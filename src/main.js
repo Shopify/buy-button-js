@@ -1,7 +1,42 @@
-class ShopifyBuy {
+import ShopifyBuy from 'shopify-buy';
+import Product from './components/product';
+import ProductIframe from './components/product-iframe';
+import Collection from './components/collection';
+import Cart from './components/cart';
+
+
+const componentTypes = {
+  'product': ProductIframe,
+  'cart': Cart,
+  'collection': Collection
+}
+
+class Container {
   constructor() {
-    console.log('constructed');
+    this.components = {
+      products: [],
+      cart: null,
+      collections: []
+    }
+  }
+
+  addToCart(data) {
+    console.log(data);
+  }
+
+  get productProps() {
+    return {
+      addToCart: this.addToCart.bind(this)
+    }
+  }
+
+  createComponent(type, config) {
+    let component = new componentTypes[type](config, {}, this.productProps);
+    this.components[`${type}s`].push(component);
+    component.render();
   }
 }
 
-new ShopifyBuy();
+let ShopifyBuyUI = new Container();
+
+ShopifyBuyUI.createComponent('collection', {});
