@@ -1,53 +1,49 @@
 import Handlebars from 'handlebars';
+import WrapperIframe from './wrapper-iframe';
+import WrapperDiv from './wrapper-div';
 
-const defaults = {
-  entryNode: document.getElementsByTagName('script')[0],
-  productConfig: {}
+const widgetDefaults = {
+  iframe: true,
+  parentNode: document.getElementsByTagName('script')[0].parentNode,
+  className: 'product'
 }
 
 export default class Widget {
-  constructor(config, data, props) {
-    this.config = Object.assign(defaults, config);
-    this.data = data || null;
-    this.props = props;
+  constructor (config, props) {
+    this.config = Object.assign({}, widgetDefaults, config);
+    this.contents = this.config.contents || [];
+    this.templates = this.config.templates || {};
+    this.renderTarget = this.config.iframe ?
+        new WrapperIframe(this.config.parentNode, document, this.config.className) :
+        new WrapperDiv(this.config.parentNode, document, this.config.className);
+    this.props = props || {};
+    this.data = this.props.data || {};
+    this.init();
   }
 
-  get templateString() {
-    return this.contents.reduce((string, item) => {
-      return string + this.templates[item]
-    }, '');
+  init() {
+    this.renderTarget.attach(this.config.className);
   }
 
   get template() {
     return Handlebars.compile(this.templateString);
   }
 
-  get wrapperNode() {
-    return this.div;
-  }
-
-  getData() {
-    return new Promise((resolve) => this.data);
-  }
-
-  afterRender() {
-    this.attachEventListeners();
+  get templateString () {
+    return this.contents.reduce((string, item) => {
+      return string + this.templates[item]
+    }, '');
   }
 
   render() {
-    return this.getData().then((data) => {
-      this.data = data;
-      this.html = this.template(this.data);
-      this.insert()
-      this.afterRender();
-    });
+    let html = this.template(this.data);
+    this.insert(html);
+    this.renderTarget.resize();
+    this.attachEventListeners();
   }
 
-  insert() {
-    this.div = this.div || document.createElement('div');
-    this.div.className = this.className;
-    this.config.entryNode.appendChild(this.div);
-    this.div.innerHTML = this.html;
+  insert (html) {
+    this.renderTarget.setHtml(html);
   }
 }
 

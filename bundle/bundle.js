@@ -29403,70 +29403,10 @@ var _widget = require('./widget');
 
 var _widget2 = _interopRequireDefault(_widget);
 
-var _cart = require('../templates/cart');
-
-var _cart2 = _interopRequireDefault(_cart);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var Cart = function (_Widget) {
-  _inherits(Cart, _Widget);
-
-  function Cart(config) {
-    _classCallCheck(this, Cart);
-
-    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Cart).call(this, config));
-
-    _this.className = 'cart';
-    _this.contents = ['title', 'total', 'checkout'];
-    _this.templates = _cart2.default;
-    return _this;
-  }
-
-  _createClass(Cart, [{
-    key: 'getData',
-    value: function getData() {
-      return new Promise(function (resolve) {
-        return resolve({
-          title: 'test Cart',
-          total: '$100'
-        });
-      });
-    }
-  }]);
-
-  return Cart;
-}(_widget2.default);
-
-exports.default = Cart;
-
-},{"../templates/cart":160,"./widget":158}],154:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _widget = require('./widget');
-
-var _widget2 = _interopRequireDefault(_widget);
-
 var _product = require('./product');
 
 var _product2 = _interopRequireDefault(_product);
 
-var _iframe = require('./iframe');
-
-var _iframe2 = _interopRequireDefault(_iframe);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -29475,15 +29415,21 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+var collectionDefaults = {
+  className: 'collection'
+};
+
 var Collection = function (_Widget) {
   _inherits(Collection, _Widget);
 
-  function Collection() {
+  function Collection(config, props) {
     _classCallCheck(this, Collection);
 
-    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Collection).apply(this, arguments));
+    var collectionConfig = Object.assign(collectionDefaults, config);
 
-    _this.className = 'collection';
+    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Collection).call(this, collectionConfig, props));
+
+    _this.config.productConfig = {};
     _this.products = [];
     return _this;
   }
@@ -29499,10 +29445,10 @@ var Collection = function (_Widget) {
             price: '$10'
           }
         }, {
-          title: 'test2',
+          title: 'cat hat',
           selectedVariant: {
-            title: 'testVariant2',
-            price: '$20'
+            title: 'red',
+            price: '$15'
           }
         }]);
       });
@@ -29512,18 +29458,20 @@ var Collection = function (_Widget) {
     value: function render() {
       var _this2 = this;
 
-      if (!this.iframe) {
-        this.iframe = new _iframe2.default(document);
-        this.iframe.attach();
-      }
-      this.config.entryNode.parentNode.insertBefore(this.iframe.el, this.config.entryNode);
-
+      this.renderTarget.setHtml('');
+      var config = Object.assign(this.config.productConfig, {
+        parentNode: this.renderTarget.node,
+        iframe: false
+      });
       this.getData().then(function (data) {
-        _this2.products = data.map(function (item) {
-          var product = new _product2.default({ entryNode: _this2.iframe.document.body }, item, _this2.props);
-          var html = product.template(product.data);
-          product.insert();
-          product.afterRender();
+        _this2.config.parentNode.appendChild(_this2.renderTarget.el);
+        _this2.products = data.map(function (p) {
+          var props = Object.assign({}, _this2.props);
+          props.data = p;
+          var product = new _product2.default(config, props);
+          product.render().then(function () {
+            _this2.renderTarget.resize();
+          });
         });
       });
     }
@@ -29534,7 +29482,7 @@ var Collection = function (_Widget) {
 
 exports.default = Collection;
 
-},{"./iframe":155,"./product":157,"./widget":158}],155:[function(require,module,exports){
+},{"./product":154,"./widget":155}],154:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -29542,124 +29490,14 @@ Object.defineProperty(exports, "__esModule", {
 });
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Iframe = function () {
-  function Iframe(document) {
-    _classCallCheck(this, Iframe);
-
-    this.documentParent = document;
-    this.el;
-  }
-
-  _createClass(Iframe, [{
-    key: 'attach',
-    value: function attach() {
-      this.el = this.documentParent.createElement('iframe');
-      this.el.style.width = '100%';
-      this.el.style.overflow = 'hidden';
-      this.el.style.border = "none";
-      this.el.scrolling = false;
-      this.el.setAttribute("horizontalscrolling", "no");
-      this.el.setAttribute("verticalscrolling", "no");
-    }
-  }, {
-    key: 'resize',
-    value: function resize(contents) {
-      console.log(contents);
-      this.document.querySelector('body').style.margin = 0;
-      this.el.style.height = contents.clientHeight + 'px';
-    }
-  }, {
-    key: 'document',
-    get: function get() {
-      return this.el.contentWindow.document;
-    }
-  }]);
-
-  return Iframe;
-}();
-
-exports.default = Iframe;
-
-},{}],156:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _product = require('./product');
-
-var _product2 = _interopRequireDefault(_product);
-
-var _iframe = require('./iframe');
-
-var _iframe2 = _interopRequireDefault(_iframe);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var defaults = {
-  entryNode: document.getElementsByTagName('script')[0],
-  productConfig: {}
-};
-
-var ProductIframe = function () {
-  function ProductIframe(config, data, props) {
-    _classCallCheck(this, ProductIframe);
-
-    this.config = Object.assign(defaults, config);
-    this.data = data || null;
-    this.props = props;
-  }
-
-  _createClass(ProductIframe, [{
-    key: 'render',
-    value: function render() {
-      var _this = this;
-
-      if (!this.iframe) {
-        this.iframe = new _iframe2.default(document);
-        this.iframe.attach();
-      }
-      this.config.entryNode.parentNode.insertBefore(this.iframe.el, this.config.entryNode);
-
-      this.widget = new _product2.default(Object.assign(this.config, {
-        entryNode: this.iframe.document.body
-      }), this.data, this.props);
-
-      this.widget.render().then(function () {
-        _this.iframe.resize(_this.widget.div);
-      });
-    }
-  }]);
-
-  return ProductIframe;
-}();
-
-exports.default = ProductIframe;
-
-},{"./iframe":155,"./product":157}],157:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _widget = require('./widget');
-
-var _widget2 = _interopRequireDefault(_widget);
 
 var _product = require('../templates/product');
 
 var _product2 = _interopRequireDefault(_product);
+
+var _widget = require('./widget');
+
+var _widget2 = _interopRequireDefault(_widget);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -29669,35 +29507,27 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+var productContents = ['title', 'variantTitle', 'price', 'button'];
+
 var Product = function (_Widget) {
   _inherits(Product, _Widget);
 
-  function Product() {
+  function Product(config, props) {
     _classCallCheck(this, Product);
 
-    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Product).apply(this, arguments));
-
-    _this.className = 'product';
-    _this.contents = ['title', 'variantTitle', 'price', 'button'];
-    _this.templates = _product2.default;
-    return _this;
+    var productConfig = Object.assign({}, config);
+    productConfig.templates = Object.assign(_product2.default, config.templates);
+    productConfig.contents = config.contents || productContents;
+    return _possibleConstructorReturn(this, Object.getPrototypeOf(Product).call(this, productConfig, props));
   }
 
   _createClass(Product, [{
-    key: 'attachEventListeners',
-    value: function attachEventListeners() {
-      this.wrapperNode.querySelector('.buy-button').addEventListener('click', this.onButtonClick.bind(this));
-    }
-  }, {
-    key: 'onButtonClick',
-    value: function onButtonClick() {
-      this.props.addToCart(this.data);
-    }
-  }, {
     key: 'getData',
     value: function getData() {
+      var _this2 = this;
+
       return new Promise(function (resolve) {
-        return resolve({
+        return resolve(_this2.data || {
           title: 'test',
           selectedVariant: {
             title: 'testVariant',
@@ -29712,8 +29542,9 @@ var Product = function (_Widget) {
 }(_widget2.default);
 
 exports.default = Product;
+;
 
-},{"../templates/product":161,"./widget":158}],158:[function(require,module,exports){
+},{"../templates/product":159,"./widget":155}],155:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -29726,66 +29557,54 @@ var _handlebars = require('handlebars');
 
 var _handlebars2 = _interopRequireDefault(_handlebars);
 
+var _wrapperIframe = require('./wrapper-iframe');
+
+var _wrapperIframe2 = _interopRequireDefault(_wrapperIframe);
+
+var _wrapperDiv = require('./wrapper-div');
+
+var _wrapperDiv2 = _interopRequireDefault(_wrapperDiv);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var defaults = {
-  entryNode: document.getElementsByTagName('script')[0],
-  productConfig: {}
+var widgetDefaults = {
+  iframe: true,
+  parentNode: document.getElementsByTagName('script')[0].parentNode,
+  className: 'product'
 };
 
 var Widget = function () {
-  function Widget(config, data, props) {
+  function Widget(config, props) {
     _classCallCheck(this, Widget);
 
-    this.config = Object.assign(defaults, config);
-    this.data = data || null;
-    this.props = props;
+    this.config = Object.assign({}, widgetDefaults, config);
+    this.contents = this.config.contents || [];
+    this.templates = this.config.templates || {};
+    this.renderTarget = this.config.iframe ? new _wrapperIframe2.default(this.config.parentNode, document, this.config.className) : new _wrapperDiv2.default(this.config.parentNode, document, this.config.className);
+    this.props = props || {};
+    this.data = this.props.data || {};
+    this.init();
   }
 
   _createClass(Widget, [{
-    key: 'getData',
-    value: function getData() {
-      var _this = this;
-
-      return new Promise(function (resolve) {
-        return _this.data;
-      });
-    }
-  }, {
-    key: 'afterRender',
-    value: function afterRender() {
-      this.attachEventListeners();
+    key: 'init',
+    value: function init() {
+      this.renderTarget.attach(this.config.className);
     }
   }, {
     key: 'render',
     value: function render() {
-      var _this2 = this;
-
-      return this.getData().then(function (data) {
-        _this2.data = data;
-        _this2.html = _this2.template(_this2.data);
-        _this2.insert();
-        _this2.afterRender();
-      });
+      var html = this.template(this.data);
+      this.insert(html);
+      this.renderTarget.resize();
+      this.attachEventListeners();
     }
   }, {
     key: 'insert',
-    value: function insert() {
-      this.div = this.div || document.createElement('div');
-      this.div.className = this.className;
-      this.config.entryNode.appendChild(this.div);
-      this.div.innerHTML = this.html;
-    }
-  }, {
-    key: 'templateString',
-    get: function get() {
-      var _this3 = this;
-
-      return this.contents.reduce(function (string, item) {
-        return string + _this3.templates[item];
-      }, '');
+    value: function insert(html) {
+      this.renderTarget.setHtml(html);
     }
   }, {
     key: 'template',
@@ -29793,9 +29612,13 @@ var Widget = function () {
       return _handlebars2.default.compile(this.templateString);
     }
   }, {
-    key: 'wrapperNode',
+    key: 'templateString',
     get: function get() {
-      return this.div;
+      var _this = this;
+
+      return this.contents.reduce(function (string, item) {
+        return string + _this.templates[item];
+      }, '');
     }
   }]);
 
@@ -29804,10 +29627,111 @@ var Widget = function () {
 
 exports.default = Widget;
 
-},{"handlebars":44}],159:[function(require,module,exports){
+},{"./wrapper-div":156,"./wrapper-iframe":157,"handlebars":44}],156:[function(require,module,exports){
 'use strict';
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var WrapperDiv = function () {
+  function WrapperDiv(parentNode, document, className) {
+    _classCallCheck(this, WrapperDiv);
+
+    this.document = document;
+    this.parentNode = parentNode;
+    this.className = className;
+  }
+
+  _createClass(WrapperDiv, [{
+    key: 'attach',
+    value: function attach() {
+      this.el = this.document.createElement('div');
+      this.el.className = this.className;
+      this.parentNode.appendChild(this.el);
+    }
+  }, {
+    key: 'setHtml',
+    value: function setHtml(html) {
+      this.el.innerHTML = html;
+    }
+  }, {
+    key: 'resize',
+    value: function resize() {}
+  }]);
+
+  return WrapperDiv;
+}();
+
+exports.default = WrapperDiv;
+
+},{}],157:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var WrapperIframe = function () {
+  function WrapperIframe(parentNode, document, className) {
+    _classCallCheck(this, WrapperIframe);
+
+    this.document = document;
+    this.parentNode = parentNode;
+    this.className = className;
+  }
+
+  _createClass(WrapperIframe, [{
+    key: 'attach',
+    value: function attach() {
+      this.el = this.document.createElement('iframe');
+      this.el.style.width = '100%';
+      this.el.style.overflow = 'hidden';
+      this.el.style.border = 'none';
+      this.el.scrolling = false;
+      this.el.setAttribute('horizontalscrolling', 'no');
+      this.el.setAttribute('verticalscrolling', 'no');
+      this.parentNode.appendChild(this.el);
+    }
+  }, {
+    key: 'setHtml',
+    value: function setHtml(html) {
+      this.doc = this.el.contentWindow.document;
+      this.doc.write(this.style + '<div class="' + this.className + '">' + html + '</div>');
+      this.doc.close();
+    }
+  }, {
+    key: 'resize',
+    value: function resize() {
+      this.el.style.height = this.node.clientHeight + 'px';
+    }
+  }, {
+    key: 'style',
+    get: function get() {
+      return "<style>body {margin: 0}</style>";
+    }
+  }, {
+    key: 'node',
+    get: function get() {
+      return this.el.contentWindow.document.querySelector('.' + this.className);
+    }
+  }]);
+
+  return WrapperIframe;
+}();
+
+exports.default = WrapperIframe;
+
+},{}],158:[function(require,module,exports){
+'use strict';
 
 var _shopifyBuy = require('shopify-buy');
 
@@ -29817,82 +29741,22 @@ var _product = require('./components/product');
 
 var _product2 = _interopRequireDefault(_product);
 
-var _productIframe = require('./components/product-iframe');
-
-var _productIframe2 = _interopRequireDefault(_productIframe);
-
 var _collection = require('./components/collection');
 
 var _collection2 = _interopRequireDefault(_collection);
 
-var _cart = require('./components/cart');
-
-var _cart2 = _interopRequireDefault(_cart);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+window.ShopifyBuy = _shopifyBuy2.default;
 
-var componentTypes = {
-  'product': _productIframe2.default,
-  'cart': _cart2.default,
-  'collection': _collection2.default
-};
+_shopifyBuy2.default.UI = _shopifyBuy2.default.UI || {};
 
-var Container = function () {
-  function Container() {
-    _classCallCheck(this, Container);
-
-    this.components = {
-      products: [],
-      cart: null,
-      collections: []
-    };
-  }
-
-  _createClass(Container, [{
-    key: 'addToCart',
-    value: function addToCart(data) {
-      console.log(data);
-    }
-  }, {
-    key: 'createComponent',
-    value: function createComponent(type, config) {
-      var component = new componentTypes[type](config, {}, this.productProps);
-      this.components[type + 's'].push(component);
-      component.render();
-    }
-  }, {
-    key: 'productProps',
-    get: function get() {
-      return {
-        addToCart: this.addToCart.bind(this)
-      };
-    }
-  }]);
-
-  return Container;
-}();
-
-var ShopifyBuyUI = new Container();
-
-ShopifyBuyUI.createComponent('collection', {});
-
-},{"./components/cart":153,"./components/collection":154,"./components/product":157,"./components/product-iframe":156,"shopify-buy":139}],160:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
+var c = new _collection2.default({});
+c.getData().then(function () {
+  return c.render();
 });
-var cartTemplate = {
-  title: '<div class="cart-section cart-section--top">' + '<h2 class="cart-title">{{title}}</h2>' + '<button class="btn--close">' + '<span aria-role="hidden">×</span>' + '<span class="visuallyhidden">Close</span>' + '</button>' + '</div>',
-  total: '<div class="cart-info__pricing">' + '<span class="cart-info__small cart-info__total">CAD</span>' + '<span class="pricing pricing--no-padding">{{total}}</span>' + '</div>',
-  checkout: '<input type="submit" class="btn btn--cart-checkout" id="checkout" name="checkout" value="Checkout">'
-};
 
-exports.default = cartTemplate;
-
-},{}],161:[function(require,module,exports){
+},{"./components/collection":153,"./components/product":154,"shopify-buy":139}],159:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -29907,4 +29771,4 @@ var productTemplate = {
 
 exports.default = productTemplate;
 
-},{}]},{},[159]);
+},{}]},{},[158]);

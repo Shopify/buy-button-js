@@ -1,11 +1,15 @@
 import Widget from './widget';
 import Product from './product';
-import Iframe from './iframe';
+
+const collectionDefaults = {
+  className: 'collection'
+}
 
 export default class Collection extends Widget {
-  constructor() {
-    super(...arguments);
-    this.className = 'collection';
+  constructor(config, props) {
+    let collectionConfig = Object.assign(collectionDefaults, config);
+    super(collectionConfig, props);
+    this.config.productConfig = {};
     this.products = [];
   }
 
@@ -17,30 +21,31 @@ export default class Collection extends Widget {
           title: 'testVariant',
           price: '$10'
         }
-      },
-      {
-        title: 'test2',
+      },{
+        title: 'cat hat',
         selectedVariant: {
-          title: 'testVariant2',
-          price: '$20'
+          title: 'red',
+          price: '$15'
         }
       }])
     });
   }
 
   render() {
-    if (!this.iframe) {
-      this.iframe = new Iframe(document);
-      this.iframe.attach();
-    }
-    this.config.entryNode.parentNode.insertBefore(this.iframe.el, this.config.entryNode);
-
+    this.renderTarget.setHtml('');
+    let config = Object.assign(this.config.productConfig, {
+      parentNode: this.renderTarget.node,
+      iframe: false
+    });
     this.getData().then((data) => {
-      this.products = data.map((item) => {
-        let product = new Product({entryNode: this.iframe.document.body}, item, this.props);
-        let html = product.template(product.data);
-        product.insert()
-        product.afterRender();
+      this.config.parentNode.appendChild(this.renderTarget.el);
+      this.products = data.map((p) => {
+        let props = Object.assign({}, this.props);
+        props.data = p;
+        let product = new Product(config, props);
+        product.render().then(() => {
+          this.renderTarget.resize()
+        });
       });
     });
   }

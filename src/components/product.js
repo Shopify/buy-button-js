@@ -1,25 +1,19 @@
+import productTemplates from '../templates/product';
 import Widget from './widget';
-import productTemplate from '../templates/product';
+
+const productContents = ['title', 'variantTitle', 'price', 'button'];
 
 export default class Product extends Widget {
-  constructor() {
-    super(...arguments);
-    this.className = 'product';
-    this.contents = ['title', 'variantTitle', 'price', 'button'];
-    this.templates = productTemplate;
-  }
-
-  attachEventListeners() {
-    this.wrapperNode.querySelector('.buy-button').addEventListener('click', this.onButtonClick.bind(this));
-  }
-
-  onButtonClick() {
-    this.props.addToCart(this.data);
+  constructor (config, props) {
+    let productConfig = Object.assign({}, config);
+    productConfig.templates = Object.assign(productTemplates, config.templates);
+    productConfig.contents = config.contents || productContents;
+    super(productConfig, props);
   }
 
   getData() {
     return new Promise((resolve) => {
-      return resolve({
+      return resolve(this.data || {
         title: 'test',
         selectedVariant: {
           title: 'testVariant',
@@ -28,5 +22,5 @@ export default class Product extends Widget {
       })
     });
   }
-}
+};
 
