@@ -1,10 +1,18 @@
 import ComponentContainer from './container';
 import productTemplate from '../templates/product';
+import View from './view';
+import optionTemplate from '../templates/option';
 
-class Product extends ComponentContainer {
-  constructor(config) {
+const productDefaults = {
+  optionConfig: {
+    templates: optionTemplate
+  }
+}
+
+export default class Product extends ComponentContainer {
+  constructor(config, props, model) {
     let productConfig = Object.assign({}, productDefaults, config);
-    super(productConfig);
+    super(productConfig, props, model);
   }
 
   getData() {
@@ -14,16 +22,20 @@ class Product extends ComponentContainer {
   }
 
   onCartAdd(data) {
-    console.log(data);
+    this.props.addVariantToCart(data.data);
   }
 
   render() {
     this.wrapper = this.wrapper || this._createWrapper();
-    this.product = new ProductView(this.config, this.model, {
-      'buyButton': this.onCartAdd.bind(this)
+    this.product = new View(this.config, this.model, this.props);
+    this.product.render(this.wrapper);
+    this.wrapper.setAttribute('id', this.model.id);
+
+    this.options = this.model.options.map((option) => {
+      return new View(this.config.optionConfig);
     });
-    this.wrapper.innerHTML = this.product.render();
-    this.wrapper.setAttribute('id', item.id);
+
+    console.log(this.options);
     this.resize();
   }
 }

@@ -1,12 +1,12 @@
 import ComponentContainer from './container';
-import View from './view';
+import Product from './product';
 import productDefaults from '../defaults/product';
 
 const collectionDefaults = {
   className: 'collection',
   productConfig: productDefaults,
   entryNode: document.getElementsByTagName('script')[0].parentNode,
-  iframe: true
+  iframe: true,
 }
 
 export default class Collection extends ComponentContainer {
@@ -28,9 +28,9 @@ export default class Collection extends ComponentContainer {
 
   render() {
     this.wrapper = this.wrapper || this._createWrapper();
-    this.products = this.model.map((p) => new View(this.config.productConfig, p, {
+    this.products = this.model.map((p) => new Product(this.config.productConfig, {
       'buyButton': this.onCartAdd.bind(this)
-    }));
+    }, p));
     this.products.forEach((item) => {
       let wrapper = this._createWrapper(this.wrapper, this.config.productConfig.className);
       item.render(wrapper);

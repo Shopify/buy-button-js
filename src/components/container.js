@@ -1,10 +1,10 @@
 import Iframe from './iframe';
 
 export default class ComponentContainer {
-  constructor(config, props) {
+  constructor(config, props, model) {
     this.config = config;
     this.props = props;
-    this.model = null;
+    this.model = model || null;
     this.iframe = this.config.iframe ? new Iframe(this.config.entryNode) : null;
     this.document = this.config.iframe ? this.iframe.document : window.document;
     this.wrapper = null;
