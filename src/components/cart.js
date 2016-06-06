@@ -17,54 +17,31 @@ const cartDefaults = {
 }
 
 export default class Cart extends ComponentContainer {
-  constructor(config) {
+  constructor(config, props) {
     let cartConfig = Object.assign({}, cartDefaults, config);
-    super(cartConfig);
+    super(cartConfig, props);
     this.init();
   }
 
   addItem(data) {
-    this.updateRemoteCart().then((newCart) => {
-      this.model = newCart;
+    this.model.addVariants({variant: data.selectedVariant, quantity: 1}).then((cart) => {
+      console.log(cart);
+      this.model = cart;
       this.render();
     });
   }
 
-  updateRemoteCart() {
-    return new Promise((resolve) => {
-      return resolve({
-        title: 'test',
-        total: '$100',
-        lineItems: [
-          {
-            title: "Hot hat",
-            price: "$10.99",
-            quantity: "2"
-          },
-          {
-            title: "Cat cactus",
-            price: "$19.99",
-            quantity: "1"
-          }
-        ]
-      })
-    });
-  }
-
   getData() {
-    return new Promise((resolve) => {
-      return resolve({
-        title: 'test',
-        total: '$100',
-        lineItems: [
-          {
-            title: "Hot hat",
-            price: "$10.99",
-            quantity: "2"
-          }
-        ]
-      })
-    });
+    if(localStorage.getItem('lastCartId')) {
+      return this.props.client.fetchCart(localStorage.getItem('lastCartId')).then(function(remoteCart) {
+        return remoteCart;
+      });
+    } else {
+      return this.props.client.createCart().then(function (newCart) {
+        localStorage.setItem('lastCartId', this.model.id);
+        return newCart;
+      });
+    }
   }
 
   render() {

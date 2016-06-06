@@ -17,20 +17,8 @@ export default class Collection extends ComponentContainer {
   }
 
   getData() {
-    return new Promise((resolve) => {
-      return resolve([{
-        title: 'test',
-        selectedVariant: {
-          title: 'testVariant',
-          price: '$10'
-        }
-      },{
-        title: 'cat hats',
-        selectedVariant: {
-          title: 'red',
-          price: '$19'
-        }
-      }])
+    return this.props.client.fetchQuery('products', {collection_id: this.config.id}).then((collection) => {
+      return collection;
     });
   }
 

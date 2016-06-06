@@ -29439,12 +29439,12 @@ var cartDefaults = {
 var Cart = function (_ComponentContainer) {
   _inherits(Cart, _ComponentContainer);
 
-  function Cart(config) {
+  function Cart(config, props) {
     _classCallCheck(this, Cart);
 
     var cartConfig = Object.assign({}, cartDefaults, config);
 
-    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Cart).call(this, cartConfig));
+    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Cart).call(this, cartConfig, props));
 
     _this.init();
     return _this;
@@ -29455,44 +29455,25 @@ var Cart = function (_ComponentContainer) {
     value: function addItem(data) {
       var _this2 = this;
 
-      this.updateRemoteCart().then(function (newCart) {
-        _this2.model = newCart;
+      this.model.addVariants({ variant: data.selectedVariant, quantity: 1 }).then(function (cart) {
+        console.log(cart);
+        _this2.model = cart;
         _this2.render();
-      });
-    }
-  }, {
-    key: 'updateRemoteCart',
-    value: function updateRemoteCart() {
-      return new Promise(function (resolve) {
-        return resolve({
-          title: 'test',
-          total: '$100',
-          lineItems: [{
-            title: "Hot hat",
-            price: "$10.99",
-            quantity: "2"
-          }, {
-            title: "Cat cactus",
-            price: "$19.99",
-            quantity: "1"
-          }]
-        });
       });
     }
   }, {
     key: 'getData',
     value: function getData() {
-      return new Promise(function (resolve) {
-        return resolve({
-          title: 'test',
-          total: '$100',
-          lineItems: [{
-            title: "Hot hat",
-            price: "$10.99",
-            quantity: "2"
-          }]
+      if (localStorage.getItem('lastCartId')) {
+        return this.props.client.fetchCart(localStorage.getItem('lastCartId')).then(function (remoteCart) {
+          return remoteCart;
         });
-      });
+      } else {
+        return this.props.client.createCart().then(function (newCart) {
+          localStorage.setItem('lastCartId', this.model.id);
+          return newCart;
+        });
+      }
     }
   }, {
     key: 'render',
@@ -29575,20 +29556,8 @@ var Collection = function (_ComponentContainer) {
   _createClass(Collection, [{
     key: 'getData',
     value: function getData() {
-      return new Promise(function (resolve) {
-        return resolve([{
-          title: 'test',
-          selectedVariant: {
-            title: 'testVariant',
-            price: '$10'
-          }
-        }, {
-          title: 'cat hats',
-          selectedVariant: {
-            title: 'red',
-            price: '$19'
-          }
-        }]);
+      return this.props.client.fetchQuery('products', { collection_id: this.config.id }).then(function (collection) {
+        return collection;
       });
     }
   }, {
@@ -29766,14 +29735,8 @@ var Product = function (_ComponentContainer) {
   _createClass(Product, [{
     key: 'getData',
     value: function getData() {
-      return new Promise(function (resolve) {
-        return resolve({
-          title: 'test',
-          selectedVariant: {
-            title: 'testVariant',
-            price: '$10'
-          }
-        });
+      return this.props.client.fetchProduct(this.config.id).then(function (product) {
+        return product;
       });
     }
   }, {
@@ -29945,11 +29908,18 @@ var UI = function () {
   function UI() {
     _classCallCheck(this, UI);
 
-    this.cart = new _cart2.default();
     this.components = {
       'collection': [],
       'product': []
     };
+    this.client = _shopifyBuy2.default.buildClient({
+      apiKey: 'bf081e860bc9dc1ce0654fdfbc20892d',
+      myShopifyDomain: 'embeds',
+      appId: '6'
+    });
+    this.cart = new _cart2.default({}, {
+      client: this.client
+    });
   }
 
   _createClass(UI, [{
@@ -29960,7 +29930,9 @@ var UI = function () {
   }, {
     key: 'createComponent',
     value: function createComponent(type, config) {
-      this.components[type].push(new componentTypes[type](config, this.props[type]));
+      var props = Object.assign({}, this.props[type]);
+      props.client = this.client;
+      this.components[type].push(new componentTypes[type](config, props));
     }
   }, {
     key: 'props',
@@ -29981,7 +29953,9 @@ var UI = function () {
 
 _shopifyBuy2.default.UI = new UI();
 
-_shopifyBuy2.default.UI.createComponent('collection', {});
+_shopifyBuy2.default.UI.createComponent('collection', {
+  id: 154868035
+});
 
 },{"./components/cart":153,"./components/collection":154,"./components/product":157,"./templates/product":163,"shopify-buy":139}],161:[function(require,module,exports){
 'use strict';
@@ -29991,7 +29965,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 var cartTemplate = {
   title: '<div class="cart-section cart-section--top">' + '<h2 class="cart-title">{{title}}</h2>' + '<button class="btn--close">' + '<span aria-role="hidden">×</span>' + '<span class="visuallyhidden">Close</span>' + '</button>' + '</div>',
-  total: '<div class="cart-info__pricing">' + '<span class="cart-info__small cart-info__total">CAD</span>' + '<span class="pricing pricing--no-padding">{{total}}</span>' + '</div>',
+  total: '<div class="cart-info__pricing">' + '<span class="cart-info__small cart-info__total">CAD</span>' + '<span class="pricing pricing--no-padding">{{subtotal}}</span>' + '</div>',
   checkout: '<input type="submit" class="btn btn--cart-checkout" id="checkout" name="checkout" value="Checkout">'
 };
 

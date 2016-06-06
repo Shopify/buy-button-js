@@ -8,14 +8,8 @@ class Product extends ComponentContainer {
   }
 
   getData() {
-    return new Promise((resolve) => {
-      return resolve({
-        title: 'test',
-        selectedVariant: {
-          title: 'testVariant',
-          price: '$10'
-        }
-      })
+    return this.props.client.fetchProduct(this.config.id).then((product) => {
+      return product;
     });
   }
 

@@ -13,11 +13,18 @@ const componentTypes = {
 
 class UI {
   constructor() {
-    this.cart = new Cart();
     this.components = {
       'collection': [],
       'product': []
     };
+    this.client = ShopifyBuy.buildClient({
+      apiKey: 'bf081e860bc9dc1ce0654fdfbc20892d',
+      myShopifyDomain: 'embeds',
+      appId: '6'
+    });
+    this.cart = new Cart({}, {
+      client: this.client
+    });
   }
 
   addVariantToCart(data) {
@@ -36,10 +43,14 @@ class UI {
   }
 
   createComponent(type, config) {
-    this.components[type].push(new componentTypes[type](config, this.props[type]));
+    let props = Object.assign({}, this.props[type]);
+    props.client = this.client;
+    this.components[type].push(new componentTypes[type](config, props));
   }
 }
 
 ShopifyBuy.UI = new UI();
 
-ShopifyBuy.UI.createComponent('collection', {});
+ShopifyBuy.UI.createComponent('collection', {
+  id: 154868035
+});
