@@ -1,19 +1,15 @@
-import productTemplates from '../templates/product';
-import Widget from './widget';
+import ComponentContainer from './container';
+import productTemplate from '../templates/product';
 
-const productContents = ['title', 'variantTitle', 'price', 'button'];
-
-export default class Product extends Widget {
-  constructor (config, props) {
-    let productConfig = Object.assign({}, config);
-    productConfig.templates = Object.assign(productTemplates, config.templates);
-    productConfig.contents = config.contents || productContents;
-    super(productConfig, props);
+class Product extends ComponentContainer {
+  constructor(config) {
+    let productConfig = Object.assign({}, productDefaults, config);
+    super(productConfig);
   }
 
   getData() {
     return new Promise((resolve) => {
-      return resolve(this.data || {
+      return resolve({
         title: 'test',
         selectedVariant: {
           title: 'testVariant',
@@ -22,5 +18,18 @@ export default class Product extends Widget {
       })
     });
   }
-};
 
+  onCartAdd(data) {
+    console.log(data);
+  }
+
+  render() {
+    this.wrapper = this.wrapper || this._createWrapper();
+    this.product = new ProductView(this.config, this.model, {
+      'buyButton': this.onCartAdd.bind(this)
+    });
+    this.wrapper.innerHTML = this.product.render();
+    this.wrapper.setAttribute('id', item.id);
+    this.resize();
+  }
+}

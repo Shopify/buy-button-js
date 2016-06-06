@@ -1,16 +1,19 @@
-import Widget from './widget';
-import Product from './product';
+import ComponentContainer from './container';
+import View from './view';
+import productDefaults from '../defaults/product';
 
 const collectionDefaults = {
-  className: 'collection'
+  className: 'collection',
+  productConfig: productDefaults,
+  entryNode: document.getElementsByTagName('script')[0].parentNode,
+  iframe: true
 }
 
-export default class Collection extends Widget {
+export default class Collection extends ComponentContainer {
   constructor(config, props) {
-    let collectionConfig = Object.assign(collectionDefaults, config);
+    let collectionConfig = Object.assign({}, collectionDefaults, config);
     super(collectionConfig, props);
-    this.config.productConfig = {};
-    this.products = [];
+    this.init();
   }
 
   getData() {
@@ -22,31 +25,28 @@ export default class Collection extends Widget {
           price: '$10'
         }
       },{
-        title: 'cat hat',
+        title: 'cat hats',
         selectedVariant: {
           title: 'red',
-          price: '$15'
+          price: '$19'
         }
       }])
     });
   }
 
+  onCartAdd(data) {
+    this.props.addVariantToCart(data.data);
+  }
+
   render() {
-    this.renderTarget.setHtml('');
-    let config = Object.assign(this.config.productConfig, {
-      parentNode: this.renderTarget.node,
-      iframe: false
+    this.wrapper = this.wrapper || this._createWrapper();
+    this.products = this.model.map((p) => new View(this.config.productConfig, p, {
+      'buyButton': this.onCartAdd.bind(this)
+    }));
+    this.products.forEach((item) => {
+      let wrapper = this._createWrapper(this.wrapper, this.config.productConfig.className);
+      item.render(wrapper);
     });
-    this.getData().then((data) => {
-      this.config.parentNode.appendChild(this.renderTarget.el);
-      this.products = data.map((p) => {
-        let props = Object.assign({}, this.props);
-        props.data = p;
-        let product = new Product(config, props);
-        product.render().then(() => {
-          this.renderTarget.resize()
-        });
-      });
-    });
+    this.resize();
   }
 }
