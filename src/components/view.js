@@ -19,7 +19,7 @@ export default class View {
     [...eventNodes].forEach((node) => {
       let [eventType, eventName] = node.dataset.event.split('.');
       node.addEventListener(eventType, (evt) => {
-        this.events[eventName].call(this, this);
+        this.events[eventName].call(this, this, evt);
       });
     })
   }
@@ -35,9 +35,9 @@ export default class View {
   }
 
   render(wrapper) {
+    wrapper.innerHTML = this.template(this.data);
+    wrapper.setAttribute('id', this.id);
     this.wrapper = wrapper;
-    this.wrapper.innerHTML = this.template(this.data);
-    this.wrapper.setAttribute('id', this.id);
     this.listen();
   }
 }

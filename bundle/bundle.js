@@ -29736,7 +29736,9 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 var productDefaults = {
   optionConfig: {
-    templates: _option2.default
+    templates: _option2.default,
+    contents: ['option'],
+    className: 'option'
   }
 };
 
@@ -29763,20 +29765,42 @@ var Product = function (_ComponentContainer) {
       this.props.addVariantToCart(data.data);
     }
   }, {
+    key: 'selectChange',
+    value: function selectChange(view, event) {
+      var target = event.target;
+      var selectedValue = target.options[target.selectedIndex].value;
+      var name = target.getAttribute('name');
+      this.updateSelectedVariant(name, selectedValue);
+    }
+  }, {
+    key: 'updateSelectedVariant',
+    value: function updateSelectedVariant(name, value) {
+      var selectedVariant = this.model.options.filter(function (option) {
+        return option.name === name;
+      })[0].selected = value;
+      this.render();
+    }
+  }, {
     key: 'render',
-    value: function render() {
+    value: function render(wrapper) {
       var _this2 = this;
 
-      this.wrapper = this.wrapper || this._createWrapper();
+      this.wrapper = wrapper || this.wrapper || this._createWrapper();
       this.product = new _view2.default(this.config, this.model, this.props);
       this.product.render(this.wrapper);
       this.wrapper.setAttribute('id', this.model.id);
 
       this.options = this.model.options.map(function (option) {
-        return new _view2.default(_this2.config.optionConfig);
+        return new _view2.default(_this2.config.optionConfig, option, {
+          'selectVariant': _this2.selectChange.bind(_this2)
+        });
       });
 
-      console.log(this.options);
+      this.options.forEach(function (option) {
+        var wrapper = _this2._createWrapper(_this2.wrapper, _this2.config.optionConfig.className);
+        option.render(wrapper);
+      });
+
       this.resize();
     }
   }]);
@@ -29838,16 +29862,16 @@ var View = function () {
         var eventName = _node$dataset$event$s2[1];
 
         node.addEventListener(eventType, function (evt) {
-          _this.events[eventName].call(_this, _this);
+          _this.events[eventName].call(_this, _this, evt);
         });
       });
     }
   }, {
     key: 'render',
     value: function render(wrapper) {
+      wrapper.innerHTML = this.template(this.data);
+      wrapper.setAttribute('id', this.id);
       this.wrapper = wrapper;
-      this.wrapper.innerHTML = this.template(this.data);
-      this.wrapper.setAttribute('id', this.id);
       this.listen();
     }
   }, {
@@ -30018,7 +30042,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 var optionTemplates = {
-  'option': '<select data-event="change.selectVariant">' + '{{#each values}}' + '<option>{{value}}</option>' + '{{/each}}' + '</select>'
+  'option': '<select data-event="change.selectVariant" name={{name}}>' + '{{#each values}}' + '<option value={{this}}>{{this}}</option>' + '{{/each}}' + '</select>'
 };
 
 exports.default = optionTemplates;
