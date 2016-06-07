@@ -22,8 +22,11 @@ class UI {
       myShopifyDomain: 'embeds',
       appId: '6'
     });
-    this.cart = new Cart({}, {
-      client: this.client
+    this.loadEmbedStyles(() => {
+      this.cart = new Cart({}, {
+        client: this.client
+      });
+      this.onReady();
     });
   }
 
@@ -42,6 +45,30 @@ class UI {
     }
   }
 
+  loadEmbedStyles(cb) {
+    let cssURL = './styles/embeds.css';
+
+    let link = document.createElement('link');
+
+    link.rel = 'stylesheet';
+    link.type = 'text/css';
+    link.href = cssURL;
+
+    let img = document.createElement('img');
+
+    img.style.opacity = 0;
+    document.body.appendChild(img);
+    document.head.appendChild(link);
+
+
+    img.src = cssURL;
+    img.onerror = () => {
+      document.body.removeChild(img);
+      cb();
+    }
+
+}
+
   createComponent(type, config) {
     let props = {
       callbacks: this.props[type],
@@ -53,6 +80,27 @@ class UI {
 
 ShopifyBuy.UI = new UI();
 
-ShopifyBuy.UI.createComponent('product', {
-  id: 6640244678
-});
+ShopifyBuy.UI.onReady = () => {
+  // ShopifyBuy.UI.createComponent('product', {
+  //   id: 6640244678,
+  //   styles: {
+  //     button: {
+  //       'background-color': 'red',
+  //       'color': 'black'
+  //     }
+  //   }
+  // });
+
+ShopifyBuy.UI.createComponent('collection', {
+    id: 244484358,
+    productConfig: {
+      styles: {
+        button: {
+          'background-color': 'red',
+          'color': 'yellow'
+        }
+      }
+    }
+  });
+};
+

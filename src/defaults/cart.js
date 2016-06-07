@@ -11,6 +11,9 @@ const cartDefaults = {
     className: 'lineItem',
     templates: lineItemTemplate,
     contents: ['title', 'price', 'quantity']
+  },
+  classes: {
+    data: 'cart_content'
   }
 }
 

@@ -29512,9 +29512,14 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 var collectionDefaults = {
   className: 'collection',
-  productConfig: _product4.default,
   entryNode: document.getElementsByTagName('script')[0].parentNode,
-  iframe: true
+  iframe: true,
+  classes: {
+    data: 'collection'
+  },
+  productConfig: Object.assign({}, _product4.default, {
+    iframe: false
+  })
 };
 
 var Collection = function (_ComponentContainer) {
@@ -29523,7 +29528,8 @@ var Collection = function (_ComponentContainer) {
   function Collection(config, props) {
     _classCallCheck(this, Collection);
 
-    var collectionConfig = Object.assign({}, collectionDefaults, config);
+    var productConfig = Object.assign({}, _product4.default, config.productConfig);
+    var collectionConfig = Object.assign({}, collectionDefaults, config, productConfig);
     return _possibleConstructorReturn(this, Object.getPrototypeOf(Collection).call(this, collectionConfig, props));
   }
 
@@ -29589,7 +29595,7 @@ var ComponentContainer = function () {
 
     this.config = config;
     this.props = props || {};
-    this.iframe = this.config.iframe ? new _iframe2.default(this.config.entryNode) : null;
+    this.iframe = this.config.iframe ? new _iframe2.default(this.config.entryNode, this.config.styles, this.config.classes) : null;
     this.document = this.config.iframe ? this.iframe.document : window.document;
     this.wrapper = null;
     if (!this.props.model) {
@@ -29616,8 +29622,8 @@ var ComponentContainer = function () {
     }
   }, {
     key: 'render',
-    value: function render() {
-      this.wrapper = this.wrapper || this._createWrapper();
+    value: function render(wrapper) {
+      this.wrapper = wrapper || this.wrapper || this._createWrapper();
 
       var view = new _view2.default(this.config, this.props.model, this.events);
       view.render(this.wrapper);
@@ -29656,11 +29662,27 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _styles = require('../templates/styles');
+
+var _styles2 = _interopRequireDefault(_styles);
+
+var _handlebars = require('handlebars');
+
+var _handlebars2 = _interopRequireDefault(_handlebars);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Iframe = function () {
-  function Iframe(parent) {
+  function Iframe(parent, styles, classes) {
     _classCallCheck(this, Iframe);
+
+    this.stylesConfig = styles || {};
+    this.classes = classes;
+
+    this.div = document.createElement('div');
+    this.div.setAttribute('data-embed_type', this.classes.data);
 
     this.el = document.createElement('iframe');
     this.el.style.width = '100%';
@@ -29669,11 +29691,61 @@ var Iframe = function () {
     this.el.scrolling = false;
     this.el.setAttribute("horizontalscrolling", "no");
     this.el.setAttribute("verticalscrolling", "no");
-    parent.appendChild(this.el);
+    this.div.appendChild(this.el);
+    parent.appendChild(this.div);
+    this.loadCSS();
     this.el.contentDocument.body.style.margin = 0;
   }
 
   _createClass(Iframe, [{
+    key: 'loadCSS',
+    value: function loadCSS() {
+      var _this = this;
+
+      var cssURL = './styles/main.css';
+
+      var link = this.document.createElement('link');
+      var img = this.document.createElement('img');
+
+      img.style.opacity = 0;
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = cssURL;
+
+      this.document.head.appendChild(link);
+      this.document.body.appendChild(img);
+
+      img.src = cssURL;
+      img.onerror = function () {
+        _this.document.body.removeChild(img);
+        _this.appendStyleTag();
+      };
+    }
+  }, {
+    key: 'appendStyleTag',
+    value: function appendStyleTag() {
+      var style = this.el.contentDocument.createElement('style');
+      style.innerHTML = _handlebars2.default.compile(_styles2.default)({ selectors: this.styles });
+      this.el.contentDocument.head.appendChild(style);
+    }
+  }, {
+    key: 'styles',
+    get: function get() {
+      var _this2 = this;
+
+      return Object.keys(this.stylesConfig).map(function (key) {
+        return {
+          selector: '.' + _this2.classes[key],
+          declarations: Object.keys(_this2.stylesConfig[key]).map(function (styleKey) {
+            return {
+              name: styleKey,
+              value: _this2.stylesConfig[key][styleKey]
+            };
+          })
+        };
+      });
+    }
+  }, {
     key: 'document',
     get: function get() {
       return this.el.contentDocument;
@@ -29685,7 +29757,7 @@ var Iframe = function () {
 
 exports.default = Iframe;
 
-},{}],157:[function(require,module,exports){
+},{"../templates/styles":166,"handlebars":44}],157:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -29766,7 +29838,7 @@ var Product = function (_ComponentContainer) {
     value: function render(wrapper) {
       var _this2 = this;
 
-      _get(Object.getPrototypeOf(Product.prototype), 'render', this).call(this);
+      _get(Object.getPrototypeOf(Product.prototype), 'render', this).call(this, wrapper);
       var parent = this.wrapper.querySelector('[data-include]');
 
       this.props.model.options.forEach(function (optionModel) {
@@ -29825,7 +29897,6 @@ var View = function () {
     this.data = data;
     this.events = events;
     this.id = uniqueId();
-    console.log(this.events);
   }
 
   _createClass(View, [{
@@ -29850,7 +29921,11 @@ var View = function () {
   }, {
     key: 'render',
     value: function render(wrapper) {
-      wrapper.innerHTML = this.template(this.data);
+      var data = {
+        data: this.data,
+        classes: this.config.classes
+      };
+      wrapper.innerHTML = this.template(data);
       wrapper.setAttribute('id', this.id);
       this.wrapper = wrapper;
       this.listen();
@@ -29903,6 +29978,9 @@ var cartDefaults = {
     className: 'lineItem',
     templates: _lineItem2.default,
     contents: ['title', 'price', 'quantity']
+  },
+  classes: {
+    data: 'cart_content'
   }
 };
 
@@ -29927,10 +30005,17 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var productDefaults = {
   className: 'product',
-  iframe: false,
+  iframe: true,
   entryNode: document.getElementsByTagName('script')[0].parentNode,
   templates: _product2.default,
   contents: ['title', 'variantTitle', 'price', 'variantSelection', 'button'],
+  classes: {
+    title: 'product-title',
+    variantTitle: 'variant-title',
+    price: 'variant-price',
+    button: 'buy-button',
+    data: 'product'
+  },
   optionConfig: {
     templates: _option2.default,
     contents: ['option'],
@@ -29978,6 +30063,8 @@ var componentTypes = {
 
 var UI = function () {
   function UI() {
+    var _this = this;
+
     _classCallCheck(this, UI);
 
     this.components = {
@@ -29989,8 +30076,11 @@ var UI = function () {
       myShopifyDomain: 'embeds',
       appId: '6'
     });
-    this.cart = new _cart2.default({}, {
-      client: this.client
+    this.loadEmbedStyles(function () {
+      _this.cart = new _cart2.default({}, {
+        client: _this.client
+      });
+      _this.onReady();
     });
   }
 
@@ -29998,6 +30088,29 @@ var UI = function () {
     key: 'addVariantToCart',
     value: function addVariantToCart(data) {
       this.cart.addItem(data);
+    }
+  }, {
+    key: 'loadEmbedStyles',
+    value: function loadEmbedStyles(cb) {
+      var cssURL = './styles/embeds.css';
+
+      var link = document.createElement('link');
+
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = cssURL;
+
+      var img = document.createElement('img');
+
+      img.style.opacity = 0;
+      document.body.appendChild(img);
+      document.head.appendChild(link);
+
+      img.src = cssURL;
+      img.onerror = function () {
+        document.body.removeChild(img);
+        cb();
+      };
     }
   }, {
     key: 'createComponent',
@@ -30027,9 +30140,29 @@ var UI = function () {
 
 _shopifyBuy2.default.UI = new UI();
 
-_shopifyBuy2.default.UI.createComponent('product', {
-  id: 6640244678
-});
+_shopifyBuy2.default.UI.onReady = function () {
+  // ShopifyBuy.UI.createComponent('product', {
+  //   id: 6640244678,
+  //   styles: {
+  //     button: {
+  //       'background-color': 'red',
+  //       'color': 'black'
+  //     }
+  //   }
+  // });
+
+  _shopifyBuy2.default.UI.createComponent('collection', {
+    id: 244484358,
+    productConfig: {
+      styles: {
+        button: {
+          'background-color': 'red',
+          'color': 'yellow'
+        }
+      }
+    }
+  });
+};
 
 },{"./components/cart":153,"./components/collection":154,"./components/product":157,"./templates/product":165,"shopify-buy":139}],162:[function(require,module,exports){
 'use strict';
@@ -30038,9 +30171,9 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 var cartTemplate = {
-  title: '<div class="cart-section cart-section--top">' + '<h2 class="cart-title">{{title}}</h2>' + '<button class="btn--close">' + '<span aria-role="hidden">×</span>' + '<span class="visuallyhidden">Close</span>' + '</button>' + '</div>',
+  title: '<div class="cart-section cart-section--top">' + '<h2 class="cart-title">{{data.title}}</h2>' + '<button class="btn--close">' + '<span aria-role="hidden">×</span>' + '<span class="visuallyhidden">Close</span>' + '</button>' + '</div>',
   items: '<div data-include></div>',
-  total: '<div class="cart-info__pricing">' + '<span class="cart-info__small cart-info__total">CAD</span>' + '<span class="pricing pricing--no-padding">{{subtotal}}</span>' + '</div>',
+  total: '<div class="cart-info__pricing">' + '<span class="cart-info__small cart-info__total">CAD</span>' + '<span class="pricing pricing--no-padding">{{data.subtotal}}</span>' + '</div>',
   checkout: '<input type="submit" class="btn btn--cart-checkout" id="checkout" name="checkout" value="Checkout">'
 };
 
@@ -30053,9 +30186,9 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 var lineItemTemplate = {
-  title: '<h4 class="product-title">{{title}}</h4>',
-  price: '<h5 class="variant-price">{{price}}</h5>',
-  quantity: '<p>{{quantity}}</p>'
+  title: '<h4 class="product-title">{{data.title}}</h4>',
+  price: '<h5 class="variant-price">{{data.price}}</h5>',
+  quantity: '<p>{{data.quantity}}</p>'
 };
 
 exports.default = lineItemTemplate;
@@ -30064,10 +30197,10 @@ exports.default = lineItemTemplate;
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
-            value: true
+  value: true
 });
 var optionTemplates = {
-            'option': '<select data-event="change.selectVariant" name={{name}}' + ' selected={{selected}}>' + '{{#each values}}' + '<option {{conditionalString ../selected this "selected"}}  value={{this}}>{{this}}</option>' + '{{/each}}' + '</select>'
+  'option': '<select data-event="change.selectVariant" name={{data.name}}>' + '{{#each data.values}}' + '<option {{conditionalString ../data.selected this "selected"}}  value={{this}}>{{this}}</option>' + '{{/each}}' + '</select>'
 };
 
 exports.default = optionTemplates;
@@ -30079,13 +30212,23 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 var productTemplate = {
-  title: '<h1 class="product-title">{{title}}</h1>',
-  variantTitle: '<h2 class="variant-title">{{selectedVariant.title}}</h2>',
-  price: '<h2 class="variant-price">{{selectedVariant.price}}</h2>',
+  title: '<h1 class="{{classes.title}}">{{data.title}}</h1>',
+  variantTitle: '<h2 class="{{classes.variantTitle}}">{{data.selectedVariant.title}}</h2>',
+  price: '<h2 class="{{classes.price}}">{{data.selectedVariant.price}}</h2>',
   variantSelection: '<div data-include></div>',
-  button: '<button data-event="click.addVariantToCart" class="buy-button js-prevent-cart-listener">Add To Cart</button>'
+  button: '<button data-event="click.addVariantToCart" class="{{classes.button}}">Add To Cart</button>'
 };
 
 exports.default = productTemplate;
+
+},{}],166:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var stylesTemplate = '{{#each selectors}}' + '{{this.selector}} \{ ' + '{{#each this.declarations}}' + '{{this.name}}: {{this.value}};' + '{{/each}}' + ' \} ' + '{{/each}}';
+
+exports.default = stylesTemplate;
 
 },{}]},{},[161]);

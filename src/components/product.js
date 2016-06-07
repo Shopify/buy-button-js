@@ -37,7 +37,7 @@ export default class Product extends ComponentContainer {
   }
 
   render(wrapper) {
-    super.render();
+    super.render(wrapper);
     let parent = this.wrapper.querySelector('[data-include]');
 
     this.props.model.options.forEach((optionModel) => {

@@ -16,7 +16,6 @@ export default class View {
     this.data = data;
     this.events = events;
     this.id = uniqueId();
-    console.log(this.events);
   }
 
   listen() {
@@ -40,7 +39,11 @@ export default class View {
   }
 
   render(wrapper) {
-    wrapper.innerHTML = this.template(this.data);
+    let data = {
+      data: this.data,
+      classes: this.config.classes
+    };
+    wrapper.innerHTML = this.template(data);
     wrapper.setAttribute('id', this.id);
     this.wrapper = wrapper;
     this.listen();

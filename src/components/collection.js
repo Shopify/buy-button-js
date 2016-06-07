@@ -4,14 +4,20 @@ import productDefaults from '../defaults/product';
 
 const collectionDefaults = {
   className: 'collection',
-  productConfig: productDefaults,
   entryNode: document.getElementsByTagName('script')[0].parentNode,
   iframe: true,
+  classes: {
+    data: 'collection'
+  },
+  productConfig: Object.assign({}, productDefaults, {
+    iframe: false
+  })
 }
 
 export default class Collection extends ComponentContainer {
   constructor(config, props) {
-    let collectionConfig = Object.assign({}, collectionDefaults, config);
+    let productConfig = Object.assign({}, productDefaults, config.productConfig);
+    let collectionConfig = Object.assign({}, collectionDefaults, config, productConfig);
     super(collectionConfig, props);
   }
 

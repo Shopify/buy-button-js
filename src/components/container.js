@@ -5,7 +5,7 @@ export default class ComponentContainer {
   constructor(config, props) {
     this.config = config;
     this.props = props || {};
-    this.iframe = this.config.iframe ? new Iframe(this.config.entryNode) : null;
+    this.iframe = this.config.iframe ? new Iframe(this.config.entryNode, this.config.styles, this.config.classes) : null;
     this.document = this.config.iframe ? this.iframe.document : window.document;
     this.wrapper = null;
     if (!this.props.model) {
@@ -26,8 +26,8 @@ export default class ComponentContainer {
     }
   }
 
-  render() {
-    this.wrapper = this.wrapper || this._createWrapper();
+  render(wrapper) {
+    this.wrapper = wrapper || (this.wrapper || this._createWrapper());
 
     let view = new View(this.config, this.props.model, this.events);
     view.render(this.wrapper);
