@@ -29436,12 +29436,10 @@ var Cart = function (_ComponentContainer) {
     value: function getData() {
       if (localStorage.getItem('lastCartId')) {
         return this.props.client.fetchCart(localStorage.getItem('lastCartId')).then(function (remoteCart) {
-          console.log(remoteCart);
           return remoteCart;
         });
       } else {
         return this.props.client.createCart().then(function (newCart) {
-          console.log(newCart);
           localStorage.setItem('lastCartId', newCart.id);
           return newCart;
         });
@@ -29516,6 +29514,10 @@ var _product3 = require('../defaults/product');
 
 var _product4 = _interopRequireDefault(_product3);
 
+var _iframe = require('./iframe');
+
+var _iframe2 = _interopRequireDefault(_iframe);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -29547,7 +29549,16 @@ var Collection = function (_ComponentContainer) {
     collectionConfig.productConfig = productConfig;
     collectionConfig.styles = productConfig.styles;
     collectionConfig.classes = productConfig.classes;
-    return _possibleConstructorReturn(this, Object.getPrototypeOf(Collection).call(this, collectionConfig, props));
+
+    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Collection).call(this, collectionConfig, props));
+
+    _this.modal = null;
+    if (_this.config.productConfig.modal) {
+      _this.modal = new _iframe2.default(_this.config.entryNode, {}, {
+        data: 'product_modal'
+      });
+    }
+    return _this;
   }
 
   _createClass(Collection, [{
@@ -29571,7 +29582,8 @@ var Collection = function (_ComponentContainer) {
       this.props.model.forEach(function (productModel) {
         var product = new _product2.default(_this2.config.productConfig, {
           model: productModel,
-          callbacks: _this2.props.callbacks
+          callbacks: _this2.props.callbacks,
+          modal: _this2.modal
         });
         var wrapper = _this2._createWrapper(_this2.wrapper, _this2.config.productConfig.className);
         product.render(wrapper);
@@ -29585,7 +29597,7 @@ var Collection = function (_ComponentContainer) {
 
 exports.default = Collection;
 
-},{"../defaults/product":160,"./container":155,"./product":157}],155:[function(require,module,exports){
+},{"../defaults/product":160,"./container":155,"./iframe":156,"./product":157}],155:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -29649,9 +29661,14 @@ var ComponentContainer = function () {
     }
   }, {
     key: '_createWrapper',
-    value: function _createWrapper(parent, className) {
+    value: function _createWrapper(parent) {
       var wrapper = this.document.createElement('div');
-      wrapper.className = className || this.config.className;
+
+      for (var _len = arguments.length, className = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+        className[_key - 1] = arguments[_key];
+      }
+
+      wrapper.className = className.join(' ') || this.config.className;
       if (parent) {
         parent.appendChild(wrapper);
       } else {
@@ -29815,8 +29832,15 @@ var Product = function (_ComponentContainer) {
 
     var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Product).call(this, productConfig, props));
 
+    if (_this.config.modal) {
+      _this.removeContents('button');
+      _this.removeContents('variantSelection');
+      _this.wrapContents('modalTrigger');
+    }
+
     _this.events = {
-      addVariantToCart: _this.onCartAdd.bind(_this)
+      addVariantToCart: _this.onCartAdd.bind(_this),
+      openModal: _this.openModal.bind(_this)
     };
     return _this;
   }
@@ -29826,6 +29850,48 @@ var Product = function (_ComponentContainer) {
     value: function getData() {
       return this.props.client.fetchProduct(this.config.id).then(function (product) {
         return product;
+      });
+    }
+  }, {
+    key: 'removeContents',
+    value: function removeContents(item) {
+      var index = this.config.contents.indexOf(item);
+      if (index > -1) {
+        this.config.contents.splice(index, 1);
+      }
+    }
+  }, {
+    key: 'wrapContents',
+    value: function wrapContents(item) {
+      this.config.contents.unshift(item + 'Open');
+      this.config.contents.push(item + 'Close');
+    }
+  }, {
+    key: 'openModal',
+    value: function openModal() {
+      var _this2 = this;
+
+      this.props.modal.div.classList.add('active');
+      var bg = this.props.modal.document.createElement('div');
+      bg.classList.add('product-modal-overlay');
+      bg.classList.add('active');
+      this.props.modal.document.body.appendChild(bg);
+      var wrapper = this._createWrapper(this.props.modal.document.body, 'product-modal-container', 'active');
+      _get(Object.getPrototypeOf(Product.prototype), 'render', this).call(this, wrapper);
+      var modalConfig = Object.assign({}, this.config, {
+        contents: ['title', 'variantSelection', 'button']
+      });
+      var view = new _view2.default(modalConfig, this.props.model, this.events);
+      view.render(this.wrapper);
+      wrapper.setAttribute('id', view.id);
+      var parent = wrapper.querySelector('[data-include]');
+
+      this.props.model.options.forEach(function (optionModel) {
+        var option = new _view2.default(_this2.config.optionConfig, optionModel, {
+          'selectVariant': _this2.selectChange.bind(_this2)
+        });
+        var wrapper = _this2._createWrapper(parent, _this2.config.optionConfig.className);
+        option.render(wrapper);
       });
     }
   }, {
@@ -29853,18 +29919,20 @@ var Product = function (_ComponentContainer) {
   }, {
     key: 'render',
     value: function render(wrapper) {
-      var _this2 = this;
+      var _this3 = this;
 
       _get(Object.getPrototypeOf(Product.prototype), 'render', this).call(this, wrapper);
       var parent = this.wrapper.querySelector('[data-include]');
 
-      this.props.model.options.forEach(function (optionModel) {
-        var option = new _view2.default(_this2.config.optionConfig, optionModel, {
-          'selectVariant': _this2.selectChange.bind(_this2)
+      if (this.config.contents.indexOf('variantSelection') > -1) {
+        this.props.model.options.forEach(function (optionModel) {
+          var option = new _view2.default(_this3.config.optionConfig, optionModel, {
+            'selectVariant': _this3.selectChange.bind(_this3)
+          });
+          var wrapper = _this3._createWrapper(parent, _this3.config.optionConfig.className);
+          option.render(wrapper);
         });
-        var wrapper = _this2._createWrapper(parent, _this2.config.optionConfig.className);
-        option.render(wrapper);
-      });
+      }
 
       this.resize();
     }
@@ -30037,7 +30105,8 @@ var productDefaults = {
     templates: _option2.default,
     contents: ['option'],
     className: 'option'
-  }
+  },
+  modal: false
 };
 
 exports.default = productDefaults;
@@ -30171,6 +30240,7 @@ _shopifyBuy2.default.UI.onReady = function () {
   _shopifyBuy2.default.UI.createComponent('collection', {
     id: 244484358,
     productConfig: {
+      modal: true,
       styles: {
         button: {
           'background-color': 'red',
@@ -30235,7 +30305,9 @@ var productTemplate = {
   variantTitle: '<h2 class="{{classes.variantTitle}}">{{data.selectedVariant.title}}</h2>',
   price: '<h2 class="{{classes.price}}">{{data.selectedVariant.price}}</h2>',
   variantSelection: '<div data-include></div>',
-  button: '<button data-event="click.addVariantToCart" class="{{classes.button}}">Add To Cart</button>'
+  button: '<button data-event="click.addVariantToCart" class="{{classes.button}}">Add To Cart</button>',
+  modalTriggerOpen: '<div data-event="click.openModal">',
+  modalTriggerClose: '</div>'
 };
 
 exports.default = productTemplate;

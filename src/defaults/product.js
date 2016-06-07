@@ -19,6 +19,7 @@ const productDefaults = {
     contents: ['option'],
     className: 'option'
   },
+  modal: false
 }
 
 export default productDefaults;

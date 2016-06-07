@@ -1,6 +1,7 @@
 import ComponentContainer from './container';
 import Product from './product';
 import productDefaults from '../defaults/product';
+import Iframe from './iframe';
 
 const collectionDefaults = {
   className: 'collection',
@@ -22,6 +23,12 @@ export default class Collection extends ComponentContainer {
     collectionConfig.styles = productConfig.styles;
     collectionConfig.classes = productConfig.classes;
     super(collectionConfig, props);
+    this.modal = null;
+    if (this.config.productConfig.modal) {
+      this.modal = new Iframe(this.config.entryNode, {}, {
+        data: 'product_modal'
+      })
+    }
   }
 
   getData() {
@@ -39,7 +46,8 @@ export default class Collection extends ComponentContainer {
     this.props.model.forEach((productModel) => {
       let product = new Product(this.config.productConfig, {
         model: productModel,
-        callbacks: this.props.callbacks
+        callbacks: this.props.callbacks,
+        modal: this.modal
       });
       let wrapper = this._createWrapper(this.wrapper, this.config.productConfig.className);
       product.render(wrapper);

@@ -35,9 +35,9 @@ export default class ComponentContainer {
     this.wrapper.setAttribute('id', view.id);
   }
 
-  _createWrapper(parent, className) {
+  _createWrapper(parent, ...className) {
     let wrapper = this.document.createElement('div');
-    wrapper.className = className || this.config.className;
+    wrapper.className = className.join(' ') || this.config.className;
     if (parent) {
       parent.appendChild(wrapper);
     } else {

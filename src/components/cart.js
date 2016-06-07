@@ -11,12 +11,10 @@ export default class Cart extends ComponentContainer {
   getData() {
     if(localStorage.getItem('lastCartId')) {
       return this.props.client.fetchCart(localStorage.getItem('lastCartId')).then(function(remoteCart) {
-        console.log(remoteCart);
         return remoteCart;
       });
     } else {
       return this.props.client.createCart().then(function (newCart) {
-        console.log(newCart);
         localStorage.setItem('lastCartId', newCart.id);
         return newCart;
       });

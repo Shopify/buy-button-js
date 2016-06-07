@@ -94,6 +94,7 @@ ShopifyBuy.UI.onReady = () => {
 ShopifyBuy.UI.createComponent('collection', {
     id: 244484358,
     productConfig: {
+      modal: true,
       styles: {
         button: {
           'background-color': 'red',

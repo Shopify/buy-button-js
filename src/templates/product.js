@@ -3,7 +3,9 @@ const productTemplate = {
   variantTitle: '<h2 class="{{classes.variantTitle}}">{{data.selectedVariant.title}}</h2>',
   price: '<h2 class="{{classes.price}}">{{data.selectedVariant.price}}</h2>',
   variantSelection: '<div data-include></div>',
-  button: '<button data-event="click.addVariantToCart" class="{{classes.button}}">Add To Cart</button>'
+  button: '<button data-event="click.addVariantToCart" class="{{classes.button}}">Add To Cart</button>',
+  modalTriggerOpen: '<div data-event="click.openModal">',
+  modalTriggerClose: '</div>'
 }
 
 export default productTemplate;
