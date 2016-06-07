@@ -16,8 +16,11 @@ const collectionDefaults = {
 
 export default class Collection extends ComponentContainer {
   constructor(config, props) {
-    let productConfig = Object.assign({}, productDefaults, config.productConfig);
-    let collectionConfig = Object.assign({}, collectionDefaults, config, productConfig);
+    let productConfig = Object.assign({}, collectionDefaults.productConfig, config.productConfig);
+    let collectionConfig = Object.assign({}, collectionDefaults, config);
+    collectionConfig.productConfig = productConfig;
+    collectionConfig.styles = productConfig.styles;
+    collectionConfig.classes = productConfig.classes;
     super(collectionConfig, props);
   }
 

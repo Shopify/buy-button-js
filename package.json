@@ -21,10 +21,6 @@
   },
   "dependencies": {
     "handlebars": "^4.0.5",
-    "htmlbars": "^0.14.23",
-    "react": "^15.1.0",
-    "react-dom": "^15.1.0",
-    "shopify-buy": "^0.1.6",
-    "handlebars-react": "git@github.com:stevenvachon/handlebars-react.git"
+    "shopify-buy": "^0.1.6"
   }
 }

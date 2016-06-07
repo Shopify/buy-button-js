@@ -29432,44 +29432,58 @@ var Cart = function (_ComponentContainer) {
   }
 
   _createClass(Cart, [{
-    key: 'addItem',
-    value: function addItem(data) {
-      var _this2 = this;
-
-      this.props.model.addVariants({ variant: data.selectedVariant, quantity: 1 }).then(function (cart) {
-        _this2.props.model = cart;
-        _this2.render();
-      });
-    }
-  }, {
     key: 'getData',
     value: function getData() {
       if (localStorage.getItem('lastCartId')) {
         return this.props.client.fetchCart(localStorage.getItem('lastCartId')).then(function (remoteCart) {
+          console.log(remoteCart);
           return remoteCart;
         });
       } else {
         return this.props.client.createCart().then(function (newCart) {
+          console.log(newCart);
           localStorage.setItem('lastCartId', newCart.id);
           return newCart;
         });
       }
     }
   }, {
+    key: 'updateLineItemQty',
+    value: function updateLineItemQty(inc, view) {
+      var _this2 = this;
+
+      var variant = view.data;
+      var newQuantity = view.data.quantity + inc;
+      this.props.model.updateLineItem(variant.id, newQuantity).then(function (cart) {
+        _this2.render();
+        console.log(variant);
+      });
+    }
+  }, {
+    key: 'addItem',
+    value: function addItem(data) {
+      var _this3 = this;
+
+      this.props.model.addVariants({ variant: data.selectedVariant, quantity: 1 }).then(function (cart) {
+        console.log(cart);
+        _this3.props.model = cart;
+        _this3.render();
+      });
+    }
+  }, {
     key: 'render',
     value: function render() {
-      var _this3 = this;
+      var _this4 = this;
 
       _get(Object.getPrototypeOf(Cart.prototype), 'render', this).call(this);
       var parent = this.wrapper.querySelector('[data-include]');
-
-      this.lineItems = this.props.model.lineItems.map(function (l) {
-        return new _view2.default(_this3.config.lineItemConfig, l, {});
-      });
-
-      this.lineItems.forEach(function (item) {
-        var wrapper = _this3._createWrapper(parent, _this3.config.lineItemConfig.className);
-        item.render(wrapper);
+      this.props.model.lineItems.forEach(function (itemModel) {
+        var lineItem = new _view2.default(_this4.config.lineItemConfig, itemModel, {
+          'incQuantity': _this4.updateLineItemQty.bind(_this4, 1),
+          'decQuantity': _this4.updateLineItemQty.bind(_this4, -1)
+        });
+        var wrapper = _this4._createWrapper(parent, _this4.config.lineItemConfig.className);
+        lineItem.render(wrapper);
       });
 
       this.resize();
@@ -29528,8 +29542,11 @@ var Collection = function (_ComponentContainer) {
   function Collection(config, props) {
     _classCallCheck(this, Collection);
 
-    var productConfig = Object.assign({}, _product4.default, config.productConfig);
-    var collectionConfig = Object.assign({}, collectionDefaults, config, productConfig);
+    var productConfig = Object.assign({}, collectionDefaults.productConfig, config.productConfig);
+    var collectionConfig = Object.assign({}, collectionDefaults, config);
+    collectionConfig.productConfig = productConfig;
+    collectionConfig.styles = productConfig.styles;
+    collectionConfig.classes = productConfig.classes;
     return _possibleConstructorReturn(this, Object.getPrototypeOf(Collection).call(this, collectionConfig, props));
   }
 
@@ -29975,9 +29992,9 @@ var cartDefaults = {
   templates: _cart2.default,
   contents: ['title', 'items', 'total', 'checkout'],
   lineItemConfig: {
-    className: 'lineItem',
+    className: 'cart-item',
     templates: _lineItem2.default,
-    contents: ['title', 'price', 'quantity']
+    contents: ['title', 'price', 'updateQuantity', 'quantity']
   },
   classes: {
     data: 'cart_content'
@@ -30188,7 +30205,9 @@ Object.defineProperty(exports, "__esModule", {
 var lineItemTemplate = {
   title: '<h4 class="product-title">{{data.title}}</h4>',
   price: '<h5 class="variant-price">{{data.price}}</h5>',
-  quantity: '<p>{{data.quantity}}</p>'
+  updateQuantity: '<button data-event="click.decQuantity" class="btn--seamless quantity-decrement" type="button"><span>-</span><span class="visuallyhidden">Decrement</span></button>' + '<input class="cart-item__quantity" type="number" min="0" aria-label="Quantity">' + '<button data-event="click.incQuantity" class="btn--seamless quantity-increment" type="button"><span>+</span><span class="visuallyhidden">Increment</span></button>',
+  quantity: '<p>{{data.quantity}} = {{data.line_price}}</p>'
+
 };
 
 exports.default = lineItemTemplate;
