@@ -5,7 +5,7 @@ const productDefaults = {
   iframe: false,
   entryNode: document.getElementsByTagName('script')[0].parentNode,
   templates: productTemplate,
-  contents: ['title', 'variantTitle', 'price', 'button']
+  contents: ['title', 'variantTitle', 'price', 'variantSelection', 'button']
 }
 
 export default productDefaults;

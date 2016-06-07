@@ -29456,7 +29456,6 @@ var Cart = function (_ComponentContainer) {
       var _this2 = this;
 
       this.model.addVariants({ variant: data.selectedVariant, quantity: 1 }).then(function (cart) {
-        console.log(cart);
         _this2.model = cart;
         _this2.render();
       });
@@ -29470,7 +29469,7 @@ var Cart = function (_ComponentContainer) {
         });
       } else {
         return this.props.client.createCart().then(function (newCart) {
-          localStorage.setItem('lastCartId', this.model.id);
+          localStorage.setItem('lastCartId', newCart.id);
           return newCart;
         });
       }
@@ -29775,9 +29774,10 @@ var Product = function (_ComponentContainer) {
   }, {
     key: 'updateSelectedVariant',
     value: function updateSelectedVariant(name, value) {
-      var selectedVariant = this.model.options.filter(function (option) {
+      var selectedOption = this.model.options.filter(function (option, index) {
         return option.name === name;
-      })[0].selected = value;
+      })[0];
+      selectedOption.selected = value;
       this.render();
     }
   }, {
@@ -29786,7 +29786,8 @@ var Product = function (_ComponentContainer) {
       var _this2 = this;
 
       this.wrapper = wrapper || this.wrapper || this._createWrapper();
-      this.product = new _view2.default(this.config, this.model, this.props);
+      var props = Object.assign({}, this.props, this.computed);
+      this.product = new _view2.default(this.config, this.model, props);
       this.product.render(this.wrapper);
       this.wrapper.setAttribute('id', this.model.id);
 
@@ -29796,8 +29797,10 @@ var Product = function (_ComponentContainer) {
         });
       });
 
+      var parent = this.wrapper.querySelector('[data-include]');
+
       this.options.forEach(function (option) {
-        var wrapper = _this2._createWrapper(_this2.wrapper, _this2.config.optionConfig.className);
+        var wrapper = _this2._createWrapper(parent, _this2.config.optionConfig.className);
         option.render(wrapper);
       });
 
@@ -29830,6 +29833,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+_handlebars2.default.registerHelper('conditionalString', function (val1, val2, output) {
+  return val1 === val2 ? output : null;
+});
 
 var idCounter = 0;
 
@@ -29913,7 +29920,7 @@ var productDefaults = {
   iframe: false,
   entryNode: document.getElementsByTagName('script')[0].parentNode,
   templates: _product2.default,
-  contents: ['title', 'variantTitle', 'price', 'button']
+  contents: ['title', 'variantTitle', 'price', 'variantSelection', 'button']
 };
 
 exports.default = productDefaults;
@@ -30004,7 +30011,7 @@ var UI = function () {
 _shopifyBuy2.default.UI = new UI();
 
 _shopifyBuy2.default.UI.createComponent('collection', {
-  id: 154868035
+  id: 244484358
 });
 
 },{"./components/cart":153,"./components/collection":154,"./components/product":157,"./templates/product":164,"shopify-buy":139}],161:[function(require,module,exports){
@@ -30039,10 +30046,10 @@ exports.default = lineItemTemplate;
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+            value: true
 });
 var optionTemplates = {
-  'option': '<select data-event="change.selectVariant" name={{name}}>' + '{{#each values}}' + '<option value={{this}}>{{this}}</option>' + '{{/each}}' + '</select>'
+            'option': '<select data-event="change.selectVariant" name={{name}}' + ' selected={{selected}}>' + '{{#each values}}' + '<option {{conditionalString ../selected this "selected"}}  value={{this}}>{{this}}</option>' + '{{/each}}' + '</select>'
 };
 
 exports.default = optionTemplates;
@@ -30057,6 +30064,7 @@ var productTemplate = {
   title: '<h1 class="product-title">{{title}}</h1>',
   variantTitle: '<h2 class="variant-title">{{selectedVariant.title}}</h2>',
   price: '<h2 class="variant-price">{{selectedVariant.price}}</h2>',
+  variantSelection: '<div data-include></div>',
   button: '<button data-event="click.buyButton" class="buy-button js-prevent-cart-listener">Add To Cart</button>'
 };
 

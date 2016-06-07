@@ -1,7 +1,8 @@
 const optionTemplates = {
-  'option': '<select data-event="change.selectVariant" name={{name}}>' +
+  'option': '<select data-event="change.selectVariant" name={{name}}' +
+              ' selected={{selected}}>' +
               '{{#each values}}' +
-                  '<option value={{this}}>{{this}}</option>' +
+                  '<option {{conditionalString ../selected this "selected"}}  value={{this}}>{{this}}</option>' +
               '{{/each}}' +
             '</select>'
 }

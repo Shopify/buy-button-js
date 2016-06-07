@@ -25,7 +25,6 @@ export default class Cart extends ComponentContainer {
 
   addItem(data) {
     this.model.addVariants({variant: data.selectedVariant, quantity: 1}).then((cart) => {
-      console.log(cart);
       this.model = cart;
       this.render();
     });
@@ -38,7 +37,7 @@ export default class Cart extends ComponentContainer {
       });
     } else {
       return this.props.client.createCart().then(function (newCart) {
-        localStorage.setItem('lastCartId', this.model.id);
+        localStorage.setItem('lastCartId', newCart.id);
         return newCart;
       });
     }

@@ -52,5 +52,5 @@ class UI {
 ShopifyBuy.UI = new UI();
 
 ShopifyBuy.UI.createComponent('collection', {
-  id: 154868035
+  id: 244484358
 });
