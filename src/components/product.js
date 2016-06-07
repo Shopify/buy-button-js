@@ -1,20 +1,14 @@
 import ComponentContainer from './container';
-import productTemplate from '../templates/product';
+import productDefaults from '../defaults/product';
 import View from './view';
-import optionTemplate from '../templates/option';
-
-const productDefaults = {
-  optionConfig: {
-    templates: optionTemplate,
-    contents: ['option'],
-    className: 'option'
-  }
-}
 
 export default class Product extends ComponentContainer {
-  constructor(config, props, model) {
+  constructor(config, props) {
     let productConfig = Object.assign({}, productDefaults, config);
-    super(productConfig, props, model);
+    super(productConfig, props);
+    this.events = {
+      addVariantToCart: this.onCartAdd.bind(this)
+    }
   }
 
   getData() {
@@ -24,7 +18,7 @@ export default class Product extends ComponentContainer {
   }
 
   onCartAdd(data) {
-    this.props.addVariantToCart(data.data);
+    this.props.callbacks.addVariantToCart(data.data);
   }
 
   selectChange(view, event) {
@@ -35,7 +29,7 @@ export default class Product extends ComponentContainer {
   }
 
   updateSelectedVariant(name, value) {
-    let selectedOption = this.model.options.filter((option, index) => {
+    let selectedOption = this.props.model.options.filter((option, index) => {
       return option.name === name;
     })[0];
     selectedOption.selected = value;
@@ -43,21 +37,13 @@ export default class Product extends ComponentContainer {
   }
 
   render(wrapper) {
-    this.wrapper = wrapper || (this.wrapper || this._createWrapper());
-    let props = Object.assign({}, this.props, this.computed);
-    this.product = new View(this.config, this.model, props);
-    this.product.render(this.wrapper);
-    this.wrapper.setAttribute('id', this.model.id);
-
-    this.options = this.model.options.map((option) => {
-      return new View(this.config.optionConfig, option, {
-        'selectVariant': this.selectChange.bind(this)
-      });
-    });
-
+    super.render();
     let parent = this.wrapper.querySelector('[data-include]');
 
-    this.options.forEach((option) => {
+    this.props.model.options.forEach((optionModel) => {
+      let option = new View(this.config.optionConfig, optionModel, {
+        'selectVariant': this.selectChange.bind(this)
+      });
       let wrapper = this._createWrapper(parent, this.config.optionConfig.className);
       option.render(wrapper);
     });

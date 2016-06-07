@@ -16,6 +16,7 @@ export default class View {
     this.data = data;
     this.events = events;
     this.id = uniqueId();
+    console.log(this.events);
   }
 
   listen() {

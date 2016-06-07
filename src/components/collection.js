@@ -13,7 +13,6 @@ export default class Collection extends ComponentContainer {
   constructor(config, props) {
     let collectionConfig = Object.assign({}, collectionDefaults, config);
     super(collectionConfig, props);
-    this.init();
   }
 
   getData() {
@@ -23,17 +22,18 @@ export default class Collection extends ComponentContainer {
   }
 
   onCartAdd(data) {
-    this.props.addVariantToCart(data.data);
+    this.props.callbacks.addVariantToCart(data.data);
   }
 
   render() {
     this.wrapper = this.wrapper || this._createWrapper();
-    this.products = this.model.map((p) => new Product(this.config.productConfig, {
-      'buyButton': this.onCartAdd.bind(this)
-    }, p));
-    this.products.forEach((item) => {
+    this.props.model.forEach((productModel) => {
+      let product = new Product(this.config.productConfig, {
+        model: productModel,
+        callbacks: this.props.callbacks
+      });
       let wrapper = this._createWrapper(this.wrapper, this.config.productConfig.className);
-      item.render(wrapper);
+      product.render(wrapper);
     });
     this.resize();
   }

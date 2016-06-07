@@ -34,23 +34,25 @@ class UI {
   get props() {
     return {
       collection: {
-        addVariantToCart: this.addVariantToCart.bind(this)
+        'addVariantToCart': this.addVariantToCart.bind(this)
       },
       product: {
-        addVariantToCart: this.addVariantToCart.bind(this)
+        'addVariantToCart': this.addVariantToCart.bind(this)
       }
     }
   }
 
   createComponent(type, config) {
-    let props = Object.assign({}, this.props[type]);
-    props.client = this.client;
+    let props = {
+      callbacks: this.props[type],
+      client: this.client
+    }
     this.components[type].push(new componentTypes[type](config, props));
   }
 }
 
 ShopifyBuy.UI = new UI();
 
-ShopifyBuy.UI.createComponent('collection', {
-  id: 244484358
+ShopifyBuy.UI.createComponent('product', {
+  id: 6640244678
 });

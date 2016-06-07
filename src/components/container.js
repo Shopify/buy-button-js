@@ -1,18 +1,21 @@
 import Iframe from './iframe';
+import View from './view';
 
 export default class ComponentContainer {
-  constructor(config, props, model) {
+  constructor(config, props) {
     this.config = config;
-    this.props = props;
-    this.model = model || null;
+    this.props = props || {};
     this.iframe = this.config.iframe ? new Iframe(this.config.entryNode) : null;
     this.document = this.config.iframe ? this.iframe.document : window.document;
     this.wrapper = null;
+    if (!this.props.model) {
+      this.init();
+    }
   }
 
   init() {
     this.getData().then((data) => {
-      this.model = data;
+      this.props.model = data;
       this.render();
     });
   }
@@ -25,6 +28,11 @@ export default class ComponentContainer {
 
   render() {
     this.wrapper = this.wrapper || this._createWrapper();
+
+    let view = new View(this.config, this.props.model, this.events);
+    view.render(this.wrapper);
+
+    this.wrapper.setAttribute('id', view.id);
   }
 
   _createWrapper(parent, className) {

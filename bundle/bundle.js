@@ -29399,21 +29399,19 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
 var _container = require('./container');
 
 var _container2 = _interopRequireDefault(_container);
 
-var _cart = require('../templates/cart');
-
-var _cart2 = _interopRequireDefault(_cart);
-
-var _lineItem = require('../templates/line-item');
-
-var _lineItem2 = _interopRequireDefault(_lineItem);
-
 var _view = require('./view');
 
 var _view2 = _interopRequireDefault(_view);
+
+var _cart = require('../defaults/cart');
+
+var _cart2 = _interopRequireDefault(_cart);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -29423,31 +29421,14 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var cartDefaults = {
-  className: 'cart',
-  iframe: true,
-  entryNode: document.getElementsByTagName('script')[0].parentNode,
-  templates: _cart2.default,
-  contents: ['title', 'total', 'checkout'],
-  lineItemConfig: {
-    className: 'lineItem',
-    templates: _lineItem2.default,
-    contents: ['title', 'price', 'quantity']
-  }
-};
-
 var Cart = function (_ComponentContainer) {
   _inherits(Cart, _ComponentContainer);
 
   function Cart(config, props) {
     _classCallCheck(this, Cart);
 
-    var cartConfig = Object.assign({}, cartDefaults, config);
-
-    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Cart).call(this, cartConfig, props));
-
-    _this.init();
-    return _this;
+    var cartConfig = Object.assign({}, _cart2.default, config);
+    return _possibleConstructorReturn(this, Object.getPrototypeOf(Cart).call(this, cartConfig, props));
   }
 
   _createClass(Cart, [{
@@ -29455,8 +29436,8 @@ var Cart = function (_ComponentContainer) {
     value: function addItem(data) {
       var _this2 = this;
 
-      this.model.addVariants({ variant: data.selectedVariant, quantity: 1 }).then(function (cart) {
-        _this2.model = cart;
+      this.props.model.addVariants({ variant: data.selectedVariant, quantity: 1 }).then(function (cart) {
+        _this2.props.model = cart;
         _this2.render();
       });
     }
@@ -29479,17 +29460,15 @@ var Cart = function (_ComponentContainer) {
     value: function render() {
       var _this3 = this;
 
-      this.wrapper = this.wrapper || this._createWrapper();
-      this.cart = new _view2.default(this.config, this.model, {});
-      this.cart.render(this.wrapper);;
-      this.wrapper.setAttribute('id', this.cart.id);
+      _get(Object.getPrototypeOf(Cart.prototype), 'render', this).call(this);
+      var parent = this.wrapper.querySelector('[data-include]');
 
-      this.lineItems = this.model.lineItems.map(function (l) {
+      this.lineItems = this.props.model.lineItems.map(function (l) {
         return new _view2.default(_this3.config.lineItemConfig, l, {});
       });
 
       this.lineItems.forEach(function (item) {
-        var wrapper = _this3._createWrapper(_this3.wrapper, _this3.config.lineItemConfig.className);
+        var wrapper = _this3._createWrapper(parent, _this3.config.lineItemConfig.className);
         item.render(wrapper);
       });
 
@@ -29502,7 +29481,7 @@ var Cart = function (_ComponentContainer) {
 
 exports.default = Cart;
 
-},{"../templates/cart":161,"../templates/line-item":162,"./container":155,"./view":158}],154:[function(require,module,exports){
+},{"../defaults/cart":159,"./container":155,"./view":158}],154:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -29545,11 +29524,7 @@ var Collection = function (_ComponentContainer) {
     _classCallCheck(this, Collection);
 
     var collectionConfig = Object.assign({}, collectionDefaults, config);
-
-    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Collection).call(this, collectionConfig, props));
-
-    _this.init();
-    return _this;
+    return _possibleConstructorReturn(this, Object.getPrototypeOf(Collection).call(this, collectionConfig, props));
   }
 
   _createClass(Collection, [{
@@ -29562,7 +29537,7 @@ var Collection = function (_ComponentContainer) {
   }, {
     key: 'onCartAdd',
     value: function onCartAdd(data) {
-      this.props.addVariantToCart(data.data);
+      this.props.callbacks.addVariantToCart(data.data);
     }
   }, {
     key: 'render',
@@ -29570,14 +29545,13 @@ var Collection = function (_ComponentContainer) {
       var _this2 = this;
 
       this.wrapper = this.wrapper || this._createWrapper();
-      this.products = this.model.map(function (p) {
-        return new _product2.default(_this2.config.productConfig, {
-          'buyButton': _this2.onCartAdd.bind(_this2)
-        }, p);
-      });
-      this.products.forEach(function (item) {
+      this.props.model.forEach(function (productModel) {
+        var product = new _product2.default(_this2.config.productConfig, {
+          model: productModel,
+          callbacks: _this2.props.callbacks
+        });
         var wrapper = _this2._createWrapper(_this2.wrapper, _this2.config.productConfig.className);
-        item.render(wrapper);
+        product.render(wrapper);
       });
       this.resize();
     }
@@ -29588,7 +29562,7 @@ var Collection = function (_ComponentContainer) {
 
 exports.default = Collection;
 
-},{"../defaults/product":159,"./container":155,"./product":157}],155:[function(require,module,exports){
+},{"../defaults/product":160,"./container":155,"./product":157}],155:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -29601,20 +29575,26 @@ var _iframe = require('./iframe');
 
 var _iframe2 = _interopRequireDefault(_iframe);
 
+var _view = require('./view');
+
+var _view2 = _interopRequireDefault(_view);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var ComponentContainer = function () {
-  function ComponentContainer(config, props, model) {
+  function ComponentContainer(config, props) {
     _classCallCheck(this, ComponentContainer);
 
     this.config = config;
-    this.props = props;
-    this.model = model || null;
+    this.props = props || {};
     this.iframe = this.config.iframe ? new _iframe2.default(this.config.entryNode) : null;
     this.document = this.config.iframe ? this.iframe.document : window.document;
     this.wrapper = null;
+    if (!this.props.model) {
+      this.init();
+    }
   }
 
   _createClass(ComponentContainer, [{
@@ -29623,7 +29603,7 @@ var ComponentContainer = function () {
       var _this = this;
 
       this.getData().then(function (data) {
-        _this.model = data;
+        _this.props.model = data;
         _this.render();
       });
     }
@@ -29638,6 +29618,11 @@ var ComponentContainer = function () {
     key: 'render',
     value: function render() {
       this.wrapper = this.wrapper || this._createWrapper();
+
+      var view = new _view2.default(this.config, this.props.model, this.events);
+      view.render(this.wrapper);
+
+      this.wrapper.setAttribute('id', view.id);
     }
   }, {
     key: '_createWrapper',
@@ -29662,7 +29647,7 @@ var ComponentContainer = function () {
 
 exports.default = ComponentContainer;
 
-},{"./iframe":156}],156:[function(require,module,exports){
+},{"./iframe":156,"./view":158}],156:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -29709,21 +29694,19 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
 var _container = require('./container');
 
 var _container2 = _interopRequireDefault(_container);
 
-var _product = require('../templates/product');
+var _product = require('../defaults/product');
 
 var _product2 = _interopRequireDefault(_product);
 
 var _view = require('./view');
 
 var _view2 = _interopRequireDefault(_view);
-
-var _option = require('../templates/option');
-
-var _option2 = _interopRequireDefault(_option);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -29733,22 +29716,20 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var productDefaults = {
-  optionConfig: {
-    templates: _option2.default,
-    contents: ['option'],
-    className: 'option'
-  }
-};
-
 var Product = function (_ComponentContainer) {
   _inherits(Product, _ComponentContainer);
 
-  function Product(config, props, model) {
+  function Product(config, props) {
     _classCallCheck(this, Product);
 
-    var productConfig = Object.assign({}, productDefaults, config);
-    return _possibleConstructorReturn(this, Object.getPrototypeOf(Product).call(this, productConfig, props, model));
+    var productConfig = Object.assign({}, _product2.default, config);
+
+    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Product).call(this, productConfig, props));
+
+    _this.events = {
+      addVariantToCart: _this.onCartAdd.bind(_this)
+    };
+    return _this;
   }
 
   _createClass(Product, [{
@@ -29761,7 +29742,7 @@ var Product = function (_ComponentContainer) {
   }, {
     key: 'onCartAdd',
     value: function onCartAdd(data) {
-      this.props.addVariantToCart(data.data);
+      this.props.callbacks.addVariantToCart(data.data);
     }
   }, {
     key: 'selectChange',
@@ -29774,7 +29755,7 @@ var Product = function (_ComponentContainer) {
   }, {
     key: 'updateSelectedVariant',
     value: function updateSelectedVariant(name, value) {
-      var selectedOption = this.model.options.filter(function (option, index) {
+      var selectedOption = this.props.model.options.filter(function (option, index) {
         return option.name === name;
       })[0];
       selectedOption.selected = value;
@@ -29785,21 +29766,13 @@ var Product = function (_ComponentContainer) {
     value: function render(wrapper) {
       var _this2 = this;
 
-      this.wrapper = wrapper || this.wrapper || this._createWrapper();
-      var props = Object.assign({}, this.props, this.computed);
-      this.product = new _view2.default(this.config, this.model, props);
-      this.product.render(this.wrapper);
-      this.wrapper.setAttribute('id', this.model.id);
-
-      this.options = this.model.options.map(function (option) {
-        return new _view2.default(_this2.config.optionConfig, option, {
-          'selectVariant': _this2.selectChange.bind(_this2)
-        });
-      });
-
+      _get(Object.getPrototypeOf(Product.prototype), 'render', this).call(this);
       var parent = this.wrapper.querySelector('[data-include]');
 
-      this.options.forEach(function (option) {
+      this.props.model.options.forEach(function (optionModel) {
+        var option = new _view2.default(_this2.config.optionConfig, optionModel, {
+          'selectVariant': _this2.selectChange.bind(_this2)
+        });
         var wrapper = _this2._createWrapper(parent, _this2.config.optionConfig.className);
         option.render(wrapper);
       });
@@ -29813,7 +29786,7 @@ var Product = function (_ComponentContainer) {
 
 exports.default = Product;
 
-},{"../templates/option":163,"../templates/product":164,"./container":155,"./view":158}],158:[function(require,module,exports){
+},{"../defaults/product":160,"./container":155,"./view":158}],158:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -29852,6 +29825,7 @@ var View = function () {
     this.data = data;
     this.events = events;
     this.id = uniqueId();
+    console.log(this.events);
   }
 
   _createClass(View, [{
@@ -29909,9 +29883,45 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _cart = require('../templates/cart');
+
+var _cart2 = _interopRequireDefault(_cart);
+
+var _lineItem = require('../templates/line-item');
+
+var _lineItem2 = _interopRequireDefault(_lineItem);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var cartDefaults = {
+  className: 'cart',
+  iframe: true,
+  entryNode: document.getElementsByTagName('script')[0].parentNode,
+  templates: _cart2.default,
+  contents: ['title', 'items', 'total', 'checkout'],
+  lineItemConfig: {
+    className: 'lineItem',
+    templates: _lineItem2.default,
+    contents: ['title', 'price', 'quantity']
+  }
+};
+
+exports.default = cartDefaults;
+
+},{"../templates/cart":162,"../templates/line-item":163}],160:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
 var _product = require('../templates/product');
 
 var _product2 = _interopRequireDefault(_product);
+
+var _option = require('../templates/option');
+
+var _option2 = _interopRequireDefault(_option);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -29920,12 +29930,17 @@ var productDefaults = {
   iframe: false,
   entryNode: document.getElementsByTagName('script')[0].parentNode,
   templates: _product2.default,
-  contents: ['title', 'variantTitle', 'price', 'variantSelection', 'button']
+  contents: ['title', 'variantTitle', 'price', 'variantSelection', 'button'],
+  optionConfig: {
+    templates: _option2.default,
+    contents: ['option'],
+    className: 'option'
+  }
 };
 
 exports.default = productDefaults;
 
-},{"../templates/product":164}],160:[function(require,module,exports){
+},{"../templates/option":164,"../templates/product":165}],161:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -29987,8 +30002,10 @@ var UI = function () {
   }, {
     key: 'createComponent',
     value: function createComponent(type, config) {
-      var props = Object.assign({}, this.props[type]);
-      props.client = this.client;
+      var props = {
+        callbacks: this.props[type],
+        client: this.client
+      };
       this.components[type].push(new componentTypes[type](config, props));
     }
   }, {
@@ -29996,10 +30013,10 @@ var UI = function () {
     get: function get() {
       return {
         collection: {
-          addVariantToCart: this.addVariantToCart.bind(this)
+          'addVariantToCart': this.addVariantToCart.bind(this)
         },
         product: {
-          addVariantToCart: this.addVariantToCart.bind(this)
+          'addVariantToCart': this.addVariantToCart.bind(this)
         }
       };
     }
@@ -30010,11 +30027,11 @@ var UI = function () {
 
 _shopifyBuy2.default.UI = new UI();
 
-_shopifyBuy2.default.UI.createComponent('collection', {
-  id: 244484358
+_shopifyBuy2.default.UI.createComponent('product', {
+  id: 6640244678
 });
 
-},{"./components/cart":153,"./components/collection":154,"./components/product":157,"./templates/product":164,"shopify-buy":139}],161:[function(require,module,exports){
+},{"./components/cart":153,"./components/collection":154,"./components/product":157,"./templates/product":165,"shopify-buy":139}],162:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -30022,13 +30039,14 @@ Object.defineProperty(exports, "__esModule", {
 });
 var cartTemplate = {
   title: '<div class="cart-section cart-section--top">' + '<h2 class="cart-title">{{title}}</h2>' + '<button class="btn--close">' + '<span aria-role="hidden">×</span>' + '<span class="visuallyhidden">Close</span>' + '</button>' + '</div>',
+  items: '<div data-include></div>',
   total: '<div class="cart-info__pricing">' + '<span class="cart-info__small cart-info__total">CAD</span>' + '<span class="pricing pricing--no-padding">{{subtotal}}</span>' + '</div>',
   checkout: '<input type="submit" class="btn btn--cart-checkout" id="checkout" name="checkout" value="Checkout">'
 };
 
 exports.default = cartTemplate;
 
-},{}],162:[function(require,module,exports){
+},{}],163:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -30042,7 +30060,7 @@ var lineItemTemplate = {
 
 exports.default = lineItemTemplate;
 
-},{}],163:[function(require,module,exports){
+},{}],164:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -30054,7 +30072,7 @@ var optionTemplates = {
 
 exports.default = optionTemplates;
 
-},{}],164:[function(require,module,exports){
+},{}],165:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -30065,9 +30083,9 @@ var productTemplate = {
   variantTitle: '<h2 class="variant-title">{{selectedVariant.title}}</h2>',
   price: '<h2 class="variant-price">{{selectedVariant.price}}</h2>',
   variantSelection: '<div data-include></div>',
-  button: '<button data-event="click.buyButton" class="buy-button js-prevent-cart-listener">Add To Cart</button>'
+  button: '<button data-event="click.addVariantToCart" class="buy-button js-prevent-cart-listener">Add To Cart</button>'
 };
 
 exports.default = productTemplate;
 
-},{}]},{},[160]);
+},{}]},{},[161]);
