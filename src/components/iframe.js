@@ -1,3 +1,4 @@
+import Handlebars from 'handlebars';
 import stylesTemplate from '../templates/styles';
 
 export default class Iframe {

@@ -1,4 +1,4 @@
-
+import Handlebars from 'handlebars';
 Handlebars.registerHelper('conditionalString', (val1, val2, output) => {
   return val1 === val2 ? output : null;
 });

@@ -2,6 +2,7 @@ import productTemplate from './templates/product';
 import Collection from './components/collection';
 import Product from './components/product';
 import Cart from './components/cart';
+import ShopifyBuy from 'shopify-buy';
 
 window.ShopifyBuy = ShopifyBuy;
 
