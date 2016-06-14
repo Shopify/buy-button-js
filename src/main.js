@@ -1,5 +1,4 @@
 import productTemplate from './templates/product';
-import ShopifyBuy from 'shopify-buy';
 import Collection from './components/collection';
 import Product from './components/product';
 import Cart from './components/cart';
@@ -94,7 +93,6 @@ ShopifyBuy.UI.onReady = () => {
 ShopifyBuy.UI.createComponent('collection', {
     id: 244484358,
     productConfig: {
-      modal: true,
       styles: {
         button: {
           'background-color': 'red',

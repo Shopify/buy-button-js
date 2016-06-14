@@ -1,5 +1,4 @@
 import stylesTemplate from '../templates/styles';
-import Handlebars from 'handlebars';
 
 export default class Iframe {
   constructor(parent, styles, classes) {

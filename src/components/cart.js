@@ -26,13 +26,11 @@ export default class Cart extends ComponentContainer {
     let newQuantity = view.data.quantity + inc;
     this.props.model.updateLineItem(variant.id, newQuantity).then((cart) => {
       this.render();
-      console.log(variant);
     });
   }
 
   addItem(data) {
     this.props.model.addVariants({variant: data.selectedVariant, quantity: 1}).then((cart) => {
-      console.log(cart);
       this.props.model = cart;
       this.render();
     });
