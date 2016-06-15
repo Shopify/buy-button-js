@@ -40,14 +40,31 @@ export default class View {
     return Handlebars.compile(this.templateString);
   }
 
+  resizeAfterImgLoad() {
+    let promises = [...this.wrapper.querySelectorAll('img')].map(img => {
+      return new Promise((resolve) => {
+        img.addEventListener('load', (evt) => {
+          resolve(evt)
+        });
+      });
+    });
+    if (promises.length) {
+      Promise.all(promises).then(result => {
+        this.events.imagesRendered();
+      });
+    }
+  }
+
   render(wrapper) {
     let data = {
       data: this.data,
       classes: this.config.classes
     };
+    let html = this.template(data);
     wrapper.innerHTML = this.template(data);
     wrapper.setAttribute('id', this.id);
     this.wrapper = wrapper;
+    this.resizeAfterImgLoad()
     this.listen();
   }
 }

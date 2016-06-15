@@ -3,7 +3,7 @@ import productDefaults from '../defaults/product';
 import View from './view';
 
 export default class Product extends ComponentContainer {
-  constructor(config, props) {
+  constructor(config, props, events = {}) {
     let productConfig = Object.assign({}, productDefaults, config);
     productConfig.templates = Object.assign({}, productDefaults.templates, config.templates);
     super(productConfig, props);
@@ -14,10 +14,10 @@ export default class Product extends ComponentContainer {
       this.wrapContents('modalTrigger');
     }
 
-    this.events = {
+    this.events = Object.assign({}, events, {
       addVariantToCart: this.onCartAdd.bind(this),
-      openModal: this.openModal.bind(this)
-    }
+      openModal: this.openModal.bind(this),
+    })
   }
 
   getData() {

@@ -12792,6 +12792,8 @@ var Collection = function (_ComponentContainer) {
           model: productModel,
           callbacks: _this2.props.callbacks,
           modal: _this2.modal
+        }, {
+          imagesRendered: _this2.resize.bind(_this2)
         });
         var wrapper = _this2._createWrapper(_this2.wrapper, _this2.config.productConfig.className);
         product.render(wrapper);
@@ -13034,6 +13036,8 @@ var Product = function (_ComponentContainer) {
   _inherits(Product, _ComponentContainer);
 
   function Product(config, props) {
+    var events = arguments.length <= 2 || arguments[2] === undefined ? {} : arguments[2];
+
     _classCallCheck(this, Product);
 
     var productConfig = Object.assign({}, _product2.default, config);
@@ -13047,10 +13051,10 @@ var Product = function (_ComponentContainer) {
       _this.wrapContents('modalTrigger');
     }
 
-    _this.events = {
+    _this.events = Object.assign({}, events, {
       addVariantToCart: _this.onCartAdd.bind(_this),
       openModal: _this.openModal.bind(_this)
-    };
+    });
     return _this;
   }
 
@@ -13191,24 +13195,44 @@ var View = function () {
       });
     }
   }, {
+    key: 'resizeAfterImgLoad',
+    value: function resizeAfterImgLoad() {
+      var _this2 = this;
+
+      var promises = [].concat(_toConsumableArray(this.wrapper.querySelectorAll('img'))).map(function (img) {
+        return new Promise(function (resolve) {
+          img.addEventListener('load', function (evt) {
+            resolve(evt);
+          });
+        });
+      });
+      if (promises.length) {
+        Promise.all(promises).then(function (result) {
+          _this2.events.imagesRendered();
+        });
+      }
+    }
+  }, {
     key: 'render',
     value: function render(wrapper) {
       var data = {
         data: this.data,
         classes: this.config.classes
       };
+      var html = this.template(data);
       wrapper.innerHTML = this.template(data);
       wrapper.setAttribute('id', this.id);
       this.wrapper = wrapper;
+      this.resizeAfterImgLoad();
       this.listen();
     }
   }, {
     key: 'templateString',
     get: function get() {
-      var _this2 = this;
+      var _this3 = this;
 
       return this.config.contents.reduce(function (string, item) {
-        return string + _this2.config.templates[item];
+        return string + _this3.config.templates[item];
       }, '');
     }
   }, {
@@ -13280,7 +13304,7 @@ var productDefaults = {
   iframe: true,
   entryNode: document.getElementsByTagName('script')[0].parentNode,
   templates: _product2.default,
-  contents: ['title', 'variantTitle', 'price', 'variantSelection', 'button'],
+  contents: ['img', 'title', 'variantTitle', 'price', 'variantSelection', 'button'],
   classes: {
     title: 'product-title',
     variantTitle: 'variant-title',
@@ -13427,7 +13451,7 @@ _shopifyBuy2.default.UI.onReady = function () {
   _shopifyBuy2.default.UI.createComponent('collection', {
     id: 244484358,
     productConfig: {
-      contents: ['title', 'variantTitle', 'price', 'description', 'variantSelection', 'button'],
+      contents: ['img', 'title', 'variantTitle', 'price', 'description', 'variantSelection', 'button'],
       templates: {
         title: '<h4>{{data.title}}</h4>',
         description: '<p>{{{data.attrs.body_html}}}</p>'
@@ -13499,6 +13523,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 var productTemplate = {
   title: '<h1 class="{{classes.title}}">{{data.title}}</h1>',
+  img: '<img src="{{data.selectedVariantImage.src}}" />',
   variantTitle: '<h2 class="{{classes.variantTitle}}">{{data.selectedVariant.title}}</h2>',
   price: '<h2 class="{{classes.price}}">{{data.selectedVariant.price}}</h2>',
   variantSelection: '<div data-include></div>',

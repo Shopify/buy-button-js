@@ -94,7 +94,7 @@ ShopifyBuy.UI.onReady = () => {
 ShopifyBuy.UI.createComponent('collection', {
     id: 244484358,
     productConfig: {
-      contents: ['title', 'variantTitle', 'price', 'description', 'variantSelection', 'button'],
+      contents: ['img', 'title', 'variantTitle', 'price', 'description', 'variantSelection', 'button'],
       templates: {
         title: '<h4>{{data.title}}</h4>',
         description: '<p>{{{data.attrs.body_html}}}</p>'

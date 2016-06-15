@@ -6,7 +6,7 @@ const productDefaults = {
   iframe: true,
   entryNode: document.getElementsByTagName('script')[0].parentNode,
   templates: productTemplate,
-  contents: ['title', 'variantTitle', 'price', 'variantSelection', 'button'],
+  contents: ['img', 'title', 'variantTitle', 'price', 'variantSelection', 'button'],
   classes: {
     title: 'product-title',
     variantTitle: 'variant-title',

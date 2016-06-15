@@ -48,6 +48,8 @@ export default class Collection extends ComponentContainer {
         model: productModel,
         callbacks: this.props.callbacks,
         modal: this.modal
+      },{
+        imagesRendered: this.resize.bind(this)
       });
       let wrapper = this._createWrapper(this.wrapper, this.config.productConfig.className);
       product.render(wrapper);
