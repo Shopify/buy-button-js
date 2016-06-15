@@ -43,6 +43,8 @@ export default class Cart extends ComponentContainer {
       let lineItem = new View(this.config.lineItemConfig, itemModel, {
         'incQuantity': this.updateLineItemQty.bind(this, 1),
         'decQuantity': this.updateLineItemQty.bind(this, -1)
+      }, {
+        imagesRendered: this.resize.bind(this)
       });
       let wrapper = this._createWrapper(parent, this.config.lineItemConfig.className);
       lineItem.render(wrapper);

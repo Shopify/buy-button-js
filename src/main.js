@@ -1,3 +1,4 @@
+import "babel-polyfill";
 import productTemplate from './templates/product';
 import Collection from './components/collection';
 import Product from './components/product';

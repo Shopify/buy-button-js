@@ -10,7 +10,7 @@ const cartDefaults = {
   lineItemConfig: {
     className: 'cart-item',
     templates: lineItemTemplate,
-    contents: ['title', 'price', 'updateQuantity', 'quantity']
+    contents: ['img', 'title', 'price', 'updateQuantity', 'quantity']
   },
   classes: {
     data: 'cart_content'

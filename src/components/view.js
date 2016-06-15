@@ -10,7 +10,7 @@ function uniqueId() {
 }
 
 export default class View {
-  constructor(config, data, events) {
+  constructor(config, data, events = {}) {
     this.config = config;
     this.data = data;
     this.events = events;
@@ -41,17 +41,19 @@ export default class View {
   }
 
   resizeAfterImgLoad() {
-    let promises = [...this.wrapper.querySelectorAll('img')].map(img => {
-      return new Promise((resolve) => {
-        img.addEventListener('load', (evt) => {
-          resolve(evt)
+    if (this.events.imagesRendered && typeof this.events.imagesRendered === 'function') {
+      let promises = [...this.wrapper.querySelectorAll('img')].map(img => {
+        return new Promise((resolve) => {
+          img.addEventListener('load', (evt) => {
+            resolve(evt)
+          });
         });
       });
-    });
-    if (promises.length) {
-      Promise.all(promises).then(result => {
-        this.events.imagesRendered();
-      });
+      if (promises.length) {
+        Promise.all(promises).then(result => {
+          this.events.imagesRendered();
+        });
+      }
     }
   }
 
