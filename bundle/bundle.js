@@ -13037,6 +13037,7 @@ var Product = function (_ComponentContainer) {
     _classCallCheck(this, Product);
 
     var productConfig = Object.assign({}, _product2.default, config);
+    productConfig.templates = Object.assign({}, _product2.default.templates, config.templates);
 
     var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Product).call(this, productConfig, props));
 
@@ -13076,32 +13077,7 @@ var Product = function (_ComponentContainer) {
     }
   }, {
     key: 'openModal',
-    value: function openModal() {
-      var _this2 = this;
-
-      this.props.modal.div.classList.add('active');
-      var bg = this.props.modal.document.createElement('div');
-      bg.classList.add('product-modal-overlay');
-      bg.classList.add('active');
-      this.props.modal.document.body.appendChild(bg);
-      var wrapper = this._createWrapper(this.props.modal.document.body, 'product-modal-container', 'active');
-      _get(Object.getPrototypeOf(Product.prototype), 'render', this).call(this, wrapper);
-      var modalConfig = Object.assign({}, this.config, {
-        contents: ['title', 'variantSelection', 'button']
-      });
-      var view = new _view2.default(modalConfig, this.props.model, this.events);
-      view.render(this.wrapper);
-      wrapper.setAttribute('id', view.id);
-      var parent = wrapper.querySelector('[data-include]');
-
-      this.props.model.options.forEach(function (optionModel) {
-        var option = new _view2.default(_this2.config.optionConfig, optionModel, {
-          'selectVariant': _this2.selectChange.bind(_this2)
-        });
-        var wrapper = _this2._createWrapper(parent, _this2.config.optionConfig.className);
-        option.render(wrapper);
-      });
-    }
+    value: function openModal() {}
   }, {
     key: 'onCartAdd',
     value: function onCartAdd(data) {
@@ -13127,17 +13103,17 @@ var Product = function (_ComponentContainer) {
   }, {
     key: 'render',
     value: function render(wrapper) {
-      var _this3 = this;
+      var _this2 = this;
 
       _get(Object.getPrototypeOf(Product.prototype), 'render', this).call(this, wrapper);
       var parent = this.wrapper.querySelector('[data-include]');
 
       if (this.config.contents.indexOf('variantSelection') > -1) {
         this.props.model.options.forEach(function (optionModel) {
-          var option = new _view2.default(_this3.config.optionConfig, optionModel, {
-            'selectVariant': _this3.selectChange.bind(_this3)
+          var option = new _view2.default(_this2.config.optionConfig, optionModel, {
+            'selectVariant': _this2.selectChange.bind(_this2)
           });
-          var wrapper = _this3._createWrapper(parent, _this3.config.optionConfig.className);
+          var wrapper = _this2._createWrapper(parent, _this2.config.optionConfig.className);
           option.render(wrapper);
         });
       }
@@ -13208,6 +13184,9 @@ var View = function () {
 
         node.addEventListener(eventType, function (evt) {
           _this.events[eventName].call(_this, _this, evt);
+          if (_this.config[eventName] && typeof _this.config[eventName] === 'function') {
+            _this.config[eventName].call(_this, _this.data, evt);
+          }
         });
       });
     }
@@ -13448,11 +13427,22 @@ _shopifyBuy2.default.UI.onReady = function () {
   _shopifyBuy2.default.UI.createComponent('collection', {
     id: 244484358,
     productConfig: {
+      contents: ['title', 'variantTitle', 'price', 'description', 'variantSelection', 'button'],
+      templates: {
+        title: '<h4>{{data.title}}</h4>',
+        description: '<p>{{{data.attrs.body_html}}}</p>'
+      },
       styles: {
         button: {
           'background-color': 'red',
-          'color': 'yellow'
+          'color': 'yellow',
+          'border': '0',
+          'border-radius': '5px',
+          'font-size': '16px'
         }
+      },
+      addVariantToCart: function addVariantToCart(product) {
+        console.log('product ' + product.id + ' added to cart');
       }
     }
   });

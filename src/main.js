@@ -94,13 +94,23 @@ ShopifyBuy.UI.onReady = () => {
 ShopifyBuy.UI.createComponent('collection', {
     id: 244484358,
     productConfig: {
+      contents: ['title', 'variantTitle', 'price', 'description', 'variantSelection', 'button'],
+      templates: {
+        title: '<h4>{{data.title}}</h4>',
+        description: '<p>{{{data.attrs.body_html}}}</p>'
+      },
       styles: {
         button: {
           'background-color': 'red',
-          'color': 'yellow'
+          'color': 'yellow',
+          'border': '0',
+          'border-radius': '5px',
+          'font-size': '16px'
         }
+      },
+      addVariantToCart: (product) => {
+        console.log(`product ${product.id} added to cart`);
       }
     }
   });
 };
-

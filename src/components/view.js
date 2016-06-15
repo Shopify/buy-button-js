@@ -23,6 +23,9 @@ export default class View {
       let [eventType, eventName] = node.dataset.event.split('.');
       node.addEventListener(eventType, (evt) => {
         this.events[eventName].call(this, this, evt);
+        if (this.config[eventName] && typeof this.config[eventName] === 'function') {
+          this.config[eventName].call(this, this.data, evt);
+        }
       });
     })
   }
