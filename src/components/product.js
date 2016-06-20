@@ -8,12 +8,6 @@ export default class Product extends ComponentContainer {
     const productConfig = merge(productDefaults, config);
     super(productConfig, props);
 
-    if (this.config.modal) {
-      this.removeContents('button');
-      this.removeContents('variantSelection');
-      this.wrapContents('modalTrigger');
-    }
-
     this.events = Object.assign({}, events, {
       addVariantToCart: this.onCartAdd.bind(this),
       openModal: this.openModal.bind(this),
@@ -36,9 +30,6 @@ export default class Product extends ComponentContainer {
   wrapContents(item) {
     this.config.contents.unshift(`${item}Open`);
     this.config.contents.push(`${item}Close`);
-  }
-
-  openModal() {
   }
 
   onCartAdd(data) {

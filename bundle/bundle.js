@@ -19544,13 +19544,17 @@ var _product = require('./product');
 
 var _product2 = _interopRequireDefault(_product);
 
-var _product3 = require('../defaults/product');
+var _collection = require('../defaults/collection');
 
-var _product4 = _interopRequireDefault(_product3);
+var _collection2 = _interopRequireDefault(_collection);
 
 var _iframe = require('./iframe');
 
 var _iframe2 = _interopRequireDefault(_iframe);
+
+var _deepmerge = require('deepmerge');
+
+var _deepmerge2 = _interopRequireDefault(_deepmerge);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -19560,39 +19564,18 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var collectionDefaults = {
-  className: 'collection',
-  entryNode: document.getElementsByTagName('script')[0].parentNode,
-  iframe: true,
-  classes: {
-    data: 'collection'
-  },
-  productConfig: Object.assign({}, _product4.default, {
-    iframe: false
-  })
-};
-
 var Collection = function (_ComponentContainer) {
   _inherits(Collection, _ComponentContainer);
 
   function Collection(config, props) {
     _classCallCheck(this, Collection);
 
-    var productConfig = Object.assign({}, collectionDefaults.productConfig, config.productConfig);
-    var collectionConfig = Object.assign({}, collectionDefaults, config);
+    var collectionConfig = Object.assign({}, _collection2.default, config);
+    var productConfig = (0, _deepmerge2.default)(_collection2.default.productConfig, config.productConfig);
     collectionConfig.productConfig = productConfig;
     collectionConfig.styles = productConfig.styles;
     collectionConfig.classes = productConfig.classes;
-
-    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Collection).call(this, collectionConfig, props));
-
-    _this.modal = null;
-    if (_this.config.productConfig.modal) {
-      _this.modal = new _iframe2.default(_this.config.entryNode, {}, {
-        data: 'product_modal'
-      });
-    }
-    return _this;
+    return _possibleConstructorReturn(this, Object.getPrototypeOf(Collection).call(this, collectionConfig, props));
   }
 
   _createClass(Collection, [{
@@ -19633,7 +19616,7 @@ var Collection = function (_ComponentContainer) {
 
 exports.default = Collection;
 
-},{"../defaults/product":383,"./container":378,"./iframe":379,"./product":380}],378:[function(require,module,exports){
+},{"../defaults/collection":383,"./container":378,"./iframe":379,"./product":380,"deepmerge":301}],378:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -19827,7 +19810,7 @@ var Iframe = function () {
 
 exports.default = Iframe;
 
-},{"../templates/styles":389,"handlebars":331}],380:[function(require,module,exports){
+},{"../templates/styles":390,"handlebars":331}],380:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -19874,12 +19857,6 @@ var Product = function (_ComponentContainer) {
 
     var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Product).call(this, productConfig, props));
 
-    if (_this.config.modal) {
-      _this.removeContents('button');
-      _this.removeContents('variantSelection');
-      _this.wrapContents('modalTrigger');
-    }
-
     _this.events = Object.assign({}, events, {
       addVariantToCart: _this.onCartAdd.bind(_this),
       openModal: _this.openModal.bind(_this)
@@ -19908,9 +19885,6 @@ var Product = function (_ComponentContainer) {
       this.config.contents.unshift(item + 'Open');
       this.config.contents.push(item + 'Close');
     }
-  }, {
-    key: 'openModal',
-    value: function openModal() {}
   }, {
     key: 'onCartAdd',
     value: function onCartAdd(data) {
@@ -19960,7 +19934,7 @@ var Product = function (_ComponentContainer) {
 
 exports.default = Product;
 
-},{"../defaults/product":383,"./container":378,"./view":381,"deepmerge":301}],381:[function(require,module,exports){
+},{"../defaults/product":384,"./container":378,"./view":381,"deepmerge":301}],381:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -20115,7 +20089,34 @@ var cartDefaults = {
 
 exports.default = cartDefaults;
 
-},{"../templates/cart":385,"../templates/line-item":386}],383:[function(require,module,exports){
+},{"../templates/cart":386,"../templates/line-item":387}],383:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _product = require('../defaults/product');
+
+var _product2 = _interopRequireDefault(_product);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var collectionDefaults = {
+  className: 'collection',
+  entryNode: document.getElementsByTagName('script')[0].parentNode,
+  iframe: true,
+  classes: {
+    data: 'collection'
+  },
+  productConfig: Object.assign({}, _product2.default, {
+    iframe: false
+  })
+};
+
+exports.default = collectionDefaults;
+
+},{"../defaults/product":384}],384:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -20155,7 +20156,7 @@ var productDefaults = {
 
 exports.default = productDefaults;
 
-},{"../templates/option":387,"../templates/product":388}],384:[function(require,module,exports){
+},{"../templates/option":388,"../templates/product":389}],385:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -20308,7 +20309,7 @@ _shopifyBuy2.default.UI.onReady = function () {
   });
 };
 
-},{"./components/cart":376,"./components/collection":377,"./components/product":380,"./templates/product":388,"babel-polyfill":2,"shopify-buy":374}],385:[function(require,module,exports){
+},{"./components/cart":376,"./components/collection":377,"./components/product":380,"./templates/product":389,"babel-polyfill":2,"shopify-buy":374}],386:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -20323,7 +20324,7 @@ var cartTemplate = {
 
 exports.default = cartTemplate;
 
-},{}],386:[function(require,module,exports){
+},{}],387:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -20340,7 +20341,7 @@ var lineItemTemplate = {
 
 exports.default = lineItemTemplate;
 
-},{}],387:[function(require,module,exports){
+},{}],388:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -20352,7 +20353,7 @@ var optionTemplates = {
 
 exports.default = optionTemplates;
 
-},{}],388:[function(require,module,exports){
+},{}],389:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -20371,7 +20372,7 @@ var productTemplate = {
 
 exports.default = productTemplate;
 
-},{}],389:[function(require,module,exports){
+},{}],390:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -20381,4 +20382,4 @@ var stylesTemplate = '{{#each selectors}}' + '{{this.selector}} \{ ' + '{{#each 
 
 exports.default = stylesTemplate;
 
-},{}]},{},[384]);
+},{}]},{},[385]);

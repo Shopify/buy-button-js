@@ -1,35 +1,17 @@
 import ComponentContainer from './container';
 import Product from './product';
-import productDefaults from '../defaults/product';
+import collectionDefaults from '../defaults/collection';
 import Iframe from './iframe';
-
-const collectionDefaults = {
-  className: 'collection',
-  entryNode: document.getElementsByTagName('script')[0].parentNode,
-  iframe: true,
-  classes: {
-    data: 'collection'
-  },
-  productConfig: Object.assign({}, productDefaults, {
-    iframe: false
-  })
-}
+import merge from 'deepmerge';
 
 export default class Collection extends ComponentContainer {
   constructor(config, props) {
-    let productConfig = Object.assign({}, collectionDefaults.productConfig, config.productConfig);
-    let collectionConfig = Object.assign({}, collectionDefaults, config);
+    const collectionConfig = Object.assign({}, collectionDefaults, config);
+    const productConfig = merge(collectionDefaults.productConfig, config.productConfig);
     collectionConfig.productConfig = productConfig;
-    collectionConfig.styles = productConfig.styles;
-    collectionConfig.classes = productConfig.classes;
+    ({ styles: collectionConfig.styles, classes: collectionConfig.classes } = productConfig);
 
     super(collectionConfig, props);
-    this.modal = null;
-    if (this.config.productConfig.modal) {
-      this.modal = new Iframe(this.config.entryNode, {}, {
-        data: 'product_modal'
-      })
-    }
   }
 
   getData() {
