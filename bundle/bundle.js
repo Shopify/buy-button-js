@@ -19858,8 +19858,7 @@ var Product = function (_ComponentContainer) {
     var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(Product).call(this, productConfig, props));
 
     _this.events = Object.assign({}, events, {
-      addVariantToCart: _this.onCartAdd.bind(_this),
-      openModal: _this.openModal.bind(_this)
+      addVariantToCart: _this.onCartAdd.bind(_this)
     });
     return _this;
   }

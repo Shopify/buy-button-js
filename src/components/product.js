@@ -9,8 +9,7 @@ export default class Product extends ComponentContainer {
     super(productConfig, props);
 
     this.events = Object.assign({}, events, {
-      addVariantToCart: this.onCartAdd.bind(this),
-      openModal: this.openModal.bind(this),
+      addVariantToCart: this.onCartAdd.bind(this)
     })
   }
 
