@@ -1,10 +1,11 @@
 import ComponentContainer from './container';
 import View from './view';
 import cartDefaults from '../defaults/cart';
+import merge from 'deepmerge';
 
 export default class Cart extends ComponentContainer {
   constructor(config, props) {
-    let cartConfig = Object.assign({}, cartDefaults, config);
+    const cartConfig = merge(cartDefaults, config);
     super(cartConfig, props);
   }
 

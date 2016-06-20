@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "babel-plugin-transform-object-assign": "^6.8.0",
+    "deepmerge": "^0.2.10",
     "handlebars": "^4.0.5",
     "minifyify": "^7.3.3",
     "shopify-buy": "^0.1.7"

@@ -22,6 +22,7 @@ export default class Collection extends ComponentContainer {
     collectionConfig.productConfig = productConfig;
     collectionConfig.styles = productConfig.styles;
     collectionConfig.classes = productConfig.classes;
+
     super(collectionConfig, props);
     this.modal = null;
     if (this.config.productConfig.modal) {

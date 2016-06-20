@@ -98,7 +98,8 @@ ShopifyBuy.UI.createComponent('collection', {
       contents: ['img', 'title', 'variantTitle', 'price', 'description', 'variantSelection', 'button'],
       templates: {
         title: '<h4>{{data.title}}</h4>',
-        description: '<p>{{{data.attrs.body_html}}}</p>'
+        description: '<p>{{{data.attrs.body_html}}}</p>',
+        button: '<button data-event="click.addVariantToCart" class="my-fancy-button-class {{classes.button}}">Special Add To Cart</button>'
       },
       styles: {
         button: {

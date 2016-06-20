@@ -1,11 +1,11 @@
 import ComponentContainer from './container';
 import productDefaults from '../defaults/product';
 import View from './view';
+import merge from 'deepmerge';
 
 export default class Product extends ComponentContainer {
   constructor(config, props, events = {}) {
-    let productConfig = Object.assign({}, productDefaults, config);
-    productConfig.templates = Object.assign({}, productDefaults.templates, config.templates);
+    const productConfig = merge(productDefaults, config);
     super(productConfig, props);
 
     if (this.config.modal) {
