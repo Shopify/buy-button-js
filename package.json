@@ -18,6 +18,7 @@
     "watchify": "^3.7.0"
   },
   "dependencies": {
+    "deepmerge": "^0.2.10",
     "shopify-buy": "^0.1.7"
   }
 }

@@ -11,7 +11,8 @@ const client = ShopifyBuy.buildClient({
 });
 
 const productConfig = {
-  id: 123
+  id: 123,
+  options: {}
 }
 
 let ui;

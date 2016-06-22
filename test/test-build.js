@@ -1824,7 +1824,61 @@ function isnan (val) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"base64-js":1,"ieee754":3,"isarray":4}],3:[function(require,module,exports){
+},{"base64-js":1,"ieee754":4,"isarray":5}],3:[function(require,module,exports){
+(function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        define(factory);
+    } else if (typeof exports === 'object') {
+        module.exports = factory();
+    } else {
+        root.deepmerge = factory();
+    }
+}(this, function () {
+
+return function deepmerge(target, src) {
+    var array = Array.isArray(src);
+    var dst = array && [] || {};
+
+    if (array) {
+        target = target || [];
+        dst = dst.concat(target);
+        src.forEach(function(e, i) {
+            if (typeof dst[i] === 'undefined') {
+                dst[i] = e;
+            } else if (typeof e === 'object') {
+                dst[i] = deepmerge(target[i], e);
+            } else {
+                if (target.indexOf(e) === -1) {
+                    dst.push(e);
+                }
+            }
+        });
+    } else {
+        if (target && typeof target === 'object') {
+            Object.keys(target).forEach(function (key) {
+                dst[key] = target[key];
+            })
+        }
+        Object.keys(src).forEach(function (key) {
+            if (typeof src[key] !== 'object' || !src[key]) {
+                dst[key] = src[key];
+            }
+            else {
+                if (!target[key]) {
+                    dst[key] = src[key];
+                } else {
+                    dst[key] = deepmerge(target[key], src[key]);
+                }
+            }
+        });
+    }
+
+    return dst;
+}
+
+}));
+
+},{}],4:[function(require,module,exports){
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
   var eLen = nBytes * 8 - mLen - 1
@@ -1910,14 +1964,14 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 var toString = {}.toString;
 
 module.exports = Array.isArray || function (arr) {
   return toString.call(arr) == '[object Array]';
 };
 
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2026,7 +2080,7 @@ var ListingsAdapter = _coreObject2.default.extend({
 });
 
 exports.default = ListingsAdapter;
-},{"../ajax":7,"../metal/core-object":13,"../version":32}],6:[function(require,module,exports){
+},{"../ajax":8,"../metal/core-object":14,"../version":33}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2114,7 +2168,7 @@ var LocalStorageAdapter = _coreObject2.default.extend({
 });
 
 exports.default = LocalStorageAdapter;
-},{"../metal/core-object":13,"../metal/set-guid-for":18}],7:[function(require,module,exports){
+},{"../metal/core-object":14,"../metal/set-guid-for":19}],8:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2168,7 +2222,7 @@ function ajax(method, url) {
 
   return fetch(url, opts).then(checkStatus).then(parseResponse);
 }
-},{"./ie9-ajax":9,"./metal/global":15}],8:[function(require,module,exports){
+},{"./ie9-ajax":10,"./metal/global":16}],9:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2249,7 +2303,7 @@ var Config = _coreObject2.default.extend({
 });
 
 exports.default = Config;
-},{"./metal/core-object":13}],9:[function(require,module,exports){
+},{"./metal/core-object":14}],10:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2321,7 +2375,7 @@ function ie9Ajax(method, url, opts) {
 }
 
 exports.default = ie9Ajax;
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 (function (Buffer){
 'use strict';
 
@@ -2345,7 +2399,7 @@ if (!btoa && (0, _isNodeLikeEnvironment2.default)()) {
   };
 }
 }).call(this,require("buffer").Buffer)
-},{"./metal/global":15,"./metal/is-node-like-environment":17,"buffer":2}],11:[function(require,module,exports){
+},{"./metal/global":16,"./metal/is-node-like-environment":18,"buffer":2}],12:[function(require,module,exports){
 'use strict';
 
 var _global = require('./metal/global');
@@ -2364,7 +2418,7 @@ if (!fetch && (0, _isNodeLikeEnvironment2.default)()) {
   _global2.default.fetch = _global2.default.require('node-fetch');
   _global2.default.Response = _global2.default.fetch.Response;
 }
-},{"./metal/global":15,"./metal/is-node-like-environment":17}],12:[function(require,module,exports){
+},{"./metal/global":16,"./metal/is-node-like-environment":18}],13:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2405,7 +2459,7 @@ if (typeof Object.assign === 'function') {
 }
 
 exports.default = assign;
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2430,7 +2484,7 @@ var CoreObject = (0, _createClass2.default)({
 });
 
 exports.default = CoreObject;
-},{"./create-class":14}],14:[function(require,module,exports){
+},{"./create-class":15}],15:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2510,7 +2564,7 @@ function createClass(props) {
 }
 
 exports.default = createClass;
-},{"./assign":12,"./includes":16}],15:[function(require,module,exports){
+},{"./assign":13,"./includes":17}],16:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -2529,7 +2583,7 @@ if (typeof global === 'undefined') {
 
 exports.default = globalNamespace;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2581,7 +2635,7 @@ if (!Array.prototype.includes) {
 }
 
 exports.default = includes;
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2594,7 +2648,7 @@ function isNodeLikeEnvironment() {
 
   return windowAbsent && requirePresent;
 }
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2695,7 +2749,7 @@ function setGuidFor(obj) {
 
 exports.default = setGuidFor;
 exports.GUID_KEY = GUID_KEY;
-},{}],19:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2711,7 +2765,7 @@ exports.default = function (array) {
     return uniqueArray;
   }, []);
 };
-},{}],20:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2745,7 +2799,7 @@ var BaseModel = _coreObject2.default.extend({
 });
 
 exports.default = BaseModel;
-},{"../metal/assign":12,"../metal/core-object":13}],21:[function(require,module,exports){
+},{"../metal/assign":13,"../metal/core-object":14}],22:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2837,7 +2891,7 @@ var CartLineItem = _baseModel2.default.extend({
 });
 
 exports.default = CartLineItem;
-},{"../metal/set-guid-for":18,"./base-model":20}],22:[function(require,module,exports){
+},{"../metal/set-guid-for":19,"./base-model":21}],23:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3131,7 +3185,7 @@ var CartModel = _baseModel2.default.extend({
 });
 
 exports.default = CartModel;
-},{"../metal/assign":12,"../metal/set-guid-for":18,"./base-model":20,"./cart-line-item-model":21}],23:[function(require,module,exports){
+},{"../metal/assign":13,"../metal/set-guid-for":19,"./base-model":21,"./cart-line-item-model":22}],24:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3299,7 +3353,7 @@ var ProductModel = _baseModel2.default.extend({
 
 exports.default = ProductModel;
 exports.NO_IMAGE_URI = NO_IMAGE_URI;
-},{"../metal/uniq":19,"./base-model":20,"./product-option-model":24,"./product-variant-model":25}],24:[function(require,module,exports){
+},{"../metal/uniq":20,"./base-model":21,"./product-option-model":25,"./product-variant-model":26}],25:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3369,7 +3423,7 @@ var ProductOptionModel = _baseModel2.default.extend({
 });
 
 exports.default = ProductOptionModel;
-},{"../metal/includes":16,"./base-model":20}],25:[function(require,module,exports){
+},{"../metal/includes":17,"./base-model":21}],26:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3531,7 +3585,7 @@ var ProductVariantModel = _baseModel2.default.extend({
 });
 
 exports.default = ProductVariantModel;
-},{"./base-model":20}],26:[function(require,module,exports){
+},{"./base-model":21}],27:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3584,7 +3638,7 @@ var ReferenceModel = _baseModel2.default.extend({
 });
 
 exports.default = ReferenceModel;
-},{"../metal/set-guid-for":18,"./base-model":20}],27:[function(require,module,exports){
+},{"../metal/set-guid-for":19,"./base-model":21}],28:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3653,7 +3707,7 @@ var CartSerializer = _coreObject2.default.extend({
 });
 
 exports.default = CartSerializer;
-},{"../metal/assign":12,"../metal/core-object":13,"../models/cart-model":22}],28:[function(require,module,exports){
+},{"../metal/assign":13,"../metal/core-object":14,"../models/cart-model":23}],29:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3724,7 +3778,7 @@ var ListingsSerializer = _coreObject2.default.extend({
 });
 
 exports.default = ListingsSerializer;
-},{"../metal/core-object":13,"../models/base-model":20,"../models/product-model":23}],29:[function(require,module,exports){
+},{"../metal/core-object":14,"../models/base-model":21,"../models/product-model":24}],30:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3768,7 +3822,7 @@ var ReferenceSerializer = _coreObject2.default.extend({
 });
 
 exports.default = ReferenceSerializer;
-},{"../metal/assign":12,"../metal/core-object":13,"../models/reference-model":26}],30:[function(require,module,exports){
+},{"../metal/assign":13,"../metal/core-object":14,"../models/reference-model":27}],31:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4272,7 +4326,7 @@ var ShopClient = _coreObject2.default.extend({
 });
 
 exports.default = ShopClient;
-},{"./adapters/listings-adapter":5,"./adapters/local-storage-adapter":6,"./metal/assign":12,"./metal/core-object":13,"./metal/set-guid-for":18,"./serializers/cart-serializer":27,"./serializers/listings-serializer":28,"./serializers/reference-serializer":29}],31:[function(require,module,exports){
+},{"./adapters/listings-adapter":6,"./adapters/local-storage-adapter":7,"./metal/assign":13,"./metal/core-object":14,"./metal/set-guid-for":19,"./serializers/cart-serializer":28,"./serializers/listings-serializer":29,"./serializers/reference-serializer":30}],32:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4349,7 +4403,7 @@ var Shopify = {
 };
 
 exports.default = Shopify;
-},{"./config":8,"./isomorphic-btoa":10,"./isomorphic-fetch":11,"./models/product-model":23,"./shop-client":30,"./version":32}],32:[function(require,module,exports){
+},{"./config":9,"./isomorphic-btoa":11,"./isomorphic-fetch":12,"./models/product-model":24,"./shop-client":31,"./version":33}],33:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4363,7 +4417,7 @@ var version = '{{versionString}}';
  */
 
 exports.default = version;
-},{}],33:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4378,7 +4432,7 @@ var Cart = function Cart() {
 
 exports.default = Cart;
 
-},{}],34:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4393,8 +4447,81 @@ var Collection = function Collection() {
 
 exports.default = Collection;
 
-},{}],35:[function(require,module,exports){
-"use strict";
+},{}],36:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _deepmerge = require('deepmerge');
+
+var _deepmerge2 = _interopRequireDefault(_deepmerge);
+
+var _components = require('../defaults/components');
+
+var _components2 = _interopRequireDefault(_components);
+
+var _iframe = require('./iframe');
+
+var _iframe2 = _interopRequireDefault(_iframe);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Component = function () {
+  function Component(config, props, type) {
+    _classCallCheck(this, Component);
+
+    this.id = config.id;
+    this.type = type;
+    this.config = (0, _deepmerge2.default)(_components2.default, config.options);
+    this.props = props;
+    this.iframe = this.options.iframe ? new _iframe2.default(this.el) : null;
+  }
+
+  _createClass(Component, [{
+    key: 'client',
+    get: function get() {
+      return this.props.client;
+    }
+  }, {
+    key: 'options',
+    get: function get() {
+      return this.config[this.type];
+    }
+  }, {
+    key: 'templates',
+    get: function get() {
+      return this.options.templates;
+    }
+  }, {
+    key: 'contents',
+    get: function get() {
+      return this.options.contents;
+    }
+  }, {
+    key: 'styles',
+    get: function get() {
+      return this.options.styles;
+    }
+  }, {
+    key: 'el',
+    get: function get() {
+      return this.config.node || document.getElementsByTagName('script')[0];
+    }
+  }]);
+
+  return Component;
+}();
+
+exports.default = Component;
+
+},{"../defaults/components":39,"./iframe":37,"deepmerge":3}],37:[function(require,module,exports){
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -4402,15 +4529,94 @@ Object.defineProperty(exports, "__esModule", {
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var Product = function Product(props, config) {
-  _classCallCheck(this, Product);
-
-  this.props = props;
+var iframeStyles = {
+  width: '100%',
+  overflow: 'hidden',
+  border: 'none'
 };
+
+var iframeAttrs = {
+  'horizontalscrolling': 'no',
+  'verticalscrolling': 'no'
+};
+
+var iframe = function iframe(parent) {
+  var _this = this;
+
+  _classCallCheck(this, iframe);
+
+  this.el = document.createElement('iframe');
+  this.el.scrolling = false;
+  Object.keys(iframeStyles).forEach(function (key) {
+    return _this.el.style[key] = iframeStyles[key];
+  });
+  Object.keys(iframeAttrs).forEach(function (key) {
+    return _this.el.setAttribute(key, iframeAttrs[key]);
+  });
+
+  this.div = document.createElement('div');
+  this.div.appendChild(this.el);
+  parent.appendChild(this.div);
+};
+
+exports.default = iframe;
+
+},{}],38:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _component = require('./component');
+
+var _component2 = _interopRequireDefault(_component);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Product = function (_Component) {
+  _inherits(Product, _Component);
+
+  function Product(config, props) {
+    _classCallCheck(this, Product);
+
+    return _possibleConstructorReturn(this, Object.getPrototypeOf(Product).call(this, config, props, 'product'));
+  }
+
+  return Product;
+}(_component2.default);
 
 exports.default = Product;
 
-},{}],36:[function(require,module,exports){
+},{"./component":36}],39:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var defaults = {
+  product: {
+    iframe: true,
+    buttonTarget: 'cart',
+    contents: ['title', 'variantTitle', 'price', 'button'],
+    templates: {
+      title: '<h2>{{data.title}}</h2>',
+      variantTitle: '<h3>{{data.selectedVariant.title}}</h3>',
+      price: '<p><strong>{{data.selectedVariant.price}}</strong></p>',
+      button: '<button class="button">Add to cart</button>'
+    }
+  }
+};
+
+exports.default = defaults;
+
+},{}],40:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4439,7 +4645,7 @@ _shopifyBuy2.default.UI = {
 window.ShopifyBuy = _shopifyBuy2.default;
 exports.default = _shopifyBuy2.default;
 
-},{"./ui":37,"shopify-buy":31}],37:[function(require,module,exports){
+},{"./ui":41,"shopify-buy":32}],41:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4517,14 +4723,81 @@ var UI = function () {
 
 exports.default = UI;
 
-},{"./components/cart":33,"./components/collection":34,"./components/product":35}],38:[function(require,module,exports){
+},{"./components/cart":34,"./components/collection":35,"./components/product":38}],42:[function(require,module,exports){
 'use strict';
 
 require('./unit/shopify-buy-ui');
 
 require('./unit/ui');
 
-},{"./unit/shopify-buy-ui":39,"./unit/ui":40}],39:[function(require,module,exports){
+require('./unit/component');
+
+},{"./unit/component":43,"./unit/shopify-buy-ui":44,"./unit/ui":45}],43:[function(require,module,exports){
+'use strict';
+
+var _shopifyBuyUi = require('../../src/shopify-buy-ui');
+
+var _shopifyBuyUi2 = _interopRequireDefault(_shopifyBuyUi);
+
+var _component = require('../../src/components/component');
+
+var _component2 = _interopRequireDefault(_component);
+
+var _iframe = require('../../src/components/iframe');
+
+var _iframe2 = _interopRequireDefault(_iframe);
+
+var _components = require('../../src/defaults/components');
+
+var _components2 = _interopRequireDefault(_components);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var _QUnit = QUnit;
+var _module = _QUnit.module;
+var test = _QUnit.test;
+
+var config = {
+  id: 123,
+  options: {
+    product: {
+      iframe: false,
+      templates: {
+        button: '<a>Fake button</a>'
+      }
+    }
+  }
+};
+
+var component = void 0;
+
+_module('Unit | Component', {
+  beforeEach: function beforeEach() {
+    component = new _component2.default(config, { client: {} }, 'product');
+  },
+  afterEach: function afterEach() {
+    component = null;
+  }
+});
+
+test('it merges configuration options and defaults', function (assert) {
+  assert.equal(component.config.product.templates.button, '<a>Fake button</a>');
+  assert.equal(component.config.product.buttonTarget, 'cart');
+});
+
+test('it proxies commonly accessed attributes to config options for type', function (assert) {
+  assert.ok(component.client);
+  assert.equal(component.options.iframe, config.options.product.iframe);
+  assert.equal(component.templates.button, config.options.product.templates.button);
+  assert.equal(component.contents, _components2.default.product.contents);
+});
+
+test('it instantiates an iframe if config.iframe is true', function (assert) {
+  var iframeComponent = new _component2.default({ id: 123, options: { product: { iframe: true } } }, { client: {} }, 'product');
+  assert.ok(iframeComponent.iframe instanceof _iframe2.default);
+});
+
+},{"../../src/components/component":36,"../../src/components/iframe":37,"../../src/defaults/components":39,"../../src/shopify-buy-ui":40}],44:[function(require,module,exports){
 'use strict';
 
 var _shopifyBuyUi = require('../../src/shopify-buy-ui');
@@ -4562,7 +4835,7 @@ test('it returns an instance of UI', function (assert) {
   assert.ok(uiClient instanceof _ui2.default);
 });
 
-},{"../../src/shopify-buy-ui":36,"../../src/ui":37}],40:[function(require,module,exports){
+},{"../../src/shopify-buy-ui":40,"../../src/ui":41}],45:[function(require,module,exports){
 'use strict';
 
 var _shopifyBuyUi = require('../../src/shopify-buy-ui');
@@ -4591,7 +4864,8 @@ var client = _shopifyBuyUi2.default.buildClient({
 });
 
 var productConfig = {
-  id: 123
+  id: 123,
+  options: {}
 };
 
 var ui = void 0;
@@ -4620,4 +4894,4 @@ test('it returns type-specific properties on #componentProps', function (assert)
   assert.deepEqual(props.client, ui.client);
 });
 
-},{"../../src/components/product":35,"../../src/shopify-buy-ui":36,"../../src/ui":37}]},{},[38]);
+},{"../../src/components/product":38,"../../src/shopify-buy-ui":40,"../../src/ui":41}]},{},[42]);
