@@ -1,6 +1,8 @@
+import morphdom from 'morphdom';
 import merge from 'deepmerge';
 import componentDefaults from '../defaults/components';
 import Iframe from './iframe';
+import View from './view';
 
 export default class Component {
   constructor(config, props, type) {
@@ -8,7 +10,9 @@ export default class Component {
     this.type = type;
     this.config = merge(componentDefaults, config.options);
     this.props = props;
+    this.model = null;
     this.iframe = this.options.iframe ? new Iframe(this.el) : null;
+    this.view = new View(this.templates, this.contents);
   }
 
   get client() {
@@ -27,11 +31,64 @@ export default class Component {
     return this.options.contents;
   }
 
+  get events() {
+    return Object.assign({}, this.options.contents, {
+
+    });
+  }
+
   get styles() {
     return this.options.styles;
   }
 
+  get document() {
+    return this.iframe ? this.iframe.document : document;
+  }
+
   get el() {
     return this.config.node || document.getElementsByTagName('script')[0];
+  }
+
+  delegateEvents() {
+
+  }
+
+  init(data) {
+    this.model = data;
+    this.render();
+    this.delegateEvents();
+  }
+
+  initFetch() {
+    return this.fetch().then(data => {
+      this.model = data;
+      this.render();
+      this.delegateEvents();
+    });
+  }
+
+  render(children = '') {
+    const viewData = Object.assign({}, this.data, {
+      children_html: children
+    });
+    const html = this.view.html({data: viewData});
+    if (this.wrapper && this.wrapper.innerHTML.length) {
+      const div = this.document.createElement('div');
+      div.innerHTML = html;
+      morphdom(this.wrapper, div);
+    } else {
+      this.wrapper = this.createWrapper();
+      this.wrapper.innerHTML = html;
+    }
+  }
+
+  createWrapper() {
+    const wrapper = this.document.createElement('div');
+    if (this.iframe) {
+      this.document.body.appendChild(wrapper);
+    } else {
+      this.el.appendChild(wrapper);
+    }
+    return wrapper;
   }
 }

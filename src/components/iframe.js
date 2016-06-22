@@ -20,4 +20,8 @@ export default class iframe {
     this.div.appendChild(this.el);
     parent.appendChild(this.div);
   }
+
+  get document() {
+    return this.el.contentDocument;
+  }
 }
