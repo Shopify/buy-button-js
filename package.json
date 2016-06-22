@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "./node_modules/.bin/watchify src/ui.js -t babelify --outfile build/shopify-buy-ui.js",
-    "test": "./node_modules/.bin/watchify test/test.js -t babelify --outfile test/test-build.js"
+    "start": "watchify src/ui.js -t babelify --outfile build/shopify-buy-ui.js",
+    "test": "watchify test/test.js -t babelify --outfile test/test-build.js"
   },
   "author": "",
   "license": "ISC",
