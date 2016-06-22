@@ -5,8 +5,8 @@ const iframeStyles = {
 }
 
 const iframeAttrs = {
-  'horizontalscrolling': 'no',
-  'verticalscrolling': 'no'
+  horizontalscrolling: 'no',
+  verticalscrolling: 'no'
 }
 
 export default class iframe {
