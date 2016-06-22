@@ -13709,7 +13709,9 @@ require('./unit/ui');
 
 require('./unit/component');
 
-},{"./unit/component":90,"./unit/shopify-buy-ui":91,"./unit/ui":92}],90:[function(require,module,exports){
+require('./unit/view');
+
+},{"./unit/component":90,"./unit/shopify-buy-ui":91,"./unit/ui":92,"./unit/view":93}],90:[function(require,module,exports){
 'use strict';
 
 var _shopifyBuyUi = require('../../src/shopify-buy-ui');
@@ -13957,4 +13959,48 @@ test('it returns type-specific properties on #componentProps', function (assert)
   assert.deepEqual(props.client, ui.client);
 });
 
-},{"../../src/components/product":84,"../../src/shopify-buy-ui":87,"../../src/ui":88}]},{},[89]);
+},{"../../src/components/product":84,"../../src/shopify-buy-ui":87,"../../src/ui":88}],93:[function(require,module,exports){
+'use strict';
+
+var _view = require('../../src/components/view');
+
+var _view2 = _interopRequireDefault(_view);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var _QUnit = QUnit;
+var _module = _QUnit.module;
+var test = _QUnit.test;
+
+var contents = ['title', 'button'];
+var templates = {
+  title: '<h1>BUY MY BUTTONS {{data.name}}</h1>',
+  button: '<button>BUTTON</button>'
+};
+
+var view = void 0;
+
+_module('Unit | View', {
+  beforeEach: function beforeEach() {
+    view = new _view2.default(templates, contents);
+  },
+  afterEach: function afterEach() {
+    view = null;
+  }
+});
+
+test('it smushes all the strings together', function (assert) {
+  var expectedString = '<h1>BUY MY BUTTONS {{data.name}}</h1><button>BUTTON</button>';
+  assert.equal(expectedString, view.templateString);
+});
+
+test('it puts data into the strings on #html', function (assert) {
+  var expectedString = '<div><h1>BUY MY BUTTONS fool</h1><button>BUTTON</button></div>';
+  var data = {
+    name: 'fool'
+  };
+  var output = view.html({ data: data });
+  assert.equal(expectedString, output);
+});
+
+},{"../../src/components/view":85}]},{},[89]);
