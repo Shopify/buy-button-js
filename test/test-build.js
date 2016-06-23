@@ -13788,11 +13788,13 @@ _module('Unit | Component', {
 });
 
 test('it merges configuration options and defaults', function (assert) {
+  assert.expect(2);
   assert.equal(component.config.product.templates.button, config.options.product.templates.button);
   assert.equal(component.config.product.buttonTarget, 'cart');
 });
 
 test('it proxies commonly accessed attributes to config options for type', function (assert) {
+  assert.expect(4);
   assert.ok(component.client);
   assert.equal(component.options.iframe, config.options.product.iframe);
   assert.equal(component.templates.button, config.options.product.templates.button);
@@ -13800,11 +13802,13 @@ test('it proxies commonly accessed attributes to config options for type', funct
 });
 
 test('it instantiates an iframe if config.iframe is true', function (assert) {
+  assert.expect(1);
   var iframeComponent = new _component2.default({ id: 123, options: { product: { iframe: true } } }, { client: {} }, 'product');
   assert.ok(iframeComponent.iframe instanceof _iframe2.default);
 });
 
 test('it instantiates a view', function (assert) {
+  assert.expect(1);
   assert.ok(component.view instanceof _view2.default);
 });
 
@@ -13833,6 +13837,7 @@ test('it fetches and renders data on #initFetch', function (assert) {
 });
 
 test('it sets data and renders on #init', function (assert) {
+  assert.expect(3);
   component.render = function () {
     assert.ok(true);
   };
@@ -13846,22 +13851,26 @@ test('it sets data and renders on #init', function (assert) {
 });
 
 test('it returns a div on #createWrapper', function (assert) {
+  assert.expect(1);
   var wrapper = component.createWrapper();
   assert.equal(wrapper.tagName, 'DIV');
 });
 
 test('it adds a div to el if iframe is false on #createWrapper', function (assert) {
+  assert.expect(1);
   component.createWrapper();
   assert.equal(component.el.children[0].tagName, 'DIV');
 });
 
 test('it adds a div to iframe if iframe is true on #createWrapper', function (assert) {
+  assert.expect(1);
   var iframeComponent = new _component2.default({ id: 123, options: { product: { iframe: true } } }, { client: {} }, 'product');
   iframeComponent.createWrapper();
   assert.equal(iframeComponent.document.body.children[0].tagName, 'DIV');
 });
 
 test('it sets innerHTML of wrapper on initial #render', function (assert) {
+  assert.expect(2);
   var testHTML = '<h1>THIS IS ONLY A TEST</h1>';
   component.view.html = function (data) {
     assert.ok(data.data);
@@ -13873,6 +13882,7 @@ test('it sets innerHTML of wrapper on initial #render', function (assert) {
 });
 
 test('it updates innerHTML of wrapper on second #render', function (assert) {
+  assert.expect(2);
   var testBeforeHTML = '<h1>THIS IS ONLY A TEST</h1>';
   var testHTML = '<h1>THIS IS NOT A TEST</h1>';
   component.wrapper = component.createWrapper();
@@ -13887,6 +13897,7 @@ test('it updates innerHTML of wrapper on second #render', function (assert) {
 });
 
 test('it passes through child string on #render', function (assert) {
+  assert.expect(1);
   var testHTML = '<h1>TEST</h1>';
   component.view.html = function (data) {
     assert.equal(data.data.children_html, 'children');
@@ -13896,6 +13907,7 @@ test('it passes through child string on #render', function (assert) {
 });
 
 test('adds event listeners to nodes on #delegateEvents', function (assert) {
+  assert.expect(2);
   function clickFakeButton(comp, evt) {
     assert.ok(evt instanceof Event);
     assert.ok(comp instanceof _component2.default);
@@ -13945,6 +13957,7 @@ _module('ShopifyBuy.UI', {
 });
 
 test('it returns an instance of UI', function (assert) {
+  assert.expect(1);
   assert.ok(uiClient instanceof _ui2.default);
 });
 
@@ -13993,15 +14006,18 @@ _module('Unit | UI', {
 });
 
 test('it creates a client', function (assert) {
+  assert.expect(1);
   assert.deepEqual(client, ui.client);
 });
 
 test('it creates a component of appropriate type on #createComponent', function (assert) {
+  assert.expect(1);
   ui.createComponent('product', productConfig);
   assert.ok(ui.components.product[0] instanceof _product2.default);
 });
 
 test('it returns type-specific properties on #componentProps', function (assert) {
+  assert.expect(2);
   var props = ui.componentProps('product');
   assert.ok(props.addToCart);
   assert.deepEqual(props.client, ui.client);
@@ -14038,11 +14054,13 @@ _module('Unit | View', {
 });
 
 test('it smushes all the strings together', function (assert) {
+  assert.expect(1);
   var expectedString = '<h1>BUY MY BUTTONS {{data.name}}</h1><button>BUTTON</button>';
   assert.equal(expectedString, view.templateString);
 });
 
 test('it puts data into the strings on #html', function (assert) {
+  assert.expect(1);
   var expectedString = '<div><h1>BUY MY BUTTONS fool</h1><button>BUTTON</button></div>';
   var data = {
     name: 'fool'

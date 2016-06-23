@@ -27,15 +27,18 @@ module('Unit | UI', {
 });
 
 test('it creates a client', (assert) => {
+  assert.expect(1);
   assert.deepEqual(client, ui.client);
 });
 
 test('it creates a component of appropriate type on #createComponent', (assert) => {
+  assert.expect(1);
   ui.createComponent('product',  productConfig);
   assert.ok(ui.components.product[0] instanceof Product);
 });
 
 test('it returns type-specific properties on #componentProps', (assert) => {
+  assert.expect(2);
   const props = ui.componentProps('product');
   assert.ok(props.addToCart);
   assert.deepEqual(props.client, ui.client);
