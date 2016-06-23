@@ -1,2 +1,2 @@
-export default class Cart {
-}
+import Component from './component';
+class Cart extends Component {}
