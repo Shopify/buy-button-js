@@ -13344,14 +13344,11 @@ var Component = function () {
 
         var _key$split2 = _slicedToArray(_key$split, 2);
 
-        var eventType = _key$split2[0];
+        var eventName = _key$split2[0];
         var selector = _key$split2[1];
 
-        var nodes = _this.wrapper.querySelectorAll(selector);
-        [].concat(_toConsumableArray(nodes)).forEach(function (node) {
-          node.addEventListener(eventType, function (evt) {
-            _this.events[key].call(_this, _this, evt);
-          });
+        _this._on(eventName, selector, function (evt) {
+          _this.events[key].call(_this, evt, _this);
         });
       });
     }
@@ -13404,6 +13401,25 @@ var Component = function () {
       return wrapper;
     }
   }, {
+    key: '_on',
+    value: function _on(eventName, selector, fn) {
+      var _this3 = this;
+
+      this.wrapper.addEventListener(eventName, function (evt) {
+        var possibleTargets = _this3.wrapper.querySelectorAll(selector);
+        var target = evt.target;
+        [].concat(_toConsumableArray(possibleTargets)).forEach(function (possibleTarget) {
+          var el = target;
+          while (el && el !== _this3.wrapper) {
+            if (el === possibleTarget) {
+              return fn.call(possibleTarget, event);
+            }
+            el = el.parentNode;
+          }
+        });
+      });
+    }
+  }, {
     key: 'client',
     get: function get() {
       return this.props.client;
@@ -13424,11 +13440,6 @@ var Component = function () {
       return this.options.contents;
     }
   }, {
-    key: 'events',
-    get: function get() {
-      return Object.assign({}, this.options.events, {});
-    }
-  }, {
     key: 'styles',
     get: function get() {
       return this.options.styles;
@@ -13442,6 +13453,11 @@ var Component = function () {
     key: 'el',
     get: function get() {
       return this.config.node || document.getElementsByTagName('script')[0];
+    }
+  }, {
+    key: 'events',
+    get: function get() {
+      return Object.assign({}, this.options.events, {});
     }
   }]);
 
@@ -13908,7 +13924,7 @@ test('it passes through child string on #render', function (assert) {
 
 test('adds event listeners to nodes on #delegateEvents', function (assert) {
   assert.expect(2);
-  function clickFakeButton(comp, evt) {
+  function clickFakeButton(evt, comp) {
     assert.ok(evt instanceof Event);
     assert.ok(comp instanceof _component2.default);
   }

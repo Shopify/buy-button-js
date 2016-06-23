@@ -149,7 +149,7 @@ test('it passes through child string on #render', (assert) => {
 
 test('adds event listeners to nodes on #delegateEvents', (assert) => {
   assert.expect(2);
-  function clickFakeButton(comp, evt) {
+  function clickFakeButton(evt, comp) {
     assert.ok(evt instanceof Event);
     assert.ok(comp instanceof Component);
   }

@@ -32,12 +32,6 @@ export default class Component {
     return this.options.contents;
   }
 
-  get events() {
-    return Object.assign({}, this.options.events, {
-
-    });
-  }
-
   get styles() {
     return this.options.styles;
   }
@@ -50,14 +44,17 @@ export default class Component {
     return this.config.node || document.getElementsByTagName('script')[0];
   }
 
+  get events() {
+    return Object.assign({}, this.options.events, {
+
+    });
+  }
+
   delegateEvents() {
     Object.keys(this.events).forEach(key => {
-      const [eventType, selector] = key.split(' ');
-      const nodes = this.wrapper.querySelectorAll(selector);
-      [...nodes].forEach(node => {
-        node.addEventListener(eventType, (evt) => {
-          this.events[key].call(this, this, evt);
-        });
+      const [eventName, selector] = key.split(' ');
+      this._on(eventName, selector, (evt) => {
+        this.events[key].call(this, evt, this);
       });
     });
   }
@@ -100,5 +97,21 @@ export default class Component {
       this.el.appendChild(wrapper);
     }
     return wrapper;
+  }
+
+  _on(eventName, selector, fn) {
+    this.wrapper.addEventListener(eventName, (evt) => {
+      const possibleTargets = this.wrapper.querySelectorAll(selector);
+      const target = evt.target;
+      [...possibleTargets].forEach(possibleTarget => {
+        let el = target;
+        while(el && el !== this.wrapper) {
+          if (el === possibleTarget) {
+            return fn.call(possibleTarget, event);
+          }
+          el = el.parentNode;
+        }
+      });
+    });
   }
 }
