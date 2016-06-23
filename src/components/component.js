@@ -10,9 +10,10 @@ export default class Component {
     this.type = type;
     this.config = merge(componentDefaults, config.options);
     this.props = props;
-    this.model = null;
+    this.model = {};
     this.iframe = this.options.iframe ? new Iframe(this.el) : null;
     this.view = new View(this.templates, this.contents);
+    this.children = null;
   }
 
   get client() {
@@ -31,12 +32,6 @@ export default class Component {
     return this.options.contents;
   }
 
-  get events() {
-    return Object.assign({}, this.options.contents, {
-
-    });
-  }
-
   get styles() {
     return this.options.styles;
   }
@@ -49,8 +44,19 @@ export default class Component {
     return this.config.node || document.getElementsByTagName('script')[0];
   }
 
-  delegateEvents() {
+  get events() {
+    return Object.assign({}, this.options.events, {
 
+    });
+  }
+
+  delegateEvents() {
+    Object.keys(this.events).forEach(key => {
+      const [eventName, selector] = key.split(' ');
+      this._on(eventName, selector, (evt) => {
+        this.events[key].call(this, evt, this);
+      });
+    });
   }
 
   init(data) {
@@ -68,9 +74,10 @@ export default class Component {
   }
 
   render(children = '') {
-    const viewData = Object.assign({}, this.data, {
+    const viewData = Object.assign({}, this.model, {
       children_html: children
     });
+
     const html = this.view.html({data: viewData});
     if (this.wrapper && this.wrapper.innerHTML.length) {
       const div = this.document.createElement('div');
@@ -90,5 +97,21 @@ export default class Component {
       this.el.appendChild(wrapper);
     }
     return wrapper;
+  }
+
+  _on(eventName, selector, fn) {
+    this.wrapper.addEventListener(eventName, (evt) => {
+      const possibleTargets = this.wrapper.querySelectorAll(selector);
+      const target = evt.target;
+      [...possibleTargets].forEach(possibleTarget => {
+        let el = target;
+        while(el && el !== this.wrapper) {
+          if (el === possibleTarget) {
+            return fn.call(possibleTarget, event);
+          }
+          el = el.parentNode;
+        }
+      });
+    });
   }
 }

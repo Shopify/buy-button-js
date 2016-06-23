@@ -19,11 +19,13 @@ module('Unit | View', {
 });
 
 test('it smushes all the strings together', (assert) => {
+  assert.expect(1);
   const expectedString = '<h1>BUY MY BUTTONS {{data.name}}</h1><button>BUTTON</button>';
   assert.equal(expectedString, view.templateString);
 });
 
 test('it puts data into the strings on #html', (assert) => {
+  assert.expect(1);
   const expectedString = '<div><h1>BUY MY BUTTONS fool</h1><button>BUTTON</button></div>';
   const data = {
     name: 'fool'

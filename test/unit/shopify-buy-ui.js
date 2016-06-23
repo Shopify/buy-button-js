@@ -20,5 +20,6 @@ module('ShopifyBuy.UI', {
 });
 
 test('it returns an instance of UI', (assert) => {
+  assert.expect(1);
   assert.ok(uiClient instanceof UI);
 });
