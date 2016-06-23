@@ -59,15 +59,17 @@ export default class Component {
     });
   }
 
-  init(data) {
-    this.model = data;
-    this.render();
-    this.delegateEvents();
+  getModel(data) {
+    if (data) {
+      return new Promise(resolve => { resolve(data) });
+    } else {
+      return this.fetch();
+    }
   }
 
-  initFetch() {
-    return this.fetch().then(data => {
-      this.model = data;
+  init(data) {
+    return this.getModel(data).then(model => {
+      this.model = model;
       this.render();
       this.delegateEvents();
     });

@@ -13254,36 +13254,60 @@ var version = '{{versionString}}';
 
 exports.default = version;
 },{}],80:[function(require,module,exports){
-"use strict";
+'use strict';
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
+var _component = require('./component');
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+var _component2 = _interopRequireDefault(_component);
 
-var Cart = function Cart() {
-  _classCallCheck(this, Cart);
-};
-
-exports.default = Cart;
-
-},{}],81:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var Collection = function Collection() {
-  _classCallCheck(this, Collection);
-};
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-exports.default = Collection;
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-},{}],82:[function(require,module,exports){
+var Cart = function (_Component) {
+  _inherits(Cart, _Component);
+
+  function Cart() {
+    _classCallCheck(this, Cart);
+
+    return _possibleConstructorReturn(this, Object.getPrototypeOf(Cart).apply(this, arguments));
+  }
+
+  return Cart;
+}(_component2.default);
+
+},{"./component":82}],81:[function(require,module,exports){
+'use strict';
+
+var _component = require('./component');
+
+var _component2 = _interopRequireDefault(_component);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Collection = function (_Component) {
+  _inherits(Collection, _Component);
+
+  function Collection() {
+    _classCallCheck(this, Collection);
+
+    return _possibleConstructorReturn(this, Object.getPrototypeOf(Collection).apply(this, arguments));
+  }
+
+  return Collection;
+}(_component2.default);
+
+},{"./component":82}],82:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -13353,19 +13377,23 @@ var Component = function () {
       });
     }
   }, {
-    key: 'init',
-    value: function init(data) {
-      this.model = data;
-      this.render();
-      this.delegateEvents();
+    key: 'getModel',
+    value: function getModel(data) {
+      if (data) {
+        return new Promise(function (resolve) {
+          resolve(data);
+        });
+      } else {
+        return this.fetch();
+      }
     }
   }, {
-    key: 'initFetch',
-    value: function initFetch() {
+    key: 'init',
+    value: function init(data) {
       var _this2 = this;
 
-      return this.fetch().then(function (data) {
-        _this2.model = data;
+      return this.getModel(data).then(function (model) {
+        _this2.model = model;
         _this2.render();
         _this2.delegateEvents();
       });
@@ -13523,10 +13551,6 @@ exports.default = iframe;
 },{}],84:[function(require,module,exports){
 'use strict';
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
 var _component = require('./component');
 
 var _component2 = _interopRequireDefault(_component);
@@ -13542,16 +13566,14 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var Product = function (_Component) {
   _inherits(Product, _Component);
 
-  function Product(config, props) {
+  function Product() {
     _classCallCheck(this, Product);
 
-    return _possibleConstructorReturn(this, Object.getPrototypeOf(Product).call(this, config, props, 'product'));
+    return _possibleConstructorReturn(this, Object.getPrototypeOf(Product).apply(this, arguments));
   }
 
   return Product;
 }(_component2.default);
-
-exports.default = Product;
 
 },{"./component":82}],85:[function(require,module,exports){
 'use strict';
@@ -13828,7 +13850,7 @@ test('it instantiates a view', function (assert) {
   assert.ok(component.view instanceof _view2.default);
 });
 
-test('it fetches and renders data on #initFetch', function (assert) {
+test('it fetches and renders data on #init', function (assert) {
   assert.expect(3);
   var done = assert.async();
 
@@ -13846,7 +13868,7 @@ test('it fetches and renders data on #initFetch', function (assert) {
     assert.ok(true);
   };
 
-  component.initFetch().then(function () {
+  component.init().then(function () {
     assert.deepEqual(component.model, { title: 'test' });
     done();
   });
@@ -13854,6 +13876,7 @@ test('it fetches and renders data on #initFetch', function (assert) {
 
 test('it sets data and renders on #init', function (assert) {
   assert.expect(3);
+  var done = assert.async();
   component.render = function () {
     assert.ok(true);
   };
@@ -13862,8 +13885,10 @@ test('it sets data and renders on #init', function (assert) {
     assert.ok(true);
   };
 
-  component.init({ title: 'test' });
-  assert.deepEqual(component.model, { title: 'test' });
+  component.init({ title: 'test' }).then(function () {
+    assert.deepEqual(component.model, { title: 'test' });
+    done();
+  });
 });
 
 test('it returns a div on #createWrapper', function (assert) {

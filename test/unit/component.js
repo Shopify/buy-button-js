@@ -53,7 +53,7 @@ test('it instantiates a view', (assert) => {
   assert.ok(component.view instanceof View);
 });
 
-test('it fetches and renders data on #initFetch', (assert) => {
+test('it fetches and renders data on #init', (assert) => {
   assert.expect(3);
   const done = assert.async();
 
@@ -71,7 +71,7 @@ test('it fetches and renders data on #initFetch', (assert) => {
     assert.ok(true);
   }
 
-  component.initFetch().then(() => {
+  component.init().then(() => {
     assert.deepEqual(component.model, {title: 'test'});
     done();
   });
@@ -79,6 +79,7 @@ test('it fetches and renders data on #initFetch', (assert) => {
 
 test('it sets data and renders on #init', (assert) => {
   assert.expect(3);
+  const done = assert.async();
   component.render = function () {
     assert.ok(true);
   }
@@ -87,8 +88,10 @@ test('it sets data and renders on #init', (assert) => {
     assert.ok(true);
   }
 
-  component.init({title: 'test'});
-  assert.deepEqual(component.model, {title: 'test'});
+  component.init({title: 'test'}).then(() => {
+    assert.deepEqual(component.model, {title: 'test'});
+    done();
+  });
 });
 
 test('it returns a div on #createWrapper', (assert) => {
