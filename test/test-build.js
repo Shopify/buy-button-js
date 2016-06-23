@@ -13290,6 +13290,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _morphdom = require('morphdom');
@@ -13314,6 +13316,8 @@ var _view2 = _interopRequireDefault(_view);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Component = function () {
@@ -13324,14 +13328,33 @@ var Component = function () {
     this.type = type;
     this.config = (0, _deepmerge2.default)(_components2.default, config.options);
     this.props = props;
-    this.model = null;
+    this.model = {};
     this.iframe = this.options.iframe ? new _iframe2.default(this.el) : null;
     this.view = new _view2.default(this.templates, this.contents);
+    this.children = null;
   }
 
   _createClass(Component, [{
     key: 'delegateEvents',
-    value: function delegateEvents() {}
+    value: function delegateEvents() {
+      var _this = this;
+
+      Object.keys(this.events).forEach(function (key) {
+        var _key$split = key.split(' ');
+
+        var _key$split2 = _slicedToArray(_key$split, 2);
+
+        var eventType = _key$split2[0];
+        var selector = _key$split2[1];
+
+        var nodes = _this.wrapper.querySelectorAll(selector);
+        [].concat(_toConsumableArray(nodes)).forEach(function (node) {
+          node.addEventListener(eventType, function (evt) {
+            _this.events[key].call(_this, _this, evt);
+          });
+        });
+      });
+    }
   }, {
     key: 'init',
     value: function init(data) {
@@ -13342,12 +13365,12 @@ var Component = function () {
   }, {
     key: 'initFetch',
     value: function initFetch() {
-      var _this = this;
+      var _this2 = this;
 
       return this.fetch().then(function (data) {
-        _this.model = data;
-        _this.render();
-        _this.delegateEvents();
+        _this2.model = data;
+        _this2.render();
+        _this2.delegateEvents();
       });
     }
   }, {
@@ -13355,9 +13378,10 @@ var Component = function () {
     value: function render() {
       var children = arguments.length <= 0 || arguments[0] === undefined ? '' : arguments[0];
 
-      var viewData = Object.assign({}, this.data, {
+      var viewData = Object.assign({}, this.model, {
         children_html: children
       });
+
       var html = this.view.html({ data: viewData });
       if (this.wrapper && this.wrapper.innerHTML.length) {
         var div = this.document.createElement('div');
@@ -13402,7 +13426,7 @@ var Component = function () {
   }, {
     key: 'events',
     get: function get() {
-      return Object.assign({}, this.options.contents, {});
+      return Object.assign({}, this.options.events, {});
     }
   }, {
     key: 'styles',
@@ -13746,7 +13770,7 @@ var config = {
     product: {
       iframe: false,
       templates: {
-        button: '<a>Fake button</a>'
+        button: '<button id="button" class="button">Fake button</button>'
       }
     }
   }
@@ -13764,7 +13788,7 @@ _module('Unit | Component', {
 });
 
 test('it merges configuration options and defaults', function (assert) {
-  assert.equal(component.config.product.templates.button, '<a>Fake button</a>');
+  assert.equal(component.config.product.templates.button, config.options.product.templates.button);
   assert.equal(component.config.product.buttonTarget, 'cart');
 });
 
@@ -13848,7 +13872,7 @@ test('it sets innerHTML of wrapper on initial #render', function (assert) {
   assert.equal(component.wrapper.innerHTML, testHTML);
 });
 
-test('updates innerHTML of wrapper on second #render', function (assert) {
+test('it updates innerHTML of wrapper on second #render', function (assert) {
   var testBeforeHTML = '<h1>THIS IS ONLY A TEST</h1>';
   var testHTML = '<h1>THIS IS NOT A TEST</h1>';
   component.wrapper = component.createWrapper();
@@ -13860,6 +13884,30 @@ test('updates innerHTML of wrapper on second #render', function (assert) {
 
   component.render();
   assert.equal(component.wrapper.innerHTML, testHTML);
+});
+
+test('it passes through child string on #render', function (assert) {
+  var testHTML = '<h1>TEST</h1>';
+  component.view.html = function (data) {
+    assert.equal(data.data.children_html, 'children');
+    return testHTML;
+  };
+  component.render('children');
+});
+
+test('adds event listeners to nodes on #delegateEvents', function (assert) {
+  function clickFakeButton(comp, evt) {
+    assert.ok(evt instanceof Event);
+    assert.ok(comp instanceof _component2.default);
+  }
+
+  component.options.events = {
+    'click .button': clickFakeButton
+  };
+
+  component.render();
+  component.delegateEvents();
+  component.document.getElementById('button').click();
 });
 
 },{"../../src/components/component":82,"../../src/components/iframe":83,"../../src/components/view":85,"../../src/defaults/components":86,"../../src/shopify-buy-ui":87}],91:[function(require,module,exports){

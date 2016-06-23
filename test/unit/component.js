@@ -11,7 +11,7 @@ const config = {
     product: {
       iframe: false,
       templates: {
-        button: '<a>Fake button</a>'
+        button: '<button id="button" class="button">Fake button</button>'
       }
     }
   }
@@ -29,7 +29,7 @@ module('Unit | Component', {
 });
 
 test('it merges configuration options and defaults', (assert) => {
-  assert.equal(component.config.product.templates.button, '<a>Fake button</a>');
+  assert.equal(component.config.product.templates.button, config.options.product.templates.button);
   assert.equal(component.config.product.buttonTarget, 'cart');
 });
 
@@ -113,7 +113,7 @@ test('it sets innerHTML of wrapper on initial #render', (assert) => {
   assert.equal(component.wrapper.innerHTML, testHTML);
 });
 
-test('updates innerHTML of wrapper on second #render', (assert) => {
+test('it updates innerHTML of wrapper on second #render', (assert) => {
   const testBeforeHTML = '<h1>THIS IS ONLY A TEST</h1>';
   const testHTML = '<h1>THIS IS NOT A TEST</h1>'
   component.wrapper = component.createWrapper();
@@ -125,4 +125,28 @@ test('updates innerHTML of wrapper on second #render', (assert) => {
 
   component.render();
   assert.equal(component.wrapper.innerHTML, testHTML);
+});
+
+test('it passes through child string on #render', (assert) => {
+  const testHTML = '<h1>TEST</h1>';
+  component.view.html = function (data) {
+    assert.equal(data.data.children_html, 'children');
+    return testHTML;
+  }
+  component.render('children');
+});
+
+test('adds event listeners to nodes on #delegateEvents', (assert) => {
+  function clickFakeButton(comp, evt) {
+    assert.ok(evt instanceof Event);
+    assert.ok(comp instanceof Component);
+  }
+
+  component.options.events = {
+    'click .button': clickFakeButton
+  }
+
+  component.render();
+  component.delegateEvents();
+  component.document.getElementById('button').click();
 });

@@ -10,9 +10,10 @@ export default class Component {
     this.type = type;
     this.config = merge(componentDefaults, config.options);
     this.props = props;
-    this.model = null;
+    this.model = {};
     this.iframe = this.options.iframe ? new Iframe(this.el) : null;
     this.view = new View(this.templates, this.contents);
+    this.children = null;
   }
 
   get client() {
@@ -32,7 +33,7 @@ export default class Component {
   }
 
   get events() {
-    return Object.assign({}, this.options.contents, {
+    return Object.assign({}, this.options.events, {
 
     });
   }
@@ -50,7 +51,15 @@ export default class Component {
   }
 
   delegateEvents() {
-
+    Object.keys(this.events).forEach(key => {
+      const [eventType, selector] = key.split(' ');
+      const nodes = this.wrapper.querySelectorAll(selector);
+      [...nodes].forEach(node => {
+        node.addEventListener(eventType, (evt) => {
+          this.events[key].call(this, this, evt);
+        });
+      });
+    });
   }
 
   init(data) {
@@ -68,9 +77,10 @@ export default class Component {
   }
 
   render(children = '') {
-    const viewData = Object.assign({}, this.data, {
+    const viewData = Object.assign({}, this.model, {
       children_html: children
     });
+
     const html = this.view.html({data: viewData});
     if (this.wrapper && this.wrapper.innerHTML.length) {
       const div = this.document.createElement('div');
