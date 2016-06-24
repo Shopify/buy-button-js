@@ -8,28 +8,28 @@ export default class UI {
     this.components = {
       cart: [],
       product: [],
-      collection: []
-    }
+      collection: [],
+    };
 
     this.componentTypes = {
       product: Product,
       cart: Cart,
-      collection: Collection
-    }
+      collection: Collection,
+    };
   }
 
   componentProps(type) {
-    const typeProperties =  {
+    const typeProperties = {
       product: {
-        addToCart: this.addToCart.bind(this)
+        addToCart: this.addToCart.bind(this),
       },
       cart: {},
       collection: {
-        addToCart: this.addToCart.bind(this)
-      }
+        addToCart: this.addToCart.bind(this),
+      },
     }[type];
     return Object.assign({}, typeProperties, {
-      client: this.client
+      client: this.client,
     });
   }
 

@@ -144,7 +144,7 @@ test('it passes through child string on #render', (assert) => {
   assert.expect(1);
   const testHTML = '<h1>TEST</h1>';
   component.view.html = function (data) {
-    assert.equal(data.data.children_html, 'children');
+    assert.equal(data.data.childrenHtml, 'children');
     return testHTML;
   }
   component.render('children');

@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "watchify src/ui.js -t babelify --outfile build/shopify-buy-ui.js",
-    "pretest": "browserify test/test.js -t babelify --outfile test/build/test.js",
+    "pretest": "eslint src/* | browserify test/test.js -t babelify --outfile test/build/test.js",
+    "lint": "eslint src/*",
     "test": "testem ci",
     "test_dev": "watchify test/test.js -t babelify --outfile test/build/test.js | testem"
   },
@@ -18,6 +19,8 @@
     "babel-preset-shopify": "11.3.1-0",
     "babelify": "^7.3.0",
     "browserify": "^13.0.1",
+    "eslint": "^2.13.1",
+    "eslint-plugin-shopify": "^12.1.0",
     "qunit": "^0.9.1",
     "testem": "^1.9.1",
     "watchify": "^3.7.0"
