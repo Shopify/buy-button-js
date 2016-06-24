@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "watchify src/ui.js -t babelify --outfile build/shopify-buy-ui.js",
-    "test": "watchify test/test.js -t babelify --outfile test/test-build.js"
+    "pretest": "browserify test/test.js -t babelify --outfile test/build/test.js",
+    "test": "testem ci",
+    "test_dev": "watchify test/test.js -t babelify --outfile test/build/test.js | testem"
   },
   "author": "",
   "license": "ISC",
@@ -15,6 +17,7 @@
     "babelify": "^7.3.0",
     "browserify": "^13.0.1",
     "qunit": "^0.9.1",
+    "testem": "^1.9.1",
     "watchify": "^3.7.0"
   },
   "dependencies": {

@@ -109,7 +109,7 @@ export default class Component {
         let el = target;
         while(el && el !== this.wrapper) {
           if (el === possibleTarget) {
-            return fn.call(possibleTarget, event);
+            return fn.call(possibleTarget, evt);
           }
           el = el.parentNode;
         }
