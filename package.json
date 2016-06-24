@@ -20,6 +20,7 @@
   "dependencies": {
     "deepmerge": "^0.2.10",
     "handlebars": "^4.0.5",
+    "hogan.js": "^3.0.2",
     "morphdom": "^1.4.3",
     "shopify-buy": "^0.1.7"
   }

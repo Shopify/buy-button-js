@@ -1,4 +1,4 @@
-import Handlebars from 'handlebars';
+import hogan from 'hogan.js';
 
 let idCounter = 0;
 
@@ -20,10 +20,10 @@ export default class View {
   }
 
   get template() {
-    return Handlebars.compile(this.templateString);
+    return hogan.compile(this.templateString);
   }
 
   html(data) {
-    return `<div>${this.template(data)}</div>`;
+    return `<div>${this.template.render(data)}</div>`;
   }
 }

@@ -1,2 +1,6 @@
 import Component from './component';
-class Product extends Component {}
+export default class Product extends Component {
+  constructor(config, props) {
+    super(config, props, 'product');
+  }
+}

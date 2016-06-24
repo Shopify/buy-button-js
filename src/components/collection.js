@@ -1,2 +1,2 @@
 import Component from './component';
-class Collection extends Component {}
+export default class Collection extends Component {}
