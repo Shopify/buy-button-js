@@ -37,11 +37,11 @@ export default class Component {
   }
 
   get document() {
-    return this.iframe ? this.iframe.document : document;
+    return this.iframe ? this.iframe.document : window.document;
   }
 
   get el() {
-    return this.config.node || document.getElementsByTagName('script')[0];
+    return this.config.node || window.document.getElementsByTagName('script')[0];
   }
 
   get events() {
@@ -51,7 +51,7 @@ export default class Component {
   }
 
   delegateEvents() {
-    Object.keys(this.events).forEach(key => {
+    Object.keys(this.events).forEach((key) => {
       const [eventName, selector] = key.split(' ');
       this._on(eventName, selector, (evt) => {
         this.events[key].call(this, evt, this);
@@ -61,25 +61,25 @@ export default class Component {
 
   getModel(data) {
     if (data) {
-      return new Promise(resolve => { resolve(data) });
+      return new Promise((resolve) => { resolve(data); });
     } else {
       return this.fetch();
     }
   }
 
   init(data) {
-    return this.getModel(data).then(model => {
+    return this.getModel(data).then((model) => {
       this.model = model;
       this.render();
       this.delegateEvents();
+      return model;
     });
   }
 
   render(children = '') {
     const viewData = Object.assign({}, this.model, {
-      children_html: children
+      childrenHtml: children,
     });
-
     const html = this.view.html({data: viewData});
     if (this.wrapper && this.wrapper.innerHTML.length) {
       const div = this.document.createElement('div');
@@ -105,14 +105,15 @@ export default class Component {
     this.wrapper.addEventListener(eventName, (evt) => {
       const possibleTargets = this.wrapper.querySelectorAll(selector);
       const target = evt.target;
-      [...possibleTargets].forEach(possibleTarget => {
+      [...possibleTargets].forEach((possibleTarget) => {
         let el = target;
-        while(el && el !== this.wrapper) {
+        while (el && el !== this.wrapper) {
           if (el === possibleTarget) {
             return fn.call(possibleTarget, evt);
           }
           el = el.parentNode;
         }
+        return el;
       });
     });
   }

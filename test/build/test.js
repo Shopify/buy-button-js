@@ -5937,6 +5937,7 @@ var Component = function () {
         _this2.model = model;
         _this2.render();
         _this2.delegateEvents();
+        return model;
       });
     }
   }, {
@@ -5945,9 +5946,8 @@ var Component = function () {
       var children = arguments.length <= 0 || arguments[0] === undefined ? '' : arguments[0];
 
       var viewData = Object.assign({}, this.model, {
-        children_html: children
+        childrenHtml: children
       });
-
       var html = this.view.html({ data: viewData });
       if (this.wrapper && this.wrapper.innerHTML.length) {
         var div = this.document.createElement('div');
@@ -5985,6 +5985,7 @@ var Component = function () {
             }
             el = el.parentNode;
           }
+          return el;
         });
       });
     }
@@ -6016,12 +6017,12 @@ var Component = function () {
   }, {
     key: 'document',
     get: function get() {
-      return this.iframe ? this.iframe.document : document;
+      return this.iframe ? this.iframe.document : window.document;
     }
   }, {
     key: 'el',
     get: function get() {
-      return this.config.node || document.getElementsByTagName('script')[0];
+      return this.config.node || window.document.getElementsByTagName('script')[0];
     }
   }, {
     key: 'events',
@@ -6066,7 +6067,7 @@ var iframe = function () {
     this.el = document.createElement('iframe');
     this.el.scrolling = false;
     Object.keys(iframeStyles).forEach(function (key) {
-      return _this.el.style[key] = iframeStyles[key];
+      _this.el.style[key] = iframeStyles[key];
     });
     Object.keys(iframeAttrs).forEach(function (key) {
       return _this.el.setAttribute(key, iframeAttrs[key]);
@@ -6487,7 +6488,7 @@ test('it passes through child string on #render', function (assert) {
   assert.expect(1);
   var testHTML = '<h1>TEST</h1>';
   component.view.html = function (data) {
-    assert.equal(data.data.children_html, 'children');
+    assert.equal(data.data.childrenHtml, 'children');
     return testHTML;
   };
   component.render('children');
@@ -6496,7 +6497,6 @@ test('it passes through child string on #render', function (assert) {
 test('adds event listeners to nodes on #delegateEvents', function (assert) {
   assert.expect(2);
   function clickFakeButton(evt, comp) {
-    console.log(evt);
     assert.ok(evt instanceof Event);
     assert.ok(comp instanceof _component2.default);
   }

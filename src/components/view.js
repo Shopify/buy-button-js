@@ -14,9 +14,7 @@ export default class View {
   }
 
   get templateString() {
-    return this.contents.reduce((acc, item) => {
-      return acc + this.templates[item];
-    }, '');
+    return this.contents.reduce((acc, item) => acc + this.templates[item], '');
   }
 
   get template() {
