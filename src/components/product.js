@@ -1,4 +1,5 @@
 import Component from './component';
+import Template from './template';
 
 export default class Product extends Component {
   constructor(config, props) {
@@ -10,10 +11,13 @@ export default class Product extends Component {
     return this.props.client.fetchProduct(this.id);
   }
 
+  render() {
+    super.render.call(this, this.childrenHtml);
+  }
 
   get childrenHtml() {
-    this.model.options.forEach((option) => {
-
-    });
+    return this.model.options.reduce((acc, option) => {
+      return acc + this.childTemplate.render({ data: option });
+    }, '');
   }
 }
