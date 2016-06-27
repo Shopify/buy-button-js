@@ -7,6 +7,7 @@ import componentDefaults from '../../src/defaults/components';
 const { module, test } = QUnit;
 const config = {
   id: 123,
+  node: document.getElementById('qunit-fixture'),
   options: {
     product: {
       iframe: false,
@@ -18,6 +19,7 @@ const config = {
 }
 
 let component;
+let scriptNode
 
 module('Unit | Component', {
   beforeEach() {
@@ -44,11 +46,30 @@ test('it proxies commonly accessed attributes to config options for type', (asse
 
 test('it instantiates an iframe if config.iframe is true', (assert) => {
   assert.expect(1);
-  const iframeComponent = new Component({id: 123, options: { product: {iframe: true}}}, {client: {}}, 'product');
+  const iframeComponent = new Component({
+    id: 123,
+    node: document.getElementById('qunit-fixture'),
+    options: { product: {iframe: true}}}, {client: {}},
+    'product');
   assert.ok(iframeComponent.iframe instanceof Iframe);
 });
 
-test('it instantiates a view', (assert) => {
+test('it finds script element with data attribute on #getEntryNode', (assert) => {
+  assert.expect(2);
+  const scriptNode = document.createElement('script');
+  scriptNode.setAttribute('data-shopify-buy-ui', true);
+  document.body.appendChild(scriptNode);
+  const initialNodes = document.querySelectorAll('script[data-shopify-buy-ui');
+  const component = new Component({
+    id: 123,
+    options: { product: {iframe: true}}}, {client: {}},
+    'product');
+  const remainingNodes = document.querySelectorAll('script[data-shopify-buy-ui');
+  assert.equal(remainingNodes.length, initialNodes.length - 1);
+  assert.equal(component.entryNode.tagName, 'SCRIPT');
+});
+
+test('it instantiates a template', (assert) => {
   assert.expect(1);
   assert.ok(component.template instanceof Template);
 });
@@ -97,15 +118,19 @@ test('it returns a div on #createWrapper', (assert) => {
   assert.equal(wrapper.tagName, 'DIV');
 });
 
-test('it adds a div to el if iframe is false on #createWrapper', (assert) => {
+test('it adds a div to node if iframe is false on #createWrapper', (assert) => {
   assert.expect(1);
   component.createWrapper();
-  assert.equal(component.el.children[0].tagName, 'DIV');
+  assert.equal(component.node.children[0].tagName, 'DIV');
 });
 
 test('it adds a div to iframe if iframe is true on #createWrapper', (assert) => {
   assert.expect(1);
-  const iframeComponent = new Component({id: 123, options: { product: {iframe: true}}}, {client: {}}, 'product');
+  const iframeComponent = new Component({
+    node: document.getElementById('qunit-fixture'),
+    id: 123,
+    options: { product: {iframe: true}}}, {client: {}},
+    'product');
   iframeComponent.createWrapper();
   assert.equal(iframeComponent.document.body.children[0].tagName, 'DIV');
 });

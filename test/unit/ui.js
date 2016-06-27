@@ -12,6 +12,7 @@ const client = ShopifyBuy.buildClient({
 
 const productConfig = {
   id: 123,
+  node: document.getElementById('qunit-fixture'),
   options: {}
 }
 
