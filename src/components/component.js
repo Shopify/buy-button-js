@@ -2,7 +2,7 @@ import morphdom from 'morphdom';
 import merge from 'deepmerge';
 import componentDefaults from '../defaults/components';
 import Iframe from './iframe';
-import View from './view';
+import Template from './template';
 
 export default class Component {
   constructor(config, props, type) {
@@ -12,7 +12,7 @@ export default class Component {
     this.props = props;
     this.model = {};
     this.iframe = this.options.iframe ? new Iframe(this.el) : null;
-    this.view = new View(this.templates, this.contents);
+    this.template = new Template(this.templates, this.contents);
     this.children = null;
   }
 
@@ -67,8 +67,14 @@ export default class Component {
     }
   }
 
-  init(data) {
-    return this.getModel(data).then((model) => {
+  initWithData(data) {
+    this.model = data;
+    this.render();
+    this.delegateEvents();
+  }
+
+  init() {
+    return this.fetchData().then((model) => {
       this.model = model;
       this.render();
       this.delegateEvents();
@@ -80,7 +86,7 @@ export default class Component {
     const viewData = Object.assign({}, this.model, {
       childrenHtml: children,
     });
-    const html = this.view.html({data: viewData});
+    const html = this.template.render({data: viewData});
     if (this.wrapper && this.wrapper.innerHTML.length) {
       const div = this.document.createElement('div');
       div.innerHTML = html;

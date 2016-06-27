@@ -1,7 +1,7 @@
 import ShopifyBuy from '../../src/shopify-buy-ui';
 import Component from '../../src/components/component';
 import Iframe from '../../src/components/iframe';
-import View from '../../src/components/view';
+import Template from '../../src/components/template';
 import componentDefaults from '../../src/defaults/components';
 
 const { module, test } = QUnit;
@@ -50,14 +50,14 @@ test('it instantiates an iframe if config.iframe is true', (assert) => {
 
 test('it instantiates a view', (assert) => {
   assert.expect(1);
-  assert.ok(component.view instanceof View);
+  assert.ok(component.template instanceof Template);
 });
 
 test('it fetches and renders data on #init', (assert) => {
   assert.expect(3);
   const done = assert.async();
 
-  component.fetch = function () {
+  component.fetchData = function () {
     return new Promise(resolve => {
       return resolve({title: 'test'});
     });
@@ -77,9 +77,8 @@ test('it fetches and renders data on #init', (assert) => {
   });
 });
 
-test('it sets data and renders on #init', (assert) => {
+test('it sets data and renders on #initWithData', (assert) => {
   assert.expect(3);
-  const done = assert.async();
   component.render = function () {
     assert.ok(true);
   }
@@ -88,10 +87,8 @@ test('it sets data and renders on #init', (assert) => {
     assert.ok(true);
   }
 
-  component.init({title: 'test'}).then(() => {
-    assert.deepEqual(component.model, {title: 'test'});
-    done();
-  });
+  component.initWithData({title: 'test'});
+  assert.deepEqual(component.model, {title: 'test'});
 });
 
 test('it returns a div on #createWrapper', (assert) => {
@@ -116,7 +113,7 @@ test('it adds a div to iframe if iframe is true on #createWrapper', (assert) => 
 test('it sets innerHTML of wrapper on initial #render', (assert) => {
   assert.expect(2);
   const testHTML = '<h1>THIS IS ONLY A TEST</h1>';
-  component.view.html = function (data) {
+  component.template.render = function (data) {
     assert.ok(data.data);
     return testHTML;
   }
@@ -131,7 +128,7 @@ test('it updates innerHTML of wrapper on second #render', (assert) => {
   const testHTML = '<h1>THIS IS NOT A TEST</h1>'
   component.wrapper = component.createWrapper();
   component.wrapper.innerHTML = testBeforeHTML;
-  component.view.html = function (data) {
+  component.template.render = function (data) {
     assert.ok(data.data);
     return testHTML;
   }
@@ -143,7 +140,7 @@ test('it updates innerHTML of wrapper on second #render', (assert) => {
 test('it passes through child string on #render', (assert) => {
   assert.expect(1);
   const testHTML = '<h1>TEST</h1>';
-  component.view.html = function (data) {
+  component.template.render = function (data) {
     assert.equal(data.data.childrenHtml, 'children');
     return testHTML;
   }
