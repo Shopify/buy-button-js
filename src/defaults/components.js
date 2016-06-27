@@ -18,6 +18,16 @@ const defaults = {
       button: 'button'
     }
   },
+  option: {
+    templates: {
+      option: '<select data-event="change.selectVariant" name={{data.name}}>' +
+                  '{{#each data.values}}' +
+                      '<option {{conditionalString ../data.selected this "selected"}}  value={{this}}>{{this}}</option>' +
+                    '{{/each}}' +
+                '</select>'
+    },
+    contents: ['option']
+  },
   cart: {
     iframe: true,
     contents: ['title', 'lineItems', 'total', 'checkout'],
