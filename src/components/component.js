@@ -88,6 +88,12 @@ export default class Component {
     });
   }
 
+  updateConfig(config) {
+    this.config = merge(componentDefaults, config.options);
+    this.render();
+    this.delegateEvents();
+  }
+
   render(children = '') {
     const viewData = Object.assign({}, this.model, {
       childrenHtml: children,

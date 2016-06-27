@@ -112,6 +112,24 @@ test('it sets data and renders on #initWithData', (assert) => {
   assert.deepEqual(component.model, {title: 'test'});
 });
 
+test('it updates config on #updateConfig', (assert) => {
+  const updateConfig = {
+    id: 123,
+    options: {
+      product: {
+        styles: {
+          button: {
+            'color': 'blue'
+          }
+        },
+      }
+    }
+  }
+
+  component.updateConfig(updateConfig);
+  assert.equal(component.options.styles.button.color, 'blue');
+});
+
 test('it returns a div on #createWrapper', (assert) => {
   assert.expect(1);
   const wrapper = component.createWrapper();
