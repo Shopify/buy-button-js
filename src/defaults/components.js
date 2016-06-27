@@ -22,10 +22,10 @@ const defaults = {
   option: {
     templates: {
       option: '<select class={{data.classes.select}} name={{data.name}}>' +
-                  '{{#data.values}}' +
-                      '<option value={{.}}>{{.}}</option>' +
-                    '{{/data.values}}' +
-                '</select>'
+                '{{#data.values}}' +
+                    '<option value={{.}}>{{.}}</option>' +
+                  '{{/data.values}}' +
+              '</select>'
     },
     contents: ['option'],
     classes: {
@@ -37,7 +37,7 @@ const defaults = {
     contents: ['title', 'lineItems', 'total', 'checkout'],
     templates: {
       title: '<h2>{{data.title}}</h2>',
-      lineItems: '<div class="line-items">{{data.childrenHtml}}</div>',
+      lineItems: '<div class="line-items">{{{data.childrenHtml}}}</div>',
       total: '<p><strong>{{data.total}}</strong></p>',
       checkout: '<button>Checkout</button>'
     },
@@ -48,6 +48,13 @@ const defaults = {
     },
     classes: {
       button: 'button'
+    }
+  },
+  lineItem: {
+    contents: ['title', 'price'],
+    templates: {
+      title: '<h3>{{data.title}}</h3>',
+      price: '<strong>{{data.price}}</strong>'
     }
   }
 };

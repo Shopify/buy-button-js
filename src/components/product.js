@@ -17,8 +17,13 @@ export default class Product extends Component {
 
   get events() {
     return Object.assign({}, this.options.events, {
-      [`change .${this.config.option.classes.select}`]: this.onVariantChange.bind(this)
+      [`change .${this.config.option.classes.select}`]: this.onVariantChange.bind(this),
+      [`click .${this.options.classes.button}`]: this.onButtonClick.bind(this)
     });
+  }
+
+  onButtonClick(evt, product) {
+    this.props.addToCart(product.model);
   }
 
   onVariantChange(evt, product) {
