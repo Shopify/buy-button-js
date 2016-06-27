@@ -54,21 +54,6 @@ test('it instantiates an iframe if config.iframe is true', (assert) => {
   assert.ok(iframeComponent.iframe instanceof Iframe);
 });
 
-test('it finds script element with data attribute on #getEntryNode', (assert) => {
-  assert.expect(2);
-  const scriptNode = document.createElement('script');
-  scriptNode.setAttribute('data-shopify-buy-ui', true);
-  document.body.appendChild(scriptNode);
-  const initialNodes = document.querySelectorAll('script[data-shopify-buy-ui');
-  const component = new Component({
-    id: 123,
-    options: { product: {iframe: true}}}, {client: {}},
-    'product');
-  const remainingNodes = document.querySelectorAll('script[data-shopify-buy-ui');
-  assert.equal(remainingNodes.length, initialNodes.length - 1);
-  assert.equal(component.entryNode.tagName, 'SCRIPT');
-});
-
 test('it instantiates a template', (assert) => {
   assert.expect(1);
   assert.ok(component.template instanceof Template);
@@ -150,7 +135,7 @@ test('it adds a div to iframe if iframe is true on #createWrapper', (assert) => 
     options: { product: {iframe: true}}}, {client: {}},
     'product');
   iframeComponent.createWrapper();
-  assert.equal(iframeComponent.document.body.children[0].tagName, 'DIV');
+  assert.equal(iframeComponent.document.body.children[iframeComponent.document.body.children.length - 1].tagName, 'DIV');
 });
 
 test('it sets innerHTML of wrapper on initial #render', (assert) => {

@@ -32,6 +32,20 @@ test('it creates a client', (assert) => {
   assert.deepEqual(client, ui.client);
 });
 
+test('it finds script element with data attribute on #queryEntryNode', (assert) => {
+  assert.expect(3);
+  const scriptNode = document.createElement('script');
+  scriptNode.setAttribute('data-shopify-buy-ui', true);
+  document.body.appendChild(scriptNode);
+  const initialNodes = document.querySelectorAll('script[data-shopify-buy-ui');
+  const div = ui.queryEntryNode();
+  const remainingNodes = document.querySelectorAll('script[data-shopify-buy-ui');
+  assert.equal(remainingNodes.length, initialNodes.length - 1);
+  assert.equal(div.tagName, 'DIV');
+  assert.equal(div.parentNode.tagName, 'SCRIPT');
+});
+
+
 test('it creates a component of appropriate type on #createComponent', (assert) => {
   assert.expect(1);
   ui.createComponent('product',  productConfig);

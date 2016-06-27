@@ -69,7 +69,7 @@ export default class Component {
   }
 
   resize() {
-    if (this.options.iframe) {
+    if (this.iframe) {
       this.iframe.el.style.height = this.wrapper.clientHeight + 'px';
     }
   }
