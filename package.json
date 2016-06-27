@@ -1,8 +1,9 @@
 {
   "name": "shopify-buy-ui",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "version": "0.0.0",
+  "description": "The JS Buy UI library allows merchants to build Shopify interfaces into any website",
+  "main": "build/shopify-buy-ui.js",
+  "repository": "git@github.com:Shopify/shopify-buy-ui.git",
   "scripts": {
     "start": "watchify src/ui.js -t babelify --outfile build/shopify-buy-ui.js",
     "pretest": "eslint src/* | browserify test/test.js -t babelify --outfile test/build/test.js",
@@ -10,8 +11,8 @@
     "test": "testem ci",
     "test_dev": "watchify test/test.js -t babelify --outfile test/build/test.js | testem"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Shopify Inc.",
+  "license": "MIT",
   "devDependencies": {
     "babel": "^6.5.2",
     "babel-core": "6.10.4",
