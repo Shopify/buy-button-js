@@ -11,7 +11,7 @@ export default class Component {
     this.id = config.id;
     this.node = config.node;
     this.type = type;
-    this.config = merge(componentDefaults, config.options);
+    this.config = merge(componentDefaults, config.options || {});
     this.props = props;
     this.model = {};
     this.iframe = this.options.iframe ? new Iframe(this.appendToHost.bind(this)) : null;
@@ -95,9 +95,8 @@ export default class Component {
   }
 
   render(children = '') {
-    const viewData = Object.assign({}, this.model, {
-      childrenHtml: children,
-    });
+    const viewData = this.model;
+    viewData.childrenHtml = children;
     const html = this.template.render({data: viewData});
     if (this.wrapper && this.wrapper.innerHTML.length) {
       const div = this.document.createElement('div');

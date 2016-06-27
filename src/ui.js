@@ -40,6 +40,7 @@ export default class UI {
   createComponent(type, config) {
     const component = new this.componentTypes[type](config, this.componentProps(type));
     this.components[type].push(component);
+    component.init();
     return component;
   }
 }
