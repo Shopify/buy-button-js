@@ -21,13 +21,16 @@ const defaults = {
   },
   option: {
     templates: {
-      option: '<select name={{data.name}}>' +
+      option: '<select class={{data.classes.select}} name={{data.name}}>' +
                   '{{#data.values}}' +
                       '<option value={{.}}>{{.}}</option>' +
                     '{{/data.values}}' +
                 '</select>'
     },
-    contents: ['option']
+    contents: ['option'],
+    classes: {
+      select: 'select'
+    }
   },
   cart: {
     iframe: true,
