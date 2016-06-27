@@ -51,14 +51,6 @@ export default class Component {
     });
   }
 
-  appendToHost(el) {
-    if (this.node) {
-      this.node.appendChild(el);
-    } else {
-      this.props.appendBeforeScript(el);
-    }
-  }
-
   delegateEvents() {
     Object.keys(this.events).forEach((key) => {
       const [eventName, selector] = key.split(' ');
@@ -69,7 +61,7 @@ export default class Component {
   }
 
   resize() {
-    if (this.options.iframe) {
+    if (this.iframe) {
       this.iframe.el.style.height = this.wrapper.clientHeight + 'px';
     }
   }
