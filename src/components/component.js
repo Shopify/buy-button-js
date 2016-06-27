@@ -4,14 +4,17 @@ import componentDefaults from '../defaults/components';
 import Iframe from './iframe';
 import Template from './template';
 
+const DATA_ATTRIBUTE = 'data-shopify-buy-ui';
+
 export default class Component {
   constructor(config, props, type) {
     this.id = config.id;
+    this.node = config.node;
     this.type = type;
     this.config = merge(componentDefaults, config.options);
     this.props = props;
     this.model = {};
-    this.iframe = this.options.iframe ? new Iframe(this.el) : null;
+    this.iframe = this.options.iframe ? new Iframe(this.appendToHost.bind(this)) : null;
     this.template = new Template(this.templates, this.contents);
     this.children = null;
   }
@@ -40,14 +43,25 @@ export default class Component {
     return this.iframe ? this.iframe.document : window.document;
   }
 
-  get el() {
-    return this.config.node || window.document.getElementsByTagName('script')[0];
+  queryEntryNode() {
+    this.entryNode = this.entryNode || window.document.querySelectorAll(`script[${DATA_ATTRIBUTE}]`)[0];
+    this.entryNode.removeAttribute(DATA_ATTRIBUTE);
+    return this.entryNode;
   }
 
   get events() {
     return Object.assign({}, this.options.events, {
 
     });
+  }
+
+  appendToHost(el) {
+    if (this.node) {
+      this.node.appendChild(el);
+    } else {
+      this.queryEntryNode();
+      this.entryNode.parentNode.insertBefore(el, this.entryNode);
+    }
   }
 
   delegateEvents() {
@@ -102,7 +116,7 @@ export default class Component {
     if (this.iframe) {
       this.document.body.appendChild(wrapper);
     } else {
-      this.el.appendChild(wrapper);
+      this.appendToHost(wrapper);
     }
     return wrapper;
   }

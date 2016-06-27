@@ -10,7 +10,7 @@ const iframeAttrs = {
 };
 
 export default class iframe {
-  constructor(parent) {
+  constructor(appendFn) {
     this.el = document.createElement('iframe');
     this.el.scrolling = false;
     Object.keys(iframeStyles).forEach((key) => {
@@ -20,7 +20,7 @@ export default class iframe {
 
     this.div = document.createElement('div');
     this.div.appendChild(this.el);
-    parent.appendChild(this.div);
+    appendFn(this.div);
   }
 
   get document() {
