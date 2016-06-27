@@ -6,5 +6,19 @@
   </head>
   <body>
     <script src="build/shopify-buy-ui.js"></script>
+
+    <div id="test"></div>
+
+    <script data-shopify-buy-ui>
+      let client = ShopifyBuy.UI.buildClient({
+         apiKey: 'bf081e860bc9dc1ce0654fdfbc20892d',
+         myShopifyDomain: 'embeds',
+         appId: '6'
+      });
+      client.createComponent('product', {
+        id: 3614436099,
+        node: document.getElementById('test')
+      });
+    </script>
   </body>
 </html>

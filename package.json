@@ -5,7 +5,7 @@
   "main": "build/shopify-buy-ui.js",
   "repository": "git@github.com:Shopify/shopify-buy-ui.git",
   "scripts": {
-    "start": "watchify src/ui.js -t babelify --outfile build/shopify-buy-ui.js",
+    "start": "watchify src/shopify-buy-ui.js -t babelify --outfile build/shopify-buy-ui.js",
     "pretest": "eslint src/* | browserify test/test.js -t babelify --outfile test/build/test.js",
     "lint": "eslint src/*",
     "test": "testem ci",

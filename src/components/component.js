@@ -4,17 +4,15 @@ import componentDefaults from '../defaults/components';
 import Iframe from './iframe';
 import Template from './template';
 
-const DATA_ATTRIBUTE = 'data-shopify-buy-ui';
-
 export default class Component {
   constructor(config, props, type) {
     this.id = config.id;
     this.node = config.node;
     this.type = type;
-    this.config = merge(componentDefaults, config.options);
+    this.config = merge(componentDefaults, config.options || {});
     this.props = props;
     this.model = {};
-    this.iframe = this.options.iframe ? new Iframe(this.appendToHost.bind(this)) : null;
+    this.iframe = this.options.iframe ? new Iframe(this.node, this.classes, this.styles) : null;
     this.template = new Template(this.templates, this.contents);
     this.children = null;
   }
@@ -39,14 +37,12 @@ export default class Component {
     return this.options.styles;
   }
 
-  get document() {
-    return this.iframe ? this.iframe.document : window.document;
+  get classes() {
+    return this.options.classes;
   }
 
-  queryEntryNode() {
-    this.entryNode = this.entryNode || window.document.querySelectorAll(`script[${DATA_ATTRIBUTE}]`)[0];
-    this.entryNode.removeAttribute(DATA_ATTRIBUTE);
-    return this.entryNode;
+  get document() {
+    return this.iframe ? this.iframe.document : window.document;
   }
 
   get events() {
@@ -59,8 +55,7 @@ export default class Component {
     if (this.node) {
       this.node.appendChild(el);
     } else {
-      this.queryEntryNode();
-      this.entryNode.parentNode.insertBefore(el, this.entryNode);
+      this.props.appendBeforeScript(el);
     }
   }
 
@@ -71,6 +66,12 @@ export default class Component {
         this.events[key].call(this, evt, this);
       });
     });
+  }
+
+  resize() {
+    if (this.options.iframe) {
+      this.iframe.el.style.height = this.wrapper.clientHeight + 'px';
+    }
   }
 
   initWithData(data) {
@@ -95,9 +96,9 @@ export default class Component {
   }
 
   render(children = '') {
-    const viewData = Object.assign({}, this.model, {
-      childrenHtml: children,
-    });
+    const viewData = this.model;
+    viewData.childrenHtml = children;
+    viewData.classes = this.classes;
     const html = this.template.render({data: viewData});
     if (this.wrapper && this.wrapper.innerHTML.length) {
       const div = this.document.createElement('div');
@@ -107,6 +108,7 @@ export default class Component {
       this.wrapper = this.createWrapper();
       this.wrapper.innerHTML = html;
     }
+    this.resize();
   }
 
   createWrapper() {
