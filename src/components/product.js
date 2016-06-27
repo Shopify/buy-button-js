@@ -4,4 +4,8 @@ export default class Product extends Component {
   constructor(config, props) {
     super(config, props, 'product');
   }
+
+  fetchData() {
+    return this.props.client.fetchProduct(this.id);
+  }
 }
