@@ -27,35 +27,14 @@ export default class iframe {
     this.div = document.createElement('div');
     this.div.appendChild(this.el);
     parent.appendChild(this.div);
-    this.loadCSS();
+    this.appendStyleTag();
   }
 
   get document() {
     return this.el.contentDocument;
   }
 
-  loadCSS() {
-    const cssURL = 'src/styles/main.css';
-
-    const link = this.document.createElement('link');
-    const img = this.document.createElement('img');
-
-    img.style.opacity = 0;
-    link.rel = 'stylesheet';
-    link.type = 'text/css';
-    link.href = cssURL;
-
-    this.document.head.appendChild(link);
-    this.document.body.appendChild(img);
-
-    img.src = cssURL;
-    img.onerror = () => {
-      this.document.body.removeChild(img);
-      this.appendStyleTag();
-    }
-  }
-
-   get styles() {
+  get styles() {
     return Object.keys(this.rawStyles).map((key) => {
       return {
         selector: `.${this.classes[key]}`,
