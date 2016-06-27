@@ -73,14 +73,6 @@ export default class Component {
     });
   }
 
-  getModel(data) {
-    if (data) {
-      return new Promise((resolve) => { resolve(data); });
-    } else {
-      return this.fetch();
-    }
-  }
-
   initWithData(data) {
     this.model = data;
     this.render();
