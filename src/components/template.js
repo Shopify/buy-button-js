@@ -15,7 +15,6 @@ export default class Template {
   }
 
   render(data) {
-    console.log(data);
     return `<div id="${this.id}">${this.templateFn.render(data)}</div>`;
   }
 }

@@ -2,6 +2,7 @@ import Cart from './components/cart';
 import Product from './components/product';
 import Collection from './components/collection';
 
+const DATA_ATTRIBUTE = 'data-shopify-buy-ui';
 export default class UI {
   constructor(client) {
     this.client = client;
@@ -16,6 +17,14 @@ export default class UI {
       cart: Cart,
       collection: Collection,
     };
+  }
+
+  queryEntryNode() {
+    this.entry = this.entry || window.document.querySelectorAll(`script[${DATA_ATTRIBUTE}]`)[0];
+    this.entry.removeAttribute(DATA_ATTRIBUTE);
+    const div = document.createElement('div');
+    this.entry.appendChild(div);
+    return div;
   }
 
   componentProps(type) {
@@ -38,9 +47,15 @@ export default class UI {
   }
 
   createComponent(type, config) {
+    config.node = config.node || queryEntryNode();
     const component = new this.componentTypes[type](config, this.componentProps(type));
     this.components[type].push(component);
     component.init();
+
+    if (!this.components.cart.length) {
+      this.createComponent('cart', config);
+    }
+
     return component;
   }
 }
