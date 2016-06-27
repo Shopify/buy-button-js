@@ -5875,9 +5875,9 @@ var _iframe = require('./iframe');
 
 var _iframe2 = _interopRequireDefault(_iframe);
 
-var _view = require('./view');
+var _template = require('./template');
 
-var _view2 = _interopRequireDefault(_view);
+var _template2 = _interopRequireDefault(_template);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -5895,7 +5895,7 @@ var Component = function () {
     this.props = props;
     this.model = {};
     this.iframe = this.options.iframe ? new _iframe2.default(this.el) : null;
-    this.view = new _view2.default(this.templates, this.contents);
+    this.template = new _template2.default(this.templates, this.contents);
     this.children = null;
   }
 
@@ -5929,11 +5929,18 @@ var Component = function () {
       }
     }
   }, {
+    key: 'initWithData',
+    value: function initWithData(data) {
+      this.model = data;
+      this.render();
+      this.delegateEvents();
+    }
+  }, {
     key: 'init',
-    value: function init(data) {
+    value: function init() {
       var _this2 = this;
 
-      return this.getModel(data).then(function (model) {
+      return this.fetchData().then(function (model) {
         _this2.model = model;
         _this2.render();
         _this2.delegateEvents();
@@ -5948,7 +5955,7 @@ var Component = function () {
       var viewData = Object.assign({}, this.model, {
         childrenHtml: children
       });
-      var html = this.view.html({ data: viewData });
+      var html = this.template.render({ data: viewData });
       if (this.wrapper && this.wrapper.innerHTML.length) {
         var div = this.document.createElement('div');
         div.innerHTML = html;
@@ -6036,7 +6043,7 @@ var Component = function () {
 
 exports.default = Component;
 
-},{"../defaults/components":44,"./iframe":41,"./view":43,"deepmerge":3,"morphdom":9}],41:[function(require,module,exports){
+},{"../defaults/components":44,"./iframe":41,"./template":43,"deepmerge":3,"morphdom":9}],41:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6146,40 +6153,31 @@ function uniqueId() {
   return 'shopify-ui-' + ++idCounter;
 }
 
-var View = function () {
-  function View(templates, contents) {
-    _classCallCheck(this, View);
+var Template = function () {
+  function Template(templates, contents) {
+    var _this = this;
+
+    _classCallCheck(this, Template);
 
     this.templates = templates;
     this.contents = contents;
     this.id = uniqueId();
+    this.templateFn = _hogan2.default.compile(this.contents.reduce(function (acc, item) {
+      return acc + _this.templates[item];
+    }, ''));
   }
 
-  _createClass(View, [{
-    key: 'html',
-    value: function html(data) {
-      return '<div>' + this.template.render(data) + '</div>';
-    }
-  }, {
-    key: 'templateString',
-    get: function get() {
-      var _this = this;
-
-      return this.contents.reduce(function (acc, item) {
-        return acc + _this.templates[item];
-      }, '');
-    }
-  }, {
-    key: 'template',
-    get: function get() {
-      return _hogan2.default.compile(this.templateString);
+  _createClass(Template, [{
+    key: 'render',
+    value: function render(data) {
+      return '<div id="' + this.id + '">' + this.templateFn.render(data) + '</div>';
     }
   }]);
 
-  return View;
+  return Template;
 }();
 
-exports.default = View;
+exports.default = Template;
 
 },{"hogan.js":5}],44:[function(require,module,exports){
 'use strict';
@@ -6318,9 +6316,9 @@ require('./unit/ui');
 
 require('./unit/component');
 
-require('./unit/view');
+require('./unit/template');
 
-},{"./unit/component":48,"./unit/shopify-buy-ui":49,"./unit/ui":50,"./unit/view":51}],48:[function(require,module,exports){
+},{"./unit/component":48,"./unit/shopify-buy-ui":49,"./unit/template":50,"./unit/ui":51}],48:[function(require,module,exports){
 'use strict';
 
 var _shopifyBuyUi = require('../../src/shopify-buy-ui');
@@ -6335,9 +6333,9 @@ var _iframe = require('../../src/components/iframe');
 
 var _iframe2 = _interopRequireDefault(_iframe);
 
-var _view = require('../../src/components/view');
+var _template = require('../../src/components/template');
 
-var _view2 = _interopRequireDefault(_view);
+var _template2 = _interopRequireDefault(_template);
 
 var _components = require('../../src/defaults/components');
 
@@ -6394,14 +6392,14 @@ test('it instantiates an iframe if config.iframe is true', function (assert) {
 
 test('it instantiates a view', function (assert) {
   assert.expect(1);
-  assert.ok(component.view instanceof _view2.default);
+  assert.ok(component.template instanceof _template2.default);
 });
 
 test('it fetches and renders data on #init', function (assert) {
   assert.expect(3);
   var done = assert.async();
 
-  component.fetch = function () {
+  component.fetchData = function () {
     return new Promise(function (resolve) {
       return resolve({ title: 'test' });
     });
@@ -6421,9 +6419,8 @@ test('it fetches and renders data on #init', function (assert) {
   });
 });
 
-test('it sets data and renders on #init', function (assert) {
+test('it sets data and renders on #initWithData', function (assert) {
   assert.expect(3);
-  var done = assert.async();
   component.render = function () {
     assert.ok(true);
   };
@@ -6432,10 +6429,8 @@ test('it sets data and renders on #init', function (assert) {
     assert.ok(true);
   };
 
-  component.init({ title: 'test' }).then(function () {
-    assert.deepEqual(component.model, { title: 'test' });
-    done();
-  });
+  component.initWithData({ title: 'test' });
+  assert.deepEqual(component.model, { title: 'test' });
 });
 
 test('it returns a div on #createWrapper', function (assert) {
@@ -6460,7 +6455,7 @@ test('it adds a div to iframe if iframe is true on #createWrapper', function (as
 test('it sets innerHTML of wrapper on initial #render', function (assert) {
   assert.expect(2);
   var testHTML = '<h1>THIS IS ONLY A TEST</h1>';
-  component.view.html = function (data) {
+  component.template.render = function (data) {
     assert.ok(data.data);
     return testHTML;
   };
@@ -6475,7 +6470,7 @@ test('it updates innerHTML of wrapper on second #render', function (assert) {
   var testHTML = '<h1>THIS IS NOT A TEST</h1>';
   component.wrapper = component.createWrapper();
   component.wrapper.innerHTML = testBeforeHTML;
-  component.view.html = function (data) {
+  component.template.render = function (data) {
     assert.ok(data.data);
     return testHTML;
   };
@@ -6487,7 +6482,7 @@ test('it updates innerHTML of wrapper on second #render', function (assert) {
 test('it passes through child string on #render', function (assert) {
   assert.expect(1);
   var testHTML = '<h1>TEST</h1>';
-  component.view.html = function (data) {
+  component.template.render = function (data) {
     assert.equal(data.data.childrenHtml, 'children');
     return testHTML;
   };
@@ -6510,7 +6505,7 @@ test('adds event listeners to nodes on #delegateEvents', function (assert) {
   component.document.getElementById('button').click();
 });
 
-},{"../../src/components/component":40,"../../src/components/iframe":41,"../../src/components/view":43,"../../src/defaults/components":44,"../../src/shopify-buy-ui":45}],49:[function(require,module,exports){
+},{"../../src/components/component":40,"../../src/components/iframe":41,"../../src/components/template":43,"../../src/defaults/components":44,"../../src/shopify-buy-ui":45}],49:[function(require,module,exports){
 'use strict';
 
 var _shopifyBuyUi = require('../../src/shopify-buy-ui');
@@ -6550,6 +6545,47 @@ test('it returns an instance of UI', function (assert) {
 });
 
 },{"../../src/shopify-buy-ui":45,"../../src/ui":46}],50:[function(require,module,exports){
+'use strict';
+
+var _template = require('../../src/components/template');
+
+var _template2 = _interopRequireDefault(_template);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var _QUnit = QUnit;
+var _module = _QUnit.module;
+var test = _QUnit.test;
+
+var contents = ['title', 'button'];
+var templates = {
+  title: '<h1>BUY MY BUTTONS {{data.name}}</h1>',
+  button: '<button>BUTTON</button>'
+};
+
+var template = void 0;
+
+_module('Unit | View', {
+  beforeEach: function beforeEach() {
+    template = new _template2.default(templates, contents);
+  },
+  afterEach: function afterEach() {
+    template = null;
+  }
+});
+
+test('it puts data into the strings on #render', function (assert) {
+  assert.expect(1);
+  template.id = 'test';
+  var expectedString = '<div id="test"><h1>BUY MY BUTTONS fool</h1><button>BUTTON</button></div>';
+  var data = {
+    name: 'fool'
+  };
+  var output = template.render({ data: data });
+  assert.equal(expectedString, output);
+});
+
+},{"../../src/components/template":43}],51:[function(require,module,exports){
 'use strict';
 
 var _shopifyBuyUi = require('../../src/shopify-buy-ui');
@@ -6611,50 +6647,4 @@ test('it returns type-specific properties on #componentProps', function (assert)
   assert.deepEqual(props.client, ui.client);
 });
 
-},{"../../src/components/product":42,"../../src/shopify-buy-ui":45,"../../src/ui":46}],51:[function(require,module,exports){
-'use strict';
-
-var _view = require('../../src/components/view');
-
-var _view2 = _interopRequireDefault(_view);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var _QUnit = QUnit;
-var _module = _QUnit.module;
-var test = _QUnit.test;
-
-var contents = ['title', 'button'];
-var templates = {
-  title: '<h1>BUY MY BUTTONS {{data.name}}</h1>',
-  button: '<button>BUTTON</button>'
-};
-
-var view = void 0;
-
-_module('Unit | View', {
-  beforeEach: function beforeEach() {
-    view = new _view2.default(templates, contents);
-  },
-  afterEach: function afterEach() {
-    view = null;
-  }
-});
-
-test('it smushes all the strings together', function (assert) {
-  assert.expect(1);
-  var expectedString = '<h1>BUY MY BUTTONS {{data.name}}</h1><button>BUTTON</button>';
-  assert.equal(expectedString, view.templateString);
-});
-
-test('it puts data into the strings on #html', function (assert) {
-  assert.expect(1);
-  var expectedString = '<div><h1>BUY MY BUTTONS fool</h1><button>BUTTON</button></div>';
-  var data = {
-    name: 'fool'
-  };
-  var output = view.html({ data: data });
-  assert.equal(expectedString, output);
-});
-
-},{"../../src/components/view":43}]},{},[47]);
+},{"../../src/components/product":42,"../../src/shopify-buy-ui":45,"../../src/ui":46}]},{},[47]);
