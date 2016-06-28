@@ -100,7 +100,7 @@ export default class Component {
       this.wrapper = this.createWrapper();
       this.wrapper.innerHTML = html;
     }
-    this.resize();
+    this.resizeAfterImgLoad();
   }
 
   createWrapper() {
@@ -111,6 +111,21 @@ export default class Component {
       this.appendToHost(wrapper);
     }
     return wrapper;
+  }
+
+  resizeAfterImgLoad() {
+    let promises = [...this.wrapper.querySelectorAll('img')].map(img => {
+      return new Promise((resolve) => {
+        img.addEventListener('load', (evt) => {
+          resolve(evt)
+        });
+      });
+    });
+    if (promises.length) {
+      Promise.all(promises).then(result => {
+        this.resize();
+      });
+    }
   }
 
   _on(eventName, selector, fn) {
