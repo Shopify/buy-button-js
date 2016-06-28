@@ -16,14 +16,14 @@ const iframeAttrs = {
 };
 
 export default class iframe {
-  constructor(parent, classes, rawStyles) {
+  constructor(parent, classes, customStyles) {
     this.el = document.createElement('iframe');
     this.el.scrolling = false;
     Object.keys(iframeStyles).forEach((key) => {
       this.el.style[key] = iframeStyles[key];
     });
     Object.keys(iframeAttrs).forEach((key) => this.el.setAttribute(key, iframeAttrs[key]));
-    this.rawStyles = rawStyles || {};
+    this.rawCustomStyles = customStyles || {};
     this.classes = classes;
     this.div = document.createElement('div');
     this.div.appendChild(this.el);
@@ -35,14 +35,14 @@ export default class iframe {
     return this.el.contentDocument;
   }
 
-  formattedStyles(styles, selectorFormat) {
-    return Object.keys(styles).map((key) => {
+  get customStyles() {
+    return Object.keys(this.rawCustomStyles).map((key) => {
       return {
-        selector: selectorFormat(key),
-        declarations: Object.keys(styles[key]).map((decKey) => {
+        selector: `.${this.classes[key]}`,
+        declarations: Object.keys(this.rawCustomStyles[key]).map((decKey) => {
           return {
             property: decKey,
-            value: styles[key][decKey]
+            value: this.rawCustomStyles[key][decKey]
           }
         })
       }
@@ -56,10 +56,6 @@ export default class iframe {
         declarations: rule.declarations
       }
     });
-  }
-
-  get customStyles() {
-    return this.formattedStyles(this.rawStyles, (key) => `.${this.classes[key]}`)
   }
 
   appendStyleTag() {
