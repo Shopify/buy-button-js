@@ -4,10 +4,10 @@ const defaults = {
     buttonTarget: 'checkout',
     contents: ['title', 'variantTitle', 'options', 'price', 'button'],
     templates: {
-      title: '<h2>{{data.title}}</h2>',
-      variantTitle: '<h3>{{data.selectedVariant.title}}</h3>',
-      options: '{{{data.childrenHtml}}}',
-      price: '<p><strong>{{data.selectedVariant.price}}</strong></p>',
+      title: '<h1 class="{{data.classes.title}}">{{data.title}}</h1>',
+      variantTitle: '<h2 class="{{data.classes.variantTitle}}">{{data.selectedVariant.title}}</h2>',
+      options: '<div class="{{data.classes.options}}">{{{data.childrenHtml}}}</div>',
+      price: '<h2 class="{{data.classes.price}}">{{data.selectedVariant.price}}</h2>',
       button: '<button class="{{data.classes.button}}" class="button">Add to cart</button>',
     },
     styles: {
@@ -16,7 +16,11 @@ const defaults = {
       }
     },
     classes: {
-      button: 'button'
+      button: 'btn buy-button btn',
+      title: 'product-title',
+      variantTitle: 'variant-title',
+      price: 'variant-price',
+      options: 'variant-selectors'
     }
   },
   option: {

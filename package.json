@@ -5,6 +5,7 @@
   "main": "build/shopify-buy-ui.js",
   "repository": "git@github.com:Shopify/shopify-buy-ui.git",
   "scripts": {
+    "styles": "node ./script/css2js",
     "start": "watchify src/shopify-buy-ui.js -t babelify --outfile build/shopify-buy-ui.js",
     "pretest": "eslint src/* | browserify test/test.js -t babelify --outfile test/build/test.js",
     "lint": "eslint src/*",
@@ -24,9 +25,11 @@
     "eslint-plugin-shopify": "^12.1.0",
     "qunit": "^0.9.1",
     "testem": "^1.9.1",
-    "watchify": "^3.7.0"
+    "watchify": "^3.7.0",
+    "css": "^2.1.0"
   },
   "dependencies": {
+    "css-to-js-object": "0.0.3",
     "deepmerge": "^0.2.10",
     "handlebars": "^4.0.5",
     "hogan.js": "^3.0.2",

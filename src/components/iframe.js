@@ -1,5 +1,6 @@
 import hogan from 'hogan.js';
 import stylesTemplate from '../templates/styles';
+import defaultStyles from '../../styles/main';
 
 const iframeStyles = {
   width: '100%',
@@ -34,24 +35,38 @@ export default class iframe {
     return this.el.contentDocument;
   }
 
-  get styles() {
-    return Object.keys(this.rawStyles).map((key) => {
+  formattedStyles(styles, selectorFormat) {
+    return Object.keys(styles).map((key) => {
       return {
-        selector: `.${this.classes[key]}`,
-        declarations: Object.keys(this.rawStyles[key]).map((styleKey) => {
+        selector: selectorFormat(key),
+        declarations: Object.keys(styles[key]).map((decKey) => {
           return {
-            name: styleKey,
-            value: this.rawStyles[key][styleKey]
+            property: decKey,
+            value: styles[key][decKey]
           }
         })
       }
     });
   }
 
+  get defaultStyles() {
+    return defaultStyles.map((rule) => {
+      return {
+        selector: rule.selectors.join(', '),
+        declarations: rule.declarations
+      }
+    });
+  }
+
+  get customStyles() {
+    return this.formattedStyles(this.rawStyles, (key) => `.${this.classes[key]}`)
+  }
+
   appendStyleTag() {
     let style = this.document.createElement('style');
     let compiled = hogan.compile(stylesTemplate)
-    style.innerHTML = compiled.render({selectors: this.styles});
+    const selectors = this.defaultStyles.concat(this.customStyles);
+    style.innerHTML = compiled.render({selectors: selectors});
     this.el.contentDocument.head.appendChild(style);
   }
 }
