@@ -4,6 +4,8 @@ import Product from '../../src/components/product';
 
 const { module, test } = QUnit;
 
+import sinon from 'sinon';
+
 const client = ShopifyBuy.buildClient({
   myShopifyDomain: 'buckets-o-stuff',
   apiKey: 123,
@@ -48,8 +50,11 @@ test('it finds script element with data attribute on #queryEntryNode', (assert) 
 
 test('it creates a component of appropriate type on #createComponent', (assert) => {
   assert.expect(1);
+  const stub = sinon.stub(Product.prototype, 'init');
+
   ui.createComponent('product',  productConfig);
   assert.ok(ui.components.product[0] instanceof Product);
+  stub.restore();
 });
 
 test('it returns type-specific properties on #componentProps', (assert) => {

@@ -17,7 +17,16 @@
       });
       client.createComponent('product', {
         id: 6640244678,
-        node: document.getElementById('test')
+        node: document.getElementById('test'),
+        options: {
+          product: {
+            styles: {
+              button: {
+                'background-color': 'blue'
+              }
+            }
+          }
+        }
       });
     </script>
   </body>

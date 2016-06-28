@@ -17,7 +17,7 @@ export default class Product extends Component {
 
   get events() {
     return Object.assign({}, this.options.events, {
-      [`change .${this.config.option.classes.select}`]: this.onVariantChange.bind(this),
+      [`change .${this.config.option.classes.select}`]: this.onOptionSelect.bind(this),
       [`click .${this.options.classes.button}`]: this.onButtonClick.bind(this)
     });
   }
@@ -40,15 +40,20 @@ export default class Product extends Component {
     window.open(this.model.selectedVariant.checkoutUrl(1), 'checkout', this.windowParams);
   }
 
-  onVariantChange(evt, product) {
+  onOptionSelect(evt) {
     const target = evt.target;
     const value = target.options[target.selectedIndex].value;
     const name = target.getAttribute('name');
-    const selectedOption = this.model.options.filter((option, index) => {
-      return option.name === name;
+    this.updateVariant(name, value);
+  }
+
+  updateVariant(optionName, value) {
+    const updatedOption = this.model.options.filter((option) => {
+      return option.name === optionName;
     })[0];
-    selectedOption.selected = value;
+    updatedOption.selected = value;
     this.render();
+    return updatedOption;
   }
 
   get childrenHtml() {

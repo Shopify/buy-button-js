@@ -9,7 +9,6 @@ export default class Cart extends Component {
 
   addItem(product) {
     this.model.addVariants({variant: product.selectedVariant, quantity: 1}).then((cart) => {
-      console.log(cart);
       this.model = cart;
       this.render();
     });
