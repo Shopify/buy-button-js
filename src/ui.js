@@ -53,8 +53,8 @@ export default class UI {
     config.node = config.node || queryEntryNode();
     const component = new this.componentTypes[type](config, this.componentProps(type));
     this.components[type].push(component);
-    component.init();
-
-    return component;
+    return component.init().then((data) => {
+      return component;
+    });
   }
 }
