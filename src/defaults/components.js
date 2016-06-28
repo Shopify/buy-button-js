@@ -1,7 +1,7 @@
 const defaults = {
   product: {
     iframe: true,
-    buttonTarget: 'cart',
+    buttonTarget: 'checkout',
     contents: ['title', 'variantTitle', 'options', 'price', 'button'],
     templates: {
       title: '<h2>{{data.title}}</h2>',
@@ -56,6 +56,21 @@ const defaults = {
       title: '<h3>{{data.title}}</h3>',
       price: '<strong>{{data.price}}</strong>'
     }
+  },
+  window: {
+    height: 600,
+    width: 600,
+    toolbar: 0,
+    scrollbars: 0,
+    status: 0,
+    resizable: 1,
+    left: 0,
+    top: 0,
+    center: 0,
+    createnew: 1,
+    location: 0,
+    menubar: 0,
+    onUnload: null
   }
 };
 

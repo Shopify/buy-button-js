@@ -52,10 +52,6 @@ export default class UI {
     this.components[type].push(component);
     component.init();
 
-    if (!this.components.cart.length) {
-      this.createComponent('cart', config);
-    }
-
     return component;
   }
 }

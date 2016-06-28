@@ -22,8 +22,22 @@ export default class Product extends Component {
     });
   }
 
+  get windowParams() {
+    return Object.keys(this.config.window).reduce((acc, key) => {
+      return acc + `${key}=${this.config.window[key]},`;
+    }, '');
+  }
+
   onButtonClick(evt, product) {
-    this.props.addToCart(product.model);
+    if (this.options.buttonTarget === 'cart') {
+      this.props.addToCart(product.model);
+    } else {
+      this.openCheckout();
+    }
+  }
+
+  openCheckout() {
+    window.open(this.model.selectedVariant.checkoutUrl(1), 'checkout', this.windowParams);
   }
 
   onVariantChange(evt, product) {
