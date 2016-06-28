@@ -9,7 +9,7 @@ const templates = {
 
 let template;
 
-module('Unit | View', {
+module('Unit | Template', {
   beforeEach() {
     template = new Template(templates, contents);
   },
@@ -20,8 +20,7 @@ module('Unit | View', {
 
 test('it puts data into the strings on #render', (assert) => {
   assert.expect(1);
-  template.id = 'test';
-  const expectedString = '<div id="test"><h1>BUY MY BUTTONS fool</h1><button>BUTTON</button></div>';
+  const expectedString = '<div><h1>BUY MY BUTTONS fool</h1><button>BUTTON</button></div>';
   const data = {
     name: 'fool'
   }

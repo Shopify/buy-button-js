@@ -17,7 +17,7 @@ const defaults = {
       }
     },
     classes: {
-      button: 'btn buy-button btn',
+      button: 'btn',
       title: 'product-title',
       variantTitle: 'variant-title',
       price: 'variant-price',

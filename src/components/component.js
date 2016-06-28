@@ -108,7 +108,7 @@ export default class Component {
     if (this.iframe) {
       this.document.body.appendChild(wrapper);
     } else {
-      this.appendToHost(wrapper);
+      this.node.appendChild(wrapper);
     }
     return wrapper;
   }

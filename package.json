@@ -21,12 +21,13 @@
     "babel-preset-shopify": "11.3.1-0",
     "babelify": "^7.3.0",
     "browserify": "^13.0.1",
+    "css": "^2.1.0",
     "eslint": "^2.13.1",
     "eslint-plugin-shopify": "^12.1.0",
     "qunit": "^0.9.1",
+    "sinon": "^1.17.4",
     "testem": "^1.9.1",
-    "watchify": "^3.7.0",
-    "css": "^2.1.0"
+    "watchify": "^3.7.0"
   },
   "dependencies": {
     "css-to-js-object": "0.0.3",
