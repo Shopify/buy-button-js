@@ -23,6 +23,7 @@ export default class Product extends Component {
       childrenHtml: this.childrenHtml,
       currentImage: this.currentImage,
       buttonClass: this.variantAvailable ? '' : this.classes.disabled,
+      hasVariants: this.hasVariants
     }
   }
 
@@ -50,6 +51,10 @@ export default class Product extends Component {
       data.classes = this.config.option.classes;
       return acc + this.childTemplate.render({ data: data });
     }, '');
+  }
+
+  get hasVariants() {
+    return this.model.variants.length > 1;
   }
 
   fetchData() {

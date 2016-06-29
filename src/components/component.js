@@ -103,6 +103,7 @@ export default class Component {
     Object.keys(localViewData).forEach((key) => {
       viewData[key] = localViewData[key];
     });
+    console.log(viewData);
     const html = this.template.render({data: viewData});
     if (this.wrapper && this.wrapper.innerHTML.length) {
       const div = this.document.createElement('div');
