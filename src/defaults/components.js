@@ -4,7 +4,7 @@ const defaults = {
     buttonTarget: 'checkout',
     contents: ['img', 'title', 'variantTitle', 'options', 'price', 'button'],
     templates: {
-      img: '<img class="{{data.classes.img}}" src="{{data.selectedVariantImage.src}}" />',
+      img: '<img width="300" class="{{data.classes.img}}" src="{{data.selectedVariantImage.src}}" />',
       title: '<h1 class="{{data.classes.title}}">{{data.title}}</h1>',
       variantTitle: '<h2 class="{{data.classes.variantTitle}}">{{data.selectedVariant.title}}</h2>',
       options: '<div class="{{data.classes.options}}">{{{data.childrenHtml}}}</div>',
