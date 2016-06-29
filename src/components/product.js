@@ -1,18 +1,29 @@
 import Component from './component';
 import Template from './template';
 
+let cachedImage = null;
+
 export default class Product extends Component {
   constructor(config, props) {
     super(config, props, 'product');
     this.childTemplate = new Template(this.config.option.templates, this.config.option.contents);
   }
 
-  fetchData() {
-    return this.props.client.fetchProduct(this.id);
+  get currentImage() {
+    if (!cachedImage) {
+      cachedImage = this.model.selectedVariantImage;
+    }
+
+    return cachedImage;
   }
 
-  render() {
-    super.render.call(this, this.childrenHtml);
+  get viewData() {
+    return {
+      buttonText: this.variantAvailable ? this.text.button : 'Unavailable',
+      childrenHtml: this.childrenHtml,
+      currentImage: this.currentImage,
+      buttonClass: this.variantAvailable ? '' : this.classes.disabled,
+    }
   }
 
   get events() {
@@ -28,16 +39,33 @@ export default class Product extends Component {
     }, '');
   }
 
+  get variantAvailable() {
+    return this.model.selectedVariant;
+  }
+
+  get childrenHtml() {
+    return this.model.options.reduce((acc, option) => {
+      const data = option;
+      data.decoratedValues = this.decorateValues(option);
+      data.classes = this.config.option.classes;
+      return acc + this.childTemplate.render({ data: data });
+    }, '');
+  }
+
+  fetchData() {
+    return this.props.client.fetchProduct(this.id);
+  }
+
+  render() {
+    super.render.call(this);
+  }
+
   onButtonClick(evt, product) {
     if (this.options.buttonTarget === 'cart') {
       this.props.addToCart(product.model);
     } else {
       this.openCheckout();
     }
-  }
-
-  openCheckout() {
-    window.open(this.model.selectedVariant.checkoutUrl(1), 'checkout', this.windowParams);
   }
 
   onOptionSelect(evt) {
@@ -47,11 +75,18 @@ export default class Product extends Component {
     this.updateVariant(name, value);
   }
 
+  openCheckout() {
+    window.open(this.model.selectedVariant.checkoutUrl(1), 'checkout', this.windowParams);
+  }
+
   updateVariant(optionName, value) {
     const updatedOption = this.model.options.filter((option) => {
       return option.name === optionName;
     })[0];
     updatedOption.selected = value;
+    if (this.variantAvailable) {
+      cachedImage = this.model.selectedVariantImage;
+    }
     this.render();
     return updatedOption;
   }
@@ -63,14 +98,5 @@ export default class Product extends Component {
         selected: value === option.selected
       }
     });
-  }
-
-  get childrenHtml() {
-    return this.model.options.reduce((acc, option) => {
-      const data = option;
-      data.decoratedValues = this.decorateValues(option);
-      data.classes = this.config.option.classes;
-      return acc + this.childTemplate.render({ data: data });
-    }, '');
   }
 }

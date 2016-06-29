@@ -41,6 +41,10 @@ export default class Component {
     return this.options.classes;
   }
 
+  get text() {
+    return this.options.text;
+  }
+
   get document() {
     return this.iframe ? this.iframe.document : window.document;
   }
@@ -49,6 +53,10 @@ export default class Component {
     return Object.assign({}, this.options.events, {
 
     });
+  }
+
+  get viewData() {
+    return {};
   }
 
   delegateEvents() {
@@ -88,10 +96,13 @@ export default class Component {
     this.delegateEvents();
   }
 
-  render(children = '') {
+  render() {
     const viewData = this.model;
-    viewData.childrenHtml = children;
+    const localViewData = Object.assign({}, this.viewData);
     viewData.classes = this.classes;
+    Object.keys(localViewData).forEach((key) => {
+      viewData[key] = localViewData[key];
+    });
     const html = this.template.render({data: viewData});
     if (this.wrapper && this.wrapper.innerHTML.length) {
       const div = this.document.createElement('div');
