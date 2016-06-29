@@ -56,9 +56,19 @@ export default class Product extends Component {
     return updatedOption;
   }
 
+  decorateValues(option) {
+    return option.values.map((value) => {
+      return {
+        name: value,
+        selected: value === option.selected
+      }
+    });
+  }
+
   get childrenHtml() {
     return this.model.options.reduce((acc, option) => {
       const data = option;
+      data.decoratedValues = this.decorateValues(option);
       data.classes = this.config.option.classes;
       return acc + this.childTemplate.render({ data: data });
     }, '');

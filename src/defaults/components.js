@@ -27,9 +27,9 @@ const defaults = {
   option: {
     templates: {
       option: '<select class={{data.classes.select}} name={{data.name}}>' +
-                '{{#data.values}}' +
-                    '<option value={{.}}>{{.}}</option>' +
-                  '{{/data.values}}' +
+                '{{#data.decoratedValues}}' +
+                  '<option {{#selected}}selected{{/selected}} value={{name}}>{{name}}</option>' +
+                '{{/data.decoratedValues}}' +
               '</select>'
     },
     contents: ['option'],
