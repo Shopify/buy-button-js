@@ -13,4 +13,4 @@ function csstojs(str, options) {
 var input = fs.readFileSync('src/styles/main.css', 'utf-8');
 var js = csstojs(input);
 
-fs.writeFileSync('./styles/main.js', 'export default ' + JSON.stringify(js));
+fs.writeFileSync('src/styles/main.js', 'export default ' + JSON.stringify(js));

@@ -8,5 +8,4 @@ ShopifyBuy.UI = {
   },
 };
 
-window.ShopifyBuy = ShopifyBuy;
 export default ShopifyBuy;
