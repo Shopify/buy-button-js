@@ -1,6 +1,6 @@
 import hogan from 'hogan.js';
 import stylesTemplate from '../templates/styles';
-import defaultStyles from '../../styles/main';
+import defaultStyles from '../styles/main';
 
 const iframeStyles = {
   width: '100%',
