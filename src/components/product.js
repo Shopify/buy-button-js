@@ -27,8 +27,8 @@ export default class Product extends Component {
     }
   }
 
-  get events() {
-    return Object.assign({}, this.options.events, {
+  get DOMEvents() {
+    return Object.assign({}, this.options.DOMEvents, {
       [`change .${this.config.option.classes.select}`]: this.onOptionSelect.bind(this),
       [`click .${this.options.classes.button}`]: this.onButtonClick.bind(this)
     });
