@@ -1,11 +1,29 @@
 import morphdom from 'morphdom';
 import merge from 'deepmerge';
+import isFunction from '../utils/is-function';
 import componentDefaults from '../defaults/components';
 import Iframe from './iframe';
 import Template from './template';
 
+function logEvent(event) {
+  console.log(`EVENT: ${event}`);
+}
+
+function methodStrings(method) {
+  const capitalized = method.name.charAt(0).toUpperCase() + method.name.slice(1)
+  return {
+    before: `before${capitalized}`,
+    after: `after${capitalized}`
+  }
+}
+
 export default class Component {
   constructor(config, props, type) {
+    this.delegateEvents = this.wrapMethod(this.delegateEvents);
+    this.render = this.wrapMethod(this.render);
+    this.initWithData = this.wrapMethod(this.initWithData);
+    this.resize = this.wrapMethod(this.resize);
+    this.updateConfig = this.wrapMethod(this.updateConfig);
     this.id = config.id;
     this.node = config.node;
     this.type = type;
@@ -50,7 +68,11 @@ export default class Component {
   }
 
   get events() {
-    return Object.assign({}, this.options.events, {
+    return this.options.events || {};
+  }
+
+  get DOMEvents() {
+    return Object.assign({}, this.options.DOMEvents, {
 
     });
   }
@@ -60,10 +82,10 @@ export default class Component {
   }
 
   delegateEvents() {
-    Object.keys(this.events).forEach((key) => {
+    Object.keys(this.DOMEvents).forEach((key) => {
       const [eventName, selector] = key.split(' ');
       this._on(eventName, selector, (evt) => {
-        this.events[key].call(this, evt, this);
+        this.DOMEvents[key].call(this, evt, this);
       });
     });
   }
@@ -81,10 +103,16 @@ export default class Component {
   }
 
   init() {
+    this._userEvent('beforeInit');
     return this.fetchData().then((model) => {
       this.model = model;
       this.render();
       this.delegateEvents();
+      if (isFunction(this.events['afterInit'])) {
+        this._logEvent('afterInit');
+        this.events['afterInit'].call(this, this);
+      }
+      this._userEvent('afterInit');
       return model;
     });
   }
@@ -103,7 +131,6 @@ export default class Component {
     Object.keys(localViewData).forEach((key) => {
       viewData[key] = localViewData[key];
     });
-    console.log(viewData);
     const html = this.template.render({data: viewData});
     if (this.wrapper && this.wrapper.innerHTML.length) {
       const div = this.document.createElement('div');
@@ -156,5 +183,21 @@ export default class Component {
         return el;
       });
     });
+  }
+
+  wrapMethod(method) {
+    return function () {
+      const {before, after} = methodStrings(method);
+      this._userEvent(before);
+      method.call(this, arguments);
+      this._userEvent(after);
+    }
+  }
+
+  _userEvent(methodName) {
+    logEvent(methodName);
+    if (isFunction(this.events[methodName])) {
+      this.events[methodName].call(this, this);
+    }
   }
 }
