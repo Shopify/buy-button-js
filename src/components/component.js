@@ -5,6 +5,8 @@ import componentDefaults from '../defaults/components';
 import Iframe from './iframe';
 import Template from './template';
 
+const delegateEventSplitter = /^(\S+)\s*(.*)$/;
+
 function logEvent(event) {
   console.log(`EVENT: ${event}`);
 }
@@ -83,7 +85,7 @@ export default class Component {
 
   delegateEvents() {
     Object.keys(this.DOMEvents).forEach((key) => {
-      const [eventName, selector] = key.split(' ');
+      const [_, eventName, selector] = key.match(delegateEventSplitter)
       this._on(eventName, selector, (evt) => {
         this.DOMEvents[key].call(this, evt, this);
       });
