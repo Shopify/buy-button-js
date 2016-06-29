@@ -83,6 +83,7 @@ export default class Component {
 
   updateConfig(config) {
     this.config = merge(componentDefaults, config.options);
+    this.iframe.updateStyles(this.styles);
     this.render();
     this.delegateEvents();
   }

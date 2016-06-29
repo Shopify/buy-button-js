@@ -7,6 +7,7 @@
   "scripts": {
     "styles": "node ./script/css2js",
     "start": "watchify src/shopify-buy-ui.js -t babelify --outfile build/shopify-buy-ui.js",
+    "app_dev": "browserify src/shopify-buy-ui.js -t babelify --outfile ../buy-button/app/assets/javascripts/greenfield/vendor/shopify-buy-ui.js",
     "pretest": "eslint src/* | browserify test/test.js -t babelify --outfile test/build/test.js",
     "lint": "eslint src/*",
     "test": "testem ci",
