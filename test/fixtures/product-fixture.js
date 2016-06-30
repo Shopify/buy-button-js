@@ -1,10 +1,16 @@
 const testProduct = {
   title: 'test',
   id: 123,
+  selectedVariant: {
+    id: 12345
+  },
+  selectedVariantImage: {
+    img: 'http://test.com/test.jpg'
+  },
   options: [
     {
       name: 'Print',
-      selected: 'loth',
+      selected: 'sloth',
       values: [
         'sloth',
         'shark'

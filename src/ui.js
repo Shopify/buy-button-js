@@ -19,9 +19,6 @@ export default class UI {
     };
   }
 
-  loadStyleSheet() {
-  }
-
   queryEntryNode() {
     this.entry = this.entry || window.document.querySelectorAll(`script[${DATA_ATTRIBUTE}]`)[0];
     this.entry.removeAttribute(DATA_ATTRIBUTE);

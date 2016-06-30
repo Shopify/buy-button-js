@@ -110,10 +110,6 @@ export default class Component {
       this.model = model;
       this.render();
       this.delegateEvents();
-      if (isFunction(this.events['afterInit'])) {
-        this._logEvent('afterInit');
-        this.events['afterInit'].call(this, this);
-      }
       this._userEvent('afterInit');
       return model;
     });
@@ -121,7 +117,9 @@ export default class Component {
 
   updateConfig(config) {
     this.config = merge(componentDefaults, config.options);
-    this.iframe.updateStyles(this.styles);
+    if (this.iframe) {
+      this.iframe.updateStyles(this.styles);
+    }
     this.render();
     this.delegateEvents();
   }
@@ -191,7 +189,7 @@ export default class Component {
     return function () {
       const {before, after} = methodStrings(method);
       this._userEvent(before);
-      method.call(this, arguments);
+      method.apply(this, arguments);
       this._userEvent(after);
     }
   }
