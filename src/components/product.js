@@ -49,7 +49,6 @@ export default class Product extends Component {
   get childrenHtml() {
     return this.model.options.reduce((acc, option) => {
       const data = option;
-      data.decoratedValues = this.decorateValues(option);
       data.classes = this.config.option.classes;
       return acc + this.childTemplate.render({ data: data });
     }, '');
@@ -98,11 +97,58 @@ export default class Product extends Component {
     return updatedOption;
   }
 
-  decorateValues(option) {
-    return option.values.map((value) => {
+  get variantArray() {
+    delete this.variant_Array;
+    return this.variant_Array = this.model.variants.map((variant) => {
+      let betterVariant =  {
+        id: variant.id,
+        optionValues: {}
+      }
+      variant.optionValues.forEach((optionValue) => {
+        betterVariant.optionValues[optionValue.name] = optionValue.value;
+      });
+
+      return betterVariant;
+    });
+  }
+
+  get selections() {
+    const selections = {};
+
+    this.model.selections.forEach((selection, index) => {
+      const option = this.model.options[index]
+      selections[option.name] = selection;
+    });
+
+    return selections;
+  }
+
+  optionValueCanBeSelected(selections, name, value) {
+    const variants = this.variantArray;
+    selections[name] = value;
+
+    const satisfactoryVariants = variants.filter((variant) => {
+      const matchingOptions = Object.keys(selections).filter((key) => {
+        return variant.optionValues[key] === selections[key];
+      });
+      return matchingOptions.length === Object.keys(selections).length;
+    });
+
+    return satisfactoryVariants.length;
+  }
+
+  get decoratedOptions() {
+    const selections = this.selections;
+    return this.model.options.map((option) => {
       return {
-        name: value,
-        selected: value === option.selected
+        name: option.name,
+        values: option.value.map((value) => {
+          return {
+            name: value,
+            selected: value === option.selected,
+            disabled: !this.optionValueCanBeSelected(selections, option.name, value)
+          }
+        })
       }
     });
   }
