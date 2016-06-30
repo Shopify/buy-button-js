@@ -2,6 +2,7 @@ import ShopifyBuy from '../../src/shopify-buy-ui';
 import Component from '../../src/components/component';
 import Iframe from '../../src/components/iframe';
 import Template from '../../src/components/template';
+
 import componentDefaults from '../../src/defaults/components';
 
 const { module, test } = QUnit;
@@ -179,4 +180,25 @@ test('adds event listeners to nodes on #delegateEvents', (assert) => {
   component.render();
   component.delegateEvents();
   component.document.getElementById('button').click();
+});
+
+test('it returns a method wrapped by user methods on #wrapMethod', (assert) => {
+  const eventConfig = config;
+  eventConfig.events = {
+    'beforeTestMethod': function (c) {
+      assert.ok(c instanceof Component);
+    },
+    'afterTestMethod': function (c) {
+      assert.ok(c instanceof Component);
+    },
+  }
+  const eventsComponent = new Component(eventConfig, {client: {}}, 'product');
+
+  eventsComponent.testMethod = function (string) {
+    assert.equal(string, 'an argument');
+  }
+
+  const wrapped = eventsComponent.wrapMethod(eventsComponent.testMethod);
+
+  wrapped.call(eventsComponent, 'an argument');
 });

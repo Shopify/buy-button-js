@@ -17,7 +17,7 @@ export default class Product extends Component {
     return cachedImage;
   }
 
-  get viewData() {
+  viewData() {
     return {
       buttonText: this.variantAvailable ? this.text.button : 'Unavailable',
       childrenHtml: this.childrenHtml,
