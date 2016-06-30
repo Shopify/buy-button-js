@@ -15,6 +15,21 @@ const iframeAttrs = {
   frameBorder: '0'
 };
 
+function isPseudoSelector(key) {
+  return key === 'focus' || key === 'hover';
+}
+
+function ruleDeclarations(rule) {
+  return Object.keys(rule).filter((key) => {
+    return !isPseudoSelector(key);
+  }).map((key) => {
+    return {
+      property: key,
+      value: rule[key]
+    }
+  })
+}
+
 export default class iframe {
   constructor(parent, classes, customStyles) {
     this.el = document.createElement('iframe');
@@ -23,7 +38,7 @@ export default class iframe {
       this.el.style[key] = iframeStyles[key];
     });
     Object.keys(iframeAttrs).forEach((key) => this.el.setAttribute(key, iframeAttrs[key]));
-    this.rawCustomStyles = customStyles || {};
+    this.customStylesHash = customStyles || {};
     this.classes = classes;
     this.div = document.createElement('div');
     this.div.appendChild(this.el);
@@ -37,17 +52,28 @@ export default class iframe {
   }
 
   get customStyles() {
-    return Object.keys(this.rawCustomStyles).map((key) => {
-      return {
-        selector: `.${this.classes[key]}`,
-        declarations: Object.keys(this.rawCustomStyles[key]).map((decKey) => {
-          return {
-            property: decKey,
-            value: this.rawCustomStyles[key][decKey]
-          }
-        })
-      }
+    let customStyles = [];
+
+    Object.keys(this.customStylesHash).forEach((key) => {
+      const styleGroup = [];
+
+      Object.keys(this.customStylesHash[key]).forEach((decKey) => {
+        if (isPseudoSelector(decKey)) {
+          styleGroup.push({
+            selector: `.${this.classes[key]}:${decKey}`,
+            declarations: ruleDeclarations(this.customStylesHash[key][decKey])
+          });
+        } else {
+          styleGroup.push({
+            selector: `.${this.classes[key]}`,
+            declarations: ruleDeclarations(this.customStylesHash[key]),
+          });
+        }
+      });
+      customStyles = customStyles.concat(styleGroup);
     });
+
+    return customStyles;
   }
 
   get defaultStyles() {
@@ -60,7 +86,7 @@ export default class iframe {
   }
 
   updateStyles(customStyles) {
-    this.rawCustomStyles = customStyles;
+    this.customStylesHash = customStyles;
     let compiled = hogan.compile(stylesTemplate)
     const selectors = this.defaultStyles.concat(this.customStyles);
     this.styleTag.innerHTML = compiled.render({selectors: selectors});
