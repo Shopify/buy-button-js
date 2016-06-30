@@ -79,3 +79,65 @@ test('it returns an html string on #childrenHtml', (assert) => {
   product.initWithData(testProduct);
   assert.ok(product.childrenHtml.match(/\<select/));
 });
+
+test('it returns true on #variantAvailable if variant exists for selected options', (assert) => {
+  product.initWithData(testProduct);
+  product.model.selectedVariant = {id: 123};
+  assert.ok(product.variantAvailable);
+});
+
+test('it returns false on #variantAvailable if variant does not exist for selected options', (assert) => {
+  product.initWithData(testProduct);
+  product.model.selectedVariant = null;
+  assert.notOk(product.variantAvailable);
+});
+
+test('it returns true on #hasVariants if multiple variants', (assert) => {
+  product.initWithData(testProduct);
+  product.model.variants = [{id: 123}, {id: 234}];
+  assert.ok(product.hasVariants);
+});
+
+test('it returns false on #hasVariants if single variant', (assert) => {
+  product.initWithData(testProduct);
+  product.model.variants = [{id: 123}];
+  assert.notOk(product.hasVariants);
+});
+
+test('it returns selected image on #currentImage if variant exists', (assert) => {
+  product.initWithData(testProduct);
+  assert.equal(product.currentImage.img, 'http://test.com/test.jpg');
+});
+
+test('it returns cached image on #currentImage if variant does not exist', (assert) => {
+  product.initWithData(testProduct);
+  product.model.selectedVariant = null;
+  product.model.selectedVariantImage = null;
+  assert.equal(product.currentImage.img, 'http://test.com/test.jpg');
+});
+
+test('it transforms array of strings to array of objects on #decorateValues', (assert) => {
+  product.initWithData(testProduct);
+  const array = product.decorateValues(testProduct.options[0])
+  const expectedArray = [
+    {
+      name: 'sloth',
+      selected: true
+    },
+    {
+      name: 'shark',
+      selected: false
+    }
+  ]
+
+  assert.deepEqual(array, expectedArray);
+});
+
+test('it returns supplemental view info on #viewData', (assert) => {
+  product.initWithData(testProduct);
+  const viewData = product.viewData;
+  assert.equal(viewData.buttonText, 'Add to cart');
+  assert.ok(viewData.childrenHtml);
+  assert.equal(viewData.currentImage.img, 'http://test.com/test.jpg');
+  assert.ok(viewData.hasVariants);
+});
