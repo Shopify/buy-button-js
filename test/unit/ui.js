@@ -49,12 +49,17 @@ test('it finds script element with data attribute on #queryEntryNode', (assert) 
 
 
 test('it creates a component of appropriate type on #createComponent', (assert) => {
+  const done = assert.async();
   assert.expect(1);
-  const stub = sinon.stub(Product.prototype, 'init');
+  const stub = sinon.stub(Product.prototype, 'init', () => {
+    return Promise.resolve()
+  });
 
-  ui.createComponent('product',  productConfig);
-  assert.ok(ui.components.product[0] instanceof Product);
-  stub.restore();
+  ui.createComponent('product',  productConfig).then((component) => {
+    assert.ok(ui.components.product[0] instanceof Product);
+    stub.restore();
+    done();
+  });
 });
 
 test('it returns type-specific properties on #componentProps', (assert) => {

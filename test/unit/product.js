@@ -55,9 +55,9 @@ test('it calls super on #render', (assert) => {
   stub.restore();
 });
 
-test('it returns event object on #events', (assert) => {
-  assert.ok(product.events['change .select'] instanceof Function)
-  assert.ok(product.events['click .btn'] instanceof Function)
+test('it returns event object on #DOMEvents', (assert) => {
+  assert.ok(product.DOMEvents['change .select'] instanceof Function)
+  assert.ok(product.DOMEvents['click .btn'] instanceof Function)
 });
 
 test('it puts together a big param string on #windowParams', (assert) => {
@@ -77,6 +77,5 @@ test('it updates selected variant on #updateVariant', (assert) => {
 
 test('it returns an html string on #childrenHtml', (assert) => {
   product.initWithData(testProduct);
-  const resultHtml = '<div><select class=select name=Print><option value=sloth>sloth</option><option value=shark>shark</option></select></div><div><select class=select name=Size><option value=small>small</option><option value=large>large</option></select></div>';
-  assert.equal(product.childrenHtml, resultHtml);
+  assert.ok(product.childrenHtml.match(/\<select/));
 });

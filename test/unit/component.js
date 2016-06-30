@@ -165,16 +165,6 @@ test('it updates innerHTML of wrapper on second #render', (assert) => {
   assert.equal(component.wrapper.innerHTML, testHTML);
 });
 
-test('it passes through child string on #render', (assert) => {
-  assert.expect(1);
-  const testHTML = '<h1>TEST</h1>';
-  component.template.render = function (data) {
-    assert.equal(data.data.childrenHtml, 'children');
-    return testHTML;
-  }
-  component.render('children');
-});
-
 test('adds event listeners to nodes on #delegateEvents', (assert) => {
   assert.expect(2);
   function clickFakeButton(evt, comp) {
@@ -182,7 +172,7 @@ test('adds event listeners to nodes on #delegateEvents', (assert) => {
     assert.ok(comp instanceof Component);
   }
 
-  component.options.events = {
+  component.options.DOMEvents = {
     'click .button': clickFakeButton
   }
 
