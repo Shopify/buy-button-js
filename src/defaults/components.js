@@ -1,16 +1,14 @@
+import productTemplates from '../templates/product';
+import optionTemplates from '../templates/option';
+import cartTemplates from '../templates/cart';
+import lineItemTemplates from '../templates/lineItem';
+
 const defaults = {
   product: {
     iframe: true,
     buttonTarget: 'checkout',
     contents: ['img', 'title', 'variantTitle', 'options', 'price', 'button'],
-    templates: {
-      img: '<img width="300" class="{{data.classes.img}}" src="{{data.currentImage.src}}" />',
-      title: '<h1 class="{{data.classes.title}}">{{data.title}}</h1>',
-      variantTitle: '{{#data.hasVariants}}<h2 class="{{data.classes.variantTitle}}">{{data.selectedVariant.title}}</h2>{{/data.hasVariants}}',
-      options: '{{#data.hasVariants}}<div class="{{data.classes.options}}">{{{data.childrenHtml}}}</div>{{/data.hasVariants}}',
-      price: '<h2 class="{{data.classes.price}}">{{data.selectedVariant.price}}</h2>',
-      button: '<button class="{{data.classes.button}} {{data.buttonClass}}">{{data.buttonText}}</button>',
-    },
+    templates: productTemplates,
     styles: {
       button: {
         'background-color': 'red'
@@ -29,13 +27,7 @@ const defaults = {
     }
   },
   option: {
-    templates: {
-      option: '<select class={{data.classes.select}} name={{data.name}}>' +
-                '{{#data.decoratedValues}}' +
-                  '<option {{#selected}}selected{{/selected}} value={{name}}>{{name}}</option>' +
-                '{{/data.decoratedValues}}' +
-              '</select>'
-    },
+    templates: optionTemplates,
     contents: ['option'],
     classes: {
       select: 'select'
@@ -44,12 +36,7 @@ const defaults = {
   cart: {
     iframe: true,
     contents: ['title', 'lineItems', 'total', 'checkout'],
-    templates: {
-      title: '<h2>{{data.title}}</h2>',
-      lineItems: '<div class="line-items">{{{data.childrenHtml}}}</div>',
-      total: '<p><strong>{{data.total}}</strong></p>',
-      checkout: '<button>Checkout</button>'
-    },
+    templates: cartTemplates,
     styles: {
       button: {
         'background-color': 'red'
@@ -61,10 +48,7 @@ const defaults = {
   },
   lineItem: {
     contents: ['title', 'price'],
-    templates: {
-      title: '<h3>{{data.title}}</h3>',
-      price: '<strong>{{data.price}}</strong>'
-    }
+    templates: lineItemTemplates
   },
   window: {
     height: 600,

@@ -1,6 +1,6 @@
 import sinon from 'sinon';
 const { module, test } = QUnit;
-import Iframe from '../../src/components/iframe';
+import Iframe from '../../src/iframe';
 
 let iframe;
 const parent = document.getElementById('qunit-fixture');
