@@ -1,8 +1,8 @@
 import sinon from 'sinon';
 import componentDefaults from '../../src/defaults/components';
 import Product from '../../src/components/product';
-import Template from '../../src/components/template';
-import Component from '../../src/components/component';
+import Template from '../../src/template';
+import Component from '../../src/component';
 import testProduct from '../fixtures/product-fixture';
 import hogan from 'hogan.js';
 

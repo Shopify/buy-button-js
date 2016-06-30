@@ -1,4 +1,4 @@
-import Template from '../../src/components/template';
+import Template from '../../src/template';
 
 const { module, test } = QUnit;
 const contents = ['title', 'button'];

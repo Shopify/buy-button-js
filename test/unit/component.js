@@ -1,7 +1,7 @@
 import ShopifyBuy from '../../src/shopify-buy-ui';
-import Component from '../../src/components/component';
-import Iframe from '../../src/components/iframe';
-import Template from '../../src/components/template';
+import Component from '../../src/component';
+import Iframe from '../../src/iframe';
+import Template from '../../src/template';
 
 import componentDefaults from '../../src/defaults/components';
 

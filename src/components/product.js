@@ -1,5 +1,5 @@
-import Component from './component';
-import Template from './template';
+import Component from '../component';
+import Template from '../template';
 
 let cachedImage = null;
 

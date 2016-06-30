@@ -1,10 +1,9 @@
 import morphdom from 'morphdom';
 import merge from 'deepmerge';
-import isFunction from '../utils/is-function';
-import componentDefaults from '../defaults/components';
+import isFunction from './utils/is-function';
+import componentDefaults from './defaults/components';
 import Iframe from './iframe';
 import Template from './template';
-
 const delegateEventSplitter = /^(\S+)\s*(.*)$/;
 
 function logEvent(event) {
