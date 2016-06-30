@@ -28,6 +28,7 @@ export default class Component {
     this.updateConfig = this.wrapMethod(this.updateConfig);
     this.id = config.id;
     this.node = config.node;
+    this.debug = config.debug;
     this.type = type;
     this.config = merge(componentDefaults, config.options || {});
     this.props = props;
@@ -79,7 +80,7 @@ export default class Component {
     });
   }
 
-  get viewData() {
+  viewData() {
     return {};
   }
 
@@ -126,7 +127,7 @@ export default class Component {
 
   render() {
     const viewData = this.model;
-    const localViewData = Object.assign({}, this.viewData);
+    const localViewData = Object.assign({}, this.viewData());
     viewData.classes = this.classes;
     Object.keys(localViewData).forEach((key) => {
       viewData[key] = localViewData[key];
@@ -168,6 +169,24 @@ export default class Component {
     }
   }
 
+  wrapMethod(method) {
+    return function() {
+      const {before, after} = methodStrings(method);
+      this._userEvent(before);
+      method.apply(this, arguments);
+      this._userEvent(after);
+    }
+  }
+
+  _userEvent(methodName) {
+    if (this.debug) {
+      logEvent(methodName);
+    }
+    if (isFunction(this.events[methodName])) {
+      this.events[methodName].call(this, this);
+    }
+  }
+
   _on(eventName, selector, fn) {
     this.wrapper.addEventListener(eventName, (evt) => {
       const possibleTargets = this.wrapper.querySelectorAll(selector);
@@ -185,19 +204,4 @@ export default class Component {
     });
   }
 
-  wrapMethod(method) {
-    return function () {
-      const {before, after} = methodStrings(method);
-      this._userEvent(before);
-      method.apply(this, arguments);
-      this._userEvent(after);
-    }
-  }
-
-  _userEvent(methodName) {
-    logEvent(methodName);
-    if (isFunction(this.events[methodName])) {
-      this.events[methodName].call(this, this);
-    }
-  }
 }
