@@ -11,7 +11,10 @@ module('Unit | Iframe', {
       button: 'btn'
     }, {
       button: {
-        'color': 'red'
+        'color': 'red',
+        'hover': {
+          'color': 'green'
+        }
       }
     });
   },
@@ -33,6 +36,14 @@ test('it returns custom styles object on #customStyles', (assert) => {
       {
         property: 'color',
         value: 'red'
+      }
+    ]
+  }, {
+    selector: '.btn:hover',
+    declarations: [
+      {
+        property: 'color',
+        value: 'green'
       }
     ]
   }]
