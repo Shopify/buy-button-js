@@ -138,7 +138,7 @@ test('it transforms array of strings to array of objects on #decorateValues', (a
 
 test('it returns supplemental view info on #viewData', (assert) => {
   product.initWithData(testProductCopy);
-  const viewData = product.viewData();
+  const viewData = product.viewData;
   assert.equal(viewData.buttonText, 'Add to cart');
   assert.ok(viewData.childrenHtml);
   assert.equal(viewData.currentImage.img, 'http://test.com/test.jpg');
