@@ -125,13 +125,7 @@ export default class Component {
   }
 
   render() {
-    const viewData = this.model;
-    const localViewData = Object.assign({}, this.viewData());
-    viewData.classes = this.classes;
-    Object.keys(localViewData).forEach((key) => {
-      viewData[key] = localViewData[key];
-    });
-    const html = this.template.render({data: viewData});
+    const html = this.template.render({data: this.viewData});
     if (this.wrapper && this.wrapper.innerHTML.length) {
       const div = this.document.createElement('div');
       div.innerHTML = html;

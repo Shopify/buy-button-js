@@ -1,5 +1,6 @@
 import Component from '../component';
 import Template from '../template';
+import extend from '../utils/extend';
 
 let cachedImage = null;
 
@@ -17,14 +18,15 @@ export default class Product extends Component {
     return cachedImage;
   }
 
-  viewData() {
-    return {
+  get viewData() {
+    return extend(this.model, {
       buttonText: this.variantAvailable ? this.text.button : 'Unavailable',
       childrenHtml: this.childrenHtml,
       currentImage: this.currentImage,
       buttonClass: this.variantAvailable ? '' : this.classes.disabled,
-      hasVariants: this.hasVariants
-    }
+      hasVariants: this.hasVariants,
+      classes: this.classes
+    })
   }
 
   get DOMEvents() {
