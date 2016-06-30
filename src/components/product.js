@@ -98,11 +98,65 @@ export default class Product extends Component {
     return updatedOption;
   }
 
+  get selectedOptions() {
+    const selected = {};
+    this.model.options.forEach((option) => {
+      selected[option.name] = option.selected;
+    });
+    return selected;
+  }
+
+  get variantArray() {
+    delete this.variant_Array;
+    return this.variant_Array = this.model.variants.map((variant) => {
+      let betterVar =  {
+        id: variant.id,
+        optionValues: {}
+      }
+      variant.optionValues.forEach((optionValue) => {
+        betterVar.optionValues[optionValue.name] = optionValue.value;
+      });
+
+      return betterVar;
+    });
+  }
+
+  get selections() {
+    const selections = {};
+
+    this.model.selections.forEach((selection, index) => {
+      const option = this.model.options[index]
+      selections[option.name] = selection;
+    });
+
+    return selections;
+  }
+
+  optionCanBeSelected(name, value) {
+    const variants = this.variantArray;
+
+    const selections = Object.assign({}, this.selections, {
+      [name]: value
+    });
+
+    const satisfactoryVariants = variants.filter((variant) => {
+      const matchingOptions = Object.keys(selections).filter((key) => {
+        return variant.optionValues[key] === selections[key];
+      });
+      return matchingOptions.length === Object.keys(selections).length;
+    });
+
+    return satisfactoryVariants.length;
+  }
+
   decorateValues(option) {
+
     return option.values.map((value) => {
+
       return {
         name: value,
-        selected: value === option.selected
+        selected: value === option.selected,
+        disabled: !this.optionCanBeSelected(option.name, value)
       }
     });
   }
