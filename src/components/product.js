@@ -49,7 +49,6 @@ export default class Product extends Component {
   get childrenHtml() {
     return this.model.options.reduce((acc, option) => {
       const data = option;
-      data.decoratedValues = this.decorateValues(option);
       data.classes = this.config.option.classes;
       return acc + this.childTemplate.render({ data: data });
     }, '');
@@ -98,26 +97,18 @@ export default class Product extends Component {
     return updatedOption;
   }
 
-  get selectedOptions() {
-    const selected = {};
-    this.model.options.forEach((option) => {
-      selected[option.name] = option.selected;
-    });
-    return selected;
-  }
-
   get variantArray() {
     delete this.variant_Array;
     return this.variant_Array = this.model.variants.map((variant) => {
-      let betterVar =  {
+      let betterVariant =  {
         id: variant.id,
         optionValues: {}
       }
       variant.optionValues.forEach((optionValue) => {
-        betterVar.optionValues[optionValue.name] = optionValue.value;
+        betterVariant.optionValues[optionValue.name] = optionValue.value;
       });
 
-      return betterVar;
+      return betterVariant;
     });
   }
 
@@ -132,12 +123,9 @@ export default class Product extends Component {
     return selections;
   }
 
-  optionCanBeSelected(name, value) {
+  optionValueCanBeSelected(selections, name, value) {
     const variants = this.variantArray;
-
-    const selections = Object.assign({}, this.selections, {
-      [name]: value
-    });
+    selections[name] = value;
 
     const satisfactoryVariants = variants.filter((variant) => {
       const matchingOptions = Object.keys(selections).filter((key) => {
@@ -149,14 +137,18 @@ export default class Product extends Component {
     return satisfactoryVariants.length;
   }
 
-  decorateValues(option) {
-
-    return option.values.map((value) => {
-
+  get decoratedOptions() {
+    const selections = this.selections;
+    return this.model.options.map((option) => {
       return {
-        name: value,
-        selected: value === option.selected,
-        disabled: !this.optionCanBeSelected(option.name, value)
+        name: option.name,
+        values: option.value.map((value) => {
+          return {
+            name: value,
+            selected: value === option.selected,
+            disabled: !this.optionValueCanBeSelected(selections, option.name, value)
+          }
+        })
       }
     });
   }
