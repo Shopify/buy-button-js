@@ -119,17 +119,39 @@ test('it returns cached image on #currentImage if variant does not exist', (asse
   assert.equal(product.currentImage.img, 'http://test.com/test.jpg');
 });
 
-test('it transforms array of strings to array of objects on #decorateValues', (assert) => {
+test('it returns options with selected and disabled values on #decoratedOptions', (assert) => {
   product.initWithData(testProductCopy);
-  const array = product.decorateValues(testProductCopy.options[0])
+  const array = product.decoratedOptions;
   const expectedArray = [
     {
-      name: 'sloth',
-      selected: true
+      name: 'Print',
+      values: [
+        {
+          name: 'sloth',
+          selected: true,
+          disabled: false
+        },
+        {
+          name: 'shark',
+          selected: false,
+          disabled: false
+        }
+      ]
     },
     {
-      name: 'shark',
-      selected: false
+      name: 'Size',
+      values: [
+        {
+          name: 'small',
+          selected: true,
+          disabled: false
+        },
+        {
+          name: 'large',
+          selected: false,
+          disabled: true
+        }
+      ]
     }
   ]
 

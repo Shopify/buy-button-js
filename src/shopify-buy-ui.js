@@ -1,5 +1,6 @@
 import ShopifyBuy from 'shopify-buy';
 import UI from './ui';
+import Pretender from 'fetch-pretender';
 
 ShopifyBuy.UI = {
   buildClient(config = {}) {
