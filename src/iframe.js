@@ -16,7 +16,7 @@ const iframeAttrs = {
 };
 
 function isPseudoSelector(key) {
-  return key === 'focus' || key === 'hover';
+  return key.charAt(0) === ':';
 }
 
 function ruleDeclarations(rule) {
@@ -60,7 +60,7 @@ export default class iframe {
       Object.keys(this.customStylesHash[key]).forEach((decKey) => {
         if (isPseudoSelector(decKey)) {
           styleGroup.push({
-            selector: `.${this.classes[key]}:${decKey}`,
+            selector: `.${this.classes[key]}${decKey}`,
             declarations: ruleDeclarations(this.customStylesHash[key][decKey])
           });
         } else {

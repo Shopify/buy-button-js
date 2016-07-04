@@ -25,11 +25,25 @@
                 // do stuff
               }
             },
+            templates: {
+              price: '<h2 class="{{data.classes.price}}">${{data.selectedVariant.price}}</h2><p class="{{data.classes.priceNote}}">* Shipping calculated at checkout</p>'
+            },
+            text: {
+              button: 'SOCK IT TO ME'
+            },
+            classes: {
+              priceNote: 'price-asterisk'
+            },
             styles: {
+              priceNote: {
+                'font-style': 'italic',
+                'font-size': '10px',
+                'margin-bottom': '10px'
+              },
               img: {
                 'border-radius': '50%',
                 'transition': 'all .2s',
-                'hover': {
+                ':hover': {
                   'border-radius': '5%',
                   'transition': 'all .2s'
                 }
@@ -43,17 +57,22 @@
               button: {
                 'background-color': 'blue',
                 'color': 'orange',
-                'hover': {
+                ':hover': {
                   'background-color': 'purple',
                   'color': 'yellow',
                 },
-                'focus': {
+                ':focus': {
                   'background-color': 'purple',
                   'color': 'yellow',
                 }
               },
               price: {
-                'color': 'orange'
+                'color': 'orange',
+                'margin-bottom': '0',
+                ':after': {
+                  'content': '\" CAD\"',
+                  'font-size': '10px'
+                }
               }
             }
           },
