@@ -15,6 +15,7 @@ const defaults = {
       }
     },
     classes: {
+      img: 'variant-img',
       button: 'btn',
       title: 'product-title',
       variantTitle: 'variant-title',
@@ -30,7 +31,8 @@ const defaults = {
     templates: optionTemplates,
     contents: ['option'],
     classes: {
-      select: 'select'
+      select: 'select',
+      option: 'option'
     }
   },
   cart: {

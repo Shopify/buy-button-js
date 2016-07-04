@@ -6,8 +6,8 @@ let cachedImage = null;
 
 export default class Product extends Component {
   constructor(config, props) {
-    super(config, props, 'product');
-    this.childTemplate = new Template(this.config.option.templates, this.config.option.contents);
+    super(config, props, 'product', 'option');
+    this.childTemplate = new Template(this.config.option.templates, this.config.option.contents, 'options');
   }
 
   get currentImage() {
@@ -50,6 +50,7 @@ export default class Product extends Component {
     return this.decoratedOptions.reduce((acc, option) => {
       const data = option;
       data.classes = this.config.option.classes;
+
       return acc + this.childTemplate.render({ data: data });
     }, '');
   }

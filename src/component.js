@@ -19,7 +19,7 @@ function methodStrings(method) {
 }
 
 export default class Component {
-  constructor(config, props, type) {
+  constructor(config, props, type, childType) {
     this.delegateEvents = this.wrapMethod(this.delegateEvents);
     this.render = this.wrapMethod(this.render);
     this.initWithData = this.wrapMethod(this.initWithData);
@@ -29,11 +29,12 @@ export default class Component {
     this.node = config.node;
     this.debug = config.debug;
     this.type = type;
+    this.childType = childType;
     this.config = merge(componentDefaults, config.options || {});
     this.props = props;
     this.model = {};
     this.iframe = this.options.iframe ? new Iframe(this.node, this.classes, this.styles) : null;
-    this.template = new Template(this.templates, this.contents);
+    this.template = new Template(this.templates, this.contents, this.type);
     this.children = null;
   }
 
@@ -54,11 +55,11 @@ export default class Component {
   }
 
   get styles() {
-    return this.options.styles;
+    return Object.assign({}, this.options.styles, this.config[this.childType].styles);
   }
 
   get classes() {
-    return this.options.classes;
+    return Object.assign({}, this.options.classes, this.config[this.childType].classes);
   }
 
   get text() {

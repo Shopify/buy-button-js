@@ -26,13 +26,45 @@
               }
             },
             styles: {
+              img: {
+                'border-radius': '50%',
+                'transition': 'all .2s',
+                'hover': {
+                  'border-radius': '5%',
+                  'transition': 'all .2s'
+                }
+              },
+              title: {
+                'color': 'red'
+              },
+              variantTitle: {
+                'font-style': 'italic'
+              },
               button: {
                 'background-color': 'blue',
                 'color': 'orange',
                 'hover': {
                   'background-color': 'purple',
                   'color': 'yellow',
+                },
+                'focus': {
+                  'background-color': 'purple',
+                  'color': 'yellow',
                 }
+              },
+              price: {
+                'color': 'orange'
+              }
+            }
+          },
+          option: {
+            styles: {
+              options: {
+                'overflow': 'hidden'
+              },
+              option: {
+                'float': 'left',
+                'padding-right': '20px'
               }
             }
           }
