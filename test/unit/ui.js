@@ -63,8 +63,7 @@ test('it creates a component of appropriate type on #createComponent', (assert) 
 });
 
 test('it returns type-specific properties on #componentProps', (assert) => {
-  assert.expect(2);
+  assert.expect(1);
   const props = ui.componentProps('product');
-  assert.ok(props.addToCart);
   assert.deepEqual(props.client, ui.client);
 });
