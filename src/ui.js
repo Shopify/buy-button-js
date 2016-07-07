@@ -47,11 +47,9 @@ export default class UI {
   }
 
   createComponent(type, config) {
-    config.node = config.node || queryEntryNode();
+    config.node = config.node || this.queryEntryNode();
     const component = new this.componentTypes[type](config, this.componentProps(type));
     this.components[type].push(component);
-    return component.init().then((data) => {
-      return component;
-    });
+    return component.init().then(() => component);
   }
 }

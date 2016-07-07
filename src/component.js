@@ -4,18 +4,23 @@ import isFunction from './utils/is-function';
 import componentDefaults from './defaults/components';
 import Iframe from './iframe';
 import Template from './template';
+
 const delegateEventSplitter = /^(\S+)\s*(.*)$/;
 
 function logEvent(event) {
+
+  /* eslint-disable no-console */
   console.log(`EVENT: ${event}`);
+
+  /* eslint-enable no-console  */
 }
 
 function methodStrings(method) {
-  const capitalized = method.name.charAt(0).toUpperCase() + method.name.slice(1)
+  const capitalized = method.name.charAt(0).toUpperCase() + method.name.slice(1);
   return {
     before: `before${capitalized}`,
-    after: `after${capitalized}`
-  }
+    after: `after${capitalized}`,
+  };
 }
 
 export default class Component {
@@ -88,7 +93,7 @@ export default class Component {
 
   delegateEvents() {
     Object.keys(this.DOMEvents).forEach((key) => {
-      const [_, eventName, selector] = key.match(delegateEventSplitter)
+      const [, eventName, selector] = key.match(delegateEventSplitter);
       this._on(eventName, selector, (evt) => {
         this.DOMEvents[key].call(this, evt, this);
       });
@@ -97,7 +102,7 @@ export default class Component {
 
   resize() {
     if (this.iframe) {
-      this.iframe.el.style.height = this.wrapper.clientHeight + 'px';
+      this.iframe.el.style.height = `${this.wrapper.clientHeight} px`;
     }
   }
 
@@ -151,27 +156,27 @@ export default class Component {
   }
 
   resizeAfterImgLoad() {
-    let promises = [...this.wrapper.querySelectorAll('img')].map(img => {
-      return new Promise((resolve) => {
+    const promises = [...this.wrapper.querySelectorAll('img')].map((img) =>
+      new Promise((resolve) => {
         img.addEventListener('load', (evt) => {
-          resolve(evt)
+          resolve(evt);
         });
-      });
-    });
+      })
+    );
     if (promises.length) {
-      Promise.all(promises).then(result => {
-        this.resize();
-      });
+      return Promise.all(promises).then(() => this.resize());
+    } else {
+      return Promise.resolve();
     }
   }
 
   wrapMethod(method) {
-    return function() {
+    return function(...args) {
       const {before, after} = methodStrings(method);
       this._userEvent(before);
-      method.apply(this, arguments);
+      method.apply(this, args);
       this._userEvent(after);
-    }
+    };
   }
 
   _userEvent(methodName) {

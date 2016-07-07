@@ -12,7 +12,7 @@ const iframeAttrs = {
   horizontalscrolling: 'no',
   verticalscrolling: 'no',
   allowTransparency: 'true',
-  frameBorder: '0'
+  frameBorder: '0',
 };
 
 function isPseudoSelector(key) {
@@ -20,14 +20,7 @@ function isPseudoSelector(key) {
 }
 
 function ruleDeclarations(rule) {
-  return Object.keys(rule).filter((key) => {
-    return !isPseudoSelector(key);
-  }).map((key) => {
-    return {
-      property: key,
-      value: rule[key]
-    }
-  })
+  return Object.keys(rule).filter((key) => !isPseudoSelector(key)).map((key) => ({property: key, value: rule[key]}));
 }
 
 export default class iframe {
@@ -61,7 +54,7 @@ export default class iframe {
         if (isPseudoSelector(decKey)) {
           styleGroup.push({
             selector: `.${this.classes[key]}${decKey}`,
-            declarations: ruleDeclarations(this.customStylesHash[key][decKey])
+            declarations: ruleDeclarations(this.customStylesHash[key][decKey]),
           });
         } else {
           styleGroup.push({
@@ -77,26 +70,21 @@ export default class iframe {
   }
 
   get defaultStyles() {
-    return defaultStyles.map((rule) => {
-      return {
-        selector: rule.selectors.join(', '),
-        declarations: rule.declarations
-      }
-    });
+    return defaultStyles.map((rule) => ({selector: rule.selectors.join(', '), declarations: rule.declarations}));
   }
 
   updateStyles(customStyles) {
     this.customStylesHash = customStyles;
-    let compiled = hogan.compile(stylesTemplate)
+    const compiled = hogan.compile(stylesTemplate);
     const selectors = this.defaultStyles.concat(this.customStyles);
-    this.styleTag.innerHTML = compiled.render({selectors: selectors});
+    this.styleTag.innerHTML = compiled.render({selectors});
   }
 
   appendStyleTag() {
     this.styleTag = this.document.createElement('style');
-    let compiled = hogan.compile(stylesTemplate)
+    const compiled = hogan.compile(stylesTemplate);
     const selectors = this.defaultStyles.concat(this.customStyles);
-    this.styleTag.innerHTML = compiled.render({selectors: selectors});
+    this.styleTag.innerHTML = compiled.render({selectors});
     this.el.contentDocument.head.appendChild(this.styleTag);
   }
 }
