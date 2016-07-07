@@ -1,1 +1,10 @@
-{ "presets": ["shopify"] }
+{
+  "presets": ["shopify"],
+  "plugins": [
+    ["transform-runtime", {
+      "polyfill": true,
+      "regenerator": false
+    }],
+    ['transform-es2015-classes', {loose: true}]
+  ]
+}

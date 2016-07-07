@@ -13,6 +13,7 @@ const iframeAttrs = {
   verticalscrolling: 'no',
   allowTransparency: 'true',
   frameBorder: '0',
+  scrolling: 'false',
 };
 
 function isPseudoSelector(key) {
@@ -26,7 +27,6 @@ function ruleDeclarations(rule) {
 export default class iframe {
   constructor(parent, classes, customStyles) {
     this.el = document.createElement('iframe');
-    this.el.scrolling = false;
     Object.keys(iframeStyles).forEach((key) => {
       this.el.style[key] = iframeStyles[key];
     });
@@ -41,7 +41,13 @@ export default class iframe {
   }
 
   get document() {
-    return this.el.contentDocument;
+    if (this.el.contentWindow && this.el.contentWindow.document.body) {
+      return this.el.contentWindow.document;
+    } else if (this.el.document && this.el.document.body) {
+      return this.el.document;
+    } else if (this.el.contentDocument && this.el.contentDocument.body) {
+      return this.el.contentDocument;
+    }
   }
 
   get customStyles() {
@@ -85,6 +91,6 @@ export default class iframe {
     const compiled = hogan.compile(stylesTemplate);
     const selectors = this.defaultStyles.concat(this.customStyles);
     this.styleTag.innerHTML = compiled.render({selectors});
-    this.el.contentDocument.head.appendChild(this.styleTag);
+    this.document.head.appendChild(this.styleTag);
   }
 }
