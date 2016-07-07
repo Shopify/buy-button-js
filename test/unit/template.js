@@ -11,7 +11,7 @@ let template;
 
 module('Unit | Template', {
   beforeEach() {
-    template = new Template(templates, contents);
+    template = new Template(templates, contents, 'test');
   },
   afterEach() {
     template = null;
@@ -20,10 +20,10 @@ module('Unit | Template', {
 
 test('it puts data into the strings on #render', (assert) => {
   assert.expect(1);
-  const expectedString = '<div><h1>BUY MY BUTTONS fool</h1><button>BUTTON</button></div>';
+  const expectedString = '<div class="test"><h1>BUY MY BUTTONS fool</h1><button>BUTTON</button></div>';
   const data = {
     name: 'fool'
   }
   const output = template.render({data: data});
-  assert.equal(expectedString, output);
+  assert.equal(output, expectedString);
 });

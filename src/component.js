@@ -55,11 +55,13 @@ export default class Component {
   }
 
   get styles() {
-    return Object.assign({}, this.options.styles, this.config[this.childType].styles);
+    const childStyles = this.config[this.childType] ? this.config[this.childType].styles : {};
+    return Object.assign({}, this.options.styles, childStyles);
   }
 
   get classes() {
-    return Object.assign({}, this.options.classes, this.config[this.childType].classes);
+    const childClasses = this.config[this.childType] ? this.config[this.childType].classes : {};
+    return Object.assign({}, this.options.classes, childClasses);
   }
 
   get text() {

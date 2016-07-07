@@ -12,7 +12,7 @@ module('Unit | Iframe', {
     }, {
       button: {
         'color': 'red',
-        'hover': {
+        ':hover': {
           'color': 'green'
         }
       }
