@@ -130,6 +130,7 @@ export default class Component {
     }
     this.render();
     this.delegateEvents();
+    this.resize();
   }
 
   render() {
