@@ -1,7 +1,6 @@
 import Component from '../component';
 import Template from '../template';
 import extend from '../utils/extend';
-import Pretender from 'fetch-pretender';
 
 let cachedImage = null;
 
