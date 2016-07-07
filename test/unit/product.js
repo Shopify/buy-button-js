@@ -74,7 +74,7 @@ test('it puts together a big param string on #windowParams', (assert) => {
 
 test('it updates selected variant on #updateVariant', (assert) => {
   product.initWithData(testProductCopy);
-  const updated = product.updateVariant('Size', 'large');
+  let updated = product.updateVariant('Size', 'large');
   assert.equal(updated.selected, 'large');
 });
 
@@ -121,7 +121,7 @@ test('it returns cached image on #currentImage if variant does not exist', (asse
 
 test('it returns options with selected and disabled values on #decoratedOptions', (assert) => {
   product.initWithData(testProductCopy);
-  const array = product.decoratedOptions;
+  product.updateVariant('Size', 'small');
   const expectedArray = [
     {
       name: 'Print',
@@ -155,7 +155,7 @@ test('it returns options with selected and disabled values on #decoratedOptions'
     }
   ]
 
-  assert.deepEqual(array, expectedArray);
+  assert.deepEqual(product.decoratedOptions, expectedArray);
 });
 
 test('it returns supplemental view info on #viewData', (assert) => {
