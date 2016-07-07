@@ -28,8 +28,6 @@
     "css": "^2.1.0",
     "eslint": "^2.13.1",
     "eslint-plugin-shopify": "^12.1.0",
-    "fetch-pretender": "^1.5.0",
-    "pretender": "^1.1.0",
     "qunit": "^0.9.1",
     "sinon": "^1.17.4",
     "testem": "^1.9.1",
