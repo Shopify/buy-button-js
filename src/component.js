@@ -102,7 +102,7 @@ export default class Component {
 
   resize() {
     if (this.iframe) {
-      this.iframe.el.style.height = `${this.wrapper.clientHeight} px`;
+      this.iframe.el.style.height = `${this.wrapper.clientHeight}px`;
     }
   }
 
@@ -165,8 +165,6 @@ export default class Component {
     );
     if (promises.length) {
       return Promise.all(promises).then(() => this.resize());
-    } else {
-      return Promise.resolve();
     }
   }
 

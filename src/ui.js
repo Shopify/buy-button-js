@@ -1,4 +1,3 @@
-import Cart from './components/cart';
 import Product from './components/product';
 import Collection from './components/collection';
 
@@ -7,14 +6,12 @@ export default class UI {
   constructor(client) {
     this.client = client;
     this.components = {
-      cart: [],
       product: [],
       collection: [],
     };
 
     this.componentTypes = {
       product: Product,
-      cart: Cart,
       collection: Collection,
     };
   }

@@ -1,7 +1,5 @@
 import productTemplates from '../templates/product';
 import optionTemplates from '../templates/option';
-import cartTemplates from '../templates/cart';
-import lineItemTemplates from '../templates/lineItem';
 
 const defaults = {
   product: {
@@ -34,23 +32,6 @@ const defaults = {
       select: 'select',
       option: 'option'
     }
-  },
-  cart: {
-    iframe: true,
-    contents: ['title', 'lineItems', 'total', 'checkout'],
-    templates: cartTemplates,
-    styles: {
-      button: {
-        'background-color': 'red'
-      }
-    },
-    classes: {
-      button: 'button'
-    }
-  },
-  lineItem: {
-    contents: ['title', 'price'],
-    templates: lineItemTemplates
   },
   window: {
     height: 600,
