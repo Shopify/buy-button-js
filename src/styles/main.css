@@ -48,7 +48,7 @@ input {
   border-radius: 3px;
   border-color: #79ab61;
   cursor: pointer;
-  transition: all 200ms ease;
+  transition: background 200ms ease, color 200ms ease;
   max-width: 100%;
   width: 100%;
   text-overflow: ellipsis;
