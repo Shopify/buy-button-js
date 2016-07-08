@@ -120,6 +120,8 @@ export default class Component {
       this.delegateEvents();
       this._userEvent('afterInit');
       return model;
+    }).catch((e) => {
+      console.log(e);
     });
   }
 

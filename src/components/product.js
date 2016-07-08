@@ -1,6 +1,6 @@
 import Component from '../component';
 import Template from '../template';
-import extend from '../utils/extend';
+import completeAssign from '../utils/complete-assign';
 
 let cachedImage = null;
 
@@ -19,7 +19,7 @@ export default class Product extends Component {
   }
 
   get viewData() {
-    return extend(this.model, {
+    return completeAssign(this.model, {
       buttonText: this.variantAvailable ? this.text.button : 'Unavailable',
       childrenHtml: this.childrenHtml,
       currentImage: this.currentImage,
