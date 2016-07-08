@@ -125,6 +125,7 @@ export default class Component {
 
   updateConfig(config) {
     this.config = deepmerge(componentDefaults, config.options);
+    this.template = new Template(this.templates, this.contents, this.type);
     if (this.iframe) {
       this.iframe.updateStyles(this.styles);
     }
