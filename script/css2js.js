@@ -1,3 +1,4 @@
+var sass = require('node-sass');
 var css = require('css');
 var fs = require('fs');
 
@@ -10,7 +11,13 @@ function csstojs(str, options) {
   return rules.rules;
 }
 
-var input = fs.readFileSync('src/styles/main.css', 'utf-8');
-var js = csstojs(input);
-
-fs.writeFileSync('src/styles/main.js', 'export default ' + JSON.stringify(js));
+sass.render({
+  file: './src/styles/sass/styles.scss'
+}, function (err, css) {
+  if (err) {
+    console.log(err);
+  } else {
+    var js = csstojs(css.css.toString());
+    fs.writeFileSync('src/styles/main.js', 'export default ' + JSON.stringify(js));
+  }
+})
