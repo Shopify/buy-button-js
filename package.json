@@ -39,6 +39,6 @@
     "deep-extend": "^0.4.1",
     "hogan.js": "^3.0.2",
     "morphdom": "^1.4.3",
-    "shopify-buy": "^0.1.7"
+    "shopify-buy": "^0.2.1"
   }
 }
