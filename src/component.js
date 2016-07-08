@@ -1,5 +1,5 @@
 import morphdom from 'morphdom';
-import merge from 'deepmerge';
+import deepExtend from 'deep-extend';
 import isFunction from './utils/is-function';
 import componentDefaults from './defaults/components';
 import Iframe from './iframe';
@@ -35,7 +35,7 @@ export default class Component {
     this.debug = config.debug;
     this.type = type;
     this.childType = childType;
-    this.config = merge(componentDefaults, config.options || {});
+    this.config = deepExtend(componentDefaults, config.options || {});
     this.props = props;
     this.model = {};
     this.iframe = this.options.iframe ? new Iframe(this.node, this.classes, this.styles) : null;
@@ -124,7 +124,7 @@ export default class Component {
   }
 
   updateConfig(config) {
-    this.config = merge(componentDefaults, config.options);
+    this.config = deepExtend(componentDefaults, config.options);
     if (this.iframe) {
       this.iframe.updateStyles(this.styles);
     }
