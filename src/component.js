@@ -157,15 +157,18 @@ export default class Component {
   }
 
   resizeAfterImgLoad() {
-    const promises = [...this.wrapper.querySelectorAll('img')].map((img) =>
-      new Promise((resolve) => {
-        img.addEventListener('load', (evt) => {
-          resolve(evt);
-        });
-      })
-    );
-    if (promises.length) {
+    const imgs = [...this.wrapper.querySelectorAll('img')];
+    if (imgs.length) {
+      const promises = imgs.map((img) =>
+        new Promise((resolve) => {
+          img.addEventListener('load', (evt) => {
+            resolve(evt);
+          });
+        })
+      );
       return Promise.all(promises).then(() => this.resize());
+    } else {
+      return Promise.resolve(this.resize());
     }
   }
 
