@@ -18,76 +18,42 @@
       client.createComponent('product', {
         id: 6640244678,
         node: document.getElementById('test'),
-        options: {
-          product: {
-            events: {
-              afterRender: function () {
-                // do stuff
-              }
-            },
-            templates: {
-              price: '<h2 class="{{data.classes.price}}">${{data.selectedVariant.price}}</h2><p class="{{data.classes.priceNote}}">* Shipping calculated at checkout</p>'
-            },
-            text: {
-              button: 'SOCK IT TO ME'
-            },
-            classes: {
-              priceNote: 'price-asterisk'
-            },
-            styles: {
-              priceNote: {
-                'font-style': 'italic',
-                'font-size': '10px',
-                'margin-bottom': '10px'
-              },
-              img: {
-                'border-radius': '50%',
-                'transition': 'all .2s',
-                ':hover': {
-                  'border-radius': '5%',
-                  'transition': 'all .2s'
-                }
-              },
-              title: {
-                'color': 'red'
-              },
-              variantTitle: {
-                'font-style': 'italic'
-              },
-              button: {
-                'background-color': 'blue',
-                'color': 'orange',
-                ':hover': {
-                  'background-color': 'purple',
-                  'color': 'yellow',
-                },
-                ':focus': {
-                  'background-color': 'purple',
-                  'color': 'yellow',
-                }
-              },
-              price: {
-                'color': 'orange',
-                'margin-bottom': '0',
-                ':after': {
-                  'content': '\" CAD\"',
-                  'font-size': '10px'
-                }
-              }
-            }
-          },
-          option: {
-            styles: {
-              options: {
-                'overflow': 'hidden'
-              },
-              option: {
-                'float': 'left',
-                'padding-right': '20px'
-              }
-            }
-          }
+options: {
+ product: {
+    events: {
+      afterRender: function () {}
+    },
+    text: {
+      button: 'Buy Dis, Fam'
+    },
+    contents: ['title', 'variantTitle', 'options', 'price', 'button'],
+    styles: {
+      button: {
+        'background-color': '#333333',
+        'color': '#b1e100',
+        'font-family': 'Helvetica',
+        'font-size': '16px',
+        'padding': '7px',
+        ':hover': {
+          'background-color': '#e5e5e5',
+          'color': '#333333',
         }
+      },
+      title: {
+        display: true,
+        'font-family': 'Helvetica',
+        'font-size': '24px',
+        'color': '#CDCDCD'
+      },
+      price: {
+        display: true,
+        'font-family': 'Helvetica',
+        'font-size': '16px',
+        'color': '#666666'
+      }
+    }
+  }
+}
       });
     </script>
   </body>
