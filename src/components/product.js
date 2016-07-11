@@ -25,21 +25,19 @@ export default class Product extends Component {
       currentImage: this.currentImage,
       buttonClass: this.variantAvailable ? '' : this.classes.disabled,
       hasVariants: this.hasVariants,
-      classes: this.classes
-    })
+      classes: this.classes,
+    });
   }
 
   get DOMEvents() {
     return Object.assign({}, this.options.DOMEvents, {
       [`change .${this.config.option.classes.select}`]: this.onOptionSelect.bind(this),
-      [`click .${this.options.classes.button}`]: this.onButtonClick.bind(this)
+      [`click .${this.options.classes.button}`]: this.onButtonClick.bind(this),
     });
   }
 
   get windowParams() {
-    return Object.keys(this.config.window).reduce((acc, key) => {
-      return acc + `${key}=${this.config.window[key]},`;
-    }, '');
+    return Object.keys(this.config.window).reduce((acc, key) => `${acc}${key}=${this.config.window[key]},`, '');
   }
 
   get variantAvailable() {
@@ -51,7 +49,7 @@ export default class Product extends Component {
       const data = option;
       data.classes = this.config.option.classes;
 
-      return acc + this.childTemplate.render({ data: data });
+      return acc + this.childTemplate.render({data});
     }, '');
   }
 
@@ -87,9 +85,7 @@ export default class Product extends Component {
   }
 
   updateVariant(optionName, value) {
-    const updatedOption = this.model.options.filter((option) => {
-      return option.name === optionName;
-    })[0];
+    const updatedOption = this.model.options.filter((option) => option.name === optionName)[0];
     updatedOption.selected = value;
     if (this.variantAvailable) {
       cachedImage = this.model.selectedVariantImage;
@@ -99,25 +95,26 @@ export default class Product extends Component {
   }
 
   get variantArray() {
-    delete this.variant_Array;
-    return this.variant_Array = this.model.variants.map((variant) => {
-      let betterVariant =  {
+    delete this.variantsMemo;
+    this.variantsMemo = this.model.variants.map((variant) => {
+      const betterVariant = {
         id: variant.id,
-        optionValues: {}
-      }
+        optionValues: {},
+      };
       variant.optionValues.forEach((optionValue) => {
         betterVariant.optionValues[optionValue.name] = optionValue.value;
       });
 
       return betterVariant;
     });
+    return this.variantsMemo;
   }
 
   get selections() {
     const selections = {};
 
     this.model.selections.forEach((selection, index) => {
-      const option = this.model.options[index]
+      const option = this.model.options[index];
       selections[option.name] = selection;
     });
 
@@ -129,9 +126,7 @@ export default class Product extends Component {
     selections[name] = value;
 
     const satisfactoryVariants = variants.filter((variant) => {
-      const matchingOptions = Object.keys(selections).filter((key) => {
-        return variant.optionValues[key] === selections[key];
-      });
+      const matchingOptions = Object.keys(selections).filter((key) => variant.optionValues[key] === selections[key]);
       return matchingOptions.length === Object.keys(selections).length;
     });
 
@@ -139,17 +134,13 @@ export default class Product extends Component {
   }
 
   get decoratedOptions() {
-    return this.model.options.map((option) => {
-      return {
-        name: option.name,
-        values: option.values.map((value) => {
-          return {
-            name: value,
-            selected: value === option.selected,
-            disabled: !this.optionValueCanBeSelected(Object.assign({}, this.selections), option.name, value)
-          }
-        })
-      }
-    });
+    return this.model.options.map((option) => ({
+      name: option.name,
+      values: option.values.map((value) => ({
+        name: value,
+        selected: value === option.selected,
+        disabled: !this.optionValueCanBeSelected(Object.assign({}, this.selections), option.name, value),
+      })),
+    }));
   }
 }

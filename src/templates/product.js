@@ -5,6 +5,6 @@ const productTemplate = {
   options: '{{#data.hasVariants}}<div class="{{data.classes.options}}">{{{data.childrenHtml}}}</div>{{/data.hasVariants}}',
   price: '<h2 class="{{data.classes.price}}">${{data.selectedVariant.price}}</h2>',
   button: '<button class="{{data.classes.button}} {{data.buttonClass}}">{{data.buttonText}}</button>',
-}
+};
 
 export default productTemplate;
