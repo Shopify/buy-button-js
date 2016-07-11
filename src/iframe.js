@@ -37,6 +37,9 @@ export default class iframe {
     this.div.appendChild(this.el);
     this.styleTag = null;
     parent.appendChild(this.div);
+    this.el.onload = () => {
+      this.appendStyleTag();
+    }
     this.appendStyleTag();
   }
 
@@ -87,10 +90,12 @@ export default class iframe {
   }
 
   appendStyleTag() {
-    this.styleTag = this.document.createElement('style');
-    const compiled = hogan.compile(stylesTemplate);
-    const selectors = this.defaultStyles.concat(this.customStyles);
-    this.styleTag.innerHTML = compiled.render({selectors});
-    this.document.head.appendChild(this.styleTag);
+    if (this.document.head) {
+      this.styleTag = this.document.createElement('style');
+      const compiled = hogan.compile(stylesTemplate);
+      const selectors = this.defaultStyles.concat(this.customStyles);
+      this.styleTag.innerHTML = compiled.render({selectors});
+      this.document.head.appendChild(this.styleTag);
+    }
   }
 }
