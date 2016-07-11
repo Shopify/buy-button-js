@@ -39,18 +39,20 @@ export default class iframe {
     parent.appendChild(this.div);
     this.el.onload = () => {
       this.appendStyleTag();
-    }
+    };
     this.appendStyleTag();
   }
 
   get document() {
+    let doc;
     if (this.el.contentWindow && this.el.contentWindow.document.body) {
-      return this.el.contentWindow.document;
+      doc = this.el.contentWindow.document;
     } else if (this.el.document && this.el.document.body) {
-      return this.el.document;
+      doc = this.el.document;
     } else if (this.el.contentDocument && this.el.contentDocument.body) {
-      return this.el.contentDocument;
+      doc = this.el.contentDocument;
     }
+    return doc;
   }
 
   get customStyles() {
@@ -90,12 +92,13 @@ export default class iframe {
   }
 
   appendStyleTag() {
-    if (this.document.head) {
-      this.styleTag = this.document.createElement('style');
-      const compiled = hogan.compile(stylesTemplate);
-      const selectors = this.defaultStyles.concat(this.customStyles);
-      this.styleTag.innerHTML = compiled.render({selectors});
-      this.document.head.appendChild(this.styleTag);
+    if (!this.document.head) {
+      return;
     }
+    this.styleTag = this.document.createElement('style');
+    const compiled = hogan.compile(stylesTemplate);
+    const selectors = this.defaultStyles.concat(this.customStyles);
+    this.styleTag.innerHTML = compiled.render({selectors});
+    this.document.head.appendChild(this.styleTag);
   }
 }

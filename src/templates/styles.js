@@ -1,8 +1,8 @@
-const stylesTemplate ='{{#selectors}}' +
-                          '{{selector}} \{ ' +
+const stylesTemplate = '{{#selectors}}' +
+                          '{{selector}} { ' +
                           '{{#declarations}}' +
-                            '{{property}}: {{{value}}};'+
+                            '{{property}}: {{{value}}};' +
                           '{{/declarations}}' +
-                          ' \} ' +
+                          ' } ' +
                       '{{/selectors}}';
 export default stylesTemplate;

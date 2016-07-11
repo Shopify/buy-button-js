@@ -9,8 +9,8 @@ const defaults = {
     templates: productTemplates,
     styles: {
       button: {
-        'background-color': 'red'
-      }
+        'background-color': 'red',
+      },
     },
     classes: {
       img: 'variant-img',
@@ -19,19 +19,19 @@ const defaults = {
       variantTitle: 'variant-title',
       price: 'variant-price',
       options: 'variant-selectors',
-      disabled: 'btn-disabled'
+      disabled: 'btn-disabled',
     },
     text: {
-      button: 'Add to cart'
-    }
+      button: 'Add to cart',
+    },
   },
   option: {
     templates: optionTemplates,
     contents: ['option'],
     classes: {
       select: 'select',
-      option: 'option'
-    }
+      option: 'option',
+    },
   },
   window: {
     height: 600,
@@ -46,8 +46,8 @@ const defaults = {
     createnew: 1,
     location: 0,
     menubar: 0,
-    onUnload: null
-  }
+    onUnload: null,
+  },
 };
 
 export default defaults;

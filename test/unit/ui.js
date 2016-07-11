@@ -7,7 +7,7 @@ const { module, test } = QUnit;
 import sinon from 'sinon';
 
 const client = ShopifyBuy.buildClient({
-  myShopifyDomain: 'buckets-o-stuff',
+  domain: 'buckets-o-stuff.myshopify.com',
   apiKey: 123,
   appId: 6
 });

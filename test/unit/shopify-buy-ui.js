@@ -5,7 +5,7 @@ const { module, test } = QUnit;
 let uiClient;
 
 const configAttrs = {
-  myShopifyDomain: 'buckets-o-stuff',
+  domain: 'buckets-o-stuff.myshopify.com',
   apiKey: 123,
   appId: 6
 };
