@@ -5,7 +5,8 @@
     <title>test</title>
   </head>
   <body>
-    <script src="build/shopify-buy-ui.js"></script>
+    <!-- <script src="build/shopify-buy-ui.globals.polyfilled.js"></script> -->
+    <script src="tmp/shopify-buy-ui.dev.js"></script>
 
     <div id="test"></div>
 
@@ -18,41 +19,41 @@
       client.createComponent('product', {
         id: 6640244678,
         node: document.getElementById('test'),
-options: {
- product: {
-    events: {
-      afterRender: function () {}
-    },
-    text: {
-      button: 'Buy Dis, Fam'
-    },
-    styles: {
-      button: {
-        'background-color': '#333333',
-        'color': '#b1e100',
-        'font-family': 'Helvetica',
-        'font-size': '16px',
-        'padding': '7px',
-        ':hover': {
-          'background-color': '#e5e5e5',
-          'color': '#333333',
+        options: {
+         product: {
+            events: {
+              afterRender: function () {}
+            },
+            text: {
+              button: 'Buy Dis, Fam'
+            },
+            styles: {
+              button: {
+                'background-color': '#333333',
+                'color': '#b1e100',
+                'font-family': 'Helvetica',
+                'font-size': '16px',
+                'padding': '7px',
+                ':hover': {
+                  'background-color': '#e5e5e5',
+                  'color': '#333333',
+                }
+              },
+              title: {
+                display: true,
+                'font-family': 'Helvetica',
+                'font-size': '24px',
+                'color': '#CDCDCD'
+              },
+              price: {
+                display: true,
+                'font-family': 'Helvetica',
+                'font-size': '16px',
+                'color': '#666666'
+              }
+            }
+          }
         }
-      },
-      title: {
-        display: true,
-        'font-family': 'Helvetica',
-        'font-size': '24px',
-        'color': '#CDCDCD'
-      },
-      price: {
-        display: true,
-        'font-family': 'Helvetica',
-        'font-size': '16px',
-        'color': '#666666'
-      }
-    }
-  }
-}
       });
     </script>
   </body>
