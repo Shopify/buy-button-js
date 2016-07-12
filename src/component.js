@@ -38,7 +38,6 @@ export default class Component {
     this.config = merge(componentDefaults, config.options || {});
     this.props = props;
     this.model = {};
-    this.iframe = this.options.iframe ? new Iframe(this.node, this.classes, this.styles) : null;
     this.template = new Template(this.templates, this.contents, this.type);
     this.children = null;
   }
@@ -108,20 +107,27 @@ export default class Component {
   }
 
   initWithData(data) {
-    this.model = data;
-    this.render();
-    this.delegateEvents();
+    this.iframe = this.options.iframe ? new Iframe(this.node, this.classes, this.styles) : null;
+    this.iframe.load(() => {
+      this.iframe.appendStyleTag();
+      this.model = data;
+      this.render();
+      this.delegateEvents();
+    })
   }
 
   init() {
     this._userEvent('beforeInit');
-    return this.fetchData().then((model) => {
-      this.model = model;
-      this.render();
-      this.delegateEvents();
-      this._userEvent('afterInit');
-      return model;
-    });
+    this.iframe = this.options.iframe ? new Iframe(this.node, this.classes, this.styles) : null;
+    return this.iframe.load().then((e) => {
+      this.fetchData().then((model) => {
+        this.model = model;
+        this.render();
+        this.delegateEvents();
+        this._userEvent('afterInit');
+        return model;
+      });
+    })
     // catch errors
   }
 

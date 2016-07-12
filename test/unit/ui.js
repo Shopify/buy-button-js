@@ -1,6 +1,7 @@
 import ShopifyBuy from '../../src/shopify-buy-ui';
 import UI from '../../src/ui';
 import Product from '../../src/components/product';
+import Cart from '../../src/components/cart';
 
 const { module, test } = QUnit;
 
@@ -67,3 +68,34 @@ test('it returns type-specific properties on #componentProps', (assert) => {
   const props = ui.componentProps('product');
   assert.deepEqual(props.client, ui.client);
 });
+
+test('it creates a cart on #createComponent', (assert) => {
+  const done = assert.async();
+  assert.expect(1);
+  const stub = sinon.stub(Product.prototype, 'init', () => {
+    return Promise.resolve()
+  });
+
+  ui.createComponent('product',  productConfig).then((component) => {
+    assert.ok(ui.components.cart[0] instanceof Cart);
+    stub.restore();
+    done();
+  });
+});
+
+test('it only creates one cart', (assert) => {
+  const done = assert.async();
+  assert.expect(1);
+  const stub = sinon.stub(Product.prototype, 'init', () => {
+    return Promise.resolve()
+  });
+
+  ui.createComponent('product',  productConfig).then(() => {
+    return ui.createComponent('product',  productConfig);
+  }).then(() => {
+    assert.equal(ui.components.cart.length, 1);
+    stub.restore();
+    done();
+  });
+});
+

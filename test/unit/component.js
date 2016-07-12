@@ -34,7 +34,7 @@ module('Unit | Component', {
 test('it merges configuration options and defaults', (assert) => {
   assert.expect(2);
   assert.equal(component.config.product.templates.button, config.options.product.templates.button);
-  assert.equal(component.config.product.buttonTarget, 'checkout');
+  assert.equal(component.config.product.buttonDestination, 'cart');
 });
 
 test('it proxies commonly accessed attributes to config options for type', (assert) => {

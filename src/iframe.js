@@ -27,6 +27,7 @@ function ruleDeclarations(rule) {
 export default class iframe {
   constructor(parent, classes, customStyles) {
     this.el = document.createElement('iframe');
+    this.parent = parent;
     Object.keys(iframeStyles).forEach((key) => {
       this.el.style[key] = iframeStyles[key];
     });
@@ -36,11 +37,16 @@ export default class iframe {
     this.div = document.createElement('div');
     this.div.appendChild(this.el);
     this.styleTag = null;
-    parent.appendChild(this.div);
-    this.el.onload = () => {
-      this.appendStyleTag();
-    };
-    this.appendStyleTag();
+  }
+
+  load() {
+    return new Promise((resolve, reject) => {
+      this.el.onload = (e) => {
+        this.appendStyleTag();
+        resolve();
+      };
+      this.parent.appendChild(this.div);
+    });
   }
 
   get document() {

@@ -1,10 +1,11 @@
 import productTemplates from '../templates/product';
+import cartTemplates from '../templates/cart';
 import optionTemplates from '../templates/option';
 
 const defaults = {
   product: {
     iframe: true,
-    buttonTarget: 'checkout',
+    buttonTarget: 'cart',
     contents: ['img', 'title', 'variantTitle', 'description', 'options', 'price', 'button'],
     templates: productTemplates,
     classes: {
@@ -27,6 +28,23 @@ const defaults = {
     classes: {
       select: 'select',
       option: 'option',
+    },
+  },
+  cart: {
+    iframe: true,
+    templates: cartTemplates,
+    contents: ['title', 'lineItems', 'total', 'button'],
+    classes: {
+      header: 'cart-section cart-section--top',
+      title: 'cart-title',
+      lineItems: 'cart-item-container cart-section',
+      footer: 'cart-bottom',
+      total: 'cart-info clearfix cart-section',
+      button: 'btn btn--cart-checkout',
+    },
+    text: {
+      title: 'Your cart',
+      button: 'Checkout'
     },
   },
   window: {
