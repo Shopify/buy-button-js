@@ -7,11 +7,6 @@ const defaults = {
     buttonTarget: 'checkout',
     contents: ['img', 'title', 'variantTitle', 'options', 'price', 'button'],
     templates: productTemplates,
-    styles: {
-      button: {
-        'background-color': 'red',
-      },
-    },
     classes: {
       img: 'variant-img',
       button: 'btn',
