@@ -1,6 +1,7 @@
 import productTemplates from '../templates/product';
 import cartTemplates from '../templates/cart';
 import optionTemplates from '../templates/option';
+import lineItemTemplates from '../templates/line-item';
 
 const defaults = {
   product: {
@@ -46,6 +47,17 @@ const defaults = {
       title: 'Your cart',
       button: 'Checkout'
     },
+  },
+  lineItem: {
+    templates: lineItemTemplates,
+    contents: ['image', 'title', 'variantTitle', 'quantity', 'price'],
+    classes: {
+      image: 'cart-item__img',
+      variantTitle: 'cart-item__variant-title',
+      title: 'cart-item__title',
+      price: 'cart-item__price',
+      quantity: 'cart-item__quantity-container',
+    }
   },
   window: {
     height: 600,

@@ -26,7 +26,9 @@ export default class UI {
 
   componentProps(type) {
     const typeProperties = {
-      product: {},
+      product: {
+        addToCart: this.components.cart[0] ? this.components.cart[0].addVariantToCart : null
+      }
     }[type];
     return Object.assign({}, typeProperties, {
       client: this.client,
@@ -37,22 +39,28 @@ export default class UI {
     if (!this.components.cart.length) {
       const cart = new Cart(config, this.componentProps('cart'));
       this.components.cart.push(cart);
-      cart.init();
+      return cart.init();
     } else {
       this.components.cart[0].updateConfig(config);
+      return Promise.resolve();
     }
   }
 
   createComponent(type, config) {
     config.node = config.node || this.queryEntryNode();
-    const component = new this.componentTypes[type](config, this.componentProps(type));
-    this.components[type].push(component);
-    if ((type === 'product' || type === 'collection') && component.options.buttonDestination === 'cart') {
-      this.createCart(config);
+    if ((type === 'product' || type === 'collection') && config.options.product.buttonDestination !== 'checkout') {
+      return this.createCart(config).then(() => {
+        const component = new this.componentTypes[type](config, this.componentProps(type));
+        this.components[type].push(component);
+        return component.init().then(() => component)
+      });
+    } else {
+      const component = new this.componentTypes[type](config, this.componentProps(type));
+      this.components[type].push(component);
+      return component.init().then(() => component).catch((e) => {
+        console.log(e)
+      });
     }
-    return component.init().then(() => component).catch((e) => {
-      console.log(e)
-    });
   }
 
   destroyComponent(type, id) {

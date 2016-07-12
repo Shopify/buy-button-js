@@ -167,6 +167,7 @@ export default class Component {
   }
 
   resizeAfterImgLoad() {
+    console.log(this.wrapper.clientHeight);
     const imgs = [...this.wrapper.querySelectorAll('img')];
     if (imgs.length) {
       const promises = imgs.map((img) =>
