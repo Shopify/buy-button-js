@@ -57,6 +57,7 @@ const defaults = {
       title: 'cart-item__title',
       price: 'cart-item__price',
       quantity: 'cart-item__quantity-container',
+      quantityButton: 'btn--seamless'
     }
   },
   window: {

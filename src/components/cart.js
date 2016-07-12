@@ -20,11 +20,27 @@ export default class Cart extends Component {
     }
   }
 
+  get DOMEvents() {
+    return Object.assign({}, this.options.DOMEvents, {
+      [`click .${this.classes.quantityButton}.quantity-increment`]: this.updateQuantity.bind(this, 1),
+      [`click .${this.classes.quantityButton}.quantity-decrement`]: this.updateQuantity.bind(this, -1),
+    });
+  }
+
+  updateQuantity(qty, evt, target) {
+    const id = target.dataset['lineItemId'];
+    const item = this.model.lineItems.filter((lineItem) => lineItem.id === id)[0];
+    const newQty = item.quantity + qty;
+    this.model.updateLineItem(id, newQty).then((cart) => {
+      this.model = cart;
+      this.render();
+    });
+  }
+
   get childrenHtml() {
     return this.model.lineItems.reduce((acc, lineItem) => {
       const data = lineItem;
       data.classes = this.config.lineItem.classes;
-
       return acc + this.childTemplate.render({data});
     }, '');
   }

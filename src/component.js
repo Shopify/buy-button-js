@@ -93,27 +93,28 @@ export default class Component {
   delegateEvents() {
     Object.keys(this.DOMEvents).forEach((key) => {
       const [, eventName, selector] = key.match(delegateEventSplitter);
-      this._on(eventName, selector, (evt) => {
-        this.DOMEvents[key].call(this, evt, this);
+      this._on(eventName, selector, (evt, target) => {
+        this.DOMEvents[key].call(this, evt, target);
       });
     });
   }
 
   resize() {
     if (this.iframe) {
-      console.log('resizing', this.type);
       this.iframe.el.style.height = `${this.wrapper.clientHeight}px`;
       this.iframe.el.style.width = `${this.wrapper.clientWidth}px`;
     }
   }
 
   initWithData(data) {
+    this._userEvent('beforeInit');
     this.iframe = this.options.iframe ? new Iframe(this.node, this.classes, this.styles) : null;
     this.iframe.load().then(() => {
       this.iframe.appendStyleTag();
       this.model = data;
       this.render();
       this.delegateEvents();
+      this._userEvent('afterInit');
     })
   }
 
@@ -213,7 +214,7 @@ export default class Component {
         let el = target;
         while (el && el !== this.wrapper) {
           if (el === possibleTarget) {
-            return fn.call(possibleTarget, evt);
+            return fn.call(possibleTarget, evt, possibleTarget);
           }
           el = el.parentNode;
         }
