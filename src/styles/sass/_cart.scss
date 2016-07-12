@@ -64,20 +64,14 @@
 // }
 
 .cart-item-container {
-  position: relative;
-  overflow-x: hidden;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  perspective: 400px;
-  perspective-origin: 50% 0px;
 }
 
 .cart-item {
   margin-bottom: 20px;
-  overflow: hidden;
-  backface-visibility: visible;
-  min-height: 65px;
-  position: relative;
+  // overflow: hidden;
+  // backface-visibility: visible;
+  // min-height: 65px;
+  // position: relative;
   opacity: 1;
   transition: opacity 0.2s ease-in-out;
 

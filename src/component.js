@@ -101,6 +101,7 @@ export default class Component {
 
   resize() {
     if (this.iframe) {
+      console.log('resizing', this.type);
       this.iframe.el.style.height = `${this.wrapper.clientHeight}px`;
       this.iframe.el.style.width = `${this.wrapper.clientWidth}px`;
     }
@@ -108,7 +109,7 @@ export default class Component {
 
   initWithData(data) {
     this.iframe = this.options.iframe ? new Iframe(this.node, this.classes, this.styles) : null;
-    this.iframe.load(() => {
+    this.iframe.load().then(() => {
       this.iframe.appendStyleTag();
       this.model = data;
       this.render();
@@ -167,13 +168,16 @@ export default class Component {
   }
 
   resizeAfterImgLoad() {
-    console.log(this.wrapper.clientHeight);
     const imgs = [...this.wrapper.querySelectorAll('img')];
     if (imgs.length) {
       const promises = imgs.map((img) =>
         new Promise((resolve) => {
+          if (this.props.imageCache[img.getAttribute('src')]) {
+            return resolve();
+          }
           img.addEventListener('load', (evt) => {
-            resolve(evt);
+            this.props.imageCache[img.getAttribute('src')] = true;
+            return resolve(evt);
           });
         })
       );

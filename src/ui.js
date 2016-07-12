@@ -2,6 +2,8 @@ import Product from './components/product';
 import Cart from './components/cart';
 
 const DATA_ATTRIBUTE = 'data-shopify-buy-ui';
+const imageCache = {};
+
 export default class UI {
   constructor(client) {
     this.client = client;
@@ -32,6 +34,7 @@ export default class UI {
     }[type];
     return Object.assign({}, typeProperties, {
       client: this.client,
+      imageCache: imageCache
     });
   }
 
