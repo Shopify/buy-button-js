@@ -8,7 +8,17 @@ function csstojs(str, options) {
 
   if (!rules.rules) return obj;
 
-  return rules.rules;
+  return rules.rules.map(function (rule) {
+    return {
+      selectors: rule.selectors,
+      declarations: rule.declarations.map(function (dec) {
+        return {
+          property: dec.property,
+          value: dec.value
+        }
+      })
+    }
+  });
 }
 
 sass.render({
