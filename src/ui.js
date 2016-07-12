@@ -36,4 +36,13 @@ export default class UI {
     this.components[type].push(component);
     return component.init().then(() => component);
   }
+
+  destroyComponent(type, id) {
+    const component = this.components[type].forEach((component, index) => {
+      if (component.model.id === id) {
+        this.components[type][index].node.removeChild(this.components[type][index].iframe.div);
+        this.components[type].splice(index, 1);
+      }
+    });
+  }
 }
