@@ -22,27 +22,24 @@ export default class Cart extends Component {
 
   get DOMEvents() {
     return Object.assign({}, this.options.DOMEvents, {
-      [`click .${this.classes.quantityButton}.quantity-increment`]: this.updateQuantity.bind(this, 1),
-      [`click .${this.classes.quantityButton}.quantity-decrement`]: this.updateQuantity.bind(this, -1),
-      [`focusout .${this.classes.quantityInput}`]: this.setQuantity.bind(this),
+      [`click .${this.classes.quantityButton}.quantity-increment`]: this.onQuantityIncrement.bind(this, 1),
+      [`click .${this.classes.quantityButton}.quantity-decrement`]: this.onQuantityIncrement.bind(this, -1),
+      [`focusout .${this.classes.quantityInput}`]: this.onQuantityBlur.bind(this),
     });
   }
 
-  setQuantity(evt, target) {
-    const id = target.dataset['lineItemId'];
-    const item = this.model.lineItems.filter((lineItem) => lineItem.id === id)[0];
-    const newQty = target.value;
-    this.model.updateLineItem(id, newQty).then((cart) => {
-      this.model = cart;
-      this.render();
-    });
+  onQuantityBlur(evt, target) {
+    this.updateQuantity(target.dataset['lineItemId'], (qty) => target.value);
   }
 
-  updateQuantity(qty, evt, target) {
-    const id = target.dataset['lineItemId'];
+  onQuantityIncrement(qty, evt, target) {
+    this.updateQuantity(target.dataset['lineItemId'], (prevQty) => prevQty + qty);
+  }
+
+  updateQuantity(id, fn) {
     const item = this.model.lineItems.filter((lineItem) => lineItem.id === id)[0];
-    const newQty = item.quantity + qty;
-    this.model.updateLineItem(id, newQty).then((cart) => {
+    const newQty = fn(item.quantity);
+    return this.model.updateLineItem(id, newQty).then((cart) => {
       this.model = cart;
       this.render();
     });
@@ -64,8 +61,8 @@ export default class Cart extends Component {
     });
   }
 
-  addVariantToCart(id, quantity = 1) {
-    this.model.addVariants({variant: id, quantity}).then(() => {
+  addVariantToCart(variant, quantity = 1) {
+    return this.model.addVariants({variant: variant, quantity}).then(() => {
       this.render();
     });
   }
