@@ -24,9 +24,13 @@ module('Unit | Iframe', {
 });
 
 test('it creates and appends an iframe', (assert) => {
-  const childDiv = parent.children[0];
-  assert.equal(childDiv.tagName, 'DIV');
-  assert.equal(childDiv.children[0].tagName, 'IFRAME');
+  const done = assert.async();
+  iframe.load().then(() => {
+    const childDiv = parent.children[0];
+    assert.equal(childDiv.tagName, 'DIV');
+    assert.equal(childDiv.children[0].tagName, 'IFRAME');
+    done();
+  });
 });
 
 test('it returns custom styles object on #customStyles', (assert) => {
@@ -59,7 +63,11 @@ test('it properly formats default styles on #defaultStyles', (assert) => {
 });
 
 test('it appends a style tag', (assert) => {
-  const headTag = iframe.el.contentDocument.head.children[0];
-  assert.equal(headTag.tagName, 'STYLE');
-  assert.ok(headTag.innerHTML);
+  const done = assert.async();
+  iframe.load().then(() => {
+    const headTag = iframe.el.contentDocument.head.children[0];
+    assert.equal(headTag.tagName, 'STYLE');
+    assert.ok(headTag.innerHTML);
+    done();
+  });
 });

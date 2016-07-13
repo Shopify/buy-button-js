@@ -45,29 +45,22 @@ test('it proxies commonly accessed attributes to config options for type', (asse
   assert.equal(component.contents, componentDefaults.product.contents);
 });
 
-test('it instantiates an iframe if config.iframe is true', (assert) => {
-  assert.expect(1);
-  const iframeComponent = new Component({
-    id: 123,
-    node: document.getElementById('qunit-fixture'),
-    options: { product: {iframe: true}}}, {client: {}},
-    'product');
-  assert.ok(iframeComponent.iframe instanceof Iframe);
-});
-
 test('it instantiates a template', (assert) => {
   assert.expect(1);
   assert.ok(component.template instanceof Template);
 });
 
 test('it fetches and renders data on #init', (assert) => {
-  assert.expect(3);
+  assert.expect(4);
   const done = assert.async();
 
-  component.fetchData = function () {
-    return new Promise(resolve => {
-      return resolve({title: 'test'});
-    });
+  component.setupView = function () {
+    assert.ok(true);
+    return Promise.resolve();
+  }
+
+  component.setupModel = function () {
+    return Promise.resolve({title: 'test'});
   }
 
   component.render = function () {
@@ -84,20 +77,6 @@ test('it fetches and renders data on #init', (assert) => {
   });
 });
 
-test('it sets data and renders on #initWithData', (assert) => {
-  assert.expect(3);
-  component.render = function () {
-    assert.ok(true);
-  }
-
-  component.delegateEvents = function () {
-    assert.ok(true);
-  }
-
-  component.initWithData({title: 'test'});
-  assert.deepEqual(component.model, {title: 'test'});
-});
-
 test('it updates config on #updateConfig', (assert) => {
   const updateConfig = {
     id: 123,
@@ -110,6 +89,9 @@ test('it updates config on #updateConfig', (assert) => {
         },
       }
     }
+  }
+  component.delegateEvents = function () {
+    assert.ok(true);
   }
 
   component.updateConfig(updateConfig);
@@ -129,14 +111,18 @@ test('it adds a div to node if iframe is false on #createWrapper', (assert) => {
 });
 
 test('it adds a div to iframe if iframe is true on #createWrapper', (assert) => {
+  const done = assert.async();
   assert.expect(1);
   const iframeComponent = new Component({
     node: document.getElementById('qunit-fixture'),
     id: 123,
     options: { product: {iframe: true}}}, {client: {}},
     'product');
-  iframeComponent.createWrapper();
-  assert.equal(iframeComponent.document.body.children[iframeComponent.document.body.children.length - 1].tagName, 'DIV');
+  iframeComponent.setupView().then(() => {
+    iframeComponent.createWrapper();
+    assert.equal(iframeComponent.document.body.children[iframeComponent.document.body.children.length - 1].tagName, 'DIV');
+    done();
+  });
 });
 
 test('it sets innerHTML of wrapper on initial #render', (assert) => {
@@ -167,19 +153,23 @@ test('it updates innerHTML of wrapper on second #render', (assert) => {
 });
 
 test('adds event listeners to nodes on #delegateEvents', (assert) => {
+  const done = assert.async();
   assert.expect(2);
-  function clickFakeButton(evt, comp) {
+  function clickFakeButton(evt, target) {
     assert.ok(evt instanceof Event);
-    assert.ok(comp instanceof Component);
+    assert.ok(target instanceof window.Node);
   }
 
   component.options.DOMEvents = {
     'click .button': clickFakeButton
   }
 
-  component.render();
-  component.delegateEvents();
-  component.document.getElementById('button').click();
+  component.setupView().then(() => {
+    component.render();
+    component.delegateEvents();
+    component.document.getElementById('button').click();
+    done();
+  });
 });
 
 test('it returns a method wrapped by user methods on #wrapMethod', (assert) => {

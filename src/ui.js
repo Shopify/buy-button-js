@@ -51,18 +51,21 @@ export default class UI {
 
   createComponent(type, config) {
     config.node = config.node || this.queryEntryNode();
-    if ((type === 'product' || type === 'collection') && config.options.product.buttonDestination !== 'checkout') {
-      return this.createCart(config).then(() => {
-        const component = new this.componentTypes[type](config, this.componentProps(type));
-        this.components[type].push(component);
-        return component.init().then(() => component)
-      });
-    } else {
+    return this.setupCart(type, config).then(() => {
       const component = new this.componentTypes[type](config, this.componentProps(type));
       this.components[type].push(component);
-      return component.init().then(() => component).catch((e) => {
-        console.log(e)
-      });
+      return component.init().then(() => component);
+    })
+  }
+
+  setupCart(type, config) {
+    const goToCheckout = config.options.product &&
+                         config.options.product.buttonDestination &&
+                         config.options.product.buttonDestination === 'checkout';
+    if ((type === 'product' || type === 'collection') && !goToCheckout) {
+      return this.createCart(config);
+    } else {
+      return Promise.resolve();
     }
   }
 

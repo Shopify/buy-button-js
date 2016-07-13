@@ -27,7 +27,6 @@ export default class Component {
   constructor(config, props, type, childType) {
     this.delegateEvents = this.wrapMethod(this.delegateEvents);
     this.render = this.wrapMethod(this.render);
-    this.initWithData = this.wrapMethod(this.initWithData);
     this.resize = this.wrapMethod(this.resize);
     this.updateConfig = this.wrapMethod(this.updateConfig);
     this.id = config.id;
@@ -81,9 +80,7 @@ export default class Component {
   }
 
   get DOMEvents() {
-    return Object.assign({}, this.options.DOMEvents, {
-
-    });
+    return this.options.DOMEvents;
   }
 
   viewData() {
@@ -106,31 +103,34 @@ export default class Component {
     }
   }
 
-  initWithData(data) {
-    this._userEvent('beforeInit');
+  setupView() {
     this.iframe = this.options.iframe ? new Iframe(this.node, this.classes, this.styles) : null;
-    this.iframe.load().then(() => {
-      this.iframe.appendStyleTag();
-      this.model = data;
+    if (this.iframe) {
+      return this.iframe.load();
+    } else {
+      return Promise.resolve();
+    }
+  }
+
+  setupModel(data) {
+    if (data) {
+      return Promise.resolve(data);
+    } else {
+      return this.fetchData();
+    }
+  }
+
+  init(data) {
+    this._userEvent('beforeInit');
+    return this.setupView().then(() => {
+      return this.setupModel(data);
+    }).then((model) => {
+      this.model = model;
       this.render();
       this.delegateEvents();
       this._userEvent('afterInit');
-    })
-  }
-
-  init() {
-    this._userEvent('beforeInit');
-    this.iframe = this.options.iframe ? new Iframe(this.node, this.classes, this.styles) : null;
-    return this.iframe.load().then((e) => {
-      this.fetchData().then((model) => {
-        this.model = model;
-        this.render();
-        this.delegateEvents();
-        this._userEvent('afterInit');
-        return model;
-      });
-    })
-    // catch errors
+      return model;
+    });
   }
 
   updateConfig(config) {

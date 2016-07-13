@@ -73,96 +73,126 @@ test('it puts together a big param string on #windowParams', (assert) => {
 });
 
 test('it updates selected variant on #updateVariant', (assert) => {
-  product.initWithData(testProductCopy);
-  let updated = product.updateVariant('Size', 'large');
-  assert.equal(updated.selected, 'large');
+  const done = assert.async();
+  product.init(testProductCopy).then(() => {
+    let updated = product.updateVariant('Size', 'large');
+    assert.equal(updated.selected, 'large');
+    done();
+  });
 });
 
 test('it returns an html string on #childrenHtml', (assert) => {
-  product.initWithData(testProductCopy);
-  assert.ok(product.childrenHtml.match(/\<select/));
+  const done = assert.async();
+  product.init(testProductCopy).then(() => {
+    assert.ok(product.childrenHtml.match(/\<select/));
+    done();
+  });
 });
 
 test('it returns true on #variantAvailable if variant exists for selected options', (assert) => {
-  product.initWithData(testProductCopy);
+  const done = assert.async();
+  product.init(testProductCopy).then(() => {
   product.model.selectedVariant = {id: 123};
-  assert.ok(product.variantAvailable);
+    assert.ok(product.variantAvailable);
+    done();
+  });
 });
 
 test('it returns false on #variantAvailable if variant does not exist for selected options', (assert) => {
-  product.initWithData(testProductCopy);
-  product.model.selectedVariant = null;
-  assert.notOk(product.variantAvailable);
+  const done = assert.async();
+  product.init(testProductCopy).then(() => {
+    product.model.selectedVariant = null;
+    assert.notOk(product.variantAvailable);
+    done();
+  });
 });
 
 test('it returns true on #hasVariants if multiple variants', (assert) => {
-  product.initWithData(testProductCopy);
-  product.model.variants = [{id: 123}, {id: 234}];
-  assert.ok(product.hasVariants);
+  const done = assert.async();
+  product.init(testProductCopy).then(() => {
+    product.model.variants = [{id: 123}, {id: 234}];
+    assert.ok(product.hasVariants);
+    done();
+  });
 });
 
 test('it returns false on #hasVariants if single variant', (assert) => {
-  product.initWithData(testProductCopy);
-  product.model.variants = [{id: 123}];
-  assert.notOk(product.hasVariants);
+  const done = assert.async();
+  product.init(testProductCopy).then(() => {
+    product.model.variants = [{id: 123}];
+    assert.notOk(product.hasVariants);
+    done();
+  });
 });
 
 test('it returns selected image on #currentImage if variant exists', (assert) => {
-  product.initWithData(testProductCopy);
-  assert.equal(product.currentImage.img, 'http://test.com/test.jpg');
+  const done = assert.async();
+  product.init(testProductCopy).then(() => {
+    assert.equal(product.currentImage.img, 'http://test.com/test.jpg');
+    done();
+  });
 });
 
 test('it returns cached image on #currentImage if variant does not exist', (assert) => {
-  product.initWithData(testProductCopy);
-  product.model.selectedVariant = null;
-  product.model.selectedVariantImage = null;
-  assert.equal(product.currentImage.img, 'http://test.com/test.jpg');
+  const done = assert.async();
+  product.init(testProductCopy).then(() => {
+    product.model.selectedVariant = null;
+    product.model.selectedVariantImage = null;
+    assert.equal(product.currentImage.img, 'http://test.com/test.jpg');
+    done();
+  });
 });
 
 test('it returns options with selected and disabled values on #decoratedOptions', (assert) => {
-  product.initWithData(testProductCopy);
-  product.updateVariant('Size', 'small');
-  const expectedArray = [
-    {
-      name: 'Print',
-      values: [
-        {
-          name: 'sloth',
-          selected: true,
-          disabled: false
-        },
-        {
-          name: 'shark',
-          selected: false,
-          disabled: false
-        }
-      ]
-    },
-    {
-      name: 'Size',
-      values: [
-        {
-          name: 'small',
-          selected: true,
-          disabled: false
-        },
-        {
-          name: 'large',
-          selected: false,
-          disabled: true
-        }
-      ]
-    }
-  ]
+  const done = assert.async();
+  product.init(testProductCopy).then(() => {
+    product.updateVariant('Size', 'small');
+    const expectedArray = [
+      {
+        name: 'Print',
+        values: [
+          {
+            name: 'sloth',
+            selected: true,
+            disabled: false
+          },
+          {
+            name: 'shark',
+            selected: false,
+            disabled: false
+          }
+        ]
+      },
+      {
+        name: 'Size',
+        values: [
+          {
+            name: 'small',
+            selected: true,
+            disabled: false
+          },
+          {
+            name: 'large',
+            selected: false,
+            disabled: true
+          }
+        ]
+      }
+    ]
 
-  assert.deepEqual(product.decoratedOptions, expectedArray);
+    assert.deepEqual(product.decoratedOptions, expectedArray);
+    done();
+  });
 });
 
 test('it returns supplemental view info on #viewData', (assert) => {
-  product.initWithData(testProductCopy);
-  const viewData = product.viewData;
-  assert.equal(viewData.buttonText, 'Add to cart');
-  assert.ok(viewData.childrenHtml);
-  assert.equal(viewData.currentImage.img, 'http://test.com/test.jpg');
-  assert.ok(viewData.hasVariants);
+  const done = assert.async();
+  product.init(testProductCopy).then(() => {
+    const viewData = product.viewData;
+    assert.equal(viewData.buttonText, 'Add to cart');
+    assert.ok(viewData.childrenHtml);
+    assert.equal(viewData.currentImage.img, 'http://test.com/test.jpg');
+    assert.ok(viewData.hasVariants);
+    done();
+  });
 });
