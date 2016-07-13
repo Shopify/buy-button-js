@@ -9,6 +9,6 @@ const lineItemTemplates = {
               '<input class="{{data.classes.quantityInput}}" type="number" min="0" aria-label="Quantity" data-line-item-id="{{data.id}}" value="{{data.quantity}}">' +
               '<button class="{{data.classes.quantityButton}} quantity-increment" type="button" data-line-item-id="{{data.id}}"><span>+</span><span class="visuallyhidden">Increment</span></button>' +
             '</div>',
-}
+};
 
 export default lineItemTemplates;

@@ -65,7 +65,7 @@ export default class Product extends Component {
     super.render.call(this);
   }
 
-  onButtonClick(evt) {
+  onButtonClick() {
     if (this.options.buttonDestination === 'cart') {
       this.props.addToCart(this.model.selectedVariant);
     } else {

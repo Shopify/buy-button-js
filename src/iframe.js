@@ -40,8 +40,8 @@ export default class iframe {
   }
 
   load() {
-    return new Promise((resolve, reject) => {
-      this.el.onload = (e) => {
+    return new Promise((resolve) => {
+      this.el.onload = () => {
         this.appendStyleTag();
         resolve();
       };

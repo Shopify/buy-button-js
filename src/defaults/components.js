@@ -45,7 +45,7 @@ const defaults = {
     },
     text: {
       title: 'Your cart',
-      button: 'Checkout'
+      button: 'Checkout',
     },
   },
   lineItem: {
@@ -58,8 +58,8 @@ const defaults = {
       price: 'cart-item__price',
       quantity: 'cart-item__quantity-container',
       quantityInput: 'cart-item__quantity',
-      quantityButton: 'btn--seamless'
-    }
+      quantityButton: 'btn--seamless',
+    },
   },
   window: {
     height: 600,

@@ -9,12 +9,12 @@ export default class UI {
     this.client = client;
     this.components = {
       product: [],
-      cart: []
+      cart: [],
     };
 
     this.componentTypes = {
       product: Product,
-      cart: Cart
+      cart: Cart,
     };
   }
 
@@ -29,12 +29,12 @@ export default class UI {
   componentProps(type) {
     const typeProperties = {
       product: {
-        addToCart: this.components.cart[0] ? this.components.cart[0].addVariantToCart : null
-      }
+        addToCart: this.components.cart[0] ? this.components.cart[0].addVariantToCart : null,
+      },
     }[type];
     return Object.assign({}, typeProperties, {
       client: this.client,
-      imageCache: imageCache
+      imageCache,
     });
   }
 
@@ -55,13 +55,13 @@ export default class UI {
       const component = new this.componentTypes[type](config, this.componentProps(type));
       this.components[type].push(component);
       return component.init().then(() => component);
-    })
+    });
   }
 
   setupCart(type, config) {
     const goToCheckout = config.options.product &&
                          config.options.product.buttonDestination &&
-                         config.options.product.buttonDestination === 'checkout';
+                         (config.options.product.buttonDestination === 'checkout');
     if ((type === 'product' || type === 'collection') && !goToCheckout) {
       return this.createCart(config);
     } else {

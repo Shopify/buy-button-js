@@ -8,7 +8,7 @@ const cartTemplates = {
           '</div>',
   lineItems: '<div class="{{data.classes.lineItems}}">{{{data.childrenHtml}}}</div>',
   total: '<div class="{{data.classes.total}}">{{data.subtotal}}</div>',
-  button: '<button class="{{data.classes.button}}">{{data.text.button}}</button>'
-}
+  button: '<button class="{{data.classes.button}}">{{data.text.button}}</button>',
+};
 
 export default cartTemplates;

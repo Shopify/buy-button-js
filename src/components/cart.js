@@ -10,8 +10,8 @@ export default class Cart extends Component {
   }
 
   fetchData() {
-    if(localStorage.getItem('lastCartId')) {
-      return this.props.client.fetchCart(localStorage.getItem('lastCartId'))
+    if (localStorage.getItem('lastCartId')) {
+      return this.props.client.fetchCart(localStorage.getItem('lastCartId'));
     } else {
       return this.props.client.createCart().then((cart) => {
         localStorage.setItem('lastCartId', cart.id);
@@ -29,11 +29,11 @@ export default class Cart extends Component {
   }
 
   onQuantityBlur(evt, target) {
-    this.updateQuantity(target.dataset['lineItemId'], (qty) => target.value);
+    this.updateQuantity(target.dataset.lineItemId, () => target.value);
   }
 
   onQuantityIncrement(qty, evt, target) {
-    this.updateQuantity(target.dataset['lineItemId'], (prevQty) => prevQty + qty);
+    this.updateQuantity(target.dataset.lineItemId, (prevQty) => prevQty + qty);
   }
 
   updateQuantity(id, fn) {
@@ -42,6 +42,7 @@ export default class Cart extends Component {
     return this.model.updateLineItem(id, newQty).then((cart) => {
       this.model = cart;
       this.render();
+      return cart;
     });
   }
 
@@ -57,13 +58,14 @@ export default class Cart extends Component {
     return completeAssign(this.model, {
       text: this.text,
       classes: this.classes,
-      childrenHtml: this.childrenHtml
+      childrenHtml: this.childrenHtml,
     });
   }
 
   addVariantToCart(variant, quantity = 1) {
-    return this.model.addVariants({variant: variant, quantity}).then(() => {
+    return this.model.addVariants({variant, quantity}).then((cart) => {
       this.render();
+      return cart;
     });
   }
 }
