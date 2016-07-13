@@ -23,8 +23,12 @@ module('Unit | Iframe', {
   }
 });
 
-test('it creates and appends an iframe', (assert) => {
+test('it appends an iframe on #load', (assert) => {
   const done = assert.async();
+  iframe.appendStyleTag = function () {
+    assert.ok(true);
+  };
+
   iframe.load().then(() => {
     const childDiv = parent.children[0];
     assert.equal(childDiv.tagName, 'DIV');

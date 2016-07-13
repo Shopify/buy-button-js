@@ -98,6 +98,39 @@ test('it updates config on #updateConfig', (assert) => {
   assert.equal(component.options.styles.button.color, 'blue');
 });
 
+test('it creates an iframe if iframe is true on #setupView', (assert) => {
+  const done = assert.async();
+  const iframeComponent = new Component({
+    node: document.getElementById('qunit-fixture'),
+    id: 123,
+    options: { product: {iframe: true}}}, {client: {}},
+    'product');
+  iframeComponent.setupView().then(() => {
+    assert.ok(iframeComponent.iframe);
+    done();
+  });
+});
+
+test('it calls fetchData if no data passed on #setupModel', (assert) => {
+  const done = assert.async();
+  component.fetchData = function () {
+    return Promise.resolve({title: 'test'});
+  }
+
+  component.setupModel().then((data) => {
+    assert.deepEqual(data, {title: 'test'});
+    done();
+  });
+});
+
+test('it sets data if data is passed on #setupModel', (assert) => {
+  const done = assert.async();
+  component.setupModel({title: 'test'}).then((data) => {
+    assert.deepEqual(data, {title: 'test'});
+    done();
+  });
+});
+
 test('it returns a div on #createWrapper', (assert) => {
   assert.expect(1);
   const wrapper = component.createWrapper();
