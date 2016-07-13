@@ -65,9 +65,9 @@ export default class Product extends Component {
     super.render.call(this);
   }
 
-  onButtonClick(evt, product) {
+  onButtonClick(evt) {
     if (this.options.buttonDestination === 'cart') {
-      this.props.addToCart(product.model.selectedVariant);
+      this.props.addToCart(this.model.selectedVariant);
     } else {
       this.openCheckout();
     }
