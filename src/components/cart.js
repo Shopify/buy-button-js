@@ -24,6 +24,17 @@ export default class Cart extends Component {
     return Object.assign({}, this.options.DOMEvents, {
       [`click .${this.classes.quantityButton}.quantity-increment`]: this.updateQuantity.bind(this, 1),
       [`click .${this.classes.quantityButton}.quantity-decrement`]: this.updateQuantity.bind(this, -1),
+      [`focusout .${this.classes.quantityInput}`]: this.setQuantity.bind(this),
+    });
+  }
+
+  setQuantity(evt, target) {
+    const id = target.dataset['lineItemId'];
+    const item = this.model.lineItems.filter((lineItem) => lineItem.id === id)[0];
+    const newQty = target.value;
+    this.model.updateLineItem(id, newQty).then((cart) => {
+      this.model = cart;
+      this.render();
     });
   }
 

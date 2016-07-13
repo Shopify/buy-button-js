@@ -7,7 +7,7 @@ const cartTemplates = {
              '</button>' +
           '</div>',
   lineItems: '<div class="{{data.classes.lineItems}}">{{{data.childrenHtml}}}</div>',
-  total: '<div class="{{data.classes.total}}">{{data.total}}</div>',
+  total: '<div class="{{data.classes.total}}">{{data.subtotal}}</div>',
   button: '<button class="{{data.classes.button}}">{{data.text.button}}</button>'
 }
 
