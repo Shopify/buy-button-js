@@ -1,6 +1,6 @@
 import Component from '../component';
 import Template from '../template';
-import completeAssign from '../utils/complete-assign';
+import merge from 'lodash.merge';
 
 let cachedImage = null;
 
@@ -19,7 +19,7 @@ export default class Product extends Component {
   }
 
   get viewData() {
-    return completeAssign(this.model, {
+    return merge(this.model, {
       buttonText: this.variantAvailable ? this.text.button : 'Unavailable',
       childrenHtml: this.childrenHtml,
       currentImage: this.currentImage,

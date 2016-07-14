@@ -45,12 +45,13 @@
     "watchify": "^3.7.0"
   },
   "dependencies": {
-    "node-sass": "^3.8.0",
-    "css": "^2.1.0",
     "babel-plugin-transform-runtime": "^6.9.0",
     "babel-runtime": "^6.9.2",
+    "css": "^2.1.0",
     "hogan.js": "^3.0.2",
+    "lodash.merge": "^4.4.0",
     "morphdom": "^1.4.3",
+    "node-sass": "^3.8.0",
     "shopify-buy": "^0.2.1"
   }
 }
