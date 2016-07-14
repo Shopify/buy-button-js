@@ -8,6 +8,7 @@ export default class Cart extends Component {
     this.addVariantToCart = this.addVariantToCart.bind(this);
     this.childTemplate = new Template(this.config.lineItem.templates, this.config.lineItem.contents, 'cart-item');
     this.node = document.body.appendChild(document.createElement('div'));
+    this.isVisible = false;
   }
 
   fetchData() {
@@ -23,10 +24,16 @@ export default class Cart extends Component {
 
   get DOMEvents() {
     return Object.assign({}, this.options.DOMEvents, {
+      [`click .${this.classes.close}`]: this.onClose.bind(this),
       [`click .${this.classes.quantityButton}.quantity-increment`]: this.onQuantityIncrement.bind(this, 1),
       [`click .${this.classes.quantityButton}.quantity-decrement`]: this.onQuantityIncrement.bind(this, -1),
       [`focusout .${this.classes.quantityInput}`]: this.onQuantityBlur.bind(this),
     });
+  }
+
+  onClose() {
+    this.isVisible = false
+    this.render();
   }
 
   onQuantityBlur(evt, target) {
@@ -57,6 +64,7 @@ export default class Cart extends Component {
 
   get viewData() {
     return merge(this.model, {
+      wrapperClass: this.isVisible ? 'js-active' : '',
       text: this.text,
       classes: this.classes,
       childrenHtml: this.childrenHtml,
@@ -64,6 +72,7 @@ export default class Cart extends Component {
   }
 
   addVariantToCart(variant, quantity = 1) {
+    this.isVisible = true;
     return this.model.addVariants({variant, quantity}).then((cart) => {
       this.render();
       return cart;

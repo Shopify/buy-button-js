@@ -1,7 +1,7 @@
 const cartTemplates = {
   title: '<div class="{{data.classes.header}}">' +
             '<h2 class="{{data.classes.title}}">{{data.text.title}}</h2>' +
-            '<button class="btn--close">' +
+            '<button class="{{data.classes.close}}">' +
               '<span aria-role="hidden">×</span>' +
               '<span class="visuallyhidden">Close</span>' +
              '</button>' +

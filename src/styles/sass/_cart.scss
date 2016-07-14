@@ -11,8 +11,10 @@
   box-shadow: 0 0 0 rgba(0, 0, 0, 0.1);
   // transform: translateX(100%);
   transition: box-shadow 0.2s ease-out, transform 0.2s ease-out;
+  display: none;
 
   &.js-active {
+    display: block;
     transform: translateX(0);
     box-shadow: -5px 0 5px rgba(0, 0, 0, 0.1);
   }

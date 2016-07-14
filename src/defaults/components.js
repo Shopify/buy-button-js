@@ -45,6 +45,7 @@ const defaults = {
       footer: 'cart-bottom',
       total: 'cart-info clearfix cart-section',
       button: 'btn btn--cart-checkout',
+      close: 'btn--close',
     },
     text: {
       title: 'Your cart',
