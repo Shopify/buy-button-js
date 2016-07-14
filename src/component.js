@@ -103,6 +103,7 @@ export default class Component {
   resize() {
     if (this.iframe) {
       this.iframe.el.style.height = `${this.wrapper.clientHeight}px`;
+      this.iframe.el.style.width = `${this.wrapper.clientWidth}px`;
     }
   }
 
@@ -150,6 +151,7 @@ export default class Component {
 
   createWrapper() {
     const wrapper = this.document.createElement('div');
+    wrapper.classList.add(`${this.type}-container`);
     if (this.iframe) {
       this.document.body.appendChild(wrapper);
     } else {
