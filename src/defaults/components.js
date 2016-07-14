@@ -69,7 +69,8 @@ const defaults = {
   },
   toggle: {
     templates: toggleTemplates,
-    contents: ['title', 'count'],
+    iframe: true,
+    contents: ['count', 'title'],
     classes: {
       toggle: 'cart-toggle',
       title: 'cart-toggle__title',

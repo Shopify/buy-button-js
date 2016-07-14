@@ -7,10 +7,10 @@ import Template from './template';
 
 const delegateEventSplitter = /^(\S+)\s*(.*)$/;
 
-function logEvent(event) {
+function logEvent(event, type) {
 
   /* eslint-disable no-console */
-  console.log(`EVENT: ${event}`);
+  console.log(`EVENT: ${event} (${type})`);
 
   /* eslint-enable no-console  */
 }
@@ -31,7 +31,7 @@ export default class Component {
     this.updateConfig = this.wrapMethod(this.updateConfig);
     this.id = config.id;
     this.node = config.node;
-    this.debug = config.debug;
+    this.debug = true;
     this.type = type;
     this.childType = childType;
     this.config = merge(componentDefaults, config.options || {});
@@ -107,6 +107,7 @@ export default class Component {
   }
 
   setupView() {
+    this.node.classList.add(`shopify-buy-${this.type}`);
     this.iframe = this.options.iframe ? new Iframe(this.node, this.classes, this.styles) : null;
     if (this.iframe) {
       return this.iframe.load();
@@ -140,6 +141,7 @@ export default class Component {
     if (this.iframe) {
       this.iframe.updateStyles(this.styles);
     }
+    this.wrapper = null;
     this.render();
     this.delegateEvents();
     this.resize();
@@ -200,7 +202,7 @@ export default class Component {
 
   _userEvent(methodName) {
     if (this.debug) {
-      logEvent(methodName);
+      logEvent(methodName, this.type);
     }
     if (isFunction(this.events[methodName])) {
       this.events[methodName].call(this, this);

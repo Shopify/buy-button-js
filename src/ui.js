@@ -45,7 +45,9 @@ export default class UI {
       this.components.cart.push(cart);
       return cart.init();
     } else {
-      this.components.cart[0].updateConfig(config);
+      if (config.options && config.options.cart) {
+        this.components.cart[0].updateConfig(config);
+      }
       return Promise.resolve(this.components.cart[0]);
     }
   }

@@ -2,11 +2,11 @@ import Component from '../component';
 import Template from '../template';
 import merge from 'lodash.merge';
 
-let cachedImage = null;
 
 export default class Product extends Component {
   constructor(config, props) {
     super(config, props, 'product', 'option');
+    this.cachedImage = null;
     this.childTemplate = new Template(this.config.option.templates, this.config.option.contents, 'options');
     this.cart = null;
   }
@@ -16,18 +16,17 @@ export default class Product extends Component {
       return this.props.createCart(this.config).then((cart) => {
         this.cart = cart;
         this.render();
-        console.log(cart);
         return model;
       });
     });
   }
 
   get currentImage() {
-    if (!cachedImage) {
-      cachedImage = this.model.selectedVariantImage;
+    if (!this.cachedImage) {
+      this.cachedImage = this.model.selectedVariantImage;
     }
 
-    return cachedImage;
+    return this.cachedImage;
   }
 
   get viewData() {
@@ -101,7 +100,7 @@ export default class Product extends Component {
     const updatedOption = this.model.options.filter((option) => option.name === optionName)[0];
     updatedOption.selected = value;
     if (this.variantAvailable) {
-      cachedImage = this.model.selectedVariantImage;
+      this.cachedImage = this.model.selectedVariantImage;
     }
     this.render();
     return updatedOption;
