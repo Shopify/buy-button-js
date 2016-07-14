@@ -5,13 +5,14 @@ const defaults = {
   product: {
     iframe: true,
     buttonTarget: 'checkout',
-    contents: ['img', 'title', 'variantTitle', 'options', 'price', 'button'],
+    contents: ['img', 'title', 'variantTitle', 'description', 'options', 'price', 'button'],
     templates: productTemplates,
     classes: {
       img: 'variant-img',
       button: 'btn',
       title: 'product-title',
       variantTitle: 'variant-title',
+      description: 'product-description',
       price: 'variant-price',
       options: 'variant-selectors',
       disabled: 'btn-disabled',
