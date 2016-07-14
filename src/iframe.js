@@ -74,8 +74,9 @@ export default class iframe {
             declarations: ruleDeclarations(this.customStylesHash[key][decKey]),
           });
         } else {
+          const selector = this.classes[key].split(' ').join('.');
           styleGroup.push({
-            selector: `.${this.classes[key]}`,
+            selector: `.${selector}`,
             declarations: ruleDeclarations(this.customStylesHash[key]),
           });
         }

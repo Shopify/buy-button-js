@@ -37,7 +37,7 @@ export default class Component {
     this.config = merge(componentDefaults, config.options || {});
     this.props = props;
     this.model = {};
-    this.template = new Template(this.templates, this.contents, this.type);
+    this.template = new Template(this.templates, this.contents, this.classes[this.type]);
     this.children = null;
   }
 
@@ -122,9 +122,7 @@ export default class Component {
 
   init(data) {
     this._userEvent('beforeInit');
-    return this.setupView().then(() => {
-      return this.setupModel(data);
-    }).then((model) => {
+    return this.setupView().then(() => this.setupModel(data)).then((model) => {
       this.model = model;
       this.render();
       this.delegateEvents();

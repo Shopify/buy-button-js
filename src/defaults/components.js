@@ -10,6 +10,7 @@ const defaults = {
     contents: ['img', 'title', 'variantTitle', 'description', 'options', 'price', 'button'],
     templates: productTemplates,
     classes: {
+      product: 'product',
       img: 'variant-img',
       button: 'btn',
       title: 'product-title',
@@ -27,6 +28,7 @@ const defaults = {
     templates: optionTemplates,
     contents: ['option'],
     classes: {
+      option: 'options',
       select: 'select',
       option: 'option',
     },
@@ -36,6 +38,7 @@ const defaults = {
     templates: cartTemplates,
     contents: ['title', 'lineItems', 'total', 'button'],
     classes: {
+      cart: 'cart',
       header: 'cart-section cart-section--top',
       title: 'cart-title',
       lineItems: 'cart-item-container cart-section',
@@ -52,6 +55,7 @@ const defaults = {
     templates: lineItemTemplates,
     contents: ['image', 'title', 'variantTitle', 'quantity', 'price'],
     classes: {
+      lineItem: 'cart-item',
       image: 'cart-item__img',
       variantTitle: 'cart-item__variant-title',
       title: 'cart-item__title',

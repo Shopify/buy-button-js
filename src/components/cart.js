@@ -1,6 +1,6 @@
 import Component from '../component';
 import Template from '../template';
-import completeAssign from '../utils/complete-assign';
+import merge from 'lodash.merge';
 
 export default class Cart extends Component {
   constructor(config, props) {
@@ -55,7 +55,7 @@ export default class Cart extends Component {
   }
 
   get viewData() {
-    return completeAssign(this.model, {
+    return merge(this.model, {
       text: this.text,
       classes: this.classes,
       childrenHtml: this.childrenHtml,
