@@ -186,6 +186,9 @@ export default class Component {
             this.props.imageCache[img.getAttribute('src')] = true;
             return resolve(evt);
           });
+          img.addEventListener('error', (evt) => {
+            resolve(evt);
+          });
         })
       );
       return Promise.all(promises).then(() => this.resize());
