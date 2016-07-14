@@ -24,7 +24,7 @@ let scriptNode
 
 module('Unit | Component', {
   beforeEach() {
-    component = new Component(config, {client: {}}, 'product');
+    component = new Component(config, {client: {}, imageCache: {}}, 'product');
   },
   afterEach() {
     component = null;

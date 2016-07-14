@@ -7,6 +7,7 @@ export default class Cart extends Component {
     super(config, props, 'cart', 'lineItem');
     this.addVariantToCart = this.addVariantToCart.bind(this);
     this.childTemplate = new Template(this.config.lineItem.templates, this.config.lineItem.contents, 'cart-item');
+    this.node = document.body.appendChild(document.createElement('div'));
   }
 
   fetchData() {

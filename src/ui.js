@@ -21,15 +21,16 @@ export default class UI {
   queryEntryNode() {
     this.entry = this.entry || window.document.querySelectorAll(`script[${DATA_ATTRIBUTE}]`)[0];
     this.entry.removeAttribute(DATA_ATTRIBUTE);
+
     const div = document.createElement('div');
-    this.entry.appendChild(div);
+    this.entry.parentNode.insertBefore(div, this.entry);
     return div;
   }
 
   componentProps(type) {
     const typeProperties = {
       product: {
-        addToCart: this.components.cart[0] ? this.components.cart[0].addVariantToCart : null,
+        createCart: this.createCart.bind(this)
       },
     }[type];
     return Object.assign({}, typeProperties, {
@@ -45,28 +46,15 @@ export default class UI {
       return cart.init();
     } else {
       this.components.cart[0].updateConfig(config);
-      return Promise.resolve();
+      return Promise.resolve(this.components.cart[0]);
     }
   }
 
   createComponent(type, config) {
     config.node = config.node || this.queryEntryNode();
-    return this.setupCart(type, config).then(() => {
-      const component = new this.componentTypes[type](config, this.componentProps(type));
-      this.components[type].push(component);
-      return component.init().then(() => component);
-    });
-  }
-
-  setupCart(type, config) {
-    const goToCheckout = config.options.product &&
-                         config.options.product.buttonDestination &&
-                         (config.options.product.buttonDestination === 'checkout');
-    if ((type === 'product' || type === 'collection') && !goToCheckout) {
-      return this.createCart(config);
-    } else {
-      return Promise.resolve();
-    }
+    const component = new this.componentTypes[type](config, this.componentProps(type));
+    this.components[type].push(component);
+    return component.init().then(() => component);
   }
 
   destroyComponent(type, id) {

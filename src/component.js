@@ -127,7 +127,7 @@ export default class Component {
       this.render();
       this.delegateEvents();
       this._userEvent('afterInit');
-      return model;
+      return this;
     });
   }
 

@@ -26,7 +26,7 @@ let testProductCopy;
 module('Unit | Product', {
   beforeEach() {
     testProductCopy = Object.assign({}, testProduct);
-    product = new Product(config, {client: {}});
+    product = new Product(config, {client: {}, imageCache: {}, createCart: function () {return Promise.resolve()}});
   },
   afterEach() {
     product = null;

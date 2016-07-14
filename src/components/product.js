@@ -8,6 +8,17 @@ export default class Product extends Component {
   constructor(config, props) {
     super(config, props, 'product', 'option');
     this.childTemplate = new Template(this.config.option.templates, this.config.option.contents, 'options');
+    this.cart = null;
+  }
+
+  init(data) {
+    return super.init.call(this, data).then((model) => {
+      return this.props.createCart(this.config).then((cart) => {
+        this.cart = cart;
+        this.render();
+        return model;
+      });
+    });
   }
 
   get currentImage() {
@@ -25,6 +36,7 @@ export default class Product extends Component {
       currentImage: this.currentImage,
       buttonClass: this.variantAvailable ? '' : this.classes.disabled,
       hasVariants: this.hasVariants,
+      buttonDisabled: this.options.buttonDestination === 'checkout' || !this.cart,
       classes: this.classes,
     });
   }
@@ -67,7 +79,7 @@ export default class Product extends Component {
 
   onButtonClick() {
     if (this.options.buttonDestination === 'cart') {
-      this.props.addToCart(this.model.selectedVariant);
+      this.cart.addVariantToCart(this.model.selectedVariant);
     } else {
       this.openCheckout();
     }

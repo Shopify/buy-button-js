@@ -8,7 +8,7 @@ let fakeLocalStorage = {};
 
 module('Unit | Cart', {
   beforeEach() {
-    cart = new Cart({}, {client: {}});
+    cart = new Cart({}, {client: {}, imageCache: {}});
   },
   afterEach() {
     cart = null;

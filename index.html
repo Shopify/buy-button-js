@@ -18,48 +18,26 @@
       });
       client.createComponent('product', {
         id: 6640244678,
-        node: document.getElementById('test'),
         options: {
          cart: {
            styles: {
              button: {
-               'background-color': 'red'
+               'background-color': 'yellow'
              }
            },
-           text: {
-             title: 'shit u gonna buy'
-           }
          },
-         product: {
-            events: {
-              afterRender: function () {}
-            },
-            text: {
-              button: 'Buy Dis, Fam'
-            },
+        }
+      });
+
+      client.createComponent('product', {
+        id: 3614411907,
+        options: {
+          product: {
             styles: {
               button: {
-                'background-color': '#333333',
-                'color': '#b1e100',
-                'font-family': 'Helvetica',
-                'font-size': '16px',
-                'padding': '7px',
-                ':hover': {
-                  'background-color': '#e5e5e5',
-                  'color': '#333333',
-                }
-              },
-              title: {
-                'font-family': 'Helvetica',
-                'font-size': '24px',
-                'color': '#CDCDCD'
-              },
-              price: {
-                'font-family': 'Helvetica',
-                'font-size': '16px',
-                'color': '#666666'
-              }
-            }
+              'background-color': 'blue'
+             }
+           }
           }
         }
       });
