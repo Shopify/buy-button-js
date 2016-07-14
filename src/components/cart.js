@@ -1,4 +1,5 @@
 import Component from '../component';
+import CartToggle from '../components/toggle';
 import Template from '../template';
 import merge from 'lodash.merge';
 
@@ -9,6 +10,7 @@ export default class Cart extends Component {
     this.childTemplate = new Template(this.config.lineItem.templates, this.config.lineItem.contents, 'cart-item');
     this.node = document.body.appendChild(document.createElement('div'));
     this.isVisible = false;
+    this.toggle = new CartToggle(config, {cart: this});
   }
 
   fetchData() {
@@ -22,6 +24,16 @@ export default class Cart extends Component {
     }
   }
 
+  init(data) {
+    return super.init(data).then((cart) => {
+      return this.toggle.init({
+        lineItems: cart.model.lineItems
+      }).then(() => {
+        return this;
+      });
+    });
+  }
+
   get DOMEvents() {
     return Object.assign({}, this.options.DOMEvents, {
       [`click .${this.classes.close}`]: this.onClose.bind(this),
@@ -33,6 +45,11 @@ export default class Cart extends Component {
 
   onClose() {
     this.isVisible = false
+    this.render();
+  }
+
+  toggleVisibility() {
+    this.isVisible = !this.isVisible;
     this.render();
   }
 
@@ -75,6 +92,7 @@ export default class Cart extends Component {
     this.isVisible = true;
     return this.model.addVariants({variant, quantity}).then((cart) => {
       this.render();
+      this.toggle.render();
       return cart;
     });
   }

@@ -1,6 +1,7 @@
 import productTemplates from '../templates/product';
 import cartTemplates from '../templates/cart';
 import optionTemplates from '../templates/option';
+import toggleTemplates from '../templates/toggle';
 import lineItemTemplates from '../templates/line-item';
 
 const defaults = {
@@ -65,6 +66,18 @@ const defaults = {
       quantityInput: 'cart-item__quantity',
       quantityButton: 'btn--seamless',
     },
+  },
+  toggle: {
+    templates: toggleTemplates,
+    contents: ['title', 'count'],
+    classes: {
+      toggle: 'cart-toggle',
+      title: 'cart-toggle__title',
+      count: 'cart-toggle__count'
+    },
+    text: {
+      title: 'cart'
+    }
   },
   window: {
     height: 600,

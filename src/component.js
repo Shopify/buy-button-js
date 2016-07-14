@@ -80,11 +80,14 @@ export default class Component {
   }
 
   get DOMEvents() {
-    return this.options.DOMEvents;
+    return this.options.DOMEvents || {};
   }
 
-  viewData() {
-    return {};
+  get viewData() {
+    return merge(this.model, {
+      classes: this.classes,
+      text: this.text
+    });
   }
 
   delegateEvents() {

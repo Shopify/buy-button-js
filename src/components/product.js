@@ -16,6 +16,7 @@ export default class Product extends Component {
       return this.props.createCart(this.config).then((cart) => {
         this.cart = cart;
         this.render();
+        console.log(cart);
         return model;
       });
     });
