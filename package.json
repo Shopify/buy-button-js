@@ -14,7 +14,7 @@
     "watch:css": "watch 'npm run styles' src/styles/sass",
     "build": "npm run clean && npm run build:cjs && npm run build:globals && npm run polyfill && npm run uglify",
     "build:cjs": "NODE_PATH=./node_modules npm run styles && babel ./src --out-dir ./build",
-    "build:globals": "browserify --full-paths --ignore buffer build/shopify-buy-ui.js --outfile build/shopify-buy-ui.globals.js",
+    "build:globals": "browserify --ignore buffer build/shopify-buy-ui.js --outfile build/shopify-buy-ui.globals.js",
     "build:test": "browserify test/test.js -t babelify --outfile test/build/test.js",
     "polyfill": "NODE_PATH=./node_modules node ./script/polyfill.js",
     "uglify": "uglifyjs build/shopify-buy-ui.globals.polyfilled.js --output build/shopify-buy-ui.globals.polyfilled.min.js",
@@ -47,7 +47,6 @@
   "dependencies": {
     "babel-plugin-transform-runtime": "^6.9.0",
     "babel-runtime": "^6.9.2",
-    "cloner": "^0.4.0",
     "css": "^2.1.0",
     "hogan.js": "^3.0.2",
     "lodash.merge": "^4.4.0",
