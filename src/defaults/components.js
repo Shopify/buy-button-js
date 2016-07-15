@@ -7,7 +7,7 @@ import lineItemTemplates from '../templates/line-item';
 const defaults = {
   product: {
     iframe: true,
-    buttonTarget: 'cart',
+    buttonDestination: 'cart',
     contents: ['img', 'title', 'variantTitle', 'description', 'options', 'price', 'button'],
     templates: productTemplates,
     classes: {

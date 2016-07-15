@@ -9,6 +9,6 @@ export default class Template {
   }
 
   render(data) {
-    return `<div class="${this.className} ${data.data.wrapperClass}">${this.templateFn.render(data)}</div>`;
+    return `<div class="${this.className} ${data.data.wrapperClass || ''}">${this.templateFn.render(data)}</div>`;
   }
 }

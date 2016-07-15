@@ -141,9 +141,7 @@ export default class Component {
     if (this.iframe) {
       this.iframe.updateStyles(this.styles);
     }
-    this.wrapper = null;
     this.render();
-    this.delegateEvents();
     this.resize();
   }
 
