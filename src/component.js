@@ -31,7 +31,7 @@ export default class Component {
     this.updateConfig = this.wrapMethod(this.updateConfig);
     this.id = config.id;
     this.node = config.node;
-    this.debug = true;
+    this.debug = config.debug;
     this.type = type;
     this.childType = childType;
     this.config = merge(componentDefaults, config.options || {});
