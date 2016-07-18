@@ -1,6 +1,7 @@
 import Template from '../../src/template';
 
-const { module, test } = QUnit;
+import chai from 'chai';
+
 const contents = ['title', 'button'];
 const templates = {
   title: '<h1>BUY MY BUTTONS {{data.name}}</h1>',
@@ -9,21 +10,22 @@ const templates = {
 
 let template;
 
-module('Unit | Template', {
-  beforeEach() {
+describe('Template class', () => {
+  beforeEach(() => {
     template = new Template(templates, contents, 'test');
-  },
-  afterEach() {
+  });
+
+  afterEach(() => {
     template = null;
-  }
+  })
+
+  it('it puts data into the strings on #render', () => {
+    const expectedString = '<div class="test "><h1>BUY MY BUTTONS fool</h1><button>BUTTON</button></div>';
+    const data = {
+      name: 'fool'
+    }
+    const output = template.render({data: data});
+    chai.assert.equal(expectedString, output);
+  });
 });
 
-test('it puts data into the strings on #render', (assert) => {
-  assert.expect(1);
-  const expectedString = '<div class="test"><h1>BUY MY BUTTONS fool</h1><button>BUTTON</button></div>';
-  const data = {
-    name: 'fool'
-  }
-  const output = template.render({data: data});
-  assert.equal(output, expectedString);
-});
