@@ -15,7 +15,6 @@ export default class Product extends Component {
     return super.init.call(this, data).then((model) => {
       return this.props.createCart(this.config).then((cart) => {
         this.cart = cart;
-        this.render();
         return model;
       });
     });
@@ -69,12 +68,46 @@ export default class Product extends Component {
     return this.model.variants.length > 1;
   }
 
-  fetchData() {
-    return this.props.client.fetchProduct(this.id);
+  get variantArray() {
+    delete this.variantsMemo;
+    this.variantsMemo = this.model.variants.map((variant) => {
+      const betterVariant = {
+        id: variant.id,
+        optionValues: {},
+      };
+      variant.optionValues.forEach((optionValue) => {
+        betterVariant.optionValues[optionValue.name] = optionValue.value;
+      });
+
+      return betterVariant;
+    });
+    return this.variantsMemo;
   }
 
-  render() {
-    super.render.call(this);
+  get selections() {
+    const selections = {};
+
+    this.model.selections.forEach((selection, index) => {
+      const option = this.model.options[index];
+      selections[option.name] = selection;
+    });
+
+    return selections;
+  }
+
+  get decoratedOptions() {
+    return this.model.options.map((option) => ({
+      name: option.name,
+      values: option.values.map((value) => ({
+        name: value,
+        selected: value === option.selected,
+        disabled: !this.optionValueCanBeSelected(Object.assign({}, this.selections), option.name, value),
+      })),
+    }));
+  }
+
+  fetchData() {
+    return this.props.client.fetchProduct(this.id);
   }
 
   onButtonClick() {
@@ -106,33 +139,6 @@ export default class Product extends Component {
     return updatedOption;
   }
 
-  get variantArray() {
-    delete this.variantsMemo;
-    this.variantsMemo = this.model.variants.map((variant) => {
-      const betterVariant = {
-        id: variant.id,
-        optionValues: {},
-      };
-      variant.optionValues.forEach((optionValue) => {
-        betterVariant.optionValues[optionValue.name] = optionValue.value;
-      });
-
-      return betterVariant;
-    });
-    return this.variantsMemo;
-  }
-
-  get selections() {
-    const selections = {};
-
-    this.model.selections.forEach((selection, index) => {
-      const option = this.model.options[index];
-      selections[option.name] = selection;
-    });
-
-    return selections;
-  }
-
   optionValueCanBeSelected(selections, name, value) {
     const variants = this.variantArray;
     selections[name] = value;
@@ -143,16 +149,5 @@ export default class Product extends Component {
     });
 
     return satisfactoryVariants.length;
-  }
-
-  get decoratedOptions() {
-    return this.model.options.map((option) => ({
-      name: option.name,
-      values: option.values.map((value) => ({
-        name: value,
-        selected: value === option.selected,
-        disabled: !this.optionValueCanBeSelected(Object.assign({}, this.selections), option.name, value),
-      })),
-    }));
   }
 }

@@ -25,7 +25,6 @@ const config = {
 
 let component;
 let scriptNode;
-let parent;
 
 describe('Component class', () => {
   beforeEach(() => {
@@ -72,10 +71,6 @@ describe('Component class', () => {
         chai.assert.calledOnce(setupModel);
         chai.assert.calledOnce(render);
         chai.assert.calledOnce(delegateEvents);
-        setupView.restore();
-        setupModel.restore();
-        render.restore();
-        delegateEvents.restore();
         done();
       }).catch((e) => {
         done(e);
