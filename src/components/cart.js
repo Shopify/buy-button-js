@@ -43,6 +43,11 @@ export default class Cart extends Component {
     });
   }
 
+  destroy() {
+    super.destroy();
+    this.toggle.destroy();
+  }
+
   onClose() {
     this.isVisible = false
     this.render();

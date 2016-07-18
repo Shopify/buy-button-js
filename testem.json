@@ -1,10 +1,11 @@
 {
-  "test_page": "test/index.html",
   "launch_in_dev": [
     "Chrome"
   ],
   "launch_in_ci": [
     "Chrome",
     "Firefox"
-  ]
+  ],
+  "framework": "mocha",
+  "src_files": "test/build/test.js"
 }

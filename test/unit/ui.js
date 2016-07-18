@@ -3,9 +3,14 @@ import UI from '../../src/ui';
 import Product from '../../src/components/product';
 import Cart from '../../src/components/cart';
 
-const { module, test } = QUnit;
-
+import chai from 'chai';
 import sinon from 'sinon';
+
+sinon.assert.expose(chai.assert, {prefix: ''});
+
+const assert = chai.assert;
+
+chai.config.showDiff = true;
 
 const client = ShopifyBuy.buildClient({
   domain: 'buckets-o-stuff.myshopify.com',
@@ -15,56 +20,128 @@ const client = ShopifyBuy.buildClient({
 
 const productConfig = {
   id: 123,
-  node: document.getElementById('qunit-fixture'),
   options: {}
 }
 
-let ui;
+describe('ui class', () => {
+  let ui;
+  let script;
 
-module('Unit | UI', {
-  beforeEach() {
+  beforeEach(() => {
     ui = new UI(client);
-  },
-  afterEach() {
+    script = document.createElement('script');
+    script.setAttribute('data-shopify-buy-ui', true);
+    document.body.appendChild(script);
+  });
+
+  afterEach(() => {
     ui = null;
-  }
-});
-
-test('it creates a client', (assert) => {
-  assert.expect(1);
-  assert.deepEqual(client, ui.client);
-});
-
-test('it finds script element with data attribute on #queryEntryNode', (assert) => {
-  assert.expect(3);
-  const scriptNode = document.createElement('script');
-  scriptNode.setAttribute('data-shopify-buy-ui', true);
-  document.body.appendChild(scriptNode);
-  const initialNodes = document.querySelectorAll('script[data-shopify-buy-ui');
-  const div = ui.queryEntryNode();
-  const remainingNodes = document.querySelectorAll('script[data-shopify-buy-ui');
-  assert.equal(remainingNodes.length, initialNodes.length - 1);
-  assert.equal(div.tagName, 'DIV');
-  assert.equal(div.parentNode.tagName, 'BODY');
-});
-
-
-test('it creates a component of appropriate type on #createComponent', (assert) => {
-  const done = assert.async();
-  assert.expect(1);
-  const stub = sinon.stub(Product.prototype, 'init', () => {
-    return Promise.resolve()
+    document.body.removeChild(script);
   });
 
-  ui.createComponent('product',  productConfig).then((component) => {
-    assert.ok(ui.components.product[0] instanceof Product);
-    stub.restore();
-    done();
-  });
-});
+  describe('createCart', () => {
 
-test('it returns type-specific properties on #componentProps', (assert) => {
-  assert.expect(1);
-  const props = ui.componentProps('product');
-  assert.deepEqual(props.client, ui.client);
+    let initStub;
+
+    beforeEach(() => {
+      initStub = sinon.stub(Cart.prototype, 'init', () => {
+        return Promise.resolve();
+      });
+    });
+
+    afterEach(() => {
+      initStub.restore();
+    });
+
+    describe('when no cart exists', () => {
+      it('creates a new cart', (done) => {
+        ui.createCart({options: {}}).then(() => {
+          assert.equal(1, ui.components.cart.length, 'cart array has 1 item');
+          ui.destroyComponent('cart', ui.components.cart[0].model.id);
+          done();
+        }).catch((e) => {
+          done(e);
+        });
+      })
+    });
+
+    describe('when a cart exists', () => {
+      it('does not create a second cart', (done) => {
+        ui.createCart({options: {}}).then(() => ui.createCart({options: {}})).then(() => {
+          assert.equal(1, ui.components.cart.length, 'cart array has 1 item');
+          ui.destroyComponent('cart', ui.components.cart[0].model.id);
+          done();
+        }).catch((e) => {
+          done(e);
+        });
+      });
+
+      it('updates config of cart if passed', (done) => {
+        let updateStub = sinon.stub(Cart.prototype, 'updateConfig');
+
+        ui.createCart({options: {}}).then(() => ui.createCart({options: { cart: {test: true }}})).then(() => {
+          assert.calledWith(updateStub, {options: {cart: {test: true}}});
+          ui.destroyComponent('cart', ui.components.cart[0].model.id);
+          updateStub.restore();
+          done();
+        }).catch((e) => {
+          done(e);
+        });
+      });
+    });
+  });
+
+  describe('createComponent', () => {
+    let initStub;
+
+    beforeEach(() => {
+      initStub = sinon.stub(Product.prototype, 'init', () => {
+        return Promise.resolve();
+      });
+    });
+
+    afterEach(() => {
+      initStub.restore();
+    });
+
+    it('creates new component of type', (done) => {
+      ui.createComponent('product', productConfig).then(() => {
+        assert.equal(1, ui.components.product.length);
+        ui.destroyComponent('product', ui.components.product[0].model.id);
+        done()
+      }).catch((e) => {
+        done(e);
+      });
+    });
+
+    it('passes config to constructor', (done) => {
+      productConfig.node = null;
+      const testConfig = {
+        id: 123,
+        options: {},
+      }
+      ui.createComponent('product', productConfig).then(() => {
+        assert.equal(null, ui.components.product[0].config.node);
+        ui.destroyComponent('product', ui.components.product[0].model.id);
+        done()
+      }).catch((e) => {
+        done(e)
+      });
+    });
+  });
+
+  describe('destroyComponent', () => {
+    it('removes component and calls its destroy method', () => {
+      const testCart = {
+        model: {
+          id: 123
+        },
+        destroy: sinon.spy()
+      }
+      ui.components.cart.push(testCart);
+      ui.destroyComponent('cart', 123);
+      assert.equal(0, ui.components.cart.length);
+      assert.calledOnce(testCart.destroy);
+    });
+  });
 });

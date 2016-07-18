@@ -135,6 +135,10 @@ export default class Component {
     });
   }
 
+  destroy() {
+    this.node.parentNode.removeChild(this.node);
+  }
+
   updateConfig(config) {
     this.config = merge(componentDefaults, config.options);
     this.template = new Template(this.templates, this.contents, this.type);

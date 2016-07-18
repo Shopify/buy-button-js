@@ -18,30 +18,9 @@ export default class UI {
     };
   }
 
-  queryEntryNode() {
-    this.entry = this.entry || window.document.querySelectorAll(`script[${DATA_ATTRIBUTE}]`)[0];
-    this.entry.removeAttribute(DATA_ATTRIBUTE);
-
-    const div = document.createElement('div');
-    this.entry.parentNode.insertBefore(div, this.entry);
-    return div;
-  }
-
-  componentProps(type) {
-    const typeProperties = {
-      product: {
-        createCart: this.createCart.bind(this)
-      },
-    }[type];
-    return Object.assign({}, typeProperties, {
-      client: this.client,
-      imageCache,
-    });
-  }
-
   createCart(config) {
     if (!this.components.cart.length) {
-      const cart = new Cart(config, this.componentProps('cart'));
+      const cart = new Cart(config, this._componentProps('cart'));
       this.components.cart.push(cart);
       return cart.init();
     } else {
@@ -53,18 +32,39 @@ export default class UI {
   }
 
   createComponent(type, config) {
-    config.node = config.node || this.queryEntryNode();
-    const component = new this.componentTypes[type](config, this.componentProps(type));
+    config.node = config.node || this._queryEntryNode();
+    const component = new this.componentTypes[type](config, this._componentProps(type));
     this.components[type].push(component);
     return component.init().then(() => component);
   }
 
   destroyComponent(type, id) {
-    const component = this.components[type].forEach((component, index) => {
+    this.components[type].forEach((component, index) => {
       if (component.model.id === id) {
-        this.components[type][index].node.removeChild(this.components[type][index].iframe.div);
+        this.components[type][index].destroy();
         this.components[type].splice(index, 1);
       }
+    });
+  }
+
+  _queryEntryNode() {
+    this.entry = this.entry || window.document.querySelectorAll(`script[${DATA_ATTRIBUTE}]`)[0];
+    this.entry.removeAttribute(DATA_ATTRIBUTE);
+
+    const div = document.createElement('div');
+    this.entry.parentNode.insertBefore(div, this.entry);
+    return div;
+  }
+
+  _componentProps(type) {
+    const typeProperties = {
+      product: {
+        createCart: this.createCart.bind(this)
+      },
+    }[type];
+    return Object.assign({}, typeProperties, {
+      client: this.client,
+      imageCache,
     });
   }
 }
