@@ -10,7 +10,7 @@ export default class CartToggle extends Component {
     return {
       classes: this.classes,
       text: this.text,
-      count: this.props.cart.model.lineItems.length
+      count: this.props.cart.model.lineItems.length,
     };
   }
 

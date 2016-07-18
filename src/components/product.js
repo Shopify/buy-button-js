@@ -1,7 +1,6 @@
+import merge from 'lodash.merge';
 import Component from '../component';
 import Template from '../template';
-import merge from 'lodash.merge';
-
 
 export default class Product extends Component {
   constructor(config, props) {
@@ -12,12 +11,12 @@ export default class Product extends Component {
   }
 
   init(data) {
-    return super.init.call(this, data).then((model) => {
-      return this.props.createCart(this.config).then((cart) => {
+    return super.init.call(this, data).then((model) => (
+      this.props.createCart(this.config).then((cart) => {
         this.cart = cart;
         return model;
-      });
-    });
+      })
+    ));
   }
 
   get currentImage() {

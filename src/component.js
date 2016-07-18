@@ -86,7 +86,7 @@ export default class Component {
   get viewData() {
     return merge(this.model, {
       classes: this.classes,
-      text: this.text
+      text: this.text,
     });
   }
 
@@ -100,10 +100,11 @@ export default class Component {
   }
 
   resize() {
-    if (this.iframe) {
-      this.iframe.el.style.height = `${this.wrapper.clientHeight}px`;
-      this.iframe.el.style.width = `${this.wrapper.clientWidth}px`;
+    if (!this.iframe) {
+      return;
     }
+    this.iframe.el.style.height = `${this.wrapper.clientHeight}px`;
+    this.iframe.el.style.width = `${this.wrapper.clientWidth}px`;
   }
 
   setupView() {

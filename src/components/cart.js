@@ -1,7 +1,7 @@
+import merge from 'lodash.merge';
 import Component from '../component';
 import CartToggle from '../components/toggle';
 import Template from '../template';
-import merge from 'lodash.merge';
 
 export default class Cart extends Component {
   constructor(config, props, storage) {
@@ -52,13 +52,7 @@ export default class Cart extends Component {
   }
 
   init(data) {
-    return super.init(data).then((cart) => {
-      return this.toggle.init({
-        lineItems: cart.model.lineItems
-      }).then(() => {
-        return this;
-      });
-    });
+    return super.init(data).then((cart) => this.toggle.init({lineItems: cart.model.lineItems}).then(() => this));
   }
 
   destroy() {
@@ -67,7 +61,7 @@ export default class Cart extends Component {
   }
 
   onClose() {
-    this.isVisible = false
+    this.isVisible = false;
     this.render();
   }
 

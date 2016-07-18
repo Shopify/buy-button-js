@@ -40,10 +40,11 @@ export default class UI {
 
   destroyComponent(type, id) {
     this.components[type].forEach((component, index) => {
-      if (component.model.id === id) {
-        this.components[type][index].destroy();
-        this.components[type].splice(index, 1);
+      if (!component.model.id === id) {
+        return;
       }
+      this.components[type][index].destroy();
+      this.components[type].splice(index, 1);
     });
   }
 
@@ -59,7 +60,7 @@ export default class UI {
   _componentProps(type) {
     const typeProperties = {
       product: {
-        createCart: this.createCart.bind(this)
+        createCart: this.createCart.bind(this),
       },
     }[type];
     return Object.assign({}, typeProperties, {

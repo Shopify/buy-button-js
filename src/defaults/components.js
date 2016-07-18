@@ -29,7 +29,6 @@ const defaults = {
     templates: optionTemplates,
     contents: ['option'],
     classes: {
-      option: 'options',
       select: 'select',
       option: 'option',
     },
@@ -74,11 +73,11 @@ const defaults = {
     classes: {
       toggle: 'cart-toggle',
       title: 'cart-toggle__title',
-      count: 'cart-toggle__count'
+      count: 'cart-toggle__count',
     },
     text: {
-      title: 'cart'
-    }
+      title: 'cart',
+    },
   },
   window: {
     height: 600,
