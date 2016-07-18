@@ -1,12 +1,21 @@
+import chai from 'chai';
 import sinon from 'sinon';
-const { module, test } = QUnit;
+
+sinon.assert.expose(chai.assert, {prefix: ''});
+
 import Iframe from '../../src/iframe';
 
-let iframe;
-const parent = document.getElementById('qunit-fixture');
+const defaultCSS = '* { box-sizing: border-box; }';
+const customCSS = '.btn { color: red; } .btn:hover { color: green; }';
 
-module('Unit | Iframe', {
-  beforeEach() {
+let iframe;
+let parent;
+
+describe('Iframe class', () => {
+  beforeEach(() => {
+    parent = document.createElement('div');
+    parent.setAttribute('id', 'fixture');
+    document.body.appendChild(parent);
     iframe = new Iframe(parent, {
       button: 'btn'
     }, {
@@ -17,61 +26,40 @@ module('Unit | Iframe', {
         }
       }
     });
-  },
-  afterEach() {
-    iframe = null;
-  }
-});
-
-test('it appends an iframe on #load', (assert) => {
-  const done = assert.async();
-  iframe.appendStyleTag = function () {
-    assert.ok(true);
-  };
-
-  iframe.load().then(() => {
-    const childDiv = parent.children[0];
-    assert.equal(childDiv.tagName, 'DIV');
-    assert.equal(childDiv.children[0].tagName, 'IFRAME');
-    done();
   });
-});
 
-test('it returns custom styles object on #customStyles', (assert) => {
-  const testStyles = [{
-    selector: '.btn',
-    declarations: [
-      {
-        property: 'color',
-        value: 'red'
-      }
-    ]
-  }, {
-    selector: '.btn:hover',
-    declarations: [
-      {
-        property: 'color',
-        value: 'green'
-      }
-    ]
-  }]
+  afterEach(() => {
+    iframe = null;
+    document.body.removeChild(parent);
+    parent = null;
+  });
 
-  assert.deepEqual(iframe.customStyles, testStyles);
-});
+  describe('load', () => {
+    it('appends an iframe', (done) => {
+      iframe.appendStyleTag = function () {
+        chai.assert.isOk(true);
+      };
 
-test('it properly formats default styles on #defaultStyles', (assert) => {
-  const firstStyle = iframe.defaultStyles[0];
-  assert.ok(firstStyle.selector);
-  assert.ok(firstStyle.declarations[0].property);
-  assert.ok(firstStyle.declarations[0].value);
-});
+      iframe.load().then(() => {
+        const childDiv = parent.children[0];
+        chai.assert.equal('DIV', childDiv.tagName);
+        chai.assert.equal('IFRAME', childDiv.children[0].tagName);
+        done();
+      }).catch((e) => {
+        done(e)
+      });
+    });
 
-test('it appends a style tag', (assert) => {
-  const done = assert.async();
-  iframe.load().then(() => {
-    const headTag = iframe.el.contentDocument.head.children[0];
-    assert.equal(headTag.tagName, 'STYLE');
-    assert.ok(headTag.innerHTML);
-    done();
+    it('adds style tag with valid css', (done) => {
+      iframe.load().then(() => {
+        const styleTag = iframe.el.contentDocument.head.children[0];
+        chai.assert.equal('STYLE', styleTag.tagName);
+        chai.assert.include(styleTag.innerHTML, defaultCSS, 'css is formatted correctly');
+        chai.assert.include(styleTag.innerHTML, customCSS, 'appends custom css');
+        done();
+      }).catch((e) => {
+        done(e)
+      });
+    });
   });
 });
