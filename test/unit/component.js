@@ -39,185 +39,162 @@ describe('Component class', () => {
     component = null;
     document.body.removeChild(config.node);
     config.node = null;
-  })
-
-  it('it merges configuration options and defaults', () => {
-    chai.assert.equal(component.config.product.templates.button, config.options.product.templates.button);
-    chai.assert.equal(component.config.product.buttonDestination, 'cart');
   });
 
-  it('it proxies commonly accessed attributes to config options for type', () => {
-    chai.assert.isOk(component.client);
-    chai.assert.equal(component.options.iframe, config.options.product.iframe);
-    chai.assert.equal(component.templates.button, config.options.product.templates.button);
-    chai.assert.equal(component.contents, componentDefaults.product.contents);
-  });
+  describe('constructor', () => {
+    it('merges configuration options and defaults', () => {
+      chai.assert.equal(component.config.product.templates.button, config.options.product.templates.button);
+      chai.assert.equal(component.config.product.buttonDestination, 'cart');
+    });
 
-  it('it instantiates a template', () => {
-    chai.assert.isOk(component.template instanceof Template);
-  });
+    it('proxies commonly accessed attributes to config options for type', () => {
+      chai.assert.isOk(component.client);
+      chai.assert.equal(component.options.iframe, config.options.product.iframe);
+      chai.assert.equal(component.templates.button, config.options.product.templates.button);
+      chai.assert.equal(component.contents, componentDefaults.product.contents);
+    });
 
-  it('it fetches and renders data on #init', (done) => {
-    component.setupView = function () {
-      chai.assert.isOk(true);
-      return Promise.resolve();
-    }
-
-    component.setupModel = function () {
-      return Promise.resolve({title: 'test'});
-    }
-
-    component.render = function () {
-      chai.assert.isOk(true);
-    }
-
-    component.delegateEvents = function () {
-      chai.assert.isOk(true);
-    }
-
-    component.init().then(() => {
-      chai.assert.deepEqual(component.model, {title: 'test'});
-      done();
+    it('instantiates a template', () => {
+      chai.assert.isOk(component.template instanceof Template);
     });
   });
 
-  it('it updates config on #updateConfig', () => {
-    const updateConfig = {
-      id: 123,
-      options: {
-        product: {
-          styles: {
-            button: {
-              'color': 'blue'
-            }
-          },
+  describe('init', () => {
+    it('fetches and renders data', (done) => {
+      const setupView = sinon.stub(component, 'setupView').returns(Promise.resolve());
+      const setupModel = sinon.stub(component, 'setupModel').returns(Promise.resolve({ title: 'test' }));
+      const render = sinon.stub(component, 'render');
+      const delegateEvents = sinon.stub(component, 'delegateEvents');
+
+      component.init().then(() => {
+        chai.assert.deepEqual(component.model, {title: 'test'});
+        chai.assert.calledOnce(setupView);
+        chai.assert.calledOnce(setupModel);
+        chai.assert.calledOnce(render);
+        chai.assert.calledOnce(delegateEvents);
+        setupView.restore();
+        setupModel.restore();
+        render.restore();
+        delegateEvents.restore();
+        done();
+      }).catch((e) => {
+        done(e);
+      });
+    });
+
+    describe('with data passed as arg', () => {
+      it('sets model to data', (done) => {
+        component.init({title: 'test'}).then(() => {
+          chai.assert.equal('test', component.model.title);
+          done();
+        });
+      });
+    });
+
+    describe('with no data passed as arg', () => {
+      it('fetches data and sets model', (done) => {
+        component.fetchData = sinon.stub().returns(Promise.resolve({title: 'rectangle'}));;
+        component.init().then(() => {
+          chai.assert.equal('rectangle', component.model.title);
+          done();
+        });
+      });
+    });
+
+    it('adds event listeners to nodes', (done) => {
+      const clickSpy = sinon.spy();
+      component.options.DOMEvents = {
+        'click .button': clickSpy
+      }
+      component.init({}).then(() => {
+        component.render();
+        component.delegateEvents();
+        component.document.getElementById('button').click();
+        chai.assert.calledWith(clickSpy, sinon.match.instanceOf(Event), sinon.match.instanceOf(window.Node));
+        done();
+      });
+    });
+
+    describe('if iframe is true', () => {
+      it('creates an iframe', (done) => {
+        const iframeComponent = new Component({
+          node: document.getElementById('fixture'),
+          id: 123,
+          options: { product: {iframe: true}}}, {client: {}, imageCache: {}},
+          'product');
+        const setupModel = sinon.stub(iframeComponent, 'setupModel').returns(Promise.resolve({ title: 'test' }));
+        iframeComponent.init().then(() => {
+          chai.assert.isOk(iframeComponent.iframe);
+          setupModel.restore();
+          done();
+        });
+      });
+    });
+  });
+
+  describe('updateConfig', () => {
+    it('updates config with passed options', () => {
+      const updateConfig = {
+        id: 123,
+        options: {
+          product: {
+            styles: {
+              button: {
+                'color': 'blue'
+              }
+            },
+          }
         }
       }
-    }
-    component.delegateEvents = function () {
-      chai.assert.isOk(true);
-    }
-
-    component.updateConfig(updateConfig);
-    chai.assert.equal(component.options.styles.button.color, 'blue');
-  });
-
-  it('it creates an iframe if iframe is true on #setupView', (done) => {
-    const iframeComponent = new Component({
-      node: document.getElementById('fixture'),
-      id: 123,
-      options: { product: {iframe: true}}}, {client: {}},
-      'product');
-    iframeComponent.setupView().then(() => {
-      chai.assert.isOk(iframeComponent.iframe);
-      done();
+      component.updateConfig(updateConfig);
+      chai.assert.equal(component.options.styles.button.color, 'blue');
     });
   });
 
-  it('it calls fetchData if no data passed on #setupModel', (done) => {
-    component.fetchData = function () {
-      return Promise.resolve({title: 'test'});
-    }
+  describe('render', () => {
+    it('sets innerHTML of wrapper on initial call', () => {
+      const testHTML = '<h1>THIS IS ONLY A TEST</h1>';
 
-    component.setupModel().then((data) => {
-      chai.assert.deepEqual(data, {title: 'test'});
-      done();
-    });
-  });
-
-  it('it sets data if data is passed on #setupModel', (done) => {
-    component.setupModel({title: 'test'}).then((data) => {
-      chai.assert.deepEqual(data, {title: 'test'});
-      done();
-    });
-  });
-
-  it('it returns a div on #createWrapper', () => {
-    const wrapper = component.createWrapper();
-    chai.assert.equal(wrapper.tagName, 'DIV');
-  });
-
-  it('it adds a div to node if iframe is false on #createWrapper', () => {
-    component.createWrapper();
-    chai.assert.equal(component.node.children[0].tagName, 'DIV');
-  });
-
-  it('it adds a div to iframe if iframe is true on #createWrapper', (done) => {
-    const iframeComponent = new Component({
-      node: document.getElementById('fixture'),
-      id: 123,
-      options: { product: {iframe: true}}}, {client: {}},
-      'product');
-    iframeComponent.setupView().then(() => {
-      iframeComponent.createWrapper();
-      chai.assert.equal(iframeComponent.document.body.children[iframeComponent.document.body.children.length - 1].tagName, 'DIV');
-      done();
-    });
-  });
-
-  it('it sets innerHTML of wrapper on initial #render', () => {
-    const testHTML = '<h1>THIS IS ONLY A TEST</h1>';
-    component.template.render = function (data) {
-      chai.assert.isOk(data.data);
-      return testHTML;
-    }
-
-    component.render();
-    chai.assert.equal(component.wrapper.innerHTML, testHTML);
-  });
-
-  it('it updates innerHTML of wrapper on second #render', () => {
-    const testBeforeHTML = '<h1>THIS IS ONLY A TEST</h1>';
-    const testHTML = '<h1>THIS IS NOT A TEST</h1>'
-    component.wrapper = component.createWrapper();
-    component.wrapper.innerHTML = testBeforeHTML;
-    component.template.render = function (data) {
-      chai.assert.isOk(data.data);
-      return testHTML;
-    }
-
-    component.render();
-    chai.assert.equal(component.wrapper.innerHTML, testHTML);
-  });
-
-  it('adds event listeners to nodes on #delegateEvents', (done) => {
-    function clickFakeButton(evt, target) {
-      chai.assert.isOk(evt instanceof Event);
-      chai.assert.isOk(target instanceof window.Node);
-    }
-
-    component.options.DOMEvents = {
-      'click .button': clickFakeButton
-    }
-
-    component.setupView().then(() => {
+      const tmplRender = sinon.stub(component.template, 'render').returns(testHTML);
       component.render();
-      component.delegateEvents();
-      component.document.getElementById('button').click();
-      done();
+      chai.assert.equal(component.wrapper.innerHTML, testHTML);
+    });
+
+    it('updates innerHTML of wrapper on second call', () => {
+      const testBeforeHTML = '<h1>THIS IS ONLY A TEST</h1>';
+      const testHTML = '<h1>THIS IS NOT A TEST</h1>'
+      component.wrapper = component.createWrapper();
+      component.wrapper.innerHTML = testBeforeHTML;
+      component.template.render = function (data) {
+        chai.assert.isOk(data.data);
+        return testHTML;
+      }
+
+      component.render();
+      chai.assert.equal(component.wrapper.innerHTML, testHTML);
     });
   });
 
-  it('it returns a method wrapped by user methods on #wrapMethod', () => {
-    const eventConfig = config;
-    eventConfig.events = {
-      'beforeTestMethod': function (c) {
-        chai.assert.isOk(c instanceof Component);
-      },
-      'afterTestMethod': function (c) {
-        chai.assert.isOk(c instanceof Component);
-      },
-    }
-    const eventsComponent = new Component(eventConfig, {client: {}}, 'product');
+  describe('wrapMethod', () => {
+    it('returns a method wrapped by user methods', () => {
+      const eventConfig = config;
+      eventConfig.events = {
+        'beforeTestMethod': function (c) {
+          chai.assert.isOk(c instanceof Component);
+        },
+        'afterTestMethod': function (c) {
+          chai.assert.isOk(c instanceof Component);
+        },
+      }
+      const eventsComponent = new Component(eventConfig, {client: {}}, 'product');
 
-    eventsComponent.testMethod = function (string) {
-      chai.assert.equal(string, 'an argument');
-    }
+      eventsComponent.testMethod = function (string) {
+        chai.assert.equal(string, 'an argument');
+      }
 
-    const wrapped = eventsComponent.wrapMethod(eventsComponent.testMethod);
+      const wrapped = eventsComponent.wrapMethod(eventsComponent.testMethod);
 
-    wrapped.call(eventsComponent, 'an argument');
+      wrapped.call(eventsComponent, 'an argument');
+    });
   });
-
-
 });
