@@ -2,8 +2,13 @@ import ShopifyBuy from 'shopify-buy';
 import UI from './ui';
 
 ShopifyBuy.UI = {
+  ui: null,
+
   init(client) {
-    return new UI(client);
+    if (!this.ui) {
+      this.ui = new UI(client);
+    }
+    return this.ui;
   },
 };
 
