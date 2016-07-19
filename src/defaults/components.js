@@ -33,6 +33,20 @@ const defaults = {
       button: 'Add to cart',
     },
   },
+  collection: {
+    iframe: true,
+    contents: {
+      title: true,
+      products: true,
+    },
+    templates: {
+      title: '<h2>Collection</h2>',
+      products: '<div class="{{data.classes.products}}"></div>',
+    },
+    classes: {
+      products: 'collection-products'
+    },
+  },
   option: {
     templates: optionTemplates,
     contents: {

@@ -1,5 +1,6 @@
 import Product from './components/product';
 import Cart from './components/cart';
+import Collection from './components/collection';
 import hostStyles from './styles/host/main';
 
 const DATA_ATTRIBUTE = 'data-shopify-buy-ui';
@@ -11,12 +12,14 @@ export default class UI {
     this.components = {
       product: [],
       cart: [],
+      collection: [],
     };
 
     this.componentTypes = {
       product: Product,
       cart: Cart,
-    };
+      collection: Collection,
+    }
     this._appendStyleTag();
   }
 
@@ -62,6 +65,9 @@ export default class UI {
   _componentProps(type) {
     const typeProperties = {
       product: {
+        createCart: this.createCart.bind(this),
+      },
+      collection: {
         createCart: this.createCart.bind(this),
       },
     }[type];
