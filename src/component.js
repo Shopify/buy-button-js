@@ -108,7 +108,7 @@ export default class Component {
   }
 
   setupView() {
-    this.node.classList.add(`shopify-buy-${this.type}`);
+    this.node.className += ` shopify-buy-${this.type}`;
     this.iframe = this.options.iframe ? new Iframe(this.node, this.classes, this.styles) : null;
     if (this.iframe) {
       return this.iframe.load();
@@ -165,7 +165,7 @@ export default class Component {
 
   createWrapper() {
     const wrapper = this.document.createElement('div');
-    wrapper.classList.add(`${this.type}-container`);
+    wrapper.className = `${this.type}-container`;
     if (this.iframe) {
       this.document.body.appendChild(wrapper);
     } else {
