@@ -7,6 +7,7 @@ import Iframe from '../../src/iframe';
 
 const defaultCSS = '* { box-sizing: border-box; }';
 const customCSS = '.btn { color: red; } .btn:hover { color: green; }';
+const stylesheet = [{"selectors":["*"],"declarations":[{"property":"box-sizing","value":"border-box"}]}];
 
 let iframe;
 let parent;
@@ -25,7 +26,7 @@ describe('Iframe class', () => {
           'color': 'green'
         }
       }
-    });
+    }, stylesheet);
   });
 
   afterEach(() => {
@@ -41,9 +42,7 @@ describe('Iframe class', () => {
       };
 
       iframe.load().then(() => {
-        const childDiv = parent.children[0];
-        chai.assert.equal('DIV', childDiv.tagName);
-        chai.assert.equal('IFRAME', childDiv.children[0].tagName);
+        chai.assert.equal('IFRAME', parent.children[0].tagName);
         done();
       }).catch((e) => {
         done(e)

@@ -84,11 +84,11 @@ export default class Cart extends Component {
   }
 
   onQuantityBlur(evt, target) {
-    this.updateQuantity(target.dataset.lineItemId, () => target.value);
+    this.updateQuantity(target.getAttribute('data-line-item-id'), () => target.value);
   }
 
   onQuantityIncrement(qty, evt, target) {
-    this.updateQuantity(target.dataset.lineItemId, (prevQty) => prevQty + qty);
+    this.updateQuantity(target.getAttribute('data-line-item-id'), (prevQty) => prevQty + qty);
   }
 
   onCheckout(evt) {
@@ -101,6 +101,7 @@ export default class Cart extends Component {
     return this.model.updateLineItem(id, newQty).then((cart) => {
       this.model = cart;
       this.render();
+      this.toggle.render();
       return cart;
     });
   }
