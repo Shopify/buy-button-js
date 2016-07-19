@@ -92,7 +92,7 @@ const defaults = {
     iframe: true,
     contents: {
       count: true,
-      title: true
+      title: true,
     },
     classes: {
       toggle: 'cart-toggle',
