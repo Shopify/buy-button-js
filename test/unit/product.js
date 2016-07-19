@@ -49,9 +49,11 @@ describe('Product class', () => {
     it('calls createCart', (done) => {
       const createCart = sinon.stub(product.props, 'createCart').returns(Promise.resolve('test'));
       const superInit = sinon.stub(Component.prototype, 'init').returns(Promise.resolve());
+      const render = sinon.stub(product, 'render');
 
       product.init('test').then(() => {
         chai.assert.equal(product.cart, 'test');
+        chai.assert.calledOnce(createCart);
         chai.assert.calledWith(superInit, 'test');
         superInit.restore();
         done();
