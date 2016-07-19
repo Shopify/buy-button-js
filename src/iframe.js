@@ -1,6 +1,5 @@
 import hogan from 'hogan.js';
 import stylesTemplate from './templates/styles';
-import defaultStyles from './styles/embeds/main';
 
 const iframeStyles = {
   width: '100%',
@@ -25,9 +24,10 @@ function ruleDeclarations(rule) {
 }
 
 export default class iframe {
-  constructor(parent, classes, customStyles) {
+  constructor(parent, classes, customStyles, stylesheet) {
     this.el = document.createElement('iframe');
     this.parent = parent;
+    this.stylesheet = stylesheet;
     Object.keys(iframeStyles).forEach((key) => {
       this.el.style[key] = iframeStyles[key];
     });
@@ -94,7 +94,7 @@ export default class iframe {
   }
 
   get defaultStyles() {
-    return defaultStyles.map((rule) => ({selector: rule.selectors.join(', '), declarations: rule.declarations}));
+    return this.stylesheet.map((rule) => ({selector: rule.selectors.join(', '), declarations: rule.declarations}));
   }
 
   updateStyles(customStyles) {

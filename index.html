@@ -10,7 +10,7 @@
 
     <div id="test"></div>
 
-    <button id="update">update</button>
+    <!-- <button id="update">update</button> -->
 
     <script data-shopify-buy-ui>
       var client = ShopifyBuy.buildClient({
@@ -36,7 +36,7 @@
          },
         }
         }).then(function (component) {
-        document.getElementById('update').addEventListener('click', function (evt) {
+/*        document.getElementById('update').addEventListener('click', function (evt) {
           component.updateConfig({
             options: {
               product: {
@@ -48,7 +48,7 @@
               }
             }
           })
-        });
+        }); */
       });
     </script>
   </body>

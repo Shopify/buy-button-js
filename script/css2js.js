@@ -21,13 +21,11 @@ function csstojs(str, options) {
   });
 }
 
-sass.render({
-  file: './src/styles/embeds/sass/styles.scss'
-}, function (err, css) {
-  if (err) {
-    console.log(err);
-  } else {
-    var js = csstojs(css.css.toString());
-    fs.writeFileSync('src/styles/embeds/main.js', 'export default ' + JSON.stringify(js));
-  }
-})
+var cssString = fs.readdirSync('src/styles/embeds/sass/manifests').reduce(function (acc, file) {
+  var fileRoot = file.split('.')[0];
+  var result = sass.renderSync({file: './src/styles/embeds/sass/manifests/' + file});
+  var js = csstojs(result.css.toString());
+  return acc + '\n export var ' + fileRoot + ' = ' + JSON.stringify(js);
+}, '');
+
+fs.writeFileSync('src/styles/embeds/all.js', cssString);

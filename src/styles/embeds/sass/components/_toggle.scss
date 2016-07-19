@@ -1,0 +1,15 @@
+.toggle-container {
+  display: inline-block;
+}
+
+.cart-toggle {
+  background-color: $color-primary;
+  color: white;
+  border-radius: 3px 0 0 3px;;
+  padding: 15px 10px;
+  text-align: center;
+  display: inline-block;
+  min-width: 46px;
+  margin-right: 0;
+  cursor: pointer;
+}
