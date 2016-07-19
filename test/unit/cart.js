@@ -69,7 +69,6 @@ describe('Cart class', () => {
     });
   });
 
-
   describe('updateQuantity', () => {
     it('sets line item quantity', (done) => {
       cart.model = {

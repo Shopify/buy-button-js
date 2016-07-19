@@ -9,18 +9,19 @@ describe('ShopifyBuy.UI', () => {
     appId: 6
   };
 
-  let uiClient;
+  const client = ShopifyBuy.buildClient(configAttrs);
+  let ui;
 
   beforeEach(() => {
-     uiClient = ShopifyBuy.UI.buildClient(configAttrs);
+     ui = ShopifyBuy.UI.init(client);
   });
 
   afterEach(() => {
-    uiClient = null;
+    ui = null;
   });
 
   it('returns an instance of UI', () => {
-     assert.isOk(uiClient instanceof UI);
+     assert.isOk(ui instanceof UI);
   });
 
   it('adds to global namespace', () => {

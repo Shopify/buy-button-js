@@ -2,8 +2,7 @@ import ShopifyBuy from 'shopify-buy';
 import UI from './ui';
 
 ShopifyBuy.UI = {
-  buildClient(config = {}) {
-    const client = ShopifyBuy.buildClient(config);
+  init(client) {
     return new UI(client);
   },
 };

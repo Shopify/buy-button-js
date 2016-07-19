@@ -13,12 +13,13 @@
     <button id="update">update</button>
 
     <script data-shopify-buy-ui>
-      var client = ShopifyBuy.UI.buildClient({
+      var client = ShopifyBuy.buildClient({
          apiKey: 'bf081e860bc9dc1ce0654fdfbc20892d',
          domain: 'embeds.myshopify.com',
          appId: '6'
-      });
-      client.createComponent('product', {
+       });
+      var ui = ShopifyBuy.UI.init(client);
+      ui.createComponent('product', {
         id: 6640244678,
         options: {
           product: {
