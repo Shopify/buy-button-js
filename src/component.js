@@ -27,7 +27,6 @@ function methodStrings(method) {
 export default class Component {
   constructor(config, props, type, childType) {
     this.delegateEvents = this.wrapMethod(this.delegateEvents);
-    this.render = this.wrapMethod(this.render);
     this.resize = this.wrapMethod(this.resize);
     this.updateConfig = this.wrapMethod(this.updateConfig);
     this.id = config.id;
@@ -153,6 +152,7 @@ export default class Component {
   }
 
   render() {
+    this._userEvent('beforeRender');
     const html = this.template.render({data: this.viewData});
     if (this.wrapper && this.wrapper.innerHTML.length) {
       const div = this.document.createElement('div');
@@ -163,6 +163,7 @@ export default class Component {
       this.wrapper = this.createWrapper();
       this.wrapper.innerHTML = html;
     }
+    this._userEvent('afterRender');
     return this.resizeAfterImgLoad();
   }
 

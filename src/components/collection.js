@@ -4,7 +4,6 @@ import Product from './product';
 export default class Collection extends Component {
   constructor(config, props) {
     super(config, props, 'collection');
-    this.render = this.wrapMethod(this.render);
     this.productComponents = [];
   }
 
