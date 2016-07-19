@@ -157,6 +157,7 @@ export default class Component {
       const div = this.document.createElement('div');
       div.innerHTML = html;
       morphdom(this.wrapper, div);
+      this.wrapper.className = `${this.type}-container`;
     } else {
       this.wrapper = this.createWrapper();
       this.wrapper.innerHTML = html;
