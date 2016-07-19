@@ -26,6 +26,7 @@ describe('Cart class', () => {
     fakeLocalStorage);
   });
   afterEach(() => {
+    cart.destroy();
     cart = null;
   });
 
