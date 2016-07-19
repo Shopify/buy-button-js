@@ -163,7 +163,7 @@ export default class Component {
       this.wrapper = this.createWrapper();
       this.wrapper.innerHTML = html;
     }
-    this.resizeAfterImgLoad();
+    return this.resizeAfterImgLoad();
   }
 
   createWrapper() {

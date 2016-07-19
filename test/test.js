@@ -6,3 +6,4 @@ import './unit/component';
 import './unit/product';
 import './unit/cart';
 import './unit/checkout';
+import './unit/collection';

@@ -4,6 +4,7 @@ import Product from './product';
 export default class Collection extends Component {
   constructor(config, props) {
     super(config, props, 'collection');
+    this.render = this.wrapMethod(this.render);
     this.productComponents = [];
   }
 
@@ -25,7 +26,7 @@ export default class Collection extends Component {
     });
     productConfig.product.iframe = false;
 
-    Promise.all(this.model.products.map((product) => {
+    return Promise.all(this.model.products.map((product) => {
       const component = new Product(productConfig, this.props);
       this.productComponents.push(component);
       return component.init(product);
