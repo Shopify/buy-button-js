@@ -40,7 +40,7 @@ const defaults = {
       products: true,
     },
     templates: {
-      title: '<h2>Collection</h2>',
+      title: '<h2>{{data.collection.attrs.title}}</h2>',
       products: '<div class="{{data.classes.products}}"></div>',
     },
     classes: {
