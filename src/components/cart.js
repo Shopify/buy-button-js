@@ -1,7 +1,8 @@
 import merge from 'lodash.merge';
 import Component from '../component';
-import CartToggle from '../components/toggle';
+import CartToggle from './toggle';
 import Template from '../template';
+import Checkout from './checkout';
 
 export default class Cart extends Component {
   constructor(config, props, storage) {
@@ -13,6 +14,7 @@ export default class Cart extends Component {
     this.node.className = 'shopify-buy-cart-wrapper';
     this.isVisible = false;
     this.toggle = new CartToggle(config, {cart: this});
+    this.checkout = new Checkout(this.config);
   }
 
   get DOMEvents() {
@@ -20,6 +22,7 @@ export default class Cart extends Component {
       [`click .${this.classes.close}`]: this.onClose.bind(this),
       [`click .${this.classes.quantityButton}.quantity-increment`]: this.onQuantityIncrement.bind(this, 1),
       [`click .${this.classes.quantityButton}.quantity-decrement`]: this.onQuantityIncrement.bind(this, -1),
+      [`click .${this.classes.button}`]: this.onCheckout.bind(this),
       [`focusout .${this.classes.quantityInput}`]: this.onQuantityBlur.bind(this),
     });
   }
@@ -77,6 +80,10 @@ export default class Cart extends Component {
 
   onQuantityIncrement(qty, evt, target) {
     this.updateQuantity(target.dataset.lineItemId, (prevQty) => prevQty + qty);
+  }
+
+  onCheckout(evt) {
+    this.checkout.open(this.model.checkoutUrl);
   }
 
   updateQuantity(id, fn) {

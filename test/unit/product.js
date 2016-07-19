@@ -68,17 +68,6 @@ describe('Product class', () => {
     });
   });
 
-  describe('get windowParams', () => {
-    it('puts together a big param string', () => {
-      product.config.window = {
-        height: 100,
-        width: 100
-      }
-      const windowParams = 'height=100,width=100,';
-      chai.assert.deepEqual(product.windowParams, windowParams);
-    });
-  });
-
   describe('get childrenHtml', () => {
     it('it returns an html string', (done) => {
       product.init(testProductCopy).then(() => {

@@ -92,7 +92,8 @@ export default class Component {
 
   delegateEvents() {
     Object.keys(this.DOMEvents).forEach((key) => {
-      const [, eventName, selector] = key.match(delegateEventSplitter);
+      let [, eventName, selector] = key.match(delegateEventSplitter);
+      selector = selector.split(' ').join('.');
       this._on(eventName, selector, (evt, target) => {
         this.DOMEvents[key].call(this, evt, target);
       });
@@ -231,5 +232,4 @@ export default class Component {
       });
     });
   }
-
 }

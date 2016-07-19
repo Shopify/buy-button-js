@@ -1,6 +1,7 @@
 import merge from 'lodash.merge';
 import Component from '../component';
 import Template from '../template';
+import Checkout from './checkout';
 
 export default class Product extends Component {
   constructor(config, props) {
@@ -14,6 +15,7 @@ export default class Product extends Component {
     return super.init.call(this, data).then((model) => (
       this.props.createCart(this.config).then((cart) => {
         this.cart = cart;
+        this.render();
         return model;
       })
     ));
@@ -34,7 +36,7 @@ export default class Product extends Component {
       currentImage: this.currentImage,
       buttonClass: this.variantAvailable ? '' : this.classes.disabled,
       hasVariants: this.hasVariants,
-      buttonDisabled: this.options.buttonDestination === 'checkout' || !this.cart,
+      buttonDisabled: !this.cart,
       classes: this.classes,
     });
   }
@@ -44,10 +46,6 @@ export default class Product extends Component {
       [`change .${this.config.option.classes.select}`]: this.onOptionSelect.bind(this),
       [`click .${this.options.classes.button}`]: this.onButtonClick.bind(this),
     });
-  }
-
-  get windowParams() {
-    return Object.keys(this.config.window).reduce((acc, key) => `${acc}${key}=${this.config.window[key]},`, '');
   }
 
   get variantAvailable() {
@@ -114,6 +112,7 @@ export default class Product extends Component {
       this.cart.addVariantToCart(this.model.selectedVariant);
     } else {
       this.openCheckout();
+      new Checkout(this.config).open(this.model.selectedVariant.checkoutUrl(1));
     }
   }
 
@@ -122,10 +121,6 @@ export default class Product extends Component {
     const value = target.options[target.selectedIndex].value;
     const name = target.getAttribute('name');
     this.updateVariant(name, value);
-  }
-
-  openCheckout() {
-    window.open(this.model.selectedVariant.checkoutUrl(1), 'checkout', this.windowParams);
   }
 
   updateVariant(optionName, value) {
