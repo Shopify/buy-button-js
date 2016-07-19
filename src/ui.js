@@ -1,5 +1,6 @@
 import Product from './components/product';
 import Cart from './components/cart';
+import hostStyles from './styles/host/main';
 
 const DATA_ATTRIBUTE = 'data-shopify-buy-ui';
 const imageCache = {};
@@ -16,6 +17,7 @@ export default class UI {
       product: Product,
       cart: Cart,
     };
+    this._appendStyleTag();
   }
 
   createCart(config) {
@@ -67,5 +69,15 @@ export default class UI {
       client: this.client,
       imageCache,
     });
+  }
+
+  _appendStyleTag() {
+    const styleTag = document.createElement('style');
+    if (styleTag.styleSheet) {
+      styleTag.styleSheet.cssText = hostStyles;
+    } else {
+      styleTag.appendChild(document.createTextNode(hostStyles));
+    }
+    document.head.appendChild(styleTag);
   }
 }

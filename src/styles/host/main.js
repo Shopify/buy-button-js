@@ -1,0 +1,1 @@
+export default ".shopify-buy-product {\n  background: blue; }\n"
