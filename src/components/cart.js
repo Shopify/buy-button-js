@@ -91,7 +91,7 @@ export default class Cart extends Component {
     this.updateQuantity(target.getAttribute('data-line-item-id'), (prevQty) => prevQty + qty);
   }
 
-  onCheckout(evt) {
+  onCheckout() {
     this.checkout.open(this.model.checkoutUrl);
   }
 

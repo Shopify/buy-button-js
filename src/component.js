@@ -4,7 +4,7 @@ import isFunction from './utils/is-function';
 import componentDefaults from './defaults/components';
 import Iframe from './iframe';
 import Template from './template';
-import * as allStyles from './styles/embeds/all';
+import styles from './styles/embeds/all';
 
 const delegateEventSplitter = /^(\S+)\s*(.*)$/;
 
@@ -93,8 +93,8 @@ export default class Component {
 
   delegateEvents() {
     Object.keys(this.DOMEvents).forEach((key) => {
-      let [, eventName, selector] = key.match(delegateEventSplitter);
-      selector = selector.split(' ').join('.');
+      const [, eventName, selectorString] = key.match(delegateEventSplitter);
+      const selector = selectorString.split(' ').join('.');
       this._on(eventName, selector, (evt, target) => {
         this.DOMEvents[key].call(this, evt, target);
       });
@@ -111,7 +111,7 @@ export default class Component {
 
   setupView() {
     this.node.className += ` shopify-buy-frame shopify-buy-frame--${this.type}`;
-    this.iframe = this.options.iframe ? new Iframe(this.node, this.classes, this.styles, allStyles[this.type]) : null;
+    this.iframe = this.options.iframe ? new Iframe(this.node, this.classes, this.styles, styles[this.type]) : null;
     if (this.iframe) {
       return this.iframe.load();
     } else {
