@@ -1,3 +1,34 @@
-.shopify-buy-product {
-  background: blue;
+$cartMaxWidth: 350px;
+
+.shopify-buy-frame {
+  display: inline-block;
+
+  iframe {
+    max-width: 450px;
+    display: block;
+  }
+}
+
+.shopify-buy-frame--cart {
+  max-width: $cartMaxWidth;
+  position: fixed;
+  top: 0;
+  right: -$cartMaxWidth;
+  height: 100%;
+  z-index: 9999;
+
+  iframe {
+    height: 100%;
+  }
+
+  &.js-active {
+    right: 0;
+  }
+}
+
+.shopify-buy-frame--toggle {
+  position: fixed;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
 }

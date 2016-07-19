@@ -109,7 +109,7 @@ export default class Component {
   }
 
   setupView() {
-    this.node.className += ` shopify-buy-${this.type}`;
+    this.node.className += ` shopify-buy-frame shopify-buy-frame--${this.type}`;
     this.iframe = this.options.iframe ? new Iframe(this.node, this.classes, this.styles) : null;
     if (this.iframe) {
       return this.iframe.load();

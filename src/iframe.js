@@ -34,8 +34,6 @@ export default class iframe {
     Object.keys(iframeAttrs).forEach((key) => this.el.setAttribute(key, iframeAttrs[key]));
     this.customStylesHash = customStyles || {};
     this.classes = classes;
-    this.div = document.createElement('div');
-    this.div.appendChild(this.el);
     this.styleTag = null;
   }
 
@@ -45,8 +43,16 @@ export default class iframe {
         this.appendStyleTag();
         resolve();
       };
-      this.parent.appendChild(this.div);
+      this.parent.appendChild(this.el);
     });
+  }
+
+  addClass(className) {
+    this.parent.classList.add(className);
+  }
+
+  removeClass(className) {
+    this.parent.classList.remove(className);
   }
 
   get document() {

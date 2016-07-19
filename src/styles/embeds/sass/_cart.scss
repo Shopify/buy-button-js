@@ -224,10 +224,14 @@ input[type=number]::-webkit-outer-spin-button {
   color: black;
 }
 
+.toggle-container {
+  display: inline-block;
+}
+
 .cart-toggle {
   background-color: $color-primary;
   color: white;
-  border-radius: 3px;
+  border-radius: 3px 0 0 3px;;
   padding: 15px 10px;
   text-align: center;
   display: inline-block;

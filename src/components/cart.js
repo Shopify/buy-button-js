@@ -59,6 +59,15 @@ export default class Cart extends Component {
     return super.init(data).then((cart) => this.toggle.init({lineItems: cart.model.lineItems}).then(() => this));
   }
 
+  render() {
+    super.render();
+    if (this.isVisible) {
+      this.iframe.addClass('js-active');
+    } else {
+      this.iframe.removeClass('js-active');
+    }
+  }
+
   destroy() {
     super.destroy();
     this.toggle.destroy();
