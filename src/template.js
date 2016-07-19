@@ -5,7 +5,9 @@ export default class Template {
     this.templates = templates;
     this.contents = contents;
     this.className = className;
-    this.templateFn = hogan.compile(this.contents.filter(Boolean).reduce((acc, item) => acc + this.templates[item], ''));
+    this.templateFn = hogan.compile(Object.keys(this.contents)
+        .filter((key) => this.contents[key])
+        .reduce((acc, key) => acc + this.templates[key], ''));
   }
 
   render(data) {

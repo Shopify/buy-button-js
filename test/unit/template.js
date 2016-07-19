@@ -2,7 +2,10 @@ import Template from '../../src/template';
 
 import chai from 'chai';
 
-const contents = ['title', 'button'];
+const contents = {
+  title: true,
+  button: true,
+}
 const templates = {
   title: '<h1>BUY MY BUTTONS {{data.name}}</h1>',
   button: '<button>BUTTON</button>'

@@ -8,7 +8,15 @@ const defaults = {
   product: {
     iframe: true,
     buttonDestination: 'cart',
-    contents: ['img', 'title', 'variantTitle', 'description', 'options', 'price', 'button'],
+    contents: {
+      img: true,
+      title: true,
+      variantTitle: true,
+      description: false,
+      options: true,
+      price: true,
+      button: true,
+    },
     templates: productTemplates,
     classes: {
       product: 'product',
@@ -27,7 +35,9 @@ const defaults = {
   },
   option: {
     templates: optionTemplates,
-    contents: ['option'],
+    contents: {
+      option: true,
+    },
     classes: {
       select: 'select',
       option: 'option',
@@ -36,7 +46,12 @@ const defaults = {
   cart: {
     iframe: true,
     templates: cartTemplates,
-    contents: ['title', 'lineItems', 'total', 'button'],
+    contents: {
+      title: true,
+      lineItems: true,
+      total: true,
+      button: true,
+    },
     classes: {
       cart: 'cart',
       header: 'cart-section cart-section--top',
@@ -54,7 +69,13 @@ const defaults = {
   },
   lineItem: {
     templates: lineItemTemplates,
-    contents: ['image', 'title', 'variantTitle', 'quantity', 'price'],
+    contents: {
+      image: true,
+      title: true,
+      variantTitle: true,
+      quantity: true,
+      price: true,
+    },
     classes: {
       lineItem: 'cart-item',
       image: 'cart-item__img',
@@ -69,7 +90,10 @@ const defaults = {
   toggle: {
     templates: toggleTemplates,
     iframe: true,
-    contents: ['count', 'title'],
+    contents: {
+      count: true,
+      title: true
+    },
     classes: {
       toggle: 'cart-toggle',
       title: 'cart-toggle__title',
