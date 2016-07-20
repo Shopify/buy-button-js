@@ -4,7 +4,6 @@ import Product from './product';
 export default class Collection extends Component {
   constructor(config, props) {
     super(config, props, 'collection');
-    this.productComponents = [];
   }
 
   fetchData() {
@@ -25,10 +24,8 @@ export default class Collection extends Component {
     });
     productConfig.product.iframe = false;
 
-    return Promise.all(this.model.products.map((product) => {
-      const component = new Product(productConfig, this.props);
-      this.productComponents.push(component);
-      return component.init(product);
+    return Promise.all(this.model.products.map((productModel) => {
+      new Product(productConfig, this.props).init(productModel);
     })).then(() => this.resizeAfterImgLoad());
   }
 }

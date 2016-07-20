@@ -2,6 +2,7 @@ import chai from 'chai';
 import sinon from 'sinon';
 import Collection from '../../src/components/collection';
 import Component from '../../src/component';
+import Product from '../../src/components/product';
 
 sinon.assert.expose(chai.assert, {prefix: ''});
 
@@ -58,9 +59,10 @@ describe('Collection class', () => {
   describe('render', () => {
     it('renders array of products', (done) => {
       collection.model.products = [fakeProduct];
+      const initSpy = sinon.spy(Product.prototype, 'init');
 
       collection.render().then((data) => {
-        chai.assert.equal(collection.productComponents.length, 1);
+        chai.assert.calledWith(initSpy, fakeProduct);
         done();
       }).catch((e) => {
         done(e);
