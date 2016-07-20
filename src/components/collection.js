@@ -3,7 +3,7 @@ import Product from './product';
 
 export default class Collection extends Component {
   constructor(config, props) {
-    super(config, props, 'collection');
+    super(config, props, 'collection', 'product');
   }
 
   fetchData() {
@@ -24,7 +24,7 @@ export default class Collection extends Component {
   render() {
     super.render();
     const productConfig = Object.assign({}, this.config, {
-      node: this.wrapper,
+      node: this.document.querySelector(`.${this.classes.products}`),
     });
     productConfig.product.iframe = false;
 

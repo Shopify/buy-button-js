@@ -109,9 +109,9 @@ export default class Component {
   }
 
   setupView() {
-    this.node.className += ` shopify-buy-frame shopify-buy-frame--${this.type}`;
     this.iframe = this.options.iframe ? new Iframe(this.node, this.classes, this.styles, styles[this.type]) : null;
     if (this.iframe) {
+      this.node.className += ` shopify-buy-frame shopify-buy-frame--${this.type}`;
       return this.iframe.load();
     } else {
       return Promise.resolve();
