@@ -7,14 +7,18 @@ export default class Collection extends Component {
   }
 
   fetchData() {
+
+    /* eslint-disable camelcase */
     return this.props.client.fetchCollection(this.id).then((collection) => {
       return this.props.client.fetchQueryProducts({collection_id: this.id}).then((products) => {
         return {
           products,
-          collection
-        }
+          collection,
+        };
       });
     });
+
+    /* eslint-enable camelcase */
   }
 
   render() {
@@ -25,7 +29,7 @@ export default class Collection extends Component {
     productConfig.product.iframe = false;
 
     return Promise.all(this.model.products.map((productModel) => {
-      new Product(productConfig, this.props).init(productModel);
+      return new Product(productConfig, this.props).init(productModel);
     })).then(() => this.resizeAfterImgLoad());
   }
 }

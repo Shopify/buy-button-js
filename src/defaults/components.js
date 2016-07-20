@@ -44,7 +44,7 @@ const defaults = {
       products: '<div class="{{data.classes.products}}"></div>',
     },
     classes: {
-      products: 'collection-products'
+      products: 'collection-products',
     },
   },
   option: {

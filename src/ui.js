@@ -19,7 +19,7 @@ export default class UI {
       product: Product,
       cart: Cart,
       collection: Collection,
-    }
+    };
     this._appendStyleTag();
   }
 
