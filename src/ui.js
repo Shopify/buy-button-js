@@ -1,4 +1,5 @@
 import Product from './components/product';
+import ProductSet from './components/product-set';
 import Cart from './components/cart';
 import Collection from './components/collection';
 import hostStyles from './styles/host/main';
@@ -13,12 +14,14 @@ export default class UI {
       product: [],
       cart: [],
       collection: [],
+      productSet: [],
     };
 
     this.componentTypes = {
       product: Product,
       cart: Cart,
       collection: Collection,
+      productSet: ProductSet,
     };
     this._appendStyleTag();
   }
@@ -38,7 +41,7 @@ export default class UI {
 
   createComponent(type, config) {
     config.node = config.node || this._queryEntryNode();
-    const component = new this.componentTypes[type](config, this._componentProps(type));
+    const component = new this.componentTypes[type](config, this.componentProps);
     this.components[type].push(component);
     return component.init().then(() => component);
   }
@@ -62,19 +65,12 @@ export default class UI {
     return div;
   }
 
-  _componentProps(type) {
-    const typeProperties = {
-      product: {
-        createCart: this.createCart.bind(this),
-      },
-      collection: {
-        createCart: this.createCart.bind(this),
-      },
-    }[type];
-    return Object.assign({}, typeProperties, {
+  get componentProps() {
+    return {
       client: this.client,
       imageCache,
-    });
+      createCart: this.createCart.bind(this),
+    };
   }
 
   _appendStyleTag() {

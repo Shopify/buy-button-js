@@ -1,11 +1,6 @@
-import Component from '../component';
-import Product from './product';
+import ProductSet from './product-set';
 
-export default class Collection extends Component {
-  constructor(config, props) {
-    super(config, props, 'collection', 'product');
-  }
-
+export default class Collection extends ProductSet {
   fetchData() {
 
     /* eslint-disable camelcase */
@@ -19,17 +14,5 @@ export default class Collection extends Component {
     });
 
     /* eslint-enable camelcase */
-  }
-
-  render() {
-    super.render();
-    const productConfig = Object.assign({}, this.config, {
-      node: this.document.querySelector(`.${this.classes.products}`),
-    });
-    productConfig.product.iframe = false;
-
-    return Promise.all(this.model.products.map((productModel) => {
-      return new Product(productConfig, this.props).init(productModel);
-    })).then(() => this.resizeAfterImgLoad());
   }
 }
