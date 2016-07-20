@@ -21,15 +21,15 @@ export default class UI {
   }
 
   createCart(config) {
-    if (!this.components.cart.length) {
-      const cart = new Cart(config, this._componentProps('cart'));
-      this.components.cart.push(cart);
-      return cart.init();
-    } else {
+    if (this.components.cart.length) {
       if (config.options && config.options.cart) {
         this.components.cart[0].updateConfig(config);
       }
       return Promise.resolve(this.components.cart[0]);
+    } else {
+      const cart = new Cart(config, this._componentProps('cart'));
+      this.components.cart.push(cart);
+      return cart.init();
     }
   }
 
