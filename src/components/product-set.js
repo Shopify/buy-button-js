@@ -18,6 +18,8 @@ export default class ProductSet extends Component {
         products,
       };
     });
+
+    /* eslint-enable camelcase */
   }
 
   render() {
