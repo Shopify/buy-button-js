@@ -10,7 +10,11 @@ export default class Template {
         .reduce((acc, key) => acc + this.templates[key], ''));
   }
 
+  wrapperClasses(data) {
+    return `component-container ${this.className} ${data.data.wrapperClass || ''}`
+  }
+
   render(data) {
-    return `<div class="${this.className} ${data.data.wrapperClass || ''}">${this.templateFn.render(data)}</div>`;
+    return `<div class="${this.wrapperClasses(data)}">${this.templateFn.render(data)}</div>`;
   }
 }
