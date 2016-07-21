@@ -45,7 +45,7 @@ export default class Product extends Component {
       buttonClass: this.variantAvailable ? '' : this.classes.disabled,
       hasVariants: this.hasVariants,
       buttonDisabled: !this.cart,
-      priceClass: this.model.selectedVariant.compareAtPrice ? 'price--strike' : '',
+      priceClass: this.model.selectedVariant.compareAtPrice ? 'price--lowered' : '',
       classes: this.classes,
     });
   }

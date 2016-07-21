@@ -7,8 +7,12 @@ const cartTemplates = {
              '</button>' +
           '</div>',
   lineItems: '<div class="{{data.classes.lineItems}}">{{{data.childrenHtml}}}</div>',
-  total: '<div class="{{data.classes.total}}">{{data.subtotal}}</div>',
-  button: '<button class="{{data.classes.button}}" type="button">{{data.text.button}}</button>',
+  footer: `<div class="{{data.classes.footer}}">
+            <p class="{{data.classes.subtotalText}}">{{data.text.total}}</p>
+            <p class="{{data.classes.subtotal}}"><span class="{{data.classes.currency}}"></span>\${{data.subtotal}}</p>
+            <p class="{{data.classes.notice}}">{{data.text.notice}}</p>
+            <button class="{{data.classes.button}}" type="button">{{data.text.button}}</button>
+          </div>`
 };
 
 export default cartTemplates;
