@@ -10,13 +10,13 @@ const imageCache = {};
 export default class UI {
   constructor(client) {
     this.client = client;
+    this.iframeComponents = [];
     this.components = {
       product: [],
       cart: [],
       collection: [],
       productSet: [],
     };
-
     this.componentTypes = {
       product: Product,
       cart: Cart,
@@ -43,7 +43,7 @@ export default class UI {
     config.node = config.node || this._queryEntryNode();
     const component = new this.componentTypes[type](config, this.componentProps);
     this.components[type].push(component);
-    return component.init().then(() => component);
+    return component.init();
   }
 
   destroyComponent(type, id) {
@@ -83,3 +83,4 @@ export default class UI {
     document.head.appendChild(styleTag);
   }
 }
+

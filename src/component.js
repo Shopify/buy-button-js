@@ -102,7 +102,19 @@ export default class Component {
     if (!this.iframe) {
       return;
     }
+    if (this.type === 'product') {
+      this.resizeX();
+    }
+    if (this.type === 'product' || this.type === 'collection') {
+      this.resizeY();
+    }
+  }
+
+  resizeY() {
     this.iframe.el.style.height = `${this.wrapper.clientHeight}px`;
+  }
+
+  resizeX() {
     this.iframe.el.style.width = `${this.wrapper.clientWidth}px`;
   }
 

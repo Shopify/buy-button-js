@@ -82,6 +82,7 @@ const defaults = {
       currency: 'cart__currency',
       button: 'btn btn--cart-checkout',
       close: 'btn--close',
+      cartScroll: 'cart-scroll',
     },
     text: {
       title: 'Your cart',
@@ -95,10 +96,10 @@ const defaults = {
     templates: lineItemTemplates,
     contents: {
       image: true,
-      title: true,
       variantTitle: true,
-      quantity: true,
+      title: true,
       price: true,
+      quantity: true,
     },
     classes: {
       lineItem: 'cart-item',

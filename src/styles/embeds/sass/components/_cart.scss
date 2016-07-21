@@ -1,20 +1,21 @@
 .cart-container {
   height: 100%;
-  width: 350px;
+  padding-left: 10px;
 }
 
 .cart {
   box-shadow: -5px 0 5px rgba(0, 0, 0, 0.1);
   height: 100%;
-  width: calc(100% - 10px);
-  margin-left: 10px;
-  right: 0;
-  top: 0;
   background: white;
+  width: calc(100% - 10px);
+  position: absolute;
+  right: 0;
 }
 
 .cart__header {
   padding: 20px;
+  position: relative;
+  z-index: 5;
 }
 
 .cart__title {
@@ -22,7 +23,19 @@
   color: #444;
 }
 
+.cart-scroll {
+  padding: 70px 0 140px 0;
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 100%;
+}
+
 .cart-items {
+  overflow: hidden;
+  overflow-y: auto;
+  height: 100%;
+  position: relative;
   padding: 0 20px 20px 20px;
 }
 
@@ -52,7 +65,6 @@
   display: block;
   margin-bottom: 10px;
   max-width: 150px;
-  float: left;
 }
 
 .cart-item__price {
@@ -71,7 +83,7 @@
 .cart-item__quantity-container {
   border-radius: 3px;
   margin-left: 80px;
-  clear: left;
+  overflow: hidden;
 }
 
 .quantity-decrement, .quantity-increment {
@@ -142,7 +154,7 @@ input[type=number]::-webkit-outer-spin-button {
 
 .cart-bottom {
   position: absolute;
-  width: calc(100% - 10px);
+  width: 100%;
   bottom: 0;
   padding: 20px;
   border-top: 1px solid #999999;
