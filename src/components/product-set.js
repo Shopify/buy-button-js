@@ -24,9 +24,10 @@ export default class ProductSet extends Component {
       node: this.document.querySelector(`.${this.classes.products}`),
     });
     productConfig.product.iframe = false;
+    console.log(this.model);
 
     return Promise.all(this.model.products.map((productModel) => {
       return new Product(productConfig, this.props).init(productModel);
-    })).then(() => this.resizeAfterImgLoad());
+    })).then(() => this.resize());
   }
 }
