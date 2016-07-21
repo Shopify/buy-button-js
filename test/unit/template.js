@@ -1,7 +1,5 @@
 import Template from '../../src/template';
 
-import chai from 'chai';
-
 const contents = {
   title: true,
   button: true,
@@ -28,7 +26,7 @@ describe('Template class', () => {
       name: 'fool'
     }
     const output = template.render({data: data});
-    chai.assert.equal(expectedString, output);
+    assert.equal(expectedString, output);
   });
 });
 

@@ -1,8 +1,3 @@
-import chai from 'chai';
-import sinon from 'sinon';
-
-sinon.assert.expose(chai.assert, {prefix: ''});
-
 import componentDefaults from '../../src/defaults/components';
 import Product from '../../src/components/product';
 import Template from '../../src/template';
@@ -42,7 +37,7 @@ describe('Product class', () => {
   });
 
   it('has a childTemplate for options', () => {
-    chai.assert.instanceOf(product.childTemplate, Template);
+    assert.instanceOf(product.childTemplate, Template);
   });
 
   describe('init', () => {
@@ -52,9 +47,9 @@ describe('Product class', () => {
       const render = sinon.stub(product, 'render');
 
       product.init('test').then(() => {
-        chai.assert.equal(product.cart, 'test');
-        chai.assert.calledOnce(createCart);
-        chai.assert.calledWith(superInit, 'test');
+        assert.equal(product.cart, 'test');
+        assert.calledOnce(createCart);
+        assert.calledWith(superInit, 'test');
         superInit.restore();
         done();
       }).catch((e) => {
@@ -65,15 +60,15 @@ describe('Product class', () => {
 
   describe('get DOMEvents', () => {
     it('returns functions for bindings', () => {
-      chai.assert.isFunction(product.DOMEvents['change .select']);
-      chai.assert.isFunction(product.DOMEvents['click .btn']);
+      assert.isFunction(product.DOMEvents['change .select']);
+      assert.isFunction(product.DOMEvents['click .btn']);
     });
   });
 
   describe('get childrenHtml', () => {
     it('it returns an html string', (done) => {
       product.init(testProductCopy).then(() => {
-        chai.assert.match(product.childrenHtml, /\<select/);
+        assert.match(product.childrenHtml, /\<select/);
         done();
       }).catch((e) => {
         done(e);
@@ -86,7 +81,7 @@ describe('Product class', () => {
       it('returns true', (done) => {
         product.init(testProductCopy).then(() => {
           product.model.selectedVariant = {id: 123};
-          chai.assert.isOk(product.variantAvailable);
+          assert.isOk(product.variantAvailable);
           done();
         }).catch((e) => {
           done(e);
@@ -98,7 +93,7 @@ describe('Product class', () => {
       it('returns false', (done) => {
         product.init(testProductCopy).then(() => {
           product.model.selectedVariant = null;
-          chai.assert.isNotOk(product.variantAvailable);
+          assert.isNotOk(product.variantAvailable);
           done();
         }).catch((e) => {
           done(e);
@@ -112,7 +107,7 @@ describe('Product class', () => {
       it('returns true', (done) => {
         product.init(testProductCopy).then(() => {
           product.model.variants = [{id: 123}, {id: 234}];
-          chai.assert.ok(product.hasVariants);
+          assert.ok(product.hasVariants);
           done();
         }).catch((e) => {
           done(e);
@@ -124,7 +119,7 @@ describe('Product class', () => {
       it('returns false on #hasVariants if single variant', (done) => {
         product.init(testProductCopy).then(() => {
           product.model.variants = [{id: 123}];
-          chai.assert.notOk(product.hasVariants);
+          assert.notOk(product.hasVariants);
           done();
         }).catch((e) => {
           done(e);
@@ -137,7 +132,7 @@ describe('Product class', () => {
     describe('if variant exists', () => {
       it('returns selected image', (done) => {
         product.init(testProductCopy).then(() => {
-          chai.assert.equal(product.currentImage.img, 'http://test.com/test.jpg');
+          assert.equal(product.currentImage.img, 'http://test.com/test.jpg');
           done();
         }).catch((e) => {
           done(e);
@@ -150,7 +145,7 @@ describe('Product class', () => {
         product.init(testProductCopy).then(() => {
           product.model.selectedVariant = null;
           product.model.selectedVariantImage = null;
-          chai.assert.equal(product.currentImage.img, 'http://test.com/test.jpg');
+          assert.equal(product.currentImage.img, 'http://test.com/test.jpg');
           done();
         }).catch((e) => {
           done(e);
@@ -196,7 +191,7 @@ describe('Product class', () => {
     it('it returns options with selected and disabled values', (done) => {
       product.init(testProductCopy).then(() => {
         product.updateVariant('Size', 'small');
-        chai.assert.deepEqual(product.decoratedOptions, expectedArray);
+        assert.deepEqual(product.decoratedOptions, expectedArray);
         done();
       }).catch((e) => {
         done(e);
@@ -208,10 +203,10 @@ describe('Product class', () => {
     it('returns supplemental view info', (done) => {
       product.init(testProductCopy).then(() => {
         const viewData = product.viewData;
-        chai.assert.equal(viewData.buttonText, 'Add to cart');
-        chai.assert.ok(viewData.childrenHtml);
-        chai.assert.equal(viewData.currentImage.img, 'http://test.com/test.jpg');
-        chai.assert.ok(viewData.hasVariants);
+        assert.equal(viewData.buttonText, 'Add to cart');
+        assert.ok(viewData.childrenHtml);
+        assert.equal(viewData.currentImage.img, 'http://test.com/test.jpg');
+        assert.ok(viewData.hasVariants);
         done();
       }).catch((e) => {
         done(e);
@@ -223,7 +218,7 @@ describe('Product class', () => {
     it('it updates selected variant', (done) => {
       product.init(testProductCopy).then(() => {
         let updated = product.updateVariant('Size', 'large');
-        chai.assert.equal(updated.selected, 'large');
+        assert.equal(updated.selected, 'large');
         done();
       }).catch((e) => {
         done(e);

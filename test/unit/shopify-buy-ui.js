@@ -1,6 +1,5 @@
 import ShopifyBuy from '../../src/shopify-buy-ui';
 import UI from '../../src/ui';
-import { assert } from 'chai';
 
 describe('ShopifyBuy.UI', () => {
   const configAttrs = {
