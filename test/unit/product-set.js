@@ -1,8 +1,8 @@
-import Collection from '../../src/components/collection';
+import ProductSet from '../../src/components/product-set';
 import Product from '../../src/components/product';
 
 const config = {
-  id: 123,
+  id: [123, 234],
   options: {
     product: {
       templates: {
@@ -18,34 +18,32 @@ const fakeProduct = {
   variants: []
 }
 
-describe('Collection class', () => {
-  let collection;
+describe('ProductSet class', () => {
+  let set;
 
   beforeEach(() => {
     config.node = document.createElement('div');
     config.node.setAttribute('id', 'fixture');
     document.body.appendChild(config.node);
-    collection = new Collection(config, {
+    set = new ProductSet(config, {
       client: {},
       imageCache: {},
       createCart: () => Promise.resolve()
     });
-    collection.props.client.fetchCollection = () => Promise.resolve({title: 'vapes'});
-    collection.props.client.fetchQueryProducts = () => Promise.resolve([{title: 'vapehat'}]);
+    set.props.client.fetchQueryProducts = () => Promise.resolve([{title: 'vapehat'}, {title: 'vapeshoe'}]);
   });
 
   afterEach(() => {
-    collection = null;
+    set = null;
     document.body.removeChild(config.node);
     config.node = null;
   });
 
   describe('fetchData', () => {
-    it('returns collection and product data', (done) => {
-      collection.fetchData().then((data) => {
+    it('returns product data', (done) => {
+      set.fetchData().then((data) => {
         assert.deepEqual(data, {
-          products: [{title: 'vapehat'}],
-          collection: {title: 'vapes'}
+          products: [{title: 'vapehat'}, {title: 'vapeshoe'}]
         });
         done();
       });
@@ -64,9 +62,9 @@ describe('Collection class', () => {
     });
 
     it('initializes an array of products', (done) => {
-      collection.model.products = [fakeProduct];
+      set.model.products = [fakeProduct];
 
-      collection.render().then((data) => {
+      set.render().then((data) => {
         assert.calledWith(initSpy, fakeProduct);
         done();
       }).catch((e) => {

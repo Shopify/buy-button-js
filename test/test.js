@@ -1,3 +1,13 @@
+import chai from 'chai';
+import sinon from 'sinon';
+
+window.chai = chai;
+window.sinon = sinon;
+
+window.assert = chai.assert;
+
+sinon.assert.expose(chai.assert, {prefix: ''});
+
 import './unit/shopify-buy-ui';
 import './unit/ui';
 import './unit/template';
@@ -7,3 +17,4 @@ import './unit/product';
 import './unit/cart';
 import './unit/checkout';
 import './unit/collection';
+import './unit/product-set';
