@@ -42,10 +42,11 @@ const defaults = {
       products: true,
     },
     templates: {
-      title: '<h2>{{data.collection.attrs.title}}</h2>',
+      title: '<h2 class="{{data.classes.collectionTitle}}">{{data.collection.attrs.title}}</h2>',
       products: '<div class="{{data.classes.products}}"></div>',
     },
     classes: {
+      collectionTitle: 'collection__title',
       collection: 'collection',
       products: 'collection-products',
     },

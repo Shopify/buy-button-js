@@ -88,9 +88,8 @@ export default class UI {
   _resizeAdjust() {
     throttle('resize', 'safeResize');
     window.addEventListener('safeResize', () => {
-      this.components.collection.forEach((collection) => {
-        collection.resize();
-      });
+      this.components.collection.forEach((collection) => collection.resize());
+      this.components.productSet.forEach((set) => set.resize());
     });
   }
 }
