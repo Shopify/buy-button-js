@@ -8,14 +8,12 @@ export default class ProductSet extends Component {
 
   fetchData() {
 
-    /* eslint-disable camelcase */
+    // eslint-disable-next-line camelcase
     return this.props.client.fetchQueryProducts({product_ids: this.id}).then((products) => {
       return {
         products,
       };
     });
-
-    /* eslint-enable camelcase */
   }
 
   render() {
@@ -24,10 +22,11 @@ export default class ProductSet extends Component {
       node: this.document.querySelector(`.${this.classes.products}`),
     });
     productConfig.product.iframe = false;
-    console.log(this.model);
 
-    return Promise.all(this.model.products.map((productModel) => {
+    const promises = this.model.products.map((productModel) => {
       return new Product(productConfig, this.props).init(productModel);
-    })).then(() => this.resize());
+    });
+
+    return Promise.all(promises).then(() => this.resize());
   }
 }
