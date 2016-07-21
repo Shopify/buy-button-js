@@ -3,3 +3,18 @@
 @import "../utilities";
 @import "../components/buttons";
 @import "../components/product";
+
+.collection-products {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-left: -20px;
+
+  .product-container {
+    max-width: 230px;
+    margin-left: 20px;
+    flex: 0 0 auto;
+    padding-top: 20px;
+    display: inline-block;
+  }
+}

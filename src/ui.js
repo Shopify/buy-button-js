@@ -3,6 +3,7 @@ import ProductSet from './components/product-set';
 import Cart from './components/cart';
 import Collection from './components/collection';
 import hostStyles from './styles/host/main';
+import throttle from './utils/throttle';
 
 const DATA_ATTRIBUTE = 'data-shopify-buy-ui';
 const imageCache = {};
@@ -24,6 +25,7 @@ export default class UI {
       productSet: ProductSet,
     };
     this._appendStyleTag();
+    this._resizeAdjust();
   }
 
   createCart(config) {
@@ -81,6 +83,15 @@ export default class UI {
       styleTag.appendChild(document.createTextNode(hostStyles));
     }
     document.head.appendChild(styleTag);
+  }
+
+  _resizeAdjust() {
+    throttle('resize', 'safeResize');
+    window.addEventListener('safeResize', () => {
+      this.components.collection.forEach((collection) => {
+        collection.resize();
+      });
+    });
   }
 }
 

@@ -5,7 +5,6 @@ $cartMaxWidth: 350px;
 
   iframe {
     width: 100%;
-    max-width: 450px;
     display: block;
   }
 }
@@ -38,4 +37,8 @@ $cartMaxWidth: 350px;
   top: 50%;
   transform: translateY(-50%);
   max-width: 46px;
+}
+
+.shopify-buy-frame--collection {
+  width: 100%;
 }
