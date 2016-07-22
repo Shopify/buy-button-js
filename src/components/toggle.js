@@ -2,8 +2,12 @@ import Component from '../component';
 
 export default class CartToggle extends Component {
   constructor(config, props) {
-    super(config, props, 'toggle');
+    super(config, props);
     this.node = this.props.cart.node.parentNode.insertBefore(document.createElement('div'), this.props.cart.node);
+  }
+
+  get typeKey() {
+    return 'toggle';
   }
 
   get viewData() {

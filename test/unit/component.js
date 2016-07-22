@@ -26,7 +26,8 @@ describe('Component class', () => {
     config.node = document.createElement('div');
     config.node.setAttribute('id', 'fixture');
     document.body.appendChild(config.node);
-    component = new Component(config, {client: {}, imageCache: {}}, 'product');
+    Component.prototype.typeKey = 'product'
+    component = new Component(config, {client: {}, imageCache: {}});
   });
 
   afterEach(() => {

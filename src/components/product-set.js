@@ -3,7 +3,15 @@ import Product from './product';
 
 export default class ProductSet extends Component {
   constructor(config, props) {
-    super(config, props, 'collection', 'product');
+    super(config, props);
+  }
+
+  get typeKey() {
+    return 'productSet';
+  }
+
+  get childTypeKey() {
+    return 'product'
   }
 
   fetchData() {

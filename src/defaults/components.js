@@ -33,7 +33,7 @@ const defaults = {
       button: 'Add to cart',
     },
   },
-  collection: {
+  productSet: {
     iframe: true,
     contents: {
       title: true,
