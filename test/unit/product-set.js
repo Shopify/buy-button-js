@@ -15,7 +15,10 @@ const config = {
 const fakeProduct = {
   title: 'vapehat',
   options: [],
-  variants: []
+  variants: [],
+  selectedVariant: {
+    compareAtPrice: '1'
+  }
 }
 
 describe('ProductSet class', () => {
