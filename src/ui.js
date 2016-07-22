@@ -85,6 +85,12 @@ export default class UI {
     document.head.appendChild(styleTag);
   }
 
+  _hostClick() {
+    document.addEventListener('click', (evt) => {
+      console.log(evt);
+    });
+  }
+
   _resizeAdjust() {
     throttle('resize', 'safeResize');
     window.addEventListener('safeResize', () => {

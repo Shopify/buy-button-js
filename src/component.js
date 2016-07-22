@@ -6,6 +6,8 @@ import Iframe from './iframe';
 import Template from './template';
 import styles from './styles/embeds/all';
 
+console.log(styles);
+
 const delegateEventSplitter = /^(\S+)\s*(.*)$/;
 
 function logEvent(event, type) {
@@ -102,10 +104,10 @@ export default class Component {
     if (!this.iframe) {
       return;
     }
-    if (this.type === 'product') {
+    if (this.typeKey === 'product') {
       this.resizeX();
     }
-    if (this.type === 'product' || this.type === 'collection') {
+    if (this.typeKey === 'product' || this.typeKey === 'productSet') {
       this.resizeY();
     }
   }
