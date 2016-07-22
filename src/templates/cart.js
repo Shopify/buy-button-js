@@ -1,11 +1,11 @@
 const cartTemplates = {
-  title: '<div class="{{data.classes.header}}">' +
-            '<h2 class="{{data.classes.title}}">{{data.text.title}}</h2>' +
-            '<button class="{{data.classes.close}}">' +
-              '<span aria-role="hidden">×</span>' +
-              '<span class="visuallyhidden">Close</span>' +
-             '</button>' +
-          '</div>',
+  title: `<div class="{{data.classes.header}}">
+            <h2 class="{{data.classes.title}}">{{data.text.title}}</h2>
+            <button class="{{data.classes.close}}">
+              <span aria-role="hidden">×</span>
+              <span class="visuallyhidden">Close</span>
+             </button>
+          </div>`,
   lineItems: '<div class="{{data.classes.cartScroll}}"><div class="{{data.classes.lineItems}}">{{{data.childrenHtml}}}</div></div>',
   footer: `<div class="{{data.classes.footer}}">
             <p class="{{data.classes.subtotalText}}">{{data.text.total}}</p>
