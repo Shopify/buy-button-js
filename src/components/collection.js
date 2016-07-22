@@ -3,15 +3,18 @@ import ProductSet from './product-set';
 export default class Collection extends ProductSet {
   fetchData() {
     const client = this.props.client;
+    // eslint-disable-next-line camelcase
+    const collectionQuery = {collection_id: this.id};
 
-    return client.fetchCollection(this.id).then((collection) => {
-      // eslint-disable-next-line camelcase
-      return client.fetchQueryProducts({collection_id: this.id}).then((products) => {
-        return {
-          products,
-          collection,
-        };
-      });
+    return Promise.all([
+      client.fetchCollection(this.id),
+      client.fetchQueryProducts(collectionQuery),
+    ]).then((resolvedPromises) => {
+      const [collection, products] = resolvedPromises;
+      return {
+        collection,
+        products,
+      }
     });
   }
 }
