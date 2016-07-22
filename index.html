@@ -5,7 +5,7 @@
     <title>test</title>
   </head>
   <body>
-    <!-- <script src="build/shopify-buy-ui.globals.polyfilled.js"></script> -->
+    <!-- <script src="build/shopify-buy-ui.globals.polyfilled.min.js"></script> -->
     <script src="tmp/shopify-buy-ui.dev.js"></script>
 
     <div id="test"></div>
@@ -13,7 +13,9 @@
     <!-- <button id="update">update</button> -->
 
     <script data-shopify-buy-ui>
-      var client = ShopifyBuy.buildClient({
+      console.log(ShopifyBuyUI);
+
+      var client = ShopifyBuyUI.buildClient({
          apiKey: 'bf081e860bc9dc1ce0654fdfbc20892d',
          domain: 'embeds.myshopify.com',
          appId: '6'

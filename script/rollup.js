@@ -21,7 +21,7 @@ const nodeResolver = nodeResolve({
 });
 
 rollup({
-  entry: 'out.js',
+  entry: 'build/shopify-buy-ui.js',
   plugins: [
     nodeResolver,
     commonjs()
@@ -30,8 +30,6 @@ rollup({
   bundle.write({
     format: 'iife',
     moduleName: 'ShopifyBuyUI',
-    dest: 'rolled-up-again.js'
+    dest: 'build/shopify-buy-ui.globals.js'
   });
-}).catch(e => {
-  console.error(e);
 });
