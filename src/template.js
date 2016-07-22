@@ -11,7 +11,7 @@ export default class Template {
   }
 
   wrapperClasses(data) {
-    return `component-container ${this.className} ${data.data.wrapperClass || ''}`
+    return `component-container ${this.className} ${data.data.wrapperClass || ''}`;
   }
 
   render(data) {

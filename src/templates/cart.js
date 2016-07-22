@@ -12,7 +12,7 @@ const cartTemplates = {
             <p class="{{data.classes.subtotal}}"><span class="{{data.classes.currency}}"></span>\${{data.subtotal}}</p>
             <p class="{{data.classes.notice}}">{{data.text.notice}}</p>
             <button class="{{data.classes.button}}" type="button">{{data.text.button}}</button>
-          </div>`
+          </div>`,
 };
 
 export default cartTemplates;

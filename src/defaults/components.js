@@ -60,7 +60,7 @@ const defaults = {
       option: 'component-input component-input--select',
       wrapper: 'shopify-select',
       select: 'component-input--select__select',
-      label: 'component-input__label visuallyhidden'
+      label: 'component-input__label visuallyhidden',
     },
   },
   cart: {
@@ -90,7 +90,7 @@ const defaults = {
       button: 'Checkout',
       total: 'Total',
       currency: 'CAD',
-      notice: 'Shipping and discount codes are added at checkout.'
+      notice: 'Shipping and discount codes are added at checkout.',
     },
   },
   lineItem: {
