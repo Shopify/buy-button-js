@@ -1,26 +1,28 @@
+$cart-item-height: 65px;
+
 .cart-container {
   height: 100%;
   padding-left: 10px;
 }
 
 .cart {
-  box-shadow: -5px 0 5px rgba(0, 0, 0, 0.1);
   height: 100%;
   background: white;
   width: calc(100% - 10px);
   position: absolute;
   right: 0;
+  box-shadow: -5px 0 5px rgba(0, 0, 0, 0.1);
 }
 
 .cart__header {
-  padding: 20px;
+  padding: $gutter;
   position: relative;
   z-index: 5;
 }
 
 .cart__title {
   font-size: 18px;
-  color: #444;
+  color: $color-title;
 }
 
 .cart-scroll {
@@ -36,20 +38,19 @@
   overflow-y: auto;
   height: 100%;
   position: relative;
-  padding: 0 20px 20px 20px;
+  padding: 0 $gutter $gutter;
 }
 
 .cart-item {
   overflow: hidden;
   position: relative;
-  min-height: 65px;
-  margin-bottom: 20px;
+  min-height: $cart-item-height;
+  margin-bottom: $gutter;
 }
 
 .cart-item__img {
-  width: 65px;
-  height: 65px;
-  border-radius: 3px;
+  width: $cart-item-height;
+  height: $cart-item-height;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center center;
@@ -64,7 +65,6 @@
   margin-left: 80px;
   display: block;
   margin-bottom: 10px;
-  max-width: 150px;
 }
 
 .cart-item__price {
@@ -75,19 +75,19 @@
 
 .cart-item__variant-title {
   float: right;
-  color: #767676;
+  color: $color-title;
   font-size: 11px;
   font-weight: bold;
 }
 
 .cart-item__quantity-container {
-  border-radius: 3px;
+  border-radius: $border-radius;
   margin-left: 80px;
   overflow: hidden;
 }
 
 .quantity-decrement, .quantity-increment {
-  color: #767676;
+  color: $color-title;
   display: block;
   float: left;
   height: 21px;
@@ -105,11 +105,11 @@
 }
 
 .quantity-decrement {
-  border-radius: 3px 0 0 3px;
+  border-radius: $border-radius 0 0 $border-radius;
 }
 
 .quantity-increment {
-  border-radius: 0 3px 3px 0;
+  border-radius: 0 $border-radius $border-radius 0;
 }
 
 .cart-item__quantity {
@@ -135,23 +135,6 @@ input[type=number]::-webkit-outer-spin-button {
   margin: 0;
 }
 
-.btn--close {
-  position: absolute;
-  right: 9px;
-  top: 8px;
-  font-size: 35px;
-  color: $color-title;
-  border: none;
-  background: transparent;
-  transition: transform 100ms ease;
-  cursor: pointer;
-  padding-right: 9px;
-  &:hover {
-    transform: scale(1.2);
-    color: darken($color-title, 5%);
-  }
-}
-
 .cart-bottom {
   position: absolute;
   width: 100%;
@@ -164,7 +147,7 @@ input[type=number]::-webkit-outer-spin-button {
   text-transform: uppercase;
   float: left;
   font-size: 11px;
-  color: #767676;
+  color: $color-title;
 }
 
 .cart__subtotal__price {
@@ -186,4 +169,22 @@ input[type=number]::-webkit-outer-spin-button {
 .btn--cart-checkout {
   clear: both;
   margin-top: 15px;
+}
+
+.btn--close {
+  position: absolute;
+  right: 9px;
+  top: 8px;
+  font-size: 35px;
+  color: $color-title;
+  border: none;
+  background: transparent;
+  transition: transform 100ms ease;
+  cursor: pointer;
+  padding-right: 9px;
+
+  &:hover {
+    transform: scale(1.2);
+    color: darken($color-title, 5%);
+  }
 }

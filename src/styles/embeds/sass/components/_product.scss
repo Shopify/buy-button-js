@@ -1,3 +1,6 @@
+$color-red: #fc3e07;
+$color-faint: #a2a2a3;
+
 .product__variant-img {
   margin: 0 auto;
 }
@@ -22,11 +25,11 @@
 .product__variant-price__compare {
   font-size: 12px;
   text-decoration: line-through;
-  color: #a2a2a3;
+  color: $color-faint;
 }
 
 .price--lowered {
-  color: #fc3e07;
+  color: $color-red;
 }
 
 .product__variant-selectors {
