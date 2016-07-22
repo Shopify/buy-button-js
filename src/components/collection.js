@@ -14,7 +14,7 @@ export default class Collection extends ProductSet {
       return {
         collection,
         products,
-      }
+      };
     });
   }
 }

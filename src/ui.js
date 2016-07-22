@@ -33,7 +33,7 @@ export default class UI {
       }
       return Promise.resolve(this.components.cart[0]);
     } else {
-      const cart = new Cart(config, this._componentProps('cart'));
+      const cart = new Cart(config, this.componentProps);
       this.components.cart.push(cart);
       return cart.init();
     }
@@ -56,6 +56,14 @@ export default class UI {
     });
   }
 
+  get componentProps() {
+    return {
+      client: this.client,
+      imageCache,
+      createCart: this.createCart.bind(this),
+    };
+  }
+
   _queryEntryNode() {
     this.entry = this.entry || window.document.querySelectorAll(`script[${DATA_ATTRIBUTE}]`)[0];
     this.entry.removeAttribute(DATA_ATTRIBUTE);
@@ -63,14 +71,6 @@ export default class UI {
     const div = document.createElement('div');
     this.entry.parentNode.insertBefore(div, this.entry);
     return div;
-  }
-
-  get componentProps() {
-    return {
-      client: this.client,
-      imageCache,
-      createCart: this.createCart.bind(this),
-    };
   }
 
   _appendStyleTag() {
