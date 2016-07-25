@@ -214,7 +214,7 @@ export default class Component {
             });
           })
         );
-        return Promise.all(promises).then(() => this.resize.bind());
+        return Promise.all(promises).then(() => this.resize());
       } else {
         return Promise.resolve(this.resize());
       }

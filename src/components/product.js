@@ -52,7 +52,7 @@ export default class Product extends Component {
 
   get DOMEvents() {
     return Object.assign({}, this.options.DOMEvents, {
-      'click': this.closeCartOnBgClick.bind(this),
+      click: this.closeCartOnBgClick.bind(this),
       [`change .${this.config.option.classes.select}`]: this.onOptionSelect.bind(this),
       [`click .${this.options.classes.button}`]: this.onButtonClick.bind(this),
     });

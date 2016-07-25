@@ -87,7 +87,7 @@ export default class UI {
   }
 
   _hostClick() {
-    document.addEventListener('click', (evt) => {
+    document.addEventListener('click', () => {
       if (this.components.cart[0].isVisible) {
         this.components.cart[0].close();
       }
