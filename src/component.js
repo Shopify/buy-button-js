@@ -108,12 +108,14 @@ export default class Component {
     if (!this.iframe) {
       return;
     }
-    if (this.typeKey === 'product') {
-      this.resizeX();
-    }
-    if (this.typeKey === 'product' || this.typeKey === 'productSet') {
-      this.resizeY();
-    }
+    window.requestAnimationFrame(() => {
+      if (this.typeKey === 'product') {
+        this.resizeX();
+      }
+      if (this.typeKey === 'product' || this.typeKey === 'productSet') {
+        this.resizeY();
+      }
+    });
   }
 
   resizeY() {
@@ -195,25 +197,29 @@ export default class Component {
   }
 
   resizeAfterImgLoad() {
-    const imgs = [...this.wrapper.querySelectorAll('img')];
-    if (imgs.length) {
-      const promises = imgs.map((img) =>
-        new Promise((resolve) => {
-          if (this.props.imageCache[img.getAttribute('src')]) {
-            return resolve();
-          }
-          img.addEventListener('load', (evt) => {
-            this.props.imageCache[img.getAttribute('src')] = true;
-            return resolve(evt);
-          });
-          img.addEventListener('error', (evt) => {
-            resolve(evt);
-          });
-        })
-      );
-      return Promise.all(promises).then(() => this.resize());
+    if (this.iframe) {
+      const imgs = [...this.wrapper.querySelectorAll('img')];
+      if (this.iframe && imgs.length) {
+        const promises = imgs.map((img) =>
+          new Promise((resolve) => {
+            if (this.props.imageCache[img.getAttribute('src')]) {
+              return resolve();
+            }
+            img.addEventListener('load', (evt) => {
+              this.props.imageCache[img.getAttribute('src')] = true;
+              return resolve(evt);
+            });
+            img.addEventListener('error', (evt) => {
+              return resolve(evt);
+            });
+          })
+        );
+        return Promise.all(promises).then(() => this.resize.bind());
+      } else {
+        return Promise.resolve(this.resize());
+      }
     } else {
-      return Promise.resolve(this.resize());
+      return Promise.resolve();
     }
   }
 

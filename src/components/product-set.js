@@ -33,6 +33,6 @@ export default class ProductSet extends Component {
       return new Product(productConfig, this.props).init(productModel);
     });
 
-    return Promise.all(promises).then(() => this.resize());
+    return Promise.all(promises).then(() => this.resizeAfterImgLoad());
   }
 }
