@@ -2,7 +2,6 @@ import Iframe from '../../src/iframe';
 
 const defaultCSS = '* { box-sizing: border-box; }';
 const customCSS = '.btn { color: red; } .btn:hover { color: green; }';
-const stylesheet = [{"selectors":["*"],"declarations":[{"property":"box-sizing","value":"border-box"}]}];
 
 let iframe;
 let parent;
@@ -21,7 +20,7 @@ describe('Iframe class', () => {
           'color': 'green'
         }
       }
-    }, stylesheet);
+    }, defaultCSS);
   });
 
   afterEach(() => {
