@@ -6,8 +6,6 @@ import Iframe from './iframe';
 import Template from './template';
 import styles from './styles/embeds/all';
 
-console.log(styles);
-
 const delegateEventSplitter = /^(\S+)\s*(.*)$/;
 
 function logEvent(event, type) {
@@ -94,9 +92,15 @@ export default class Component {
     Object.keys(this.DOMEvents).forEach((key) => {
       const [, eventName, selectorString] = key.match(delegateEventSplitter);
       const selector = selectorString.split(' ').join('.');
-      this._on(eventName, selector, (evt, target) => {
-        this.DOMEvents[key].call(this, evt, target);
-      });
+      if (selector) {
+        this._on(eventName, selector, (evt, target) => {
+          this.DOMEvents[key].call(this, evt, target);
+        });
+      } else {
+        this.wrapper.addEventListener('click', (evt) => {
+          this.DOMEvents[key].call(this, evt);
+        });
+      }
     });
   }
 

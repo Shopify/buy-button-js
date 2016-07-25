@@ -27,7 +27,7 @@ export default class Cart extends Component {
 
   get DOMEvents() {
     return Object.assign({}, this.options.DOMEvents, {
-      [`click .${this.classes.close}`]: this.onClose.bind(this),
+      [`click .${this.classes.close}`]: this.close.bind(this),
       [`click .${this.classes.quantityButton}.quantity-increment`]: this.onQuantityIncrement.bind(this, 1),
       [`click .${this.classes.quantityButton}.quantity-decrement`]: this.onQuantityIncrement.bind(this, -1),
       [`click .${this.classes.button}`]: this.onCheckout.bind(this),
@@ -81,7 +81,7 @@ export default class Cart extends Component {
     this.toggle.destroy();
   }
 
-  onClose() {
+  close() {
     this.isVisible = false;
     this.render();
   }

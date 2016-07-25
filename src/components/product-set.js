@@ -10,6 +10,12 @@ export default class ProductSet extends Component {
     return 'product';
   }
 
+  get DOMEvents() {
+    return Object.assign({}, this.options.DOMEvents, {
+      'click': this.closeCartOnBgClick.bind(this),
+    });
+  }
+
   fetchData() {
 
     // eslint-disable-next-line camelcase
@@ -35,5 +41,4 @@ export default class ProductSet extends Component {
 
     return Promise.all(promises).then(() => this.resize());
   }
-
 }

@@ -26,6 +26,7 @@ export default class UI {
     };
     this._appendStyleTag();
     this._resizeAdjust();
+    this._hostClick();
   }
 
   createCart(config) {
@@ -87,7 +88,9 @@ export default class UI {
 
   _hostClick() {
     document.addEventListener('click', (evt) => {
-      console.log(evt);
+      if (this.components.cart[0].isVisible) {
+        this.components.cart[0].close();
+      }
     });
   }
 
