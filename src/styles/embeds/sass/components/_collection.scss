@@ -11,6 +11,10 @@
     padding-top: $gutter;
     display: inline-block;
   }
+
+  @media (max-width: 600px) {
+    display: block;
+  }
 }
 
 .collection__title {

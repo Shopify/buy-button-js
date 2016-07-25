@@ -41,13 +41,23 @@ $cart-item-height: 65px;
   padding: 0 $gutter $gutter;
 }
 
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 .cart-item {
   overflow: hidden;
   position: relative;
   min-height: $cart-item-height;
   margin-bottom: $gutter;
+  animation-name: fadein;
+  animation-duration: .3s;
 }
-
 .cart-item__img {
   width: $cart-item-height;
   height: $cart-item-height;

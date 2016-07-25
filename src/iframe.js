@@ -93,15 +93,10 @@ export default class iframe {
     return customStyles;
   }
 
-  get defaultStyles() {
-    return this.stylesheet.map((rule) => ({selector: rule.selectors.join(', '), declarations: rule.declarations}));
-  }
-
   updateStyles(customStyles) {
     this.customStylesHash = customStyles;
     const compiled = hogan.compile(stylesTemplate);
-    const selectors = this.defaultStyles.concat(this.customStyles);
-    this.styleTag.innerHTML = compiled.render({selectors});
+    this.styleTag.innerHTML = compiled.render({selectors: this.customStyles});
   }
 
   appendStyleTag() {
@@ -110,12 +105,11 @@ export default class iframe {
     }
     this.styleTag = this.document.createElement('style');
     const compiled = hogan.compile(stylesTemplate);
-    const selectors = this.defaultStyles.concat(this.customStyles);
 
     if (this.styleTag.styleSheet) {
-      this.styleTag.styleSheet.cssText = compiled.render({selectors});
+      this.styleTag.styleSheet.cssText = this.stylesheet + "\n" + compiled.render({selectors: this.customStyles});
     } else {
-      this.styleTag.appendChild(this.document.createTextNode(compiled.render({selectors})));
+      this.styleTag.appendChild(this.document.createTextNode(this.stylesheet + "\n" + compiled.render({selectors: this.customStyles})));
     }
 
     this.document.head.appendChild(this.styleTag);
