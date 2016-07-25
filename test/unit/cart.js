@@ -1,11 +1,6 @@
 import Cart from '../../src/components/cart';
 import defaults from '../../src/defaults/components';
 
-import chai from 'chai';
-import sinon from 'sinon';
-
-sinon.assert.expose(chai.assert, {prefix: ''});
-
 let cart;
 let fakeLocalStorage = {
   getItem: () => {},
@@ -37,9 +32,9 @@ describe('Cart class', () => {
         let fetchCart = sinon.stub(cart.props.client, 'fetchCart').returns(Promise.resolve({id: 1234}));
 
         cart.fetchData().then((data) => {
-          chai.assert.deepEqual(data, {id: 1234});
-          chai.assert.calledWith(getItem, 'lastCartId');
-          chai.assert.calledWith(fetchCart, '1234');
+          assert.deepEqual(data, {id: 1234});
+          assert.calledWith(getItem, 'lastCartId');
+          assert.calledWith(fetchCart, '1234');
           getItem.restore();
           fetchCart.restore();
           done();
@@ -56,8 +51,8 @@ describe('Cart class', () => {
         let setItem = sinon.stub(fakeLocalStorage, 'setItem');
 
         cart.fetchData().then((data) => {
-          chai.assert.deepEqual(data, {id: 1234});
-          chai.assert.calledWith(setItem, 'lastCartId', 1234);
+          assert.deepEqual(data, {id: 1234});
+          assert.calledWith(setItem, 'lastCartId', 1234);
           getItem.restore();
           setItem.restore();
           createCart.restore();
@@ -89,14 +84,14 @@ describe('Cart class', () => {
       }));
 
       cart.updateQuantity(1234, (qty) => qty + 5).then((c) => {
-        chai.assert.deepEqual(cart.model, {
+        assert.deepEqual(cart.model, {
           id: 1,
           lineItems: [{
             id: 1234,
             quantity: 6
           }]
         });
-        chai.assert.calledWith(updateLineItem, 1234, 6);
+        assert.calledWith(updateLineItem, 1234, 6);
         done();
       }).catch((e) => {
         done(e);
@@ -120,8 +115,8 @@ describe('Cart class', () => {
 
       let render = sinon.spy(cart.childTemplate, 'render');
 
-      chai.assert.include(cart.childrenHtml, 'data-line-item-id="123"');
-      chai.assert.calledOnce(render);
+      assert.include(cart.childrenHtml, 'data-line-item-id="123"');
+      assert.calledOnce(render);
     });
   });
 
@@ -132,8 +127,8 @@ describe('Cart class', () => {
       let toggleRender = sinon.stub(cart.toggle, 'render');
 
       cart.addVariantToCart({id: 123}).then(() => {
-        chai.assert.calledWith(cart.model.addVariants, {variant: {id: 123 }, quantity: 1});
-        chai.assert.calledOnce(toggleRender);
+        assert.calledWith(cart.model.addVariants, {variant: {id: 123 }, quantity: 1});
+        assert.calledOnce(toggleRender);
         done();
       }).catch((e) => {
         done(e);

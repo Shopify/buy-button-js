@@ -1,8 +1,3 @@
-import chai from 'chai';
-import sinon from 'sinon';
-
-sinon.assert.expose(chai.assert, {prefix: ''});
-
 import Iframe from '../../src/iframe';
 
 const defaultCSS = '* { box-sizing: border-box; }';
@@ -38,11 +33,11 @@ describe('Iframe class', () => {
   describe('load', () => {
     it('appends an iframe', (done) => {
       iframe.appendStyleTag = function () {
-        chai.assert.isOk(true);
+        assert.isOk(true);
       };
 
       iframe.load().then(() => {
-        chai.assert.equal('IFRAME', parent.children[0].tagName);
+        assert.equal('IFRAME', parent.children[0].tagName);
         done();
       }).catch((e) => {
         done(e)
@@ -52,9 +47,9 @@ describe('Iframe class', () => {
     it('adds style tag with valid css', (done) => {
       iframe.load().then(() => {
         const styleTag = iframe.el.contentDocument.head.children[0];
-        chai.assert.equal('STYLE', styleTag.tagName);
-        chai.assert.include(styleTag.innerHTML, defaultCSS, 'css is formatted correctly');
-        chai.assert.include(styleTag.innerHTML, customCSS, 'appends custom css');
+        assert.equal('STYLE', styleTag.tagName);
+        assert.include(styleTag.innerHTML, defaultCSS, 'css is formatted correctly');
+        assert.include(styleTag.innerHTML, customCSS, 'appends custom css');
         done();
       }).catch((e) => {
         done(e)

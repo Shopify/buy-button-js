@@ -25,20 +25,17 @@ function methodStrings(method) {
 }
 
 export default class Component {
-  constructor(config, props, type, childType) {
+  constructor(config, props) {
     this.delegateEvents = this.wrapMethod(this.delegateEvents);
-    this.render = this.wrapMethod(this.render);
     this.resize = this.wrapMethod(this.resize);
     this.updateConfig = this.wrapMethod(this.updateConfig);
     this.id = config.id;
     this.node = config.node;
     this.debug = config.debug;
-    this.type = type;
-    this.childType = childType;
     this.config = merge(componentDefaults, config.options || {});
     this.props = props;
     this.model = {};
-    this.template = new Template(this.templates, this.contents, this.classes[this.type]);
+    this.template = new Template(this.templates, this.contents, this.classes[this.typeKey]);
     this.children = null;
   }
 
@@ -47,7 +44,7 @@ export default class Component {
   }
 
   get options() {
-    return this.config[this.type];
+    return this.config[this.typeKey];
   }
 
   get templates() {
@@ -59,12 +56,12 @@ export default class Component {
   }
 
   get styles() {
-    const childStyles = this.config[this.childType] ? this.config[this.childType].styles : {};
+    const childStyles = this.config[this.childTypeKey] ? this.config[this.childTypeKey].styles : {};
     return Object.assign({}, this.options.styles, childStyles);
   }
 
   get classes() {
-    const childClasses = this.config[this.childType] ? this.config[this.childType].classes : {};
+    const childClasses = this.config[this.childTypeKey] ? this.config[this.childTypeKey].classes : {};
     return Object.assign({}, this.options.classes, childClasses);
   }
 
@@ -110,9 +107,9 @@ export default class Component {
   }
 
   setupView() {
-    this.node.className += ` shopify-buy-frame shopify-buy-frame--${this.type}`;
-    this.iframe = this.options.iframe ? new Iframe(this.node, this.classes, this.styles, styles[this.type]) : null;
+    this.iframe = this.options.iframe ? new Iframe(this.node, this.classes, this.styles, styles[this.typeKey]) : null;
     if (this.iframe) {
+      this.node.className += ` shopify-buy-frame shopify-buy-frame--${this.typeKey}`;
       return this.iframe.load();
     } else {
       return Promise.resolve();
@@ -144,7 +141,7 @@ export default class Component {
 
   updateConfig(config) {
     this.config = merge(componentDefaults, config.options);
-    this.template = new Template(this.templates, this.contents, this.type);
+    this.template = new Template(this.templates, this.contents, this.typeKey);
     if (this.iframe) {
       this.iframe.updateStyles(this.styles);
     }
@@ -153,22 +150,24 @@ export default class Component {
   }
 
   render() {
+    this._userEvent('beforeRender');
     const html = this.template.render({data: this.viewData});
     if (this.wrapper && this.wrapper.innerHTML.length) {
       const div = this.document.createElement('div');
       div.innerHTML = html;
       morphdom(this.wrapper, div);
-      this.wrapper.className = `${this.type}-container`;
+      this.wrapper.className = `${this.typeKey}-container`;
     } else {
       this.wrapper = this.createWrapper();
       this.wrapper.innerHTML = html;
     }
-    this.resizeAfterImgLoad();
+    this._userEvent('afterRender');
+    return this.resizeAfterImgLoad();
   }
 
   createWrapper() {
     const wrapper = this.document.createElement('div');
-    wrapper.className = `${this.type}-container`;
+    wrapper.className = `${this.typeKey}-container`;
     if (this.iframe) {
       this.document.body.appendChild(wrapper);
     } else {
@@ -211,7 +210,7 @@ export default class Component {
 
   _userEvent(methodName) {
     if (this.debug) {
-      logEvent(methodName, this.type);
+      logEvent(methodName, this.typeKey);
     }
     if (isFunction(this.events[methodName])) {
       this.events[methodName].call(this, this);

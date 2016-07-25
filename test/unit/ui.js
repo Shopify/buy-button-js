@@ -3,15 +3,6 @@ import UI from '../../src/ui';
 import Product from '../../src/components/product';
 import Cart from '../../src/components/cart';
 
-import chai from 'chai';
-import sinon from 'sinon';
-
-sinon.assert.expose(chai.assert, {prefix: ''});
-
-const assert = chai.assert;
-
-chai.config.showDiff = true;
-
 const client = ShopifyBuy.buildClient({
   domain: 'buckets-o-stuff.myshopify.com',
   apiKey: 123,

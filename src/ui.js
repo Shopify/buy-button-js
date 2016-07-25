@@ -1,5 +1,7 @@
 import Product from './components/product';
+import ProductSet from './components/product-set';
 import Cart from './components/cart';
+import Collection from './components/collection';
 import hostStyles from './styles/host/main';
 
 const DATA_ATTRIBUTE = 'data-shopify-buy-ui';
@@ -11,11 +13,15 @@ export default class UI {
     this.components = {
       product: [],
       cart: [],
+      collection: [],
+      productSet: [],
     };
 
     this.componentTypes = {
       product: Product,
       cart: Cart,
+      collection: Collection,
+      productSet: ProductSet,
     };
     this._appendStyleTag();
   }
@@ -27,7 +33,7 @@ export default class UI {
       }
       return Promise.resolve(this.components.cart[0]);
     } else {
-      const cart = new Cart(config, this._componentProps('cart'));
+      const cart = new Cart(config, this.componentProps);
       this.components.cart.push(cart);
       return cart.init();
     }
@@ -35,7 +41,7 @@ export default class UI {
 
   createComponent(type, config) {
     config.node = config.node || this._queryEntryNode();
-    const component = new this.componentTypes[type](config, this._componentProps(type));
+    const component = new this.componentTypes[type](config, this.componentProps);
     this.components[type].push(component);
     return component.init().then(() => component);
   }
@@ -50,6 +56,14 @@ export default class UI {
     });
   }
 
+  get componentProps() {
+    return {
+      client: this.client,
+      imageCache,
+      createCart: this.createCart.bind(this),
+    };
+  }
+
   _queryEntryNode() {
     this.entry = this.entry || window.document.querySelectorAll(`script[${DATA_ATTRIBUTE}]`)[0];
     this.entry.removeAttribute(DATA_ATTRIBUTE);
@@ -57,18 +71,6 @@ export default class UI {
     const div = document.createElement('div');
     this.entry.parentNode.insertBefore(div, this.entry);
     return div;
-  }
-
-  _componentProps(type) {
-    const typeProperties = {
-      product: {
-        createCart: this.createCart.bind(this),
-      },
-    }[type];
-    return Object.assign({}, typeProperties, {
-      client: this.client,
-      imageCache,
-    });
   }
 
   _appendStyleTag() {

@@ -5,7 +5,7 @@ import Checkout from './checkout';
 
 export default class Product extends Component {
   constructor(config, props) {
-    super(config, props, 'product', 'option');
+    super(config, props);
     this.cachedImage = null;
     this.childTemplate = new Template(this.config.option.templates, this.config.option.contents, 'options');
     this.cart = null;
@@ -19,6 +19,14 @@ export default class Product extends Component {
         return model;
       })
     ));
+  }
+
+  get typeKey() {
+    return 'product';
+  }
+
+  get childTypeKey() {
+    return 'option';
   }
 
   get currentImage() {

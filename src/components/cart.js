@@ -6,7 +6,7 @@ import Checkout from './checkout';
 
 export default class Cart extends Component {
   constructor(config, props, storage) {
-    super(config, props, 'cart', 'lineItem');
+    super(config, props);
     this.storage = storage || window.localStorage;
     this.addVariantToCart = this.addVariantToCart.bind(this);
     this.childTemplate = new Template(this.config.lineItem.templates, this.config.lineItem.contents, 'cart-item');
@@ -15,6 +15,14 @@ export default class Cart extends Component {
     this.isVisible = false;
     this.toggle = new CartToggle(config, {cart: this});
     this.checkout = new Checkout(this.config);
+  }
+
+  get typeKey() {
+    return 'cart';
+  }
+
+  get childTypeKey() {
+    return 'lineItem';
   }
 
   get DOMEvents() {

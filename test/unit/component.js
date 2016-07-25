@@ -1,8 +1,3 @@
-import chai from 'chai';
-import sinon from 'sinon';
-
-sinon.assert.expose(chai.assert, {prefix: ''});
-
 import ShopifyBuy from '../../src/shopify-buy-ui';
 import Component from '../../src/component';
 import Iframe from '../../src/iframe';
@@ -31,7 +26,8 @@ describe('Component class', () => {
     config.node = document.createElement('div');
     config.node.setAttribute('id', 'fixture');
     document.body.appendChild(config.node);
-    component = new Component(config, {client: {}, imageCache: {}}, 'product');
+    Component.prototype.typeKey = 'product'
+    component = new Component(config, {client: {}, imageCache: {}});
   });
 
   afterEach(() => {
@@ -42,19 +38,19 @@ describe('Component class', () => {
 
   describe('constructor', () => {
     it('merges configuration options and defaults', () => {
-      chai.assert.equal(component.config.product.templates.button, config.options.product.templates.button);
-      chai.assert.equal(component.config.product.buttonDestination, 'cart');
+      assert.equal(component.config.product.templates.button, config.options.product.templates.button);
+      assert.equal(component.config.product.buttonDestination, 'cart');
     });
 
     it('proxies commonly accessed attributes to config options for type', () => {
-      chai.assert.isOk(component.client);
-      chai.assert.equal(component.options.iframe, config.options.product.iframe);
-      chai.assert.equal(component.templates.button, config.options.product.templates.button);
-      chai.assert.equal(component.contents, componentDefaults.product.contents);
+      assert.isOk(component.client);
+      assert.equal(component.options.iframe, config.options.product.iframe);
+      assert.equal(component.templates.button, config.options.product.templates.button);
+      assert.equal(component.contents, componentDefaults.product.contents);
     });
 
     it('instantiates a template', () => {
-      chai.assert.isOk(component.template instanceof Template);
+      assert.isOk(component.template instanceof Template);
     });
   });
 
@@ -66,11 +62,11 @@ describe('Component class', () => {
       const delegateEvents = sinon.stub(component, 'delegateEvents');
 
       component.init().then(() => {
-        chai.assert.deepEqual(component.model, {title: 'test'});
-        chai.assert.calledOnce(setupView);
-        chai.assert.calledOnce(setupModel);
-        chai.assert.calledOnce(render);
-        chai.assert.calledOnce(delegateEvents);
+        assert.deepEqual(component.model, {title: 'test'});
+        assert.calledOnce(setupView);
+        assert.calledOnce(setupModel);
+        assert.calledOnce(render);
+        assert.calledOnce(delegateEvents);
         done();
       }).catch((e) => {
         done(e);
@@ -80,7 +76,7 @@ describe('Component class', () => {
     describe('with data passed as arg', () => {
       it('sets model to data', (done) => {
         component.init({title: 'test'}).then(() => {
-          chai.assert.equal('test', component.model.title);
+          assert.equal('test', component.model.title);
           done();
         });
       });
@@ -90,7 +86,7 @@ describe('Component class', () => {
       it('fetches data and sets model', (done) => {
         component.fetchData = sinon.stub().returns(Promise.resolve({title: 'rectangle'}));;
         component.init().then(() => {
-          chai.assert.equal('rectangle', component.model.title);
+          assert.equal('rectangle', component.model.title);
           done();
         });
       });
@@ -105,7 +101,7 @@ describe('Component class', () => {
         component.render();
         component.delegateEvents();
         component.document.getElementById('button').click();
-        chai.assert.calledWith(clickSpy, sinon.match.instanceOf(Event), sinon.match.instanceOf(window.Node));
+        assert.calledWith(clickSpy, sinon.match.instanceOf(Event), sinon.match.instanceOf(window.Node));
         done();
       });
     });
@@ -119,7 +115,7 @@ describe('Component class', () => {
           'product');
         const setupModel = sinon.stub(iframeComponent, 'setupModel').returns(Promise.resolve({ title: 'test' }));
         iframeComponent.init().then(() => {
-          chai.assert.isOk(iframeComponent.iframe);
+          assert.isOk(iframeComponent.iframe);
           setupModel.restore();
           done();
         });
@@ -142,7 +138,7 @@ describe('Component class', () => {
         }
       }
       component.updateConfig(updateConfig);
-      chai.assert.equal(component.options.styles.button.color, 'blue');
+      assert.equal(component.options.styles.button.color, 'blue');
     });
   });
 
@@ -152,7 +148,7 @@ describe('Component class', () => {
 
       const tmplRender = sinon.stub(component.template, 'render').returns(testHTML);
       component.render();
-      chai.assert.equal(component.wrapper.innerHTML, testHTML);
+      assert.equal(component.wrapper.innerHTML, testHTML);
     });
 
     it('updates innerHTML of wrapper on second call', () => {
@@ -161,12 +157,12 @@ describe('Component class', () => {
       component.wrapper = component.createWrapper();
       component.wrapper.innerHTML = testBeforeHTML;
       component.template.render = function (data) {
-        chai.assert.isOk(data.data);
+        assert.isOk(data.data);
         return testHTML;
       }
 
       component.render();
-      chai.assert.equal(component.wrapper.innerHTML, testHTML);
+      assert.equal(component.wrapper.innerHTML, testHTML);
     });
   });
 
@@ -175,16 +171,16 @@ describe('Component class', () => {
       const eventConfig = config;
       eventConfig.events = {
         'beforeTestMethod': function (c) {
-          chai.assert.isOk(c instanceof Component);
+          assert.isOk(c instanceof Component);
         },
         'afterTestMethod': function (c) {
-          chai.assert.isOk(c instanceof Component);
+          assert.isOk(c instanceof Component);
         },
       }
       const eventsComponent = new Component(eventConfig, {client: {}}, 'product');
 
       eventsComponent.testMethod = function (string) {
-        chai.assert.equal(string, 'an argument');
+        assert.equal(string, 'an argument');
       }
 
       const wrapped = eventsComponent.wrapMethod(eventsComponent.testMethod);
