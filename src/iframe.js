@@ -19,8 +19,12 @@ function isPseudoSelector(key) {
   return key.charAt(0) === ':';
 }
 
+function isMedia(key) {
+  return key.charAt(0) === '@';
+}
+
 function ruleDeclarations(rule) {
-  return Object.keys(rule).filter((key) => !isPseudoSelector(key)).map((key) => ({property: key, value: rule[key]}));
+  return Object.keys(rule).filter((key) => !isPseudoSelector(key) && !isMedia(key)).map((key) => ({property: key, value: rule[key]}));
 }
 
 export default class iframe {
@@ -79,6 +83,12 @@ export default class iframe {
             selector: `.${this.classes[key]}${decKey}`,
             declarations: ruleDeclarations(this.customStylesHash[key][decKey]),
           });
+        } else if (isMedia(decKey)) {
+          styleGroup.push({
+            media: decKey,
+            selector: `.${this.classes[key]}`,
+            declarations: ruleDeclarations(this.customStylesHash[key][decKey]),
+          });
         } else {
           const selector = this.classes[key].split(' ').join('.');
           styleGroup.push({
@@ -105,6 +115,7 @@ export default class iframe {
     }
     this.styleTag = this.document.createElement('style');
     const compiled = hogan.compile(stylesTemplate);
+    console.log(compiled.render({selectors: this.customStyles}));
 
     if (this.styleTag.styleSheet) {
       this.styleTag.styleSheet.cssText = this.stylesheet + "\n" + compiled.render({selectors: this.customStyles});
