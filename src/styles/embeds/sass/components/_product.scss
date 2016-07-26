@@ -12,17 +12,17 @@ $color-faint: #a2a2a3;
   margin-bottom: 5px;
 }
 
-.product__variant-prices {
+.product__prices {
   margin-bottom: 10px;
 }
 
-.product__variant-prices__price {
+.product__actual-price {
   font-size: 16px;
   line-height: 22px;
   color: #000;
 }
 
-.product__variant-price__compare {
+.product__compare-price {
   font-size: 12px;
   text-decoration: line-through;
   color: $color-faint;
