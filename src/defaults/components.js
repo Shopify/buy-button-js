@@ -20,7 +20,7 @@ const defaults = {
     templates: productTemplates,
     classes: {
       product: 'product',
-      img: 'product__variant-img',
+      img: 'product__variant-image',
       button: 'btn',
       title: 'product__title',
       prices: 'product__price',
@@ -104,7 +104,7 @@ const defaults = {
     },
     classes: {
       lineItem: 'cart-item',
-      image: 'cart-item__img',
+      image: 'cart-item__image',
       variantTitle: 'cart-item__variant-title',
       itemTitle: 'cart-item__title',
       price: 'cart-item__price',
