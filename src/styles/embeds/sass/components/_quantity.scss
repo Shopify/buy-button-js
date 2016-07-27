@@ -1,0 +1,54 @@
+.cart-item__quantity-container {
+  border-radius: $border-radius;
+  margin-left: 80px;
+  overflow: hidden;
+}
+
+.quantity-decrement, .quantity-increment {
+  color: $color-title;
+  display: block;
+  float: left;
+  height: 21px;
+  line-height: 16px;
+  font-family: monospace;
+  width: 25px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+  cursor: pointer;
+  font-size: 18px;
+  text-align: center;
+  border: 1px solid #a9a9a9;
+}
+
+.quantity-decrement {
+  border-radius: $border-radius 0 0 $border-radius;
+}
+
+.quantity-increment {
+  border-radius: 0 $border-radius $border-radius 0;
+}
+
+.cart-item__quantity {
+  color: black;
+  width: 38px;
+  height: 21px;
+  font-size: 12px;
+  border: none;
+  text-align: center;
+  -moz-appearance: textfield;
+  background: transparent;
+  display: block;
+  float: left;
+  padding: 0;
+  border-radius: 0;
+  border-top: 1px solid #a9a9a9;
+  border-bottom: 1px solid #a9a9a9;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}

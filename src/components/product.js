@@ -55,6 +55,9 @@ export default class Product extends Component {
       click: this.closeCartOnBgClick.bind(this),
       [`change .${this.config.option.classes.select}`]: this.onOptionSelect.bind(this),
       [`click .${this.options.classes.button}`]: this.onButtonClick.bind(this),
+      [`click .${this.classes.quantityButton}.quantity-increment`]: this.onQuantityIncrement.bind(this, 1),
+      [`click .${this.classes.quantityButton}.quantity-decrement`]: this.onQuantityIncrement.bind(this, -1),
+      [`focusout .${this.classes.quantityInput}`]: this.onQuantityBlur.bind(this),
     });
   }
 
@@ -114,12 +117,15 @@ export default class Product extends Component {
   }
 
   fetchData() {
-    return this.props.client.fetchProduct(this.id);
+    return this.props.client.fetchProduct(this.id).then((model) => {
+      model.selectedQuantity = 0;
+      return model;
+    });
   }
 
   onButtonClick() {
     if (this.options.buttonDestination === 'cart') {
-      this.cart.addVariantToCart(this.model.selectedVariant);
+      this.cart.addVariantToCart(this.model.selectedVariant, this.model.selectedQuantity);
     } else {
       this.openCheckout();
       new Checkout(this.config).open(this.model.selectedVariant.checkoutUrl(1));
@@ -131,6 +137,19 @@ export default class Product extends Component {
     const value = target.options[target.selectedIndex].value;
     const name = target.getAttribute('name');
     this.updateVariant(name, value);
+  }
+
+  onQuantityBlur(evt, target) {
+    this.updateQuantity(() => target.value);
+  }
+
+  onQuantityIncrement(qty) {
+    this.updateQuantity((prevQty) => prevQty + qty);
+  }
+
+  updateQuantity(fn) {
+    this.model.selectedQuantity = fn(this.model.selectedQuantity);
+    this.render();
   }
 
   updateVariant(optionName, value) {
