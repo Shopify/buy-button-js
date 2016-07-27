@@ -47,12 +47,12 @@ export default class Product extends Component {
       buttonDisabled: !this.cart,
       priceClass: this.model.selectedVariant.compareAtPrice ? 'price--lowered' : '',
       classes: this.classes,
-      hasQuantity: this.options.contents.quantity
+      hasQuantity: this.options.contents.quantity,
     });
   }
 
   get buttonClass() {
-    return `${this.variantAvailable ? '' : this.classes.disabled} ${this.options.contents.quantity ? 'beside-quantity': ''}`;
+    return `${this.variantAvailable ? '' : this.classes.disabled} ${this.options.contents.quantity ? 'beside-quantity' : ''}`;
   }
 
   get DOMEvents() {
