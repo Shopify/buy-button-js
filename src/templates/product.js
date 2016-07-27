@@ -9,6 +9,11 @@ const productTemplate = {
           </div>`,
   description: '<div class="{{data.classes.description}}">{{{data.description}}}</div>',
   button: '<button {{#data.buttonDisabled}}disabled{{/data.buttonDisabled}} class="{{data.classes.button}} {{data.buttonClass}}">{{data.buttonText}}</button>',
+  quantity: `<div class="cart-item__quantity-container">
+              <button class="{{data.classes.quantityButton}} quantity-decrement" type="buttoni" ><span>-</span><span class="visuallyhidden">Decrement</span></button>
+              <input class="{{data.classes.quantityInput}}" type="number" min="0" aria-label="Quantity" value="{{data.selectedQuantity}}">
+              <button class="{{data.classes.quantityButton}} quantity-increment" type="button"><span>+</span><span class="visuallyhidden">Increment</span></button>
+            </div>`,
 };
 
 export default productTemplate;

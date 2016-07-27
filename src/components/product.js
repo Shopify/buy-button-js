@@ -42,12 +42,17 @@ export default class Product extends Component {
       buttonText: this.variantAvailable ? this.text.button : 'Unavailable',
       childrenHtml: this.childrenHtml,
       currentImage: this.currentImage,
-      buttonClass: this.variantAvailable ? '' : this.classes.disabled,
+      buttonClass: this.buttonClass,
       hasVariants: this.hasVariants,
       buttonDisabled: !this.cart,
       priceClass: this.model.selectedVariant.compareAtPrice ? 'price--lowered' : '',
       classes: this.classes,
+      hasQuantity: this.options.contents.quantity,
     });
+  }
+
+  get buttonClass() {
+    return `${this.variantAvailable ? '' : this.classes.disabled} ${this.options.contents.quantity ? 'beside-quantity' : ''}`;
   }
 
   get DOMEvents() {
@@ -55,6 +60,9 @@ export default class Product extends Component {
       click: this.closeCartOnBgClick.bind(this),
       [`change .${this.config.option.classes.select}`]: this.onOptionSelect.bind(this),
       [`click .${this.options.classes.button}`]: this.onButtonClick.bind(this),
+      [`click .${this.classes.quantityButton}.quantity-increment`]: this.onQuantityIncrement.bind(this, 1),
+      [`click .${this.classes.quantityButton}.quantity-decrement`]: this.onQuantityIncrement.bind(this, -1),
+      [`focusout .${this.classes.quantityInput}`]: this.onQuantityBlur.bind(this),
     });
   }
 
@@ -114,12 +122,15 @@ export default class Product extends Component {
   }
 
   fetchData() {
-    return this.props.client.fetchProduct(this.id);
+    return this.props.client.fetchProduct(this.id).then((model) => {
+      model.selectedQuantity = 0;
+      return model;
+    });
   }
 
   onButtonClick() {
     if (this.options.buttonDestination === 'cart') {
-      this.cart.addVariantToCart(this.model.selectedVariant);
+      this.cart.addVariantToCart(this.model.selectedVariant, this.model.selectedQuantity);
     } else {
       this.openCheckout();
       new Checkout(this.config).open(this.model.selectedVariant.checkoutUrl(1));
@@ -131,6 +142,23 @@ export default class Product extends Component {
     const value = target.options[target.selectedIndex].value;
     const name = target.getAttribute('name');
     this.updateVariant(name, value);
+  }
+
+  onQuantityBlur(evt, target) {
+    this.updateQuantity(() => target.value);
+  }
+
+  onQuantityIncrement(qty) {
+    this.updateQuantity((prevQty) => prevQty + qty);
+  }
+
+  updateQuantity(fn) {
+    let quantity = fn(this.model.selectedQuantity);
+    if (quantity < 0) {
+      quantity = 0;
+    }
+    this.model.selectedQuantity = quantity;
+    this.render();
   }
 
   updateVariant(optionName, value) {

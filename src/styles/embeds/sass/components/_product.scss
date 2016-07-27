@@ -80,3 +80,21 @@ $color-faint: #a2a2a3;
   -webkit-appearance: none;
   -moz-appearance: none;
 }
+
+.cart-item__quantity-container {
+  margin-left: 0;
+  display: inline-block;
+}
+
+.cart-item__quantity,
+.quantity-decrement,
+.quantity-increment {
+  height: 42px;
+}
+
+.btn.beside-quantity {
+  display: inline-block;
+  width: 68%;
+  margin-left: 2%;
+  vertical-align: top;
+}
