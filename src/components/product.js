@@ -9,6 +9,7 @@ export default class Product extends Component {
     this.cachedImage = null;
     this.childTemplate = new Template(this.config.option.templates, this.config.option.contents, 'options');
     this.cart = null;
+    this.selectedQuantity = 1;
   }
 
   init(data) {
@@ -48,6 +49,7 @@ export default class Product extends Component {
       priceClass: this.model.selectedVariant.compareAtPrice ? 'price--lowered' : '',
       classes: this.classes,
       hasQuantity: this.options.contents.quantity,
+      selectedQuantity: this.selectedQuantity,
     });
   }
 
@@ -123,7 +125,6 @@ export default class Product extends Component {
 
   fetchData() {
     return this.props.client.fetchProduct(this.id).then((model) => {
-      model.selectedQuantity = 0;
       return model;
     });
   }
@@ -153,11 +154,11 @@ export default class Product extends Component {
   }
 
   updateQuantity(fn) {
-    let quantity = fn(this.model.selectedQuantity);
+    let quantity = fn(this.selectedQuantity);
     if (quantity < 0) {
       quantity = 0;
     }
-    this.model.selectedQuantity = quantity;
+    this.selectedQuantity = quantity;
     this.render();
   }
 
