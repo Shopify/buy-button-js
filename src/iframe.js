@@ -106,7 +106,7 @@ export default class iframe {
   updateStyles(customStyles) {
     this.customStylesHash = customStyles;
     const compiled = hogan.compile(stylesTemplate);
-    this.styleTag.innerHTML = compiled.render({selectors: this.customStyles});
+    this.styleTag.innerHTML = this.stylesheet + "\n" + compiled.render({selectors: this.customStyles});
   }
 
   appendStyleTag() {
