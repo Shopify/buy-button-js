@@ -42,12 +42,17 @@ export default class Product extends Component {
       buttonText: this.variantAvailable ? this.text.button : 'Unavailable',
       childrenHtml: this.childrenHtml,
       currentImage: this.currentImage,
-      buttonClass: this.variantAvailable ? '' : this.classes.disabled,
+      buttonClass: this.buttonClass,
       hasVariants: this.hasVariants,
       buttonDisabled: !this.cart,
       priceClass: this.model.selectedVariant.compareAtPrice ? 'price--lowered' : '',
       classes: this.classes,
+      hasQuantity: this.options.contents.quantity
     });
+  }
+
+  get buttonClass() {
+    return `${this.variantAvailable ? '' : this.classes.disabled} ${this.options.contents.quantity ? 'beside-quantity': ''}`;
   }
 
   get DOMEvents() {
@@ -148,7 +153,11 @@ export default class Product extends Component {
   }
 
   updateQuantity(fn) {
-    this.model.selectedQuantity = fn(this.model.selectedQuantity);
+    let quantity = fn(this.model.selectedQuantity);
+    if (quantity < 0) {
+      quantity = 0;
+    }
+    this.model.selectedQuantity = quantity;
     this.render();
   }
 
