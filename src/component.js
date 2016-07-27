@@ -100,7 +100,7 @@ export default class Component {
 
   delegateEvents() {
     Object.keys(this.DOMEvents).forEach((key) => {
-      const [, eventName, selectorString] = key.match(delegateEventSplitter);
+      const [_, eventName, selectorString] = key.match(delegateEventSplitter); //eslint disable-this-line no-unused-vars
       const selector = selectorString.split(' ').join('.');
       if (selector) {
         this._on(eventName, selector, (evt, target) => {
