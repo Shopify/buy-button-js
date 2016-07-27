@@ -125,6 +125,7 @@ export default class Product extends Component {
 
   fetchData() {
     return this.props.client.fetchProduct(this.id).then((model) => {
+      model.selectedQuantity = 0;
       return model;
     });
   }
