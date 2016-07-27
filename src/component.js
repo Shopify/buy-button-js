@@ -35,7 +35,7 @@ export default class Component {
     this.config = merge(componentDefaults, config.options || {});
     this.props = props;
     this.model = {};
-    this.template = new Template(this.templates, this.contents, this.classes[this.typeKey]);
+    this.template = new Template(this.templates, this.contents, this.classes[this.typeKey][this.typeKey]);
     this.children = null;
   }
 
@@ -56,13 +56,23 @@ export default class Component {
   }
 
   get styles() {
-    const childStyles = this.config[this.childTypeKey] ? this.config[this.childTypeKey].styles : {};
-    return Object.assign({}, this.options.styles, childStyles);
+    const styles = {
+      [this.typeKey]: this.options.styles,
+    }
+    if (this.childTypeKey) {
+      styles[this.childTypeKey] = this.config[this.childTypeKey].styles;
+    }
+    return styles;
   }
 
   get classes() {
-    const childClasses = this.config[this.childTypeKey] ? this.config[this.childTypeKey].classes : {};
-    return Object.assign({}, this.options.classes, childClasses);
+    const classNames = {
+      [this.typeKey]: this.options.classes,
+    }
+    if (this.childTypeKey) {
+      classNames[this.childTypeKey] = this.config[this.childTypeKey].classes;
+    }
+    return classNames;
   }
 
   get text() {

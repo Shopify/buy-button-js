@@ -22,7 +22,7 @@ export default class CartToggle extends Component {
 
   get DOMEvents() {
     return Object.assign({}, this.options.DOMEvents, {
-      [`click .${this.classes.toggle}`]: this.props.cart.toggleVisibility.bind(this.props.cart),
+      [`click .${this.classes.toggle.toggle}`]: this.props.cart.toggleVisibility.bind(this.props.cart),
     });
   }
 }

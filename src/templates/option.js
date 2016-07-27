@@ -1,8 +1,8 @@
 const optionTemplates = {
-  option: `<div class={{data.classes.option}}>
-    <label class="{{data.classes.label}}">{{data.name}}</label>
-      <div class="{{data.classes.wrapper}}">
-      <select class="{{data.classes.select}}" name="{{data.name}}">
+  option: `<div class={{data.classes.option.option}}>
+    <label class="{{data.classes.option.label}}">{{data.name}}</label>
+      <div class="{{data.classes.option.wrapper}}">
+      <select class="{{data.classes.option.select}}" name="{{data.name}}">
         {{#data.values}}
           <option {{#disabled}}disabled{{/disabled}} {{#selected}}selected{{/selected}} value={{name}}>{{name}}</option>
         {{/data.values}}

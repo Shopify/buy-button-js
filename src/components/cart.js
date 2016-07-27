@@ -27,18 +27,18 @@ export default class Cart extends Component {
 
   get DOMEvents() {
     return Object.assign({}, this.options.DOMEvents, {
-      [`click .${this.classes.close}`]: this.close.bind(this),
-      [`click .${this.classes.quantityButton}.quantity-increment`]: this.onQuantityIncrement.bind(this, 1),
-      [`click .${this.classes.quantityButton}.quantity-decrement`]: this.onQuantityIncrement.bind(this, -1),
-      [`click .${this.classes.button}`]: this.onCheckout.bind(this),
-      [`focusout .${this.classes.quantityInput}`]: this.onQuantityBlur.bind(this),
+      [`click .${this.classes.cart.close}`]: this.close.bind(this),
+      [`click .${this.classes.lineItem.quantityButton}.quantity-increment`]: this.onQuantityIncrement.bind(this, 1),
+      [`click .${this.classes.lineItem.quantityButton}.quantity-decrement`]: this.onQuantityIncrement.bind(this, -1),
+      [`click .${this.classes.cart.button}`]: this.onCheckout.bind(this),
+      [`focusout .${this.classes.lineItem.quantityInput}`]: this.onQuantityBlur.bind(this),
     });
   }
 
   get childrenHtml() {
     return this.model.lineItems.reduce((acc, lineItem) => {
       const data = lineItem;
-      data.classes = this.config.lineItem.classes;
+      data.classes = this.classes;
       return acc + this.childTemplate.render({data});
     }, '');
   }

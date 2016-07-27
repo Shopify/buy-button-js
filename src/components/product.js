@@ -58,8 +58,8 @@ export default class Product extends Component {
   get DOMEvents() {
     return Object.assign({}, this.options.DOMEvents, {
       click: this.closeCartOnBgClick.bind(this),
-      [`change .${this.config.option.classes.select}`]: this.onOptionSelect.bind(this),
-      [`click .${this.options.classes.button}`]: this.onButtonClick.bind(this),
+      [`change .${this.classes.option.select}`]: this.onOptionSelect.bind(this),
+      [`click .${this.classes.product.button}`]: this.onButtonClick.bind(this),
       [`click .${this.classes.quantityButton}.quantity-increment`]: this.onQuantityIncrement.bind(this, 1),
       [`click .${this.classes.quantityButton}.quantity-decrement`]: this.onQuantityIncrement.bind(this, -1),
       [`focusout .${this.classes.quantityInput}`]: this.onQuantityBlur.bind(this),
@@ -73,7 +73,7 @@ export default class Product extends Component {
   get childrenHtml() {
     return this.decoratedOptions.reduce((acc, option) => {
       const data = option;
-      data.classes = this.config.option.classes;
+      data.classes = this.classes;
 
       return acc + this.childTemplate.render({data});
     }, '');
@@ -184,7 +184,7 @@ export default class Product extends Component {
   }
 
   closeCartOnBgClick(evt) {
-    if (!this.wrapper.querySelector(`.${this.classes.button}`).contains(evt.target)) {
+    if (!this.wrapper.querySelector(`.${this.classes.product.button}`).contains(evt.target)) {
       this.cart.close();
     }
   }
