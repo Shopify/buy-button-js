@@ -56,19 +56,19 @@ export default class Component {
   }
 
   get styles() {
-    const styles = {
+    const stylesHash = {
       [this.typeKey]: this.options.styles,
-    }
+    };
     if (this.childTypeKey) {
-      styles[this.childTypeKey] = this.config[this.childTypeKey].styles;
+      stylesHash[this.childTypeKey] = this.config[this.childTypeKey].styles;
     }
-    return styles;
+    return stylesHash;
   }
 
   get classes() {
     const classNames = {
       [this.typeKey]: this.options.classes,
-    }
+    };
     if (this.childTypeKey) {
       classNames[this.childTypeKey] = this.config[this.childTypeKey].classes;
     }

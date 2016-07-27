@@ -111,7 +111,8 @@ export default class iframe {
   updateStyles(customStyles) {
     this.customStylesHash = customStyles;
     const compiled = hogan.compile(stylesTemplate);
-    this.styleTag.innerHTML = this.stylesheet + "\n" + compiled.render({selectors: this.customStyles});
+    const stylesText = `${this.stylesheet} \n ${compiled.render({selectors: this.customStyles})}`;
+    this.styleTag.innerHTML = stylesText;
   }
 
   appendStyleTag() {
@@ -120,11 +121,12 @@ export default class iframe {
     }
     this.styleTag = this.document.createElement('style');
     const compiled = hogan.compile(stylesTemplate);
+    const stylesText = `${this.stylesheet} \n ${compiled.render({selectors: this.customStyles})}`;
 
     if (this.styleTag.styleSheet) {
-      this.styleTag.styleSheet.cssText = this.stylesheet + "\n" + compiled.render({selectors: this.customStyles});
+      this.styleTag.styleSheet.cssText = stylesText;
     } else {
-      this.styleTag.appendChild(this.document.createTextNode(this.stylesheet + "\n" + compiled.render({selectors: this.customStyles})));
+      this.styleTag.appendChild(this.document.createTextNode(stylesText));
     }
 
     this.document.head.appendChild(this.styleTag);

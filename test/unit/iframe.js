@@ -12,12 +12,16 @@ describe('Iframe class', () => {
     parent.setAttribute('id', 'fixture');
     document.body.appendChild(parent);
     iframe = new Iframe(parent, {
-      button: 'btn'
+      product: {
+        button: 'btn'
+      }
     }, {
-      button: {
-        'color': 'red',
-        ':hover': {
-          'color': 'green'
+      product: {
+        button: {
+          'color': 'red',
+          ':hover': {
+            'color': 'green'
+          }
         }
       }
     }, defaultCSS);
