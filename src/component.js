@@ -44,15 +44,27 @@ export default class Component {
   }
 
   get options() {
-    return this.config[this.typeKey];
+    return Object.assign({}, this.config[this.typeKey]);
   }
 
   get templates() {
-    return this.options.templates;
+    return Object.assign({}, this.options.templates);
   }
 
   get contents() {
-    return this.options.contents;
+    return Object.assign({}, this.options.contents);
+  }
+
+  get text() {
+    return Object.assign({}, this.options.text);
+  }
+
+  get events() {
+    return Object.assign({}, this.options.events);
+  }
+
+  get DOMEvents() {
+    return Object.assign({}, this.options.DOMEvents);
   }
 
   get styles() {
@@ -75,20 +87,8 @@ export default class Component {
     return classNames;
   }
 
-  get text() {
-    return this.options.text;
-  }
-
   get document() {
     return this.iframe ? this.iframe.document : window.document;
-  }
-
-  get events() {
-    return this.options.events || {};
-  }
-
-  get DOMEvents() {
-    return this.options.DOMEvents || {};
   }
 
   get viewData() {
