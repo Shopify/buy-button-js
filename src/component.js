@@ -193,7 +193,7 @@ export default class Component {
       this.wrapper.innerHTML = html;
     }
     this._userEvent('afterRender');
-    return this.resizeAfterImgLoad();
+    return this.loadImgs();
   }
 
   createWrapper() {
@@ -207,30 +207,30 @@ export default class Component {
     return wrapper;
   }
 
-  resizeAfterImgLoad() {
-    if (this.iframe) {
-      const imgs = [...this.wrapper.querySelectorAll('img')];
-      if (this.iframe && imgs.length) {
-        const promises = imgs.map((img) =>
-          new Promise((resolve) => {
-            if (this.props.imageCache[img.getAttribute('src')]) {
-              return resolve();
-            }
+  loadImgs() {
+    const imgs = [...this.wrapper.querySelectorAll('img')];
+    if (imgs.length) {
+      const promises = imgs.map((img) => {
+        const src = img.getAttribute('data-src');
+        if (src) {
+          return new Promise((resolve) => {
             img.addEventListener('load', (evt) => {
-              this.props.imageCache[img.getAttribute('src')] = true;
               return resolve(evt);
             });
             img.addEventListener('error', (evt) => {
               return resolve(evt);
             });
-          })
-        );
+            img.setAttribute('src', src);
+          });
+        } else {
+          return Promise.resolve();
+        }
+      });
+      if (this.iframe) {
         return Promise.all(promises).then(() => this.resize());
       } else {
-        return Promise.resolve(this.resize());
+        return Promise.resolve();
       }
-    } else {
-      return Promise.resolve();
     }
   }
 
