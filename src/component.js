@@ -26,9 +26,6 @@ function methodStrings(method) {
 
 export default class Component {
   constructor(config, props) {
-    this.delegateEvents = this.wrapMethod(this.delegateEvents);
-    this.resize = this.wrapMethod(this.resize);
-    this.updateConfig = this.wrapMethod(this.updateConfig);
     this.id = config.id;
     this.node = config.node;
     this.debug = config.debug;
@@ -99,6 +96,7 @@ export default class Component {
   }
 
   delegateEvents() {
+    this._userEvent('beforeDelegateEvents');
     Object.keys(this.DOMEvents).forEach((key) => {
       const [_, eventName, selectorString] = key.match(delegateEventSplitter);
       const selector = selectorString.split(' ').join('.');
@@ -112,6 +110,7 @@ export default class Component {
         });
       }
     });
+    this._userEvent('afterDelegateEvents');
   }
 
   resize() {
@@ -170,6 +169,7 @@ export default class Component {
   }
 
   updateConfig(config) {
+    this._userEvent('beforeUpdateConfig');
     this.config = merge(componentDefaults, config.options);
     this.template = new Template(this.templates, this.contents, this.typeKey);
     if (this.iframe) {
@@ -177,6 +177,7 @@ export default class Component {
     }
     this.render();
     this.resize();
+    this._userEvent('afterUpdateConfig');
   }
 
   render() {
@@ -231,15 +232,6 @@ export default class Component {
     } else {
       return Promise.resolve();
     }
-  }
-
-  wrapMethod(method) {
-    return function(...args) {
-      const {before, after} = methodStrings(method);
-      this._userEvent(before);
-      method.apply(this, args);
-      this._userEvent(after);
-    };
   }
 
   _userEvent(methodName) {

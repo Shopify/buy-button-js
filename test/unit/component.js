@@ -169,27 +169,4 @@ describe('Component class', () => {
       assert.equal(component.wrapper.innerHTML, testHTML);
     });
   });
-
-  describe('wrapMethod', () => {
-    it('returns a method wrapped by user methods', () => {
-      const eventConfig = config;
-      eventConfig.events = {
-        'beforeTestMethod': function (c) {
-          assert.isOk(c instanceof Component);
-        },
-        'afterTestMethod': function (c) {
-          assert.isOk(c instanceof Component);
-        },
-      }
-      const eventsComponent = new Component(eventConfig, {client: {}}, 'product');
-
-      eventsComponent.testMethod = function (string) {
-        assert.equal(string, 'an argument');
-      }
-
-      const wrapped = eventsComponent.wrapMethod(eventsComponent.testMethod);
-
-      wrapped.call(eventsComponent, 'an argument');
-    });
-  });
 });
