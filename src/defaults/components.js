@@ -20,6 +20,7 @@ const defaults = {
     },
     templates: productTemplates,
     classes: {
+      wrapper: 'product-wrapper',
       product: 'product',
       img: 'product__variant-image',
       button: 'btn',
@@ -50,6 +51,8 @@ const defaults = {
       products: '<div class="{{data.classes.productSet.products}}"></div>',
     },
     classes: {
+      wrapper: 'collection-wrapper',
+      productSet: 'collection',
       title: 'collection__title',
       collection: 'collection',
       products: 'collection-products',
@@ -76,6 +79,7 @@ const defaults = {
       footer: true,
     },
     classes: {
+      wrapper: 'cart-wrapper',
       cart: 'cart',
       header: 'cart__header',
       title: 'cart__title',
@@ -125,6 +129,7 @@ const defaults = {
       title: true,
     },
     classes: {
+      wrapper: 'cart-toggle-wrapper',
       toggle: 'cart-toggle',
       title: 'cart-toggle__title',
       count: 'cart-toggle__count',

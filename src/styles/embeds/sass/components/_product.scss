@@ -83,7 +83,9 @@ $color-faint: #a2a2a3;
 
 .cart-item__quantity-container {
   margin-left: 0;
-  display: inline-block;
+  float: left;
+  width: 90px;
+  margin-right: 10px;
 }
 
 .cart-item__quantity,
@@ -94,7 +96,6 @@ $color-faint: #a2a2a3;
 
 .btn.beside-quantity {
   display: inline-block;
-  width: 68%;
-  margin-left: 2%;
   vertical-align: top;
+  width: calc(100% - 100px);
 }

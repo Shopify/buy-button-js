@@ -4,14 +4,6 @@
   flex-wrap: wrap;
   margin-left: -$gutter;
 
-  .product-container {
-    max-width: 230px;
-    margin-left: $gutter;
-    flex: 0 0 auto;
-    padding-top: $gutter;
-    display: inline-block;
-  }
-
   @media (max-width: 600px) {
     display: block;
   }
@@ -22,10 +14,18 @@
   text-align: center;
 }
 
-.cart-item__quantity-container {
+.product-wrapper {
+  margin-left: $gutter;
+  flex: 0 0 auto;
+  padding-top: $gutter;
+  display: inline-block;
 
+  @media (min-width: 601px) {
+    width: 230px;
+  }
+
+  @media (max-width: 600px) {
+    width: 100%;
+  }
 }
 
-.btn.beside-quantity {
-  max-width: 50%;
-}

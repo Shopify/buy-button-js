@@ -187,7 +187,7 @@ export default class Component {
       const div = this.document.createElement('div');
       div.innerHTML = html;
       morphdom(this.wrapper, div);
-      this.wrapper.className = `${this.typeKey}-container`;
+      this.wrapper.className = this.classes[this.typeKey].wrapper;
     } else {
       this.wrapper = this.createWrapper();
       this.wrapper.innerHTML = html;
@@ -198,7 +198,7 @@ export default class Component {
 
   createWrapper() {
     const wrapper = this.document.createElement('div');
-    wrapper.className = `${this.typeKey}-container`;
+    wrapper.className = this.classes[this.typeKey].wrapper;
     if (this.iframe) {
       this.document.body.appendChild(wrapper);
     } else {
