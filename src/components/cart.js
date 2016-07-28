@@ -44,12 +44,12 @@ export default class Cart extends Component {
   }
 
   get viewData() {
-    return Object.assign({}, {
+    return merge(this.model, {
       wrapperClass: this.isVisible ? 'js-active' : '',
       text: this.text,
       classes: this.classes,
       childrenHtml: this.childrenHtml,
-    }, this.model);
+    });
   }
 
   fetchData() {
