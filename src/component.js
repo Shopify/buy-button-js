@@ -16,14 +16,6 @@ function logEvent(event, type) {
   /* eslint-enable no-console  */
 }
 
-function methodStrings(method) {
-  const capitalized = method.name.charAt(0).toUpperCase() + method.name.slice(1);
-  return {
-    before: `before${capitalized}`,
-    after: `after${capitalized}`,
-  };
-}
-
 export default class Component {
   constructor(config, props) {
     this.id = config.id;
@@ -98,7 +90,7 @@ export default class Component {
   delegateEvents() {
     this._userEvent('beforeDelegateEvents');
     Object.keys(this.DOMEvents).forEach((key) => {
-      const [_, eventName, selectorString] = key.match(delegateEventSplitter);
+      const [, eventName, selectorString] = key.match(delegateEventSplitter);
       const selector = selectorString.split(' ').join('.');
       if (selector) {
         this._on(eventName, selector, (evt, target) => {
