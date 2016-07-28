@@ -45,8 +45,8 @@ describe('Component class', () => {
     it('proxies commonly accessed attributes to config options for type', () => {
       assert.isOk(component.client);
       assert.equal(component.options.iframe, config.options.product.iframe);
-      assert.equal(component.templates.button, config.options.product.templates.button);
-      assert.equal(component.contents, componentDefaults.product.contents);
+      assert.deepEqual(component.templates.button, config.options.product.templates.button);
+      assert.deepEqual(component.contents, componentDefaults.product.contents);
     });
 
     it('instantiates a template', () => {
@@ -94,15 +94,19 @@ describe('Component class', () => {
 
     it('adds event listeners to nodes', (done) => {
       const clickSpy = sinon.spy();
-      component.options.DOMEvents = {
+      const testConfig = Object.assign({}, config);
+      testConfig.options.product.DOMEvents = {
         'click .button': clickSpy
       }
-      component.init({}).then(() => {
-        component.render();
-        component.delegateEvents();
-        component.document.getElementById('button').click();
+      const testComponent = new Component(testConfig, {client: {}, imageCache: {}});
+      testComponent.init({}).then(() => {
+        testComponent.render();
+        testComponent.delegateEvents();
+        testComponent.document.getElementById('button').click();
         assert.calledWith(clickSpy, sinon.match.instanceOf(Event), sinon.match.instanceOf(window.Node));
         done();
+      }).catch((e) => {
+        console.log(e);
       });
     });
 
