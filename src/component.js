@@ -16,14 +16,6 @@ function logEvent(event, type) {
   /* eslint-enable no-console  */
 }
 
-function methodStrings(method) {
-  const capitalized = method.name.charAt(0).toUpperCase() + method.name.slice(1);
-  return {
-    before: `before${capitalized}`,
-    after: `after${capitalized}`,
-  };
-}
-
 export default class Component {
   constructor(config, props) {
     this.id = config.id;
@@ -209,28 +201,26 @@ export default class Component {
 
   loadImgs() {
     const imgs = [...this.wrapper.querySelectorAll('img')];
-    if (imgs.length) {
-      const promises = imgs.map((img) => {
-        const src = img.getAttribute('data-src');
-        if (src) {
-          return new Promise((resolve) => {
-            img.addEventListener('load', (evt) => {
-              return resolve(evt);
-            });
-            img.addEventListener('error', (evt) => {
-              return resolve(evt);
-            });
-            img.setAttribute('src', src);
+    const promises = imgs.map((img) => {
+      const src = img.getAttribute('data-src');
+      if (src) {
+        return new Promise((resolve) => {
+          img.addEventListener('load', (evt) => {
+            return resolve(evt);
           });
-        } else {
-          return Promise.resolve();
-        }
-      });
-      if (this.iframe) {
-        return Promise.all(promises).then(() => this.resize());
+          img.addEventListener('error', (evt) => {
+            return resolve(evt);
+          });
+          img.setAttribute('src', src);
+        });
       } else {
         return Promise.resolve();
       }
+    });
+    if (this.iframe) {
+      return Promise.all(promises).then(() => this.resize());
+    } else {
+      return Promise.resolve();
     }
   }
 
