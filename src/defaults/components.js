@@ -42,7 +42,7 @@ const defaults = {
   productSet: {
     iframe: true,
     contents: {
-      title: true,
+      title: false,
       products: true,
     },
     templates: {
