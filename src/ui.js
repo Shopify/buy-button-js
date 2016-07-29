@@ -6,7 +6,6 @@ import hostStyles from './styles/host/main';
 import throttle from './utils/throttle';
 
 const DATA_ATTRIBUTE = 'data-shopify-buy-ui';
-const imageCache = {};
 
 export default class UI {
   constructor(client) {
@@ -62,7 +61,6 @@ export default class UI {
   get componentProps() {
     return {
       client: this.client,
-      imageCache,
       createCart: this.createCart.bind(this),
     };
   }

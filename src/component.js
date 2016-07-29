@@ -109,14 +109,12 @@ export default class Component {
     if (!this.iframe) {
       return;
     }
-    window.requestAnimationFrame(() => {
-      if (this.typeKey === 'product') {
-        this.resizeX();
-      }
-      if (this.typeKey === 'product' || this.typeKey === 'productSet') {
-        this.resizeY();
-      }
-    });
+    if (this.typeKey === 'product') {
+      this.resizeX();
+    }
+    if (this.typeKey === 'product' || this.typeKey === 'productSet') {
+      this.resizeY();
+    }
   }
 
   resizeY() {
@@ -185,7 +183,7 @@ export default class Component {
       this.wrapper.innerHTML = html;
     }
     this._userEvent('afterRender');
-    return this.resizeAfterImgLoad();
+    return this.loadImgs();
   }
 
   createWrapper() {
@@ -199,28 +197,26 @@ export default class Component {
     return wrapper;
   }
 
-  resizeAfterImgLoad() {
-    if (this.iframe) {
-      const imgs = [...this.wrapper.querySelectorAll('img')];
-      if (this.iframe && imgs.length) {
-        const promises = imgs.map((img) =>
-          new Promise((resolve) => {
-            if (this.props.imageCache[img.getAttribute('src')]) {
-              return resolve();
-            }
-            img.addEventListener('load', (evt) => {
-              this.props.imageCache[img.getAttribute('src')] = true;
-              return resolve(evt);
-            });
-            img.addEventListener('error', (evt) => {
-              return resolve(evt);
-            });
-          })
-        );
-        return Promise.all(promises).then(() => this.resize());
+  loadImgs() {
+    const imgs = [...this.wrapper.querySelectorAll('img')];
+    const promises = imgs.map((img) => {
+      const src = img.getAttribute('data-src');
+      if (src) {
+        return new Promise((resolve) => {
+          img.addEventListener('load', (evt) => {
+            return resolve(evt);
+          });
+          img.addEventListener('error', (evt) => {
+            return resolve(evt);
+          });
+          img.setAttribute('src', src);
+        });
       } else {
-        return Promise.resolve(this.resize());
+        return Promise.resolve();
       }
+    });
+    if (this.iframe) {
+      return Promise.all(promises).then(() => this.resize());
     } else {
       return Promise.resolve();
     }
