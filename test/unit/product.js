@@ -225,4 +225,12 @@ describe('Product class', () => {
       });
     });
   });
+
+  describe('setVariantById', () => {
+    it('sets selectedVariant to specified variant', () => {
+      const model = product.setVariantById(12347, testProductCopy);
+      assert.equal('shark', model.options[0].selected);
+      assert.equal('large', model.options[1].selected);
+    });
+  });
 });

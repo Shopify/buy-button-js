@@ -7,6 +7,7 @@ export default class Product extends Component {
   constructor(config, props) {
     super(config, props);
     this.cachedImage = null;
+    this.fixedVariant = config.variant;
     this.childTemplate = new Template(this.config.option.templates, this.config.option.contents, 'options');
     this.cart = null;
     this.selectedQuantity = 1;
@@ -37,7 +38,7 @@ export default class Product extends Component {
   get viewData() {
     return merge(this.model, {
       buttonText: this.variantAvailable ? this.text.button : 'Unavailable',
-      optionsHtml: this.optionsHtml,
+      optionsHtml: this.fixedVariant ? '' : this.optionsHtml,
       currentImage: this.currentImage,
       buttonClass: this.buttonClass,
       hasVariants: this.hasVariants,
@@ -119,9 +120,26 @@ export default class Product extends Component {
     }));
   }
 
+  setupModel(data) {
+    if (data) {
+      return Promise.resolve(this.setVariantById(this.fixedVariant, data));
+    } else {
+      return this.fetchData().then((model) => this.setVariantById(this.fixedVariant, model));
+    }
+  }
+
+  setVariantById(id, model) {
+    if (id) {
+      const selectedVariant = model.variants.filter((variant) => variant.id === id)[0];
+      model.options.forEach((option) => {
+        option.selected = selectedVariant.optionValues.filter((optionValue) => optionValue.name === option.name)[0].value;
+      });
+    }
+    return model;
+  }
+
   fetchData() {
     return this.props.client.fetchProduct(this.id).then((model) => {
-      model.selectedQuantity = 0;
       return model;
     });
   }
