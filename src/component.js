@@ -61,23 +61,17 @@ export default class Component {
   }
 
   get styles() {
-    const stylesHash = {};
-    this.manifest.forEach((component) => {
-      if (this.config[component].styles) {
-        stylesHash[component] = this.config[component].styles;
-      }
-    });
-    return stylesHash;
+    return this.manifest.filter((component) => this.config[component].styles).reduce((hash, component) => {
+      hash[component] = this.config[component].styles;
+      return hash;
+    }, {});
   }
 
   get classes() {
-    const classHash = {};
-    this.manifest.forEach((component) => {
-      if (this.config[component].classes) {
-        classHash[component] = this.config[component].classes;
-      }
-    });
-    return classHash;
+    return this.manifest.filter((component) => this.config[component].classes).reduce((hash, component) => {
+      hash[component] = this.config[component].classes;
+      return hash;
+    }, {});
   }
 
   get document() {
