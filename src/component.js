@@ -109,14 +109,12 @@ export default class Component {
     if (!this.iframe) {
       return;
     }
-    window.requestAnimationFrame(() => {
-      if (this.typeKey === 'product') {
-        this.resizeX();
-      }
-      if (this.typeKey === 'product' || this.typeKey === 'productSet') {
-        this.resizeY();
-      }
-    });
+    if (this.typeKey === 'product') {
+      this.resizeX();
+    }
+    if (this.typeKey === 'product' || this.typeKey === 'productSet') {
+      this.resizeY();
+    }
   }
 
   resizeY() {
