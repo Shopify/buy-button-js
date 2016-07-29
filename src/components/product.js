@@ -38,7 +38,7 @@ export default class Product extends Component {
   get viewData() {
     return merge(this.model, {
       buttonText: this.variantAvailable ? this.text.button : 'Unavailable',
-      optionsHtml: this.fixedVariant ? '' : this.optionsHtml,
+      optionsHtml: this.optionsHtml,
       currentImage: this.currentImage,
       buttonClass: this.buttonClass,
       hasVariants: this.hasVariants,
