@@ -99,7 +99,7 @@ describe('Cart class', () => {
     });
   });
 
-  describe('get childrenHtml', () => {
+  describe('get lineItemsHtml', () => {
     it('returns an html string', () => {
       cart.model = {
         lineItems: [
@@ -115,7 +115,7 @@ describe('Cart class', () => {
 
       let render = sinon.spy(cart.childTemplate, 'render');
 
-      assert.include(cart.childrenHtml, 'data-line-item-id="123"');
+      assert.include(cart.lineItemsHtml, 'data-line-item-id="123"');
       assert.calledOnce(render);
     });
   });

@@ -2,7 +2,7 @@ const productTemplate = {
   img: '<img width="300" class="{{data.classes.product.productImg}}" data-src="{{data.currentImage.src}}" />',
   title: '<h1 class="{{data.classes.product.title}}">{{data.title}}</h1>',
   variantTitle: '{{#data.hasVariants}}<h2 class="{{data.classes.product.variantTitle}}">{{data.selectedVariant.title}}</h2>{{/data.hasVariants}}',
-  options: '{{#data.hasVariants}}<div class="{{data.classes.product.options}}">{{{data.childrenHtml}}}</div>{{/data.hasVariants}}',
+  options: '{{#data.hasVariants}}<div class="{{data.classes.product.options}}">{{{data.optionsHtml}}}</div>{{/data.hasVariants}}',
   price: `<div class="{{data.classes.product.prices}}">
             {{#data.selectedVariant.compareAtPrice}}<span class="{{data.classes.product.compareAt}}">\${{data.selectedVariant.compareAtPrice}}</span>{{/data.selectedVariant.compareAtPrice}}
             <span class="{{data.classes.product.price}} {{data.priceClass}}">\${{data.selectedVariant.price}}</span>

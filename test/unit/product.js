@@ -65,10 +65,10 @@ describe('Product class', () => {
     });
   });
 
-  describe('get childrenHtml', () => {
+  describe('get optionsHtml', () => {
     it('it returns an html string', (done) => {
       product.init(testProductCopy).then(() => {
-        assert.match(product.childrenHtml, /\<select/);
+        assert.match(product.optionsHtml, /\<select/);
         done();
       }).catch((e) => {
         done(e);
@@ -204,7 +204,7 @@ describe('Product class', () => {
       product.init(testProductCopy).then(() => {
         const viewData = product.viewData;
         assert.equal(viewData.buttonText, 'Add to cart');
-        assert.ok(viewData.childrenHtml);
+        assert.ok(viewData.optionsHtml);
         assert.equal(viewData.currentImage.img, 'http://test.com/test.jpg');
         assert.ok(viewData.hasVariants);
         done();

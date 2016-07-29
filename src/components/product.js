@@ -26,10 +26,6 @@ export default class Product extends Component {
     return 'product';
   }
 
-  get childTypeKey() {
-    return 'option';
-  }
-
   get currentImage() {
     if (!this.cachedImage) {
       this.cachedImage = this.model.selectedVariantImage;
@@ -41,7 +37,7 @@ export default class Product extends Component {
   get viewData() {
     return merge(this.model, {
       buttonText: this.variantAvailable ? this.text.button : 'Unavailable',
-      childrenHtml: this.childrenHtml,
+      optionsHtml: this.optionsHtml,
       currentImage: this.currentImage,
       buttonClass: this.buttonClass,
       hasVariants: this.hasVariants,
@@ -72,7 +68,7 @@ export default class Product extends Component {
     return this.model.selectedVariant;
   }
 
-  get childrenHtml() {
+  get optionsHtml() {
     return this.decoratedOptions.reduce((acc, option) => {
       const data = option;
       data.classes = this.classes;
