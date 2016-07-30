@@ -36,6 +36,10 @@ export default class Component {
     return Object.assign({}, this.config[this.typeKey]);
   }
 
+  get manifest() {
+    return this.options.manifest.slice(0);
+  }
+
   get templates() {
     return Object.assign({}, this.options.templates);
   }
@@ -57,23 +61,17 @@ export default class Component {
   }
 
   get styles() {
-    const stylesHash = {
-      [this.typeKey]: this.options.styles,
-    };
-    if (this.childTypeKey) {
-      stylesHash[this.childTypeKey] = this.config[this.childTypeKey].styles;
-    }
-    return stylesHash;
+    return this.manifest.filter((component) => this.config[component].styles).reduce((hash, component) => {
+      hash[component] = this.config[component].styles;
+      return hash;
+    }, {});
   }
 
   get classes() {
-    const classNames = {
-      [this.typeKey]: this.options.classes,
-    };
-    if (this.childTypeKey) {
-      classNames[this.childTypeKey] = this.config[this.childTypeKey].classes;
-    }
-    return classNames;
+    return this.manifest.filter((component) => this.config[component].classes).reduce((hash, component) => {
+      hash[component] = this.config[component].classes;
+      return hash;
+    }, {});
   }
 
   get document() {

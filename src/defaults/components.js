@@ -8,6 +8,7 @@ const defaults = {
   product: {
     iframe: true,
     buttonDestination: 'cart',
+    manifest: ['product', 'option'],
     contents: {
       img: true,
       title: true,
@@ -42,6 +43,7 @@ const defaults = {
   },
   productSet: {
     iframe: true,
+    manifest: ['product', 'option', 'productSet'],
     contents: {
       title: false,
       products: true,
@@ -73,6 +75,7 @@ const defaults = {
   cart: {
     iframe: true,
     templates: cartTemplates,
+    manifest: ['cart', 'lineItem'],
     contents: {
       title: true,
       lineItems: true,
@@ -123,6 +126,7 @@ const defaults = {
   },
   toggle: {
     templates: toggleTemplates,
+    manifest: ['toggle'],
     iframe: true,
     contents: {
       count: true,

@@ -6,10 +6,6 @@ export default class ProductSet extends Component {
     return 'productSet';
   }
 
-  get childTypeKey() {
-    return 'product';
-  }
-
   fetchData() {
 
     // eslint-disable-next-line camelcase

@@ -21,10 +21,6 @@ export default class Cart extends Component {
     return 'cart';
   }
 
-  get childTypeKey() {
-    return 'lineItem';
-  }
-
   get DOMEvents() {
     return Object.assign({}, this.options.DOMEvents, {
       [`click .${this.classes.cart.close}`]: this.close.bind(this),
@@ -35,7 +31,7 @@ export default class Cart extends Component {
     });
   }
 
-  get childrenHtml() {
+  get lineItemsHtml() {
     return this.model.lineItems.reduce((acc, lineItem) => {
       const data = lineItem;
       data.classes = this.classes;
@@ -48,7 +44,7 @@ export default class Cart extends Component {
       wrapperClass: this.isVisible ? 'js-active' : '',
       text: this.text,
       classes: this.classes,
-      childrenHtml: this.childrenHtml,
+      lineItemsHtml: this.lineItemsHtml,
     });
   }
 
