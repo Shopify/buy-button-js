@@ -7,7 +7,7 @@ export default class Product extends Component {
   constructor(config, props) {
     super(config, props);
     this.cachedImage = null;
-    this.fixedVariant = config.variant;
+    this.fixedVariantId = config.variantId;
     this.childTemplate = new Template(this.config.option.templates, this.config.option.contents, 'options');
     this.cart = null;
     this.selectedQuantity = 1;
@@ -122,9 +122,9 @@ export default class Product extends Component {
 
   setupModel(data) {
     if (data) {
-      return Promise.resolve(this.setVariantById(this.fixedVariant, data));
+      return Promise.resolve(this.setVariantById(this.fixedVariantId, data));
     } else {
-      return this.fetchData().then((model) => this.setVariantById(this.fixedVariant, model));
+      return this.fetchData().then((model) => this.setVariantById(this.fixedVariantId, model));
     }
   }
 
