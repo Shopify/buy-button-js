@@ -136,7 +136,7 @@ export default class Product extends Component {
           option.selected = selectedVariant.optionValues.filter((optionValue) => optionValue.name === option.name)[0].value;
         });
       } else {
-        throw new Error('Invalid variant ID');
+        console.error('Invalid variant ID');
       }
     }
     return model;
