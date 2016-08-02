@@ -30,17 +30,16 @@ export default class Modal extends Component {
     super.render();
     this.iframe.addClass('js-active');
 
-    const productConfig = {
+    const productConfig = merge({}, this.config.product, this.config.modalProduct);
+
+    const config = {
       node: this.document.querySelector(`.${this.classes.modal.contents}`),
       options: merge({}, this.config, {
-        product: {
-          iframe: false,
-          buttonDestination: 'cart'
-        }
+        product: productConfig,
       })
     };
 
-    return new Product(productConfig, this.props).init(this.model).then(() => {
+    return new Product(config, this.props).init(this.model).then(() => {
       return this.loadImgs();
     });
   }

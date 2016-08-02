@@ -41,6 +41,20 @@ const defaults = {
       button: 'Add to cart',
     },
   },
+  modalProduct: {
+    iframe: false,
+    contents: {
+      img: true,
+      title: true,
+      variantTitle: true,
+      options: true,
+      price: true,
+      description: true,
+      quantity: true,
+      button: true,
+    },
+    buttonDestination: 'cart',
+  },
   modal: {
     iframe: true,
     manifest: ['modal', 'product', 'option'],
