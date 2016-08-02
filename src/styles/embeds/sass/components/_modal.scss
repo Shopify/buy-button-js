@@ -17,3 +17,42 @@
   left: 0;
   right: 0;
 }
+
+.product__variant-image {
+  float: left;
+  width: 40%;
+}
+
+.product__title,
+.product__variant-title,
+.product__variant-selectors,
+.product__price,
+.product-description {
+  margin-left: 40%;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.product__title {
+  padding-top: 20px;
+}
+
+.btn {
+  margin-right: 20px;
+  margin-bottom: 20px;
+}
+
+.btn.beside-quantity {
+  margin-left: 0;
+  float: left;
+  width: calc(60% - 140px);
+}
+
+.cart-item__quantity-container {
+  padding-left: 20px;
+  width: 110px;
+}
+
+.product-description {
+  margin-bottom: 20px;
+}
