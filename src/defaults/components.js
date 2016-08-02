@@ -61,6 +61,7 @@ const defaults = {
     classes: {
       modal: 'modal',
       contents: 'modal-contents',
+      close: 'btn--close',
       wrapper: 'modal-wrapper',
       product: 'product-modal',
       overlay: 'modal-overlay',
@@ -71,7 +72,12 @@ const defaults = {
     },
     templates: {
       overlay: '<div class={{data.classes.modal.overlay}}></div>',
-      contents: '<div class={{data.classes.modal.contents}}></div>',
+      contents: `<div class={{data.classes.modal.contents}}>
+                  <button class="{{data.classes.modal.close}}">
+                    <span aria-role="hidden">×</span>
+                    <span class="visuallyhidden">Close</span>
+                  </button>
+                </div>`,
     }
   },
   productSet: {

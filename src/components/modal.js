@@ -16,14 +16,19 @@ export default class Modal extends Component {
 
   get DOMEvents() {
     return Object.assign({}, this.options.DOMEvents, {
-      [`click .${this.classes.modal.overlay}`]: this.close.bind(this),
+      [`click .${this.classes.modal.overlay}`]: this.closeOnBgClick.bind(this),
+      [`click .${this.classes.modal.close}`]: this.close.bind(this),
     });
   }
 
-  close(evt) {
+  closeOnBgClick(evt) {
     if (!this.wrapper.querySelector(`.${this.classes.modal.contents}`).contains(evt.target)) {
-      this.iframe.removeClass('js-active');
+      this.close();
     }
+  }
+
+  close() {
+    this.iframe.removeClass('js-active');
   }
 
   render() {

@@ -56,3 +56,21 @@
 .product-description {
   margin-bottom: 20px;
 }
+
+.btn--close {
+  position: absolute;
+  right: 0px;
+  top: 3px;
+  font-size: 35px;
+  color: $color-title;
+  border: none;
+  background: transparent;
+  transition: transform 100ms ease;
+  cursor: pointer;
+  line-height: 20px;
+
+  &:hover {
+    transform: scale(1.2);
+    color: darken($color-title, 5%);
+  }
+}
