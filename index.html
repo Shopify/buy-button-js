@@ -31,10 +31,25 @@
               quantity: true,
             },
             styles: {
+              wrapper: {
+                '@media (min-width: 601px)': {
+                  'width': '500px',
+                  'margin-left': '40px'
+                }
+              },
               button: {
                 'background-color': 'blue',
                 '@media (max-width: 600px)': {
                   'background-color': 'red'
+                }
+              }
+            }
+          },
+          productSet: {
+            styles: {
+              products: {
+                '@media (min-width: 601px)': {
+                  'margin-left': '-40px'
                 }
               }
             }
