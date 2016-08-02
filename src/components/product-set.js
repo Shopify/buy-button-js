@@ -1,5 +1,6 @@
 import Component from '../component';
 import Product from './product';
+import merge from 'lodash.merge';
 
 export default class ProductSet extends Component {
   get typeKey() {
@@ -18,10 +19,14 @@ export default class ProductSet extends Component {
 
   render() {
     super.render();
-    const productConfig = Object.assign({}, this.config, {
+    const productConfig = {
       node: this.document.querySelector(`.${this.classes.productSet.products}`),
-    });
-    productConfig.product.iframe = false;
+      options: merge({}, this.config, {
+        product: {
+          iframe: false,
+        }
+      })
+    };
 
     const promises = this.model.products.map((productModel) => {
       return new Product(productConfig, this.props).init(productModel);

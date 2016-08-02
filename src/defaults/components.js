@@ -41,6 +41,25 @@ const defaults = {
       button: 'Add to cart',
     },
   },
+  modal: {
+    iframe: true,
+    manifest: ['modal', 'product', 'option'],
+    classes: {
+      modal: 'modal',
+      contents: 'modal-contents',
+      wrapper: 'modal-wrapper',
+      product: 'product-modal',
+      overlay: 'modal-overlay',
+    },
+    contents: {
+      overlay: true,
+      contents: true,
+    },
+    templates: {
+      overlay: '<div class={{data.classes.modal.overlay}}></div>',
+      contents: '<div class={{data.classes.modal.contents}}></div>',
+    }
+  },
   productSet: {
     iframe: true,
     manifest: ['product', 'option', 'productSet'],

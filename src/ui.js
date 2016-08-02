@@ -1,4 +1,5 @@
 import Product from './components/product';
+import Modal from './components/modal';
 import ProductSet from './components/product-set';
 import Cart from './components/cart';
 import Collection from './components/collection';
@@ -16,6 +17,7 @@ export default class UI {
       cart: [],
       collection: [],
       productSet: [],
+      modal: [],
     };
     this.componentTypes = {
       product: Product,
@@ -41,6 +43,14 @@ export default class UI {
     }
   }
 
+  createModal(config) {
+    if (this.components.modal.length) {
+      return this.components.modal[0];
+    } else {
+      return new Modal(config, this.componentProps);
+    }
+  }
+
   createComponent(type, config) {
     config.node = config.node || this._queryEntryNode();
     const component = new this.componentTypes[type](config, this.componentProps);
@@ -62,6 +72,7 @@ export default class UI {
     return {
       client: this.client,
       createCart: this.createCart.bind(this),
+      createModal: this.createModal.bind(this),
     };
   }
 

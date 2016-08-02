@@ -21,7 +21,7 @@ export default class Component {
     this.id = config.id;
     this.node = config.node;
     this.debug = config.debug;
-    this.config = merge(componentDefaults, config.options || {});
+    this.config = merge({}, componentDefaults, config.options || {});
     this.props = props;
     this.model = {};
     this.template = new Template(this.templates, this.contents, this.classes[this.typeKey][this.typeKey]);

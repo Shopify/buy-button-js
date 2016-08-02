@@ -9,6 +9,7 @@ export default class Product extends Component {
     this.cachedImage = null;
     this.childTemplate = new Template(this.config.option.templates, this.config.option.contents, 'options');
     this.cart = null;
+    this.modal = null;
     this.selectedQuantity = 1;
   }
 
@@ -129,10 +130,21 @@ export default class Product extends Component {
   onButtonClick() {
     if (this.options.buttonDestination === 'cart') {
       this.cart.addVariantToCart(this.model.selectedVariant, this.model.selectedQuantity);
+    } else if (this.options.buttonDestination === 'modal') {
+      this.openModal();
     } else {
       this.openCheckout();
       new Checkout(this.config).open(this.model.selectedVariant.checkoutUrl(1));
     }
+  }
+
+  openModal() {
+    if (!this.modal) {
+      this.modal = this.props.createModal({
+        options: this.config,
+      }, this.props);
+    }
+    this.modal.init(this.model);
   }
 
   onOptionSelect(evt) {

@@ -1,0 +1,19 @@
+.modal-overlay {
+  background: rgba(0,0,0,0.3);
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+
+.modal-contents {
+  background: #fff;
+  max-width: 950px;
+  max-height: 570px;
+  position: absolute;
+  margin: -285px auto 0 auto;
+  top: 50%;
+  left: 0;
+  right: 0;
+}
