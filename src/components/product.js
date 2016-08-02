@@ -140,8 +140,11 @@ export default class Product extends Component {
 
   openModal() {
     if (!this.modal) {
+      const productConfig = merge({}, this.config.product, this.config.modalProduct);
       this.modal = this.props.createModal({
-        options: this.config,
+        options: merge({}, this.config, {
+          product: productConfig,
+        })
       }, this.props);
     }
     this.modal.init(this.model);
