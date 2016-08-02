@@ -124,11 +124,15 @@ export default class Component {
   }
 
   setupView() {
-    this.iframe = this.options.iframe ? new Iframe(this.node, this.classes, this.styles, styles[this.typeKey]) : null;
     if (this.iframe) {
+      return Promise.resolve();
+    }
+    if (this.options.iframe) {
+      this.iframe = new Iframe(this.node, this.classes, this.styles, styles[this.typeKey]);
       this.node.className += ` shopify-buy-frame shopify-buy-frame--${this.typeKey}`;
       return this.iframe.load();
     } else {
+      this.iframe = null;
       return Promise.resolve();
     }
   }

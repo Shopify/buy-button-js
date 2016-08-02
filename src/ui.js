@@ -47,7 +47,9 @@ export default class UI {
     if (this.components.modal.length) {
       return this.components.modal[0];
     } else {
-      return new Modal(config, this.componentProps);
+      const modal = new Modal(config, this.componentProps);
+      this.components.modal.push(modal);
+      return modal;
     }
   }
 
