@@ -131,9 +131,13 @@ export default class Product extends Component {
   setVariantById(id, model) {
     if (id) {
       const selectedVariant = model.variants.filter((variant) => variant.id === id)[0];
-      model.options.forEach((option) => {
-        option.selected = selectedVariant.optionValues.filter((optionValue) => optionValue.name === option.name)[0].value;
-      });
+      if (selectedVariant) {
+        model.options.forEach((option) => {
+          option.selected = selectedVariant.optionValues.filter((optionValue) => optionValue.name === option.name)[0].value;
+        });
+      } else {
+        throw new Error('Invalid variant ID');
+      }
     }
     return model;
   }
