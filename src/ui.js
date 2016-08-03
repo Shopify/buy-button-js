@@ -7,6 +7,7 @@ import hostStyles from './styles/host/main';
 import throttle from './utils/throttle';
 
 const DATA_ATTRIBUTE = 'data-shopify-buy-ui';
+const ESC_KEY = 27;
 
 export default class UI {
   constructor(client) {
@@ -28,6 +29,7 @@ export default class UI {
     this._appendStyleTag();
     this._resizeAdjust();
     this._hostClick();
+    this._closeComponentsOnEsc();
   }
 
   createCart(config) {
@@ -40,6 +42,12 @@ export default class UI {
       const cart = new Cart(config, this.componentProps);
       this.components.cart.push(cart);
       return cart.init();
+    }
+  }
+
+  closeCart() {
+    if (this.components.cart.length) {
+      this.components.cart[0].close();
     }
   }
 
@@ -80,6 +88,7 @@ export default class UI {
     return {
       client: this.client,
       createCart: this.createCart.bind(this),
+      closeCart: this.closeCart.bind(this),
       createModal: this.createModal.bind(this),
       closeModal: this.closeModal.bind(this),
     };
@@ -117,6 +126,15 @@ export default class UI {
     window.addEventListener('safeResize', () => {
       this.components.collection.forEach((collection) => collection.resize());
       this.components.productSet.forEach((set) => set.resize());
+    });
+  }
+
+  _closeComponentsOnEsc() {
+    window.addEventListener('keydown', (evt) => {
+      if (evt.keyCode === ESC_KEY) {
+        this.closeModal();
+        this.closeCart();
+      }
     });
   }
 }

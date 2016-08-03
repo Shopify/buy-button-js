@@ -7,6 +7,7 @@ import Template from './template';
 import styles from './styles/embeds/all';
 
 const delegateEventSplitter = /^(\S+)\s*(.*)$/;
+const ESC_KEY = 27;
 
 function logEvent(event, type) {
 
@@ -87,6 +88,7 @@ export default class Component {
 
   delegateEvents() {
     this._userEvent('beforeDelegateEvents');
+    this._closeComponentsOnEsc();
     Object.keys(this.DOMEvents).forEach((key) => {
       const [, eventName, selectorString] = key.match(delegateEventSplitter);
       const selector = selectorString.split(' ').join('.');
@@ -221,6 +223,17 @@ export default class Component {
       return Promise.all(promises).then(() => this.resize());
     } else {
       return Promise.resolve();
+    }
+  }
+
+  _closeComponentsOnEsc() {
+    if (this.iframe) {
+      this.document.addEventListener('keydown', (evt) => {
+        if (evt.keyCode === ESC_KEY) {
+          this.props.closeModal();
+          this.props.closeCart();
+        }
+      });
     }
   }
 

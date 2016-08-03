@@ -13,7 +13,7 @@ export default class Cart extends Component {
     this.node = document.body.appendChild(document.createElement('div'));
     this.node.className = 'shopify-buy-cart-wrapper';
     this.isVisible = false;
-    this.toggle = new CartToggle(config, {cart: this});
+    this.toggle = new CartToggle(config, Object.assign({}, this.props, {cart: this}));
     this.checkout = new Checkout(this.config);
   }
 
