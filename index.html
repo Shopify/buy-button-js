@@ -6,63 +6,62 @@
     <title>test</title>
   </head>
   <body>
-    <!-- <script src="build/shopify-buy-ui.globals.polyfilled.min.js"></script> -->
-    <script src="tmp/shopify-buy-ui.dev.js"></script>
-
     <div id="test"></div>
-
-    <!-- <button id="update">update</button> -->
 
     <!-- all prdoucts collection: 317738502 -->
     <!-- many variants product: 6640244678-->
+    <!-- single variants product: 3030475907-->
 
     <script data-shopify-buy-ui>
-      var client = ShopifyBuy.buildClient({
-         apiKey: 'bf081e860bc9dc1ce0654fdfbc20892d',
-         domain: 'embeds.myshopify.com',
-         appId: '6'
-       });
-      var ui = ShopifyBuy.UI.init(client);
-      ui.createComponent('collection', {
-        id: 317738502,
-        options: {
-          product: {
-            contents: {
-              quantity: true,
-            },
-            styles: {
-              wrapper: {
-                '@media (min-width: 601px)': {
-                  'width': '500px',
-                  'margin-left': '40px'
-                }
+      var scriptURL = "tmp/shopify-buy-ui.dev.js";
+      //var scriptURL = "build/shopify-buy-ui.globals.polyfilled.min.js";
+
+      /** DO NOT TOUCH THIS CODE **/
+      if (window.ShopifyBuy && window.ShopifyBuy.UI) {
+        ShopifyBuyInit();
+      } else {
+        var script = document.createElement('script');
+        script.async = true;
+        script.src = scriptURL;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(script);
+        script.onload = ShopifyBuyInit;
+      }
+
+      function ShopifyBuyInit() {
+        var client = ShopifyBuy.buildClient({
+           apiKey: 'bf081e860bc9dc1ce0654fdfbc20892d',
+           domain: 'embeds.myshopify.com',
+           appId: '6'
+         });
+        var ui = ShopifyBuy.UI.init(client);
+
+        /** HERE IS OK TO TOUCH **/
+        ui.createComponent('product', {
+          id: 3030475907,
+          options: {
+            product: {
+              contents: {
+                quantity: true,
               },
-              button: {
-                'background-color': 'blue',
-                '@media (max-width: 600px)': {
-                  'background-color': 'red'
+              styles: {
+                button: {
+                  'background-color': 'blue',
+                  '@media (max-width: 600px)': {
+                    'background-color': 'red'
+                  }
                 }
               }
-            }
-          },
-          productSet: {
-            styles: {
-              products: {
-                '@media (min-width: 601px)': {
-                  'margin-left': '-40px'
-                }
-              }
-            }
-          },
-         cart: {
-           styles: {
-             button: {
-               'background-color': 'orange'
-             }
+            },
+           cart: {
+             styles: {
+               button: {
+                 'background-color': 'orange'
+               }
+             },
            },
-         },
-        }
-      });
+          }
+        });
+      }
     </script>
   </body>
 </html>
