@@ -24,6 +24,9 @@ export default class ProductSet extends Component {
       options: merge({}, this.config, {
         product: {
           iframe: false,
+          classes: {
+            wrapper: this.classes.productSet.product,
+          }
         },
       }),
     };

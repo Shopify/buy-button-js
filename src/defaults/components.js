@@ -54,6 +54,9 @@ const defaults = {
       button: true,
       description: true,
     },
+    classes: {
+      wrapper: 'modal-product-wrapper',
+    },
     buttonDestination: 'cart',
   },
   modal: {
@@ -90,6 +93,7 @@ const defaults = {
       title: 'collection__title',
       collection: 'collection',
       products: 'collection-products',
+      product: 'collection-product',
     },
   },
   option: {
