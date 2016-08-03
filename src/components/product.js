@@ -15,12 +15,20 @@ export default class Product extends Component {
 
   init(data) {
     return super.init.call(this, data).then((model) => (
-      this.props.createCart(this.config).then((cart) => {
+      this.createCart().then((cart) => {
         this.cart = cart;
         this.render();
         return model;
       })
     ));
+  }
+
+  createCart() {
+    if (this.options.buttonDestination === 'cart' || this.config.modalProduct.buttonDestination === 'cart') {
+      return this.props.createCart(this.config);
+    } else {
+      return Promise.resolve();
+    }
   }
 
   get typeKey() {
@@ -42,7 +50,7 @@ export default class Product extends Component {
       currentImage: this.currentImage,
       buttonClass: this.buttonClass,
       hasVariants: this.hasVariants,
-      buttonDisabled: !this.cart,
+      buttonDisabled: !this.cart && this.options.buttonDestination === 'cart',
       priceClass: this.model.selectedVariant.compareAtPrice ? 'price--lowered' : '',
       classes: this.classes,
       hasQuantity: this.options.contents.quantity,
@@ -133,7 +141,6 @@ export default class Product extends Component {
     } else if (this.options.buttonDestination === 'modal') {
       this.openModal();
     } else {
-      this.openCheckout();
       new Checkout(this.config).open(this.model.selectedVariant.checkoutUrl(1));
     }
   }
