@@ -53,6 +53,12 @@ export default class UI {
     }
   }
 
+  closeModal() {
+    if (this.components.modal.length) {
+      this.components.modal[0].close();
+    }
+  }
+
   createComponent(type, config) {
     config.node = config.node || this._queryEntryNode();
     const component = new this.componentTypes[type](config, this.componentProps);
@@ -75,6 +81,7 @@ export default class UI {
       client: this.client,
       createCart: this.createCart.bind(this),
       createModal: this.createModal.bind(this),
+      closeModal: this.closeModal.bind(this),
     };
   }
 

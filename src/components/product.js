@@ -137,6 +137,7 @@ export default class Product extends Component {
 
   onButtonClick() {
     if (this.options.buttonDestination === 'cart') {
+      this.props.closeModal();
       this.cart.addVariantToCart(this.model.selectedVariant, this.model.selectedQuantity);
     } else if (this.options.buttonDestination === 'modal') {
       this.openModal();
