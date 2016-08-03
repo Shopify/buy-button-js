@@ -18,6 +18,11 @@ const config = {
   }
 }
 
+const props = {
+  client: {},
+  createCart: function () {return Promise.resolve()}
+}
+
 let product;
 let testProductCopy;
 
@@ -27,7 +32,7 @@ describe('Product class', () => {
     config.node.setAttribute('id', 'fixture');
     document.body.appendChild(config.node);
     testProductCopy = Object.assign({}, testProduct);
-    product = new Product(config, {client: {}, imageCache: {}, createCart: function () {return Promise.resolve()}});
+    product = new Product(config, props);
   });
   afterEach(() => {
     product = null;

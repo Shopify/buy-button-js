@@ -40,8 +40,6 @@ export default class Modal extends Component {
       options: this.config,
     };
 
-    return new Product(config, this.props).init(this.model).then(() => {
-      return this.loadImgs();
-    });
+    return new Product(config, this.props).init(this.model).then(() => this.loadImgs());
   }
 }
