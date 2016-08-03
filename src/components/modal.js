@@ -1,6 +1,5 @@
 import Component from '../component';
 import Product from './product';
-import merge from 'lodash.merge';
 
 export default class Modal extends Component {
   constructor(config, props) {

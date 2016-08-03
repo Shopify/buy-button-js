@@ -1,6 +1,6 @@
+import merge from 'lodash.merge';
 import Component from '../component';
 import Product from './product';
-import merge from 'lodash.merge';
 
 export default class ProductSet extends Component {
   get typeKey() {
@@ -24,8 +24,8 @@ export default class ProductSet extends Component {
       options: merge({}, this.config, {
         product: {
           iframe: false,
-        }
-      })
+        },
+      }),
     };
 
     const promises = this.model.products.map((productModel) => {

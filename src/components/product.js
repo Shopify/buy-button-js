@@ -144,7 +144,7 @@ export default class Product extends Component {
       this.modal = this.props.createModal({
         options: merge({}, this.config, {
           product: productConfig,
-        })
+        }),
       }, this.props);
     }
     this.modal.init(this.model);
