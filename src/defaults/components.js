@@ -130,7 +130,8 @@ const defaults = {
     iframe: true,
     contents: {
       count: true,
-      title: true,
+      icon: true,
+      title: false,
     },
     classes: {
       wrapper: 'cart-toggle-wrapper',
