@@ -16,7 +16,7 @@ $cartMaxWidth: 350px;
   top: 0;
   right: 0;
   height: 100%;
-  z-index: 9999;
+  z-index: 3000;
   transform: translateX(100%);
   transition: all 250ms cubic-bezier(0.165, 0.84, 0.44, 1);
 
@@ -39,4 +39,24 @@ $cartMaxWidth: 350px;
 
 .shopify-buy-frame--productSet {
   width: 100%;
+}
+
+.shopify-buy-frame--modal {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 4000;
+  display: none;
+
+  iframe {
+    height: 100%;
+    width: 100%;
+    max-width: none;
+  }
+
+  &.js-active {
+    display: block;
+  }
 }

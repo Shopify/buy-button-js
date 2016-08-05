@@ -9,17 +9,26 @@ export default class Product extends Component {
     this.cachedImage = null;
     this.childTemplate = new Template(this.config.option.templates, this.config.option.contents, 'options');
     this.cart = null;
+    this.modal = null;
     this.selectedQuantity = 1;
   }
 
   init(data) {
     return super.init.call(this, data).then((model) => (
-      this.props.createCart(this.config).then((cart) => {
+      this.createCart().then((cart) => {
         this.cart = cart;
         this.render();
         return model;
       })
     ));
+  }
+
+  createCart() {
+    if (this.options.buttonDestination === 'cart' || this.config.modalProduct.buttonDestination === 'cart') {
+      return this.props.createCart(this.config);
+    } else {
+      return Promise.resolve();
+    }
   }
 
   get typeKey() {
@@ -41,7 +50,7 @@ export default class Product extends Component {
       currentImage: this.currentImage,
       buttonClass: this.buttonClass,
       hasVariants: this.hasVariants,
-      buttonDisabled: !this.cart,
+      buttonDisabled: !this.cart && this.options.buttonDestination === 'cart',
       priceClass: this.model.selectedVariant.compareAtPrice ? 'price--lowered' : '',
       classes: this.classes,
       hasQuantity: this.options.contents.quantity,
@@ -128,11 +137,25 @@ export default class Product extends Component {
 
   onButtonClick() {
     if (this.options.buttonDestination === 'cart') {
+      this.props.closeModal();
       this.cart.addVariantToCart(this.model.selectedVariant, this.model.selectedQuantity);
+    } else if (this.options.buttonDestination === 'modal') {
+      this.openModal();
     } else {
-      this.openCheckout();
       new Checkout(this.config).open(this.model.selectedVariant.checkoutUrl(1));
     }
+  }
+
+  openModal() {
+    if (!this.modal) {
+      const productConfig = merge({}, this.config.product, this.config.modalProduct);
+      this.modal = this.props.createModal({
+        options: merge({}, this.config, {
+          product: productConfig,
+        }),
+      }, this.props);
+    }
+    this.modal.init(this.model);
   }
 
   onOptionSelect(evt) {

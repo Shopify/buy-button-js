@@ -1,4 +1,5 @@
 import Product from './components/product';
+import Modal from './components/modal';
 import ProductSet from './components/product-set';
 import Cart from './components/cart';
 import Collection from './components/collection';
@@ -6,6 +7,7 @@ import hostStyles from './styles/host/main';
 import throttle from './utils/throttle';
 
 const DATA_ATTRIBUTE = 'data-shopify-buy-ui';
+const ESC_KEY = 27;
 
 export default class UI {
   constructor(client) {
@@ -16,6 +18,7 @@ export default class UI {
       cart: [],
       collection: [],
       productSet: [],
+      modal: [],
     };
     this.componentTypes = {
       product: Product,
@@ -24,20 +27,43 @@ export default class UI {
       productSet: ProductSet,
     };
     this._appendStyleTag();
-    this._resizeAdjust();
-    this._hostClick();
+    this._bindResize();
+    this._bindHostClick();
+    this._bindEsc();
   }
 
   createCart(config) {
     if (this.components.cart.length) {
       if (config.options && config.options.cart) {
-        this.components.cart[0].updateConfig(config);
+        this.components.cart.forEach((cart) => cart.updateConfig(config));
       }
       return Promise.resolve(this.components.cart[0]);
     } else {
       const cart = new Cart(config, this.componentProps);
       this.components.cart.push(cart);
       return cart.init();
+    }
+  }
+
+  closeCart() {
+    if (this.components.cart.length) {
+      this.components.cart.forEach((cart) => cart.close());
+    }
+  }
+
+  createModal(config) {
+    if (this.components.modal.length) {
+      return this.components.modal[0];
+    } else {
+      const modal = new Modal(config, this.componentProps);
+      this.components.modal.push(modal);
+      return modal;
+    }
+  }
+
+  closeModal() {
+    if (this.components.modal.length) {
+      this.components.modal.forEach((modal) => modal.close());
     }
   }
 
@@ -62,6 +88,9 @@ export default class UI {
     return {
       client: this.client,
       createCart: this.createCart.bind(this),
+      closeCart: this.closeCart.bind(this),
+      createModal: this.createModal.bind(this),
+      closeModal: this.closeModal.bind(this),
     };
   }
 
@@ -84,19 +113,26 @@ export default class UI {
     document.head.appendChild(styleTag);
   }
 
-  _hostClick() {
+  _bindHostClick() {
     document.addEventListener('click', () => {
-      if (this.components.cart[0] && this.components.cart[0].isVisible) {
-        this.components.cart[0].close();
-      }
+      this.closeCart();
     });
   }
 
-  _resizeAdjust() {
+  _bindResize() {
     throttle('resize', 'safeResize');
     window.addEventListener('safeResize', () => {
       this.components.collection.forEach((collection) => collection.resize());
       this.components.productSet.forEach((set) => set.resize());
+    });
+  }
+
+  _bindEsc() {
+    window.addEventListener('keydown', (evt) => {
+      if (evt.keyCode === ESC_KEY) {
+        this.closeModal();
+        this.closeCart();
+      }
     });
   }
 }

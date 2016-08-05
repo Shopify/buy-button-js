@@ -3,6 +3,7 @@ import cartTemplates from '../templates/cart';
 import optionTemplates from '../templates/option';
 import toggleTemplates from '../templates/toggle';
 import lineItemTemplates from '../templates/line-item';
+import modalTemplates from '../templates/modal';
 
 const defaults = {
   product: {
@@ -13,11 +14,11 @@ const defaults = {
       img: true,
       title: true,
       variantTitle: false,
-      options: true,
       price: true,
-      description: false,
+      options: true,
       quantity: false,
       button: true,
+      description: false,
     },
     templates: productTemplates,
     classes: {
@@ -41,6 +42,40 @@ const defaults = {
       button: 'Add to cart',
     },
   },
+  modalProduct: {
+    iframe: false,
+    contents: {
+      img: true,
+      title: true,
+      variantTitle: true,
+      price: true,
+      options: true,
+      quantity: true,
+      button: true,
+      description: true,
+    },
+    classes: {
+      wrapper: 'modal-product-wrapper',
+    },
+    buttonDestination: 'cart',
+  },
+  modal: {
+    iframe: true,
+    manifest: ['modal', 'product', 'option'],
+    classes: {
+      modal: 'modal',
+      contents: 'modal-contents',
+      close: 'btn--close',
+      wrapper: 'modal-wrapper',
+      product: 'product-modal',
+      overlay: 'modal-overlay',
+    },
+    contents: {
+      overlay: true,
+      contents: true,
+    },
+    templates: modalTemplates,
+  },
   productSet: {
     iframe: true,
     manifest: ['product', 'option', 'productSet'],
@@ -58,6 +93,7 @@ const defaults = {
       title: 'collection__title',
       collection: 'collection',
       products: 'collection-products',
+      product: 'collection-product',
     },
   },
   option: {
