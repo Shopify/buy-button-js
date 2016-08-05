@@ -52,11 +52,12 @@ export default class iframe {
   }
 
   addClass(className) {
-    this.parent.classList.add(className);
+    this.parent.className += ` ${className}`;
   }
 
   removeClass(className) {
-    this.parent.classList.remove(className);
+    const newClass = this.parent.className.replace(className, '');
+    this.parent.className = newClass;
   }
 
   get document() {

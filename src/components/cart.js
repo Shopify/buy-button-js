@@ -22,7 +22,7 @@ export default class Cart extends Component {
   }
 
   get DOMEvents() {
-    return Object.assign({}, this.options.DOMEvents, {
+    return merge({}, this.options.DOMEvents, {
       [`click .${this.classes.cart.close}`]: this.close.bind(this),
       [`click .${this.classes.lineItem.quantityButton}.quantity-increment`]: this.onQuantityIncrement.bind(this, 1),
       [`click .${this.classes.lineItem.quantityButton}.quantity-decrement`]: this.onQuantityIncrement.bind(this, -1),

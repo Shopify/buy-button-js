@@ -54,7 +54,7 @@ export default class Product extends Component {
   }
 
   get DOMEvents() {
-    return Object.assign({}, this.options.DOMEvents, {
+    return merge({}, this.options.DOMEvents, {
       click: this.closeCartOnBgClick.bind(this),
       [`change .${this.classes.option.select}`]: this.onOptionSelect.bind(this),
       [`click .${this.classes.product.button}`]: this.onButtonClick.bind(this),
@@ -114,7 +114,7 @@ export default class Product extends Component {
       values: option.values.map((value) => ({
         name: value,
         selected: value === option.selected,
-        disabled: !this.optionValueCanBeSelected(Object.assign({}, this.selections), option.name, value),
+        disabled: !this.optionValueCanBeSelected(merge({}, this.selections), option.name, value),
       })),
     }));
   }
