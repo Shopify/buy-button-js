@@ -35,7 +35,7 @@ export default class UI {
   createCart(config) {
     if (this.components.cart.length) {
       if (config.options && config.options.cart) {
-        this.components.cart[0].updateConfig(config);
+        this.components.cart.forEach((cart) => cart.updateConfig(config));
       }
       return Promise.resolve(this.components.cart[0]);
     } else {
@@ -47,7 +47,7 @@ export default class UI {
 
   closeCart() {
     if (this.components.cart.length) {
-      this.components.cart[0].close();
+      this.components.cart.forEach((cart) => cart.close());
     }
   }
 
@@ -63,7 +63,7 @@ export default class UI {
 
   closeModal() {
     if (this.components.modal.length) {
-      this.components.modal[0].close();
+      this.components.modal.forEach((modal) => modal.close());
     }
   }
 
@@ -115,9 +115,7 @@ export default class UI {
 
   _bindHostClick() {
     document.addEventListener('click', () => {
-      if (this.components.cart[0] && this.components.cart[0].isVisible) {
-        this.components.cart[0].close();
-      }
+      this.closeCart();
     });
   }
 
