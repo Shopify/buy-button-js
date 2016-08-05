@@ -134,7 +134,7 @@ export default class Component {
       this.node.className += ` shopify-buy-frame shopify-buy-frame--${this.typeKey}`;
       return this.iframe.load();
     } else {
-			this.iframe = null;
+      this.iframe = null;
       return Promise.resolve();
     }
   }
