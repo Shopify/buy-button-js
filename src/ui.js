@@ -27,9 +27,9 @@ export default class UI {
       productSet: ProductSet,
     };
     this._appendStyleTag();
-    this._resizeAdjust();
-    this._hostClick();
-    this._closeComponentsOnEsc();
+    this._bindResize();
+    this._bindHostClick();
+    this._bindEsc();
   }
 
   createCart(config) {
@@ -113,7 +113,7 @@ export default class UI {
     document.head.appendChild(styleTag);
   }
 
-  _hostClick() {
+  _bindHostClick() {
     document.addEventListener('click', () => {
       if (this.components.cart[0] && this.components.cart[0].isVisible) {
         this.components.cart[0].close();
@@ -121,7 +121,7 @@ export default class UI {
     });
   }
 
-  _resizeAdjust() {
+  _bindResize() {
     throttle('resize', 'safeResize');
     window.addEventListener('safeResize', () => {
       this.components.collection.forEach((collection) => collection.resize());
@@ -129,7 +129,7 @@ export default class UI {
     });
   }
 
-  _closeComponentsOnEsc() {
+  _bindEsc() {
     window.addEventListener('keydown', (evt) => {
       if (evt.keyCode === ESC_KEY) {
         this.closeModal();
