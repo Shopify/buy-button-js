@@ -16,7 +16,7 @@ export default class Modal extends Component {
   }
 
   get DOMEvents() {
-    return Object.assign({}, this.options.DOMEvents, {
+    return Object.assign({}, this.options.DOMEvents, this.product.DOMEvents, {
       [`click .${this.classes.modal.overlay}`]: this.closeOnBgClick.bind(this),
       [`click .${this.classes.modal.close}`]: this.close.bind(this),
     });
@@ -33,7 +33,6 @@ export default class Modal extends Component {
   }
 
   alterDOM() {
-
     const imgTemplate = new Template(this.product.templates, {img: true}, 'product-modal-img');
     const imgHtml = imgTemplate.render({data: this.product.viewData});
 
@@ -52,13 +51,14 @@ export default class Modal extends Component {
     imgDiv.innerHTML = imgHtml;
     imgDiv.className = 'modal-img';
 
-    this.wrapper.appendChild(footerDiv);
-    this.wrapper.insertBefore(imgDiv, this.wrapper.children[0]);
+    this.wrapper.children[0].appendChild(footerDiv);
+    this.wrapper.children[0].insertBefore(imgDiv, this.wrapper.children[0].children[0]);
 
     const overLayDiv = this.document.createElement('div');
     overLayDiv.className = 'modal-overlay';
     this.document.body.appendChild(overLayDiv);
 
+    this.product.wrapper = this.wrapper;
     return Promise.resolve();
   }
 
@@ -80,6 +80,6 @@ export default class Modal extends Component {
     });
 
     this.product.template = new Template(this.product.templates, contents, 'modal-scroll-content');
-    return this.product.init(this.model).then(() => this.alterDOM()).then(() => this.loadImgs());
+    return this.product.init(this.model).then(() => this.alterDOM()).then(() => this.product.delegateEvents()).then(() => this.loadImgs());
   }
 }
