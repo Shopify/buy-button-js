@@ -25,7 +25,7 @@ export default class Component {
     this.config = merge({}, componentDefaults, config.options || {});
     this.props = props;
     this.model = {};
-    this.template = new Template(this.templates, this.contents, this.classes[this.typeKey][this.typeKey]);
+    this.template = new Template(this.templates, this.contents);
     this.children = null;
   }
 

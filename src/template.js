@@ -11,10 +11,14 @@ export default class Template {
   }
 
   wrapperClasses(data) {
-    return `component-container ${this.className} ${data.data.wrapperClass || ''}`;
+    return `${this.className} ${data.data.wrapperClass || ''}`;
   }
 
   render(data) {
-    return `<div class="${this.wrapperClasses(data)}">${this.templateFn.render(data)}</div>`;
+    if (this.className) {
+      return `<div class="${this.wrapperClasses(data)}">${this.templateFn.render(data)}</div>`;
+    } else {
+      return `${this.templateFn.render(data)}`;
+    }
   }
 }

@@ -1,5 +1,7 @@
+import merge from 'lodash.merge';
 import Component from '../component';
 import Product from './product';
+import Template from '../template';
 
 export default class Modal extends Component {
   constructor(config, props) {
@@ -30,15 +32,54 @@ export default class Modal extends Component {
     this.iframe.removeClass('js-active');
   }
 
+  alterDOM() {
+
+    const imgTemplate = new Template(this.product.templates, {img: true}, 'product-modal-img');
+    const imgHtml = imgTemplate.render({data: this.product.viewData});
+
+    const buttonTemplate = new Template(this.product.templates, {
+      quantity: this.product.contents.quantity,
+      button: true,
+    }, 'product-modal-footer');
+
+    const buttonHtml = buttonTemplate.render({data: this.product.viewData});
+
+    const footerDiv = this.document.createElement('div');
+    footerDiv.innerHTML = buttonHtml;
+    footerDiv.className = 'modal-footer';
+
+    const imgDiv = this.document.createElement('div');
+    imgDiv.innerHTML = imgHtml;
+    imgDiv.className = 'modal-img';
+
+    this.wrapper.appendChild(footerDiv);
+    this.wrapper.insertBefore(imgDiv, this.wrapper.children[0]);
+
+    const overLayDiv = this.document.createElement('div');
+    overLayDiv.className = 'modal-overlay';
+    this.document.body.appendChild(overLayDiv);
+
+    return Promise.resolve();
+  }
+
   render() {
     super.render();
     this.iframe.addClass('js-active');
 
     const config = {
       node: this.document.querySelector(`.${this.classes.modal.contents}`),
-      options: this.config,
+      options: merge({}, this.config),
     };
 
-    return new Product(config, this.props).init(this.model).then(() => this.loadImgs());
+    this.product = new Product(config, this.props);
+
+    const contents = Object.assign({}, this.product.contents, {
+      img: false,
+      button: false,
+      quantity: false,
+    });
+
+    this.product.template = new Template(this.product.templates, contents, 'modal-scroll-content');
+    return this.product.init(this.model).then(() => this.alterDOM()).then(() => this.loadImgs());
   }
 }
