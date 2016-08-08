@@ -32,54 +32,36 @@ export default class Modal extends Component {
     this.iframe.removeClass('js-active');
   }
 
-  alterDOM() {
-    const imgTemplate = new Template(this.product.templates, {img: true}, 'product-modal-img');
-    const imgHtml = imgTemplate.render({data: this.product.viewData});
-
-    const buttonTemplate = new Template(this.product.templates, {
-      quantity: this.product.contents.quantity,
-      button: true,
-    }, 'product-modal-footer');
-
-    const buttonHtml = buttonTemplate.render({data: this.product.viewData});
-
-    const footerDiv = this.document.createElement('div');
-    footerDiv.innerHTML = buttonHtml;
-    footerDiv.className = 'modal-footer';
-
-    const imgDiv = this.document.createElement('div');
-    imgDiv.innerHTML = imgHtml;
-    imgDiv.className = 'modal-img';
-
-    this.wrapper.children[0].appendChild(footerDiv);
-    this.wrapper.children[0].insertBefore(imgDiv, this.wrapper.children[0].children[0]);
-
-    const overLayDiv = this.document.createElement('div');
-    overLayDiv.className = 'modal-overlay';
-    this.document.body.appendChild(overLayDiv);
-
-    this.product.wrapper = this.wrapper;
-    return Promise.resolve();
-  }
-
   render() {
     super.render();
     this.iframe.addClass('js-active');
 
     const config = {
-      node: this.document.querySelector(`.${this.classes.modal.contents}`),
+      node: this.document.querySelector(`.${this.classes.modal.modal}`),
       options: merge({}, this.config),
     };
 
     this.product = new Product(config, this.props);
 
-    const contents = Object.assign({}, this.product.contents, {
+    const productContents = Object.assign({}, this.product.contents, {
       img: false,
       button: false,
       quantity: false,
     });
 
-    this.product.template = new Template(this.product.templates, contents, 'modal-scroll-content');
-    return this.product.init(this.model).then(() => this.alterDOM()).then(() => this.product.delegateEvents()).then(() => this.loadImgs());
+    const productTemplate = new Template(this.product.templates, productContents);
+
+    const templates = {
+      img: `<div class="modal-img">${this.product.templates.img}</div>`,
+      contents: `<div class="modal-contents"><div class="modal-scroll-contents">${productTemplate.masterTemplate}</div></div>`,
+      footer: `<div class="modal-footer">
+                ${this.product.templates.quantity}
+                ${this.product.templates.button}
+              </div>`
+    }
+
+    this.product.template = new Template(templates, {img: true, contents: true, footer: true});
+
+    return this.product.init(this.model).then(() => this.loadImgs());
   }
 }

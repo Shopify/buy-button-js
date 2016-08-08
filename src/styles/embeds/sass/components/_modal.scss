@@ -50,13 +50,17 @@
     border-bottom: 1px solid rgba(170,170,170,0.3);
   }
 
+  .product__variant-image {
+    height: 100%;
+  }
+
   .modal-contents {
     width: 100%;
     height: 60%;
     position: relative;
   }
 
-  .modal-product-wrapper {
+  .modal-scroll-contents {
     position: absolute;
     height: 100%;
     width: 100%;
@@ -64,7 +68,7 @@
     -webkit-overflow-scrolling: touch;
   }
 
-  .modal-scroll-content {
+  .modal-scroll-contents {
     padding-bottom: 90px;
   }
 
@@ -79,6 +83,7 @@
 
   .btn--close {
     position: fixed;
+    z-index: 10000;
   }
 
   .btn.beside-quantity {

@@ -5,13 +5,17 @@ export default class Template {
     this.templates = templates;
     this.contents = contents;
     this.className = className;
-    this.templateFn = hogan.compile(Object.keys(this.contents)
-        .filter((key) => this.contents[key])
-        .reduce((acc, key) => acc + this.templates[key], ''));
+    this.templateFn = hogan.compile(this.masterTemplate);
   }
 
   wrapperClasses(data) {
     return `${this.className} ${data.data.wrapperClass || ''}`;
+  }
+
+  get masterTemplate() {
+    return Object.keys(this.contents)
+        .filter((key) => this.contents[key])
+        .reduce((acc, key) => acc + this.templates[key], '');
   }
 
   render(data) {
