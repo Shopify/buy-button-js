@@ -227,14 +227,15 @@ export default class Component {
   }
 
   _closeComponentsOnEsc() {
-    if (this.iframe) {
-      this.document.addEventListener('keydown', (evt) => {
-        if (evt.keyCode === ESC_KEY) {
-          this.props.closeModal();
-          this.props.closeCart();
-        }
-      });
+    if (!this.iframe) {
+      return;
     }
+    this.document.addEventListener('keydown', (evt) => {
+      if (evt.keyCode === ESC_KEY) {
+        this.props.closeModal();
+        this.props.closeCart();
+      }
+    });
   }
 
   _userEvent(methodName) {
