@@ -52,7 +52,9 @@ export default class iframe {
   }
 
   addClass(className) {
-    this.parent.className += ` ${className}`;
+    if (this.parent.className.indexOf(className) < 0) {
+      this.parent.className += ` ${className}`;
+    }
   }
 
   removeClass(className) {
