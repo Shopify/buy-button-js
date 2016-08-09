@@ -14,7 +14,7 @@
     "watch:test": "watchify test/test.js -t babelify --outfile test/build/test.js -v",
     "watch:css": "watch 'npm run styles:embeds' src/styles/embeds/sass",
     "watch:hostcss": "watch 'npm run styles:host' src/styles/host/sass",
-    "build": "npm run clean && npm run build:cjs && node script/rollup.js && npm run polyfill && npm run uglify",
+    "build": "npm run clean && npm run build:cjs && npm run build:globals && npm run polyfill && npm run uglify",
     "build:cjs": "NODE_PATH=./node_modules npm run styles:embeds && npm run styles:host && babel ./src --out-dir ./build",
     "build:globals": "browserify --ignore buffer build/shopify-buy-ui.js --outfile build/shopify-buy-ui.globals.js",
     "build:test": "browserify test/test.js -t babelify --outfile test/build/test.js",
