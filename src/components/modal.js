@@ -45,8 +45,8 @@ export default class Modal extends Component {
       footer: `<div class="${this.classes.modal.footer}">
                 ${this.product.templates.quantity}
                 ${this.product.templates.button}
-              </div>`
-    }
+              </div>`,
+    };
   }
 
   get productModalContents() {
@@ -54,7 +54,7 @@ export default class Modal extends Component {
       img: true,
       contents: true,
       footer: true,
-    }
+    };
   }
 
   closeOnBgClick(evt) {

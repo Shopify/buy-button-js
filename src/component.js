@@ -231,10 +231,11 @@ export default class Component {
       return;
     }
     this.document.addEventListener('keydown', (evt) => {
-      if (evt.keyCode === ESC_KEY) {
-        this.props.closeModal();
-        this.props.closeCart();
+      if (evt.keyCode !== ESC_KEY) {
+        return;
       }
+      this.props.closeModal();
+      this.props.closeCart();
     });
   }
 
