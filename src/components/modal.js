@@ -8,6 +8,7 @@ export default class Modal extends Component {
     super(config, props);
     this.node = document.body.appendChild(document.createElement('div'));
     this.node.className = 'shopify-buy-modal-wrapper';
+    this.product = null;
     this.isVisible = false;
   }
 
@@ -20,6 +21,40 @@ export default class Modal extends Component {
       [`click .${this.classes.modal.overlay}`]: this.closeOnBgClick.bind(this),
       [`click .${this.classes.modal.close}`]: this.close.bind(this),
     });
+  }
+
+  get productConfig() {
+    return {
+      node: this.document.querySelector(`.${this.classes.modal.modal}`),
+      options: merge({}, this.config),
+    };
+  }
+
+  get productTemplate() {
+    return new Template(this.product.templates, Object.assign({}, this.product.contents, {
+      img: false,
+      button: false,
+      quantity: false,
+    }));
+  }
+
+  get productModalTemplates() {
+    return {
+      img: `<div class="${this.classes.modal.img}">${this.product.templates.img}</div>`,
+      contents: `<div class="${this.classes.modal.contents}"><div class="${this.classes.modal.scrollContents}">${this.productTemplate.masterTemplate}</div></div>`,
+      footer: `<div class="${this.classes.modal.footer}">
+                ${this.product.templates.quantity}
+                ${this.product.templates.button}
+              </div>`
+    }
+  }
+
+  get productModalContents() {
+    return {
+      img: true,
+      contents: true,
+      footer: true,
+    }
   }
 
   closeOnBgClick(evt) {
@@ -35,33 +70,8 @@ export default class Modal extends Component {
   render() {
     super.render();
     this.iframe.addClass('js-active');
-
-    const config = {
-      node: this.document.querySelector(`.${this.classes.modal.modal}`),
-      options: merge({}, this.config),
-    };
-
-    this.product = new Product(config, this.props);
-
-    const productContents = Object.assign({}, this.product.contents, {
-      img: false,
-      button: false,
-      quantity: false,
-    });
-
-    const productTemplate = new Template(this.product.templates, productContents);
-
-    const templates = {
-      img: `<div class="modal-img">${this.product.templates.img}</div>`,
-      contents: `<div class="modal-contents"><div class="modal-scroll-contents">${productTemplate.masterTemplate}</div></div>`,
-      footer: `<div class="modal-footer">
-                ${this.product.templates.quantity}
-                ${this.product.templates.button}
-              </div>`
-    }
-
-    this.product.template = new Template(templates, {img: true, contents: true, footer: true});
-
+    this.product = new Product(this.productConfig, this.props);
+    this.product.template = new Template(this.productModalTemplates, this.productModalContents);
     return this.product.init(this.model).then(() => this.loadImgs());
   }
 }
