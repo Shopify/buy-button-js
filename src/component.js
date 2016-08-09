@@ -7,6 +7,7 @@ import Template from './template';
 import styles from './styles/embeds/all';
 
 const delegateEventSplitter = /^(\S+)\s*(.*)$/;
+const ESC_KEY = 27;
 
 function logEvent(event, type) {
 
@@ -21,7 +22,7 @@ export default class Component {
     this.id = config.id;
     this.node = config.node;
     this.debug = config.debug;
-    this.config = merge(componentDefaults, config.options || {});
+    this.config = merge({}, componentDefaults, config.options || {});
     this.props = props;
     this.model = {};
     this.template = new Template(this.templates, this.contents, this.classes[this.typeKey][this.typeKey]);
@@ -33,7 +34,7 @@ export default class Component {
   }
 
   get options() {
-    return Object.assign({}, this.config[this.typeKey]);
+    return merge({}, this.config[this.typeKey]);
   }
 
   get manifest() {
@@ -41,23 +42,23 @@ export default class Component {
   }
 
   get templates() {
-    return Object.assign({}, this.options.templates);
+    return merge({}, this.options.templates);
   }
 
   get contents() {
-    return Object.assign({}, this.options.contents);
+    return merge({}, this.options.contents);
   }
 
   get text() {
-    return Object.assign({}, this.options.text);
+    return merge({}, this.options.text);
   }
 
   get events() {
-    return Object.assign({}, this.options.events);
+    return merge({}, this.options.events);
   }
 
   get DOMEvents() {
-    return Object.assign({}, this.options.DOMEvents);
+    return merge({}, this.options.DOMEvents);
   }
 
   get styles() {
@@ -87,6 +88,7 @@ export default class Component {
 
   delegateEvents() {
     this._userEvent('beforeDelegateEvents');
+    this._closeComponentsOnEsc();
     Object.keys(this.DOMEvents).forEach((key) => {
       const [, eventName, selectorString] = key.match(delegateEventSplitter);
       const selector = selectorString.split(' ').join('.');
@@ -124,11 +126,15 @@ export default class Component {
   }
 
   setupView() {
-    this.iframe = this.options.iframe ? new Iframe(this.node, this.classes, this.styles, styles[this.typeKey]) : null;
     if (this.iframe) {
+      return Promise.resolve();
+    }
+    if (this.options.iframe) {
+      this.iframe = new Iframe(this.node, this.classes, this.styles, styles[this.typeKey]);
       this.node.className += ` shopify-buy-frame shopify-buy-frame--${this.typeKey}`;
       return this.iframe.load();
     } else {
+      this.iframe = null;
       return Promise.resolve();
     }
   }
@@ -196,7 +202,7 @@ export default class Component {
   }
 
   loadImgs() {
-    const imgs = [...this.wrapper.querySelectorAll('img')];
+    const imgs = Array.prototype.slice.call(this.wrapper.querySelectorAll('img'));
     const promises = imgs.map((img) => {
       const src = img.getAttribute('data-src');
       if (src) {
@@ -220,6 +226,18 @@ export default class Component {
     }
   }
 
+  _closeComponentsOnEsc() {
+    if (!this.iframe) {
+      return;
+    }
+    this.document.addEventListener('keydown', (evt) => {
+      if (evt.keyCode === ESC_KEY) {
+        this.props.closeModal();
+        this.props.closeCart();
+      }
+    });
+  }
+
   _userEvent(methodName) {
     if (this.debug) {
       logEvent(methodName, this.typeKey);
@@ -231,9 +249,10 @@ export default class Component {
 
   _on(eventName, selector, fn) {
     this.wrapper.addEventListener(eventName, (evt) => {
-      const possibleTargets = this.wrapper.querySelectorAll(selector);
+      const possibleTargets = Array.prototype.slice.call(this.wrapper.querySelectorAll(selector));
       const target = evt.target;
-      [...possibleTargets].forEach((possibleTarget) => {
+
+      possibleTargets.forEach((possibleTarget) => {
         let el = target;
         while (el && el !== this.wrapper) {
           if (el === possibleTarget) {

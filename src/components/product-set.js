@@ -1,3 +1,4 @@
+import merge from 'lodash.merge';
 import Component from '../component';
 import Product from './product';
 
@@ -18,10 +19,17 @@ export default class ProductSet extends Component {
 
   render() {
     super.render();
-    const productConfig = Object.assign({}, this.config, {
+    const productConfig = {
       node: this.document.querySelector(`.${this.classes.productSet.products}`),
-    });
-    productConfig.product.iframe = false;
+      options: merge({}, this.config, {
+        product: {
+          iframe: false,
+          classes: {
+            wrapper: this.classes.productSet.product,
+          }
+        },
+      }),
+    };
 
     const promises = this.model.products.map((productModel) => {
       return new Product(productConfig, this.props).init(productModel);

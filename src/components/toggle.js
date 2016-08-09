@@ -1,4 +1,5 @@
 import Component from '../component';
+import merge from 'lodash.merge';
 
 export default class CartToggle extends Component {
   constructor(config, props) {
@@ -21,7 +22,7 @@ export default class CartToggle extends Component {
   }
 
   get DOMEvents() {
-    return Object.assign({}, this.options.DOMEvents, {
+    return merge({}, this.options.DOMEvents, {
       [`click .${this.classes.toggle.toggle}`]: this.props.cart.toggleVisibility.bind(this.props.cart),
     });
   }
