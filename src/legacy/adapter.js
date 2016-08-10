@@ -3,24 +3,22 @@ import EmbedWrapper from './embed-wrapper';
 
 class Adapter {
   constructor() {
+    this.clients = {};
+    this.uis = {};
     this.elements = [...document.querySelectorAll('[data-embed_type]')].map((element) => {
-      return new EmbedWrapper(element);
+      const elem = new EmbedWrapper(element);
+      elem.render(this.getUI(elem));
+      return elem;
     });
-    this.client = ShopifyBuy.buildClient(this.clientConfig);
-    this.ui = ShopifyBuy.UI.init(this.client);
-    this.elements.forEach((elem) => elem.render(this.ui));
   }
-  get clientConfig() {
-    const config = {
+  getUI(elem) {
+    this.clients[elem.shop] = this.clients[elem.shop] || ShopifyBuy.buildClient({
       apiKey: '395ba487a5981e6e573b5ab104645271',
       appId: 6,
-    };
-
-    if (this.elements.length > 0) {
-      config.domain = this.elements[0].shop;
-    }
-
-    return config;
+      domain: elem.shop,
+    });
+    this.uis[elem.shop] = this.uis[elem.shop] || ShopifyBuy.UI.init(this.client);
+    return this.uis[elem.shop];
   }
 }
 
