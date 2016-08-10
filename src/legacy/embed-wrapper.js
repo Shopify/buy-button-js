@@ -8,8 +8,9 @@ class EmbedWrapper {
       opts[attr] = this.element.getAttribute(`data-${attr}`);
       return opts;
     }, {});
+    this.shop = options.shop;
     this.embedType = options.embed_type;
-    this.handle = options[`${this.embed_type}_handle`];
+    this.handle = options[`${this.embedType}_handle`];
     this.options = new OptionsTransform(this.embedType, options);
   }
   render(ui) {

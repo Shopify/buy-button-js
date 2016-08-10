@@ -17,7 +17,7 @@ class Adapter {
     };
 
     if (this.elements.length > 0) {
-      config.domain = this.elements[0].options.shop;
+      config.domain = this.elements[0].shop;
     }
 
     return config;
