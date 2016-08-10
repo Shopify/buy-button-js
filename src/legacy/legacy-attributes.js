@@ -26,4 +26,3 @@ export const attributes = [
   'empty_cart_text',
   'next_page_button_text',
 ];
-
