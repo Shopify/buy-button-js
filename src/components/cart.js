@@ -53,8 +53,11 @@ export default class Cart extends Component {
       return this.props.client.fetchCart(this.storage.getItem('lastCartId'));
     } else {
       return this.props.client.createCart().then((cart) => {
-        this.storage.setItem('lastCartId', cart.id);
-        return cart;
+        try {
+          this.storage.setItem('lastCartId', cart.id);
+        } finally {
+          return cart;
+        }
       });
     }
   }
