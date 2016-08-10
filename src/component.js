@@ -20,6 +20,7 @@ function logEvent(event, type) {
 export default class Component {
   constructor(config, props) {
     this.id = config.id;
+    this.handle = config.handle;
     this.node = config.node;
     this.debug = config.debug;
     this.config = merge({}, componentDefaults, config.options || {});

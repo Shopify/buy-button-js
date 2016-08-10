@@ -128,8 +128,16 @@ export default class Product extends Component {
     }));
   }
 
+  fetchMethod() {
+    if (this.id) {
+      return this.props.client.fetchProduct(this.id);
+    } else if (this.handle) {
+      return this.props.client.fetchQueryProducts({handle: this.handle}).then((products) => products[0]);
+    }
+  }
+
   fetchData() {
-    return this.props.client.fetchProduct(this.id).then((model) => {
+    return this.fetchMethod().then((model) => {
       model.selectedQuantity = 0;
       return model;
     });

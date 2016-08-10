@@ -2,15 +2,33 @@ import merge from 'lodash.merge';
 import Component from '../component';
 import Product from './product';
 
+function isArray(arg) {
+  return Object.prototype.toString.call(arg) === '[object Array]';
+}
+
 export default class ProductSet extends Component {
   get typeKey() {
     return 'productSet';
   }
 
-  fetchData() {
+  sdkFetch() {
+    // eslint-disable camelcase
+    let method;
+    if (this.id) {
+      const queryKey = isArray(this.id) ? 'product_ids' : 'collection_id';
+      method = this.props.client.fetchQueryProducts({[queryKey]: this.id});
+    } else if (this.handle) {
+      method = this.props.client.fetchQueryCollections({handle: this.handle}).then((collections) => {
+        const collection = collections[0];
+        return this.props.client.fetchQueryProducts({collection_id: collection.attrs.collection_id});
+      });
+    }
+    return method;
+    // eslint-enable camelcase
+  }
 
-    // eslint-disable-next-line camelcase
-    return this.props.client.fetchQueryProducts({product_ids: this.id}).then((products) => {
+  fetchData() {
+    return this.sdkFetch().then((products) => {
       return {
         products,
       };
@@ -26,7 +44,7 @@ export default class ProductSet extends Component {
           iframe: false,
           classes: {
             wrapper: this.classes.productSet.product,
-          }
+          },
         },
       }),
     };

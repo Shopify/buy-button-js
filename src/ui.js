@@ -2,7 +2,6 @@ import Product from './components/product';
 import Modal from './components/modal';
 import ProductSet from './components/product-set';
 import Cart from './components/cart';
-import Collection from './components/collection';
 import hostStyles from './styles/host/main';
 import throttle from './utils/throttle';
 
@@ -23,7 +22,7 @@ export default class UI {
     this.componentTypes = {
       product: Product,
       cart: Cart,
-      collection: Collection,
+      collection: ProductSet,
       productSet: ProductSet,
     };
     this._appendStyleTag();
