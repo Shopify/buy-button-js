@@ -230,4 +230,46 @@ describe('Product class', () => {
       });
     });
   });
+
+  describe('sdkFetch', () => {
+    describe('when passed a product ID', () => {
+      let idProduct;
+
+      beforeEach(() => {
+        idProduct = new Product({
+          id: 1234,
+          options: config.options,
+        }, {
+          client: {
+            fetchProduct: sinon.spy()
+          }
+        });
+      });
+
+      it('calls fetchProduct with product id', () => {
+        idProduct.sdkFetch();
+        assert.calledWith(idProduct.client.fetchProduct, 1234);
+      });
+    });
+
+    describe('when passed a product handle', () => {
+      let handleProduct;
+
+      beforeEach(() => {
+        handleProduct = new Product({
+          handle: 'hat',
+          options: config.options,
+        }, {
+          client: {
+            fetchQueryProducts: sinon.stub().returns(Promise.resolve()),
+          }
+        });
+      });
+
+      it('calls fetchQueryProducts with product handel', () => {
+        handleProduct.sdkFetch()
+        assert.calledWith(handleProduct.client.fetchQueryProducts, {handle: 'hat'});
+      });
+    });
+  });
 });

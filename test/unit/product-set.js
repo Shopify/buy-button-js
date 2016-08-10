@@ -55,7 +55,6 @@ describe('ProductSet class', () => {
   describe('sdkFetch', () => {
     describe('when passed a colleciton ID', () => {
       let collection;
-      let productQuery;
 
       beforeEach(() => {
         collection = new ProductSet({
@@ -77,7 +76,6 @@ describe('ProductSet class', () => {
 
     describe('when passed a colleciton handle', () => {
       let collection;
-      let productQuery;
 
       beforeEach(() => {
         collection = new ProductSet({
@@ -105,7 +103,6 @@ describe('ProductSet class', () => {
 
     describe('when passed an array of product IDs', () => {
       let collection;
-      let productQuery;
 
       beforeEach(() => {
         collection = new ProductSet({

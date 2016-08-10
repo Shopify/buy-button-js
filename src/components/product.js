@@ -128,7 +128,7 @@ export default class Product extends Component {
     }));
   }
 
-  fetchMethod() {
+  sdkFetch() {
     if (this.id) {
       return this.props.client.fetchProduct(this.id);
     } else if (this.handle) {
@@ -137,7 +137,7 @@ export default class Product extends Component {
   }
 
   fetchData() {
-    return this.fetchMethod().then((model) => {
+    return this.sdkFetch().then((model) => {
       model.selectedQuantity = 0;
       return model;
     });
