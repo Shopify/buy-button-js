@@ -21,7 +21,7 @@ describe('Template class', () => {
   })
 
   it('it puts data into the strings on #render', () => {
-    const expectedString = '<div class="component-container test "><h1>BUY MY BUTTONS fool</h1><button>BUTTON</button></div>';
+    const expectedString = '<div class="test "><h1>BUY MY BUTTONS fool</h1><button>BUTTON</button></div>';
     const data = {
       name: 'fool'
     }

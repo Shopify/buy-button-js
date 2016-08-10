@@ -1,5 +1,5 @@
-import Component from '../component';
 import merge from 'lodash.merge';
+import Component from '../component';
 
 export default class CartToggle extends Component {
   constructor(config, props) {

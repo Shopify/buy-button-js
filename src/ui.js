@@ -129,10 +129,11 @@ export default class UI {
 
   _bindEsc() {
     window.addEventListener('keydown', (evt) => {
-      if (evt.keyCode === ESC_KEY) {
-        this.closeModal();
-        this.closeCart();
+      if (evt.keyCode !== ESC_KEY) {
+        return;
       }
+      this.closeModal();
+      this.closeCart();
     });
   }
 }

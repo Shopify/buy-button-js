@@ -68,7 +68,9 @@ const defaults = {
       close: 'btn--close',
       wrapper: 'modal-wrapper',
       product: 'product-modal',
-      overlay: 'modal-overlay',
+      img: 'modal-img',
+      footer: 'modal-footer',
+      scrollContents: 'modal-scroll-contents',
     },
     contents: {
       overlay: true,

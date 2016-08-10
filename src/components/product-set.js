@@ -26,7 +26,7 @@ export default class ProductSet extends Component {
           iframe: false,
           classes: {
             wrapper: this.classes.productSet.product,
-          }
+          },
         },
       }),
     };
