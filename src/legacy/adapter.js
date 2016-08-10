@@ -17,7 +17,7 @@ class Adapter {
       appId: 6,
       domain: elem.shop,
     });
-    this.uis[elem.shop] = this.uis[elem.shop] || ShopifyBuy.UI.init(this.client);
+    this.uis[elem.shop] = this.uis[elem.shop] || ShopifyBuy.UI.init(this.clients[elem.shop]);
     return this.uis[elem.shop];
   }
 }
