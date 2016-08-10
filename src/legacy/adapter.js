@@ -6,22 +6,21 @@ class Adapter {
     this.elements = [...document.querySelectorAll('[data-embed_type]')].map((element) => {
       return new EmbedWrapper(element);
     });
-    if (this.elements.length === 0) {
-      return;
-    }
-    this.generateClient();
+    this.client = ShopifyBuy.buildClient(this.clientConfig);
+    this.ui = ShopifyBuy.UI.init(this.client);
     this.elements.forEach((elem) => elem.render(this.ui));
   }
-  generateClient() {
-    this.client = ShopifyBuy.buildClient(this.generateConfig());
-    this.ui = ShopifyBuy.UI.init(this.client);
-  }
-  generateConfig() {
-    return {
+  get clientConfig() {
+    const config = {
       apiKey: '395ba487a5981e6e573b5ab104645271',
       appId: 6,
-      domain: this.elements[0].options.shop,
     };
+
+    if (this.elements.length > 0) {
+      config.domain = this.elements[0].options.shop;
+    }
+
+    return config;
   }
 }
 
