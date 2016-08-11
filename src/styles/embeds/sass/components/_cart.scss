@@ -48,15 +48,27 @@ $cart-item-height: 65px;
   height: 100%;
   position: relative;
   padding: 0 $gutter $gutter;
+  -webkit-overflow-scrolling: touch;
+  perspective: 400px;
+  perspective-origin: 50% 0px;
 }
 
 .cart-item {
+  border: 1px solid red;
   overflow: hidden;
   position: relative;
   min-height: $cart-item-height;
   margin-bottom: $gutter;
-  animation-name: fadein;
-  animation-duration: .3s;
+  transition: all 1000ms;
+  backface-visibility: visible;
+  transform-style: preserve-3d;
+}
+
+.cart-item.is-discarded {
+  max-height: 0;
+  transform: rotateX(90deg) translateY(-50%);
+  margin-bottom: -65px;
+  opacity: 0;
 }
 
 .cart-item__image {

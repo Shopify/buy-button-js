@@ -87,6 +87,10 @@ export default class Component {
     });
   }
 
+  get morphCallbacks() {
+    return {};
+  }
+
   delegateEvents() {
     this._userEvent('beforeDelegateEvents');
     this._closeComponentsOnEsc();
@@ -187,7 +191,7 @@ export default class Component {
     if (this.wrapper && this.wrapper.innerHTML.length) {
       const div = this.document.createElement('div');
       div.innerHTML = html;
-      morphdom(this.wrapper, div);
+      morphdom(this.wrapper, div, this.morphCallbacks);
       this.wrapper.className = this.classes[this.typeKey].wrapper;
     } else {
       this.wrapper = this.createWrapper();

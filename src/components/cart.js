@@ -94,15 +94,20 @@ export default class Cart extends Component {
   }
 
   onQuantityBlur(evt, target) {
-    this.updateQuantity(target.getAttribute('data-line-item-id'), () => target.value);
+    this.updateQuantity(target, () => target.value);
   }
 
   onQuantityIncrement(qty, evt, target) {
-    this.updateQuantity(target.getAttribute('data-line-item-id'), (prevQty) => prevQty + qty);
+    this.updateQuantity(target, (prevQty) => prevQty + qty);
   }
 
-  onCheckout() {
-    this.checkout.open(this.model.checkoutUrl);
+  removeItem(id, el) {
+    return this.model.updateLineItem(id, 0).then((cart) => {
+      el.classList.add('is-discarded');
+      setTimeout(() => {
+        el.parentNode.removeChild(el);
+      }, 1000);
+    });
   }
 
   updateConfig(config) {
@@ -110,10 +115,8 @@ export default class Cart extends Component {
     this.toggle.updateConfig(config);
   }
 
-  updateQuantity(id, fn) {
-    const item = this.model.lineItems.filter((lineItem) => lineItem.id === id)[0];
-    const newQty = fn(item.quantity);
-    return this.model.updateLineItem(id, newQty).then((cart) => {
+  updateItem(id, qty) {
+    return this.model.updateLineItem(id, qty).then((cart) => {
       this.model = cart;
       this.render();
       this.toggle.render();
@@ -121,12 +124,31 @@ export default class Cart extends Component {
     });
   }
 
+  onCheckout() {
+    this.checkout.open(this.model.checkoutUrl);
+  }
+
+  updateQuantity(target, fn) {
+    const id = target.getAttribute('data-line-item-id')
+    const item = this.model.lineItems.filter((lineItem) => lineItem.id === id)[0];
+    const newQty = fn(item.quantity);
+    if (newQty > 0) {
+      this.updateItem(id, newQty);
+    } else {
+      this.removeItem(id, target.parentNode.parentNode);
+    }
+  }
+
   addVariantToCart(variant, quantity = 1) {
+    const delay = this.isVisible ? 0 : 250;
     this.isVisible = true;
-    return this.model.addVariants({variant, quantity}).then((cart) => {
-      this.render();
-      this.toggle.render();
-      return cart;
-    });
+    this.render();
+    setTimeout(() => {
+      return this.model.addVariants({variant, quantity}).then((cart) => {
+        this.render();
+        this.toggle.render();
+        return cart;
+      });
+    }, delay);
   }
 }
