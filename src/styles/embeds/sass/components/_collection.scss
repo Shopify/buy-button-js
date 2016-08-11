@@ -4,7 +4,7 @@
   flex-wrap: wrap;
   margin-left: -$gutter;
 
-  .product-container {
+  .collection-product {
     max-width: 230px;
     margin-left: $gutter;
     margin-bottom: $gutter;
@@ -17,22 +17,3 @@
   }
 }
 
-.collection__title {
-  font-weight: normal;
-  text-align: center;
-}
-
-.product-wrapper {
-  margin-left: $gutter;
-  flex: 0 0 auto;
-  padding-top: $gutter;
-  display: inline-block;
-
-  @media (min-width: 601px) {
-    width: 250px;
-  }
-
-  @media (max-width: 600px) {
-    width: 100%;
-  }
-}

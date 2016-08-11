@@ -29,6 +29,12 @@ $cartMaxWidth: 350px;
   }
 }
 
+.shopify-buy-frame--product {
+  iframe {
+    max-width: 230px;
+  }
+}
+
 .shopify-buy-frame--toggle {
   position: fixed;
   right: 0;
@@ -58,5 +64,6 @@ $cartMaxWidth: 350px;
 
   &.js-active {
     display: block;
+    background: rgba(0,0,0,0.3);
   }
 }
