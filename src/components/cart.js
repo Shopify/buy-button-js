@@ -104,10 +104,12 @@ export default class Cart extends Component {
   removeItem(id, el) {
     return this.model.updateLineItem(id, 0).then((cart) => {
       this.toggle.render();
-      el.classList.add('is-discarded');
-      setTimeout(() => {
-        el.parentNode.removeChild(el);
-      }, 200);
+      el.classList.add('is-hidden');
+      el.addEventListener('transitionend', () => {
+        if (el.parentNode) {
+          el.parentNode.removeChild(el);
+        }
+      })
     });
   }
 

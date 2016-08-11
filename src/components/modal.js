@@ -75,6 +75,9 @@ export default class Modal extends Component {
   close() {
     this.isVisible = false;
     this.iframe.removeClass('js-active');
+    this.iframe.parent.addEventListener('transitionend', () => {
+      this.iframe.removeClass('js-block');
+    });
   }
 
   render() {
