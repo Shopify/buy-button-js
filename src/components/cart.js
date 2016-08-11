@@ -94,16 +94,18 @@ export default class Cart extends Component {
   }
 
   onQuantityBlur(evt, target) {
-    this.updateQuantity(target, () => target.value);
+    this.setQuantity(target, () => target.value);
   }
 
   onQuantityIncrement(qty, evt, target) {
-    this.updateQuantity(target, (prevQty) => prevQty + qty);
+    this.setQuantity(target, (prevQty) => prevQty + qty);
   }
 
-  removeItem(id, el) {
+  removeItem(id, target) {
+    const el = target.parentNode.parentNode;
     return this.model.updateLineItem(id, 0).then((cart) => {
       this.toggle.render();
+      this.model = cart;
       el.classList.add('is-hidden');
       el.addEventListener('transitionend', () => {
         if (el.parentNode) {
@@ -131,14 +133,14 @@ export default class Cart extends Component {
     this.checkout.open(this.model.checkoutUrl);
   }
 
-  updateQuantity(target, fn) {
+  setQuantity(target, fn) {
     const id = target.getAttribute('data-line-item-id')
     const item = this.model.lineItems.filter((lineItem) => lineItem.id === id)[0];
     const newQty = fn(item.quantity);
     if (newQty > 0) {
-      this.updateItem(id, newQty);
+      return this.updateItem(id, newQty);
     } else {
-      this.removeItem(id, target.parentNode.parentNode);
+      return this.removeItem(id, target);
     }
   }
 
