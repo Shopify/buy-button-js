@@ -59,7 +59,7 @@ $cart-item-height: 65px;
   position: relative;
   min-height: $cart-item-height;
   margin-bottom: $gutter;
-  transition: all 1000ms;
+  transition: all 200ms;
   backface-visibility: visible;
   transform-style: preserve-3d;
 }

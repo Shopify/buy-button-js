@@ -103,10 +103,11 @@ export default class Cart extends Component {
 
   removeItem(id, el) {
     return this.model.updateLineItem(id, 0).then((cart) => {
+      this.toggle.render();
       el.classList.add('is-discarded');
       setTimeout(() => {
         el.parentNode.removeChild(el);
-      }, 1000);
+      }, 200);
     });
   }
 
@@ -143,12 +144,10 @@ export default class Cart extends Component {
     const delay = this.isVisible ? 0 : 250;
     this.isVisible = true;
     this.render();
-    setTimeout(() => {
-      return this.model.addVariants({variant, quantity}).then((cart) => {
-        this.render();
-        this.toggle.render();
-        return cart;
-      });
-    }, delay);
+    return this.model.addVariants({variant, quantity}).then((cart) => {
+      this.render();
+      this.toggle.render();
+      return cart;
+    });
   }
 }
