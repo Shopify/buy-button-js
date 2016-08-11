@@ -22,7 +22,7 @@
 .product__price {
   display: inline-block;
   vertical-align: middle;
-  margin-left: 10px;
+  margin-left: $gutter / 2;
 }
 
 .product__actual-price {
