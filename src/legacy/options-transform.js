@@ -8,17 +8,14 @@ class OptionsTransform {
     this.legacyOptions = options;
   }
   process() {
-    const options = Object.assign({}, defaultOptions);
-
-    attributes.forEach((attr) => {
+    return attributes.reduce((options, attr) => {
       const transform = this[`${attr}_transform`];
       const value = this.legacyOptions[attr];
       if (transform && value) {
         transform(value, options);
       }
-    });
-
-    return {options};
+      return options;
+    }, Object.assign({}, defaultOptions));
   }
   display_size_transform(value, options) {
   }
