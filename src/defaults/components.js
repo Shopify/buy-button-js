@@ -73,7 +73,6 @@ const defaults = {
       scrollContents: 'modal-scroll-contents',
     },
     contents: {
-      overlay: true,
       contents: true,
     },
     templates: modalTemplates,

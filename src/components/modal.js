@@ -18,7 +18,6 @@ export default class Modal extends Component {
 
   get DOMEvents() {
     return Object.assign({}, this.options.DOMEvents, this.product.DOMEvents, {
-      [`click .${this.classes.modal.overlay}`]: this.closeOnBgClick.bind(this),
       [`click .${this.classes.modal.close}`]: this.close.bind(this),
     });
   }
@@ -57,8 +56,13 @@ export default class Modal extends Component {
     };
   }
 
+  delegateEvents() {
+    super.delegateEvents();
+    this.document.body.addEventListener('click', this.closeOnBgClick.bind(this));
+  }
+
   closeOnBgClick(evt) {
-    if (!this.wrapper.querySelector(`.${this.classes.modal.contents}`).contains(evt.target)) {
+    if (!this.wrapper.contains(evt.target)) {
       this.close();
     }
   }

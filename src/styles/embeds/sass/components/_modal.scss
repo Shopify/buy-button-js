@@ -9,6 +9,7 @@
   transition: transform 100ms ease;
   cursor: pointer;
   line-height: 20px;
+  z-index: 10000;
 
   &:hover {
     transform: scale(1.2);
