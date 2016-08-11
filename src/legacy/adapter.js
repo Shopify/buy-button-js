@@ -27,6 +27,6 @@ class Adapter {
 
 const adapter = new Adapter();
 
-(() => { setTimeout(adapter.init.bind(adapter)); })();
+document.addEventListener('DOMContentLoaded', adapter.init.bind(adapter));
 
 export default adapter;
