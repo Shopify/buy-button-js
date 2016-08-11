@@ -1,25 +1,28 @@
-const defaultOptions = {
-  product: {
-    text: {},
-    contents: {},
-    styles: {
-      button: {},
-      variantTitle: {},
-      title: {},
-      price: {},
-    },
-  },
-  productSet: {
-    styles: {
-      product: {},
-    },
-    products: {},
-  },
-  modalProduct: {
-    styles: {
-      button: {},
-    },
+const product = {
+  text: {},
+  contents: {},
+  styles: {
+    button: {},
+    variantTitle: {},
+    title: {},
+    price: {},
+    wrapper: {},
   },
 };
 
-export default defaultOptions;
+const productSet = {
+  styles: {
+    product: {},
+    wrapper: {},
+  },
+  products: {},
+};
+
+const modalProduct = {
+  styles: {
+    button: {},
+    wrapper: {},
+  },
+};
+
+export default {product, productSet, modalProduct};
