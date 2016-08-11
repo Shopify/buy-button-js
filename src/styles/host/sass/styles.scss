@@ -25,7 +25,7 @@ $max-z-index: 2147483647;
     height: 100%;
   }
 
-  &.js-active {
+  &.is-active {
     transform: translateX(0);
   }
 }
@@ -70,7 +70,7 @@ $max-z-index: 2147483647;
     max-width: none;
   }
 
-  &.js-active {
+  &.is-active {
     background: rgba(0,0,0,0.3);
   }
 

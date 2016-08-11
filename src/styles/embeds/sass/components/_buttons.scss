@@ -59,7 +59,7 @@
   height: auto;
   z-index: $max-z-index;
 
-  &.js-active {
+  &.is-active {
     transform: translateY(-50%);
     opacity: 1;
   }

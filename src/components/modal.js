@@ -73,8 +73,8 @@ export default class Modal extends Component {
   }
 
   close() {
-    this.isVisible = false;
-    this.iframe.removeClass('js-active');
+    this.wrapper.classList.remove('is-active');
+    this.iframe.removeClass('is-active');
     this.iframe.parent.addEventListener('transitionend', () => {
       this.iframe.removeClass('js-block');
     });
@@ -85,8 +85,9 @@ export default class Modal extends Component {
       return Promise.resolve();
     }
     super.render();
+    this.iframe.addClass('is-active');
     this.iframe.addClass('js-block');
-    this.wrapper.classList.add('js-active');
+    this.wrapper.classList.add('is-active');
     this.product = new Product(this.productConfig, this.props);
     this.product.template = new Template(this.productModalTemplates, this.productModalContents);
     return this.product.init(this.model).then(() => this.loadImgs());

@@ -126,7 +126,7 @@ describe('Modal class', () => {
     });
 
     it('makes modal visible', () => {
-      assert.match(modal.iframe.parent.className, 'js-active');
+      assert.match(modal.iframe.parent.className, 'is-active');
     });
 
     it('replaces product template', () => {

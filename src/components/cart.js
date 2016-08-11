@@ -41,7 +41,7 @@ export default class Cart extends Component {
 
   get viewData() {
     return merge(this.model, {
-      wrapperClass: this.isVisible ? 'js-active' : '',
+      wrapperClass: this.isVisible ? 'is-active' : '',
       text: this.text,
       classes: this.classes,
       lineItemsHtml: this.lineItemsHtml,
@@ -72,9 +72,9 @@ export default class Cart extends Component {
   render() {
     super.render();
     if (this.isVisible) {
-      this.iframe.addClass('js-active');
+      this.iframe.addClass('is-active');
     } else {
-      this.iframe.removeClass('js-active');
+      this.iframe.removeClass('is-active');
     }
   }
 

@@ -141,7 +141,7 @@ $modal-footer-height: 90px;
     animation-duration: 200ms;
     animation-fill-mode: forwards;
 
-    &.js-active {
+    &.is-active {
       animation-name: slideIn;
       animation-duration: 200ms;
       animation-fill-mode: forwards;
