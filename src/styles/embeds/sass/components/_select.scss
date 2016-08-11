@@ -1,0 +1,46 @@
+.option-select-wrapper {
+  border: 1px solid #a9a9a9;
+  border-radius: 3px;
+  box-sizing: border-box;
+  position: relative;
+  background: #ffffff;
+  overflow: hidden;
+  vertical-align: bottom;
+}
+
+.shopify-select-icon {
+  cursor: pointer;
+  display: block;
+  fill: #798c9c;
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  margin-top: -6px;
+  pointer-events: none;
+  width: 12px;
+  height: 12px;
+  vertical-align: middle;
+}
+
+.option-select {
+  margin-bottom: 10px;
+}
+
+.option-select__label {
+  display: block;
+  font-size: 14px;
+  margin-top: 15px;
+  margin-bottom: 5px;
+}
+
+.option-select__select {
+  font-size: inherit;
+  padding: 7px 10px;
+  padding-right: 32px;
+  border: 0;
+  width: 100%;
+  background: transparent;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+

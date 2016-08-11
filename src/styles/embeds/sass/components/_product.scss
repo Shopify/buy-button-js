@@ -1,42 +1,42 @@
-$color-red: #fc3e07;
-$color-faint: #a2a2a3;
+@import "./select.scss";
 
 .product__variant-image {
-  margin: 0 auto 10px auto;
+  margin: 0 auto $gutter auto;
 }
 
 .product__title {
-  font-size: 20px;
-  line-height: 1.3;
-  font-weight: 400;
-  color: #000;
+  font-size: 16px;
+  line-height: 22px;
+  color: $color-black;
   margin-bottom: 5px;
-  text-align: center;
+  font-weight: 500;
 }
 
 .product__variant-title {
   font-size: 16px;
   color: #666;
   font-weight: 400;
-  text-align: center;
   margin-bottom: 15px;
 }
 
 .product__price {
-  margin-bottom: 10px;
-  text-align: center;
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 10px;
 }
 
 .product__actual-price {
   font-size: 16px;
   line-height: 22px;
-  color: #666;
+  color: $color-grey;
+  display: block;
 }
 
 .product__compare-price {
   font-size: 12px;
   text-decoration: line-through;
   color: $color-faint;
+  display: block;
 }
 
 .price--lowered {
@@ -44,65 +44,24 @@ $color-faint: #a2a2a3;
 }
 
 .product__variant-selectors {
-  margin-top: 20px;
+  margin-top: $gutter;
 }
 
-.component-input {
-  margin-bottom: 15px;
-}
-
-.component-input__label {
-  display: block;
-  font-size: 14px;
-  margin-bottom: 5px;
-}
-
-.shopify-select {
-  border: 1px solid #d3dbe2;
-  border-radius: 3px;
-  box-sizing: border-box;
-  position: relative;
-  background: #ffffff;
-  overflow: hidden;
-  vertical-align: bottom;
-}
-
-.shopify-select-icon {
-  cursor: pointer;
-  display: block;
-  fill: #798c9c;
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  margin-top: -6px;
-  pointer-events: none;
-  width: 12px;
-  height: 12px;
-  vertical-align: middle;
-}
-
-.shopify-select select {
-  font-size: 16px;
-  padding: 7px 10px;
-  padding-right: 32px;
-  border: 0;
-  width: 100%;
-  background: transparent;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-}
-
-.cart-item__quantity-container {
+.quantity-container {
   margin-left: 0;
   float: left;
   width: 90px;
   margin-right: 10px;
 }
 
-.cart-item__quantity,
+.quantity,
 .quantity-decrement,
 .quantity-increment {
   height: 51px;
+}
+
+.btn {
+  display: inline-block;
 }
 
 .btn.beside-quantity {
