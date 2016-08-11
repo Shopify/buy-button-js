@@ -50,7 +50,6 @@ $modal-footer-height: 90px;
   position: absolute;
   bottom: 0;
   background-image: linear-gradient(to bottom,  rgba(256, 255, 255, 0.93) 0%,rgba(255, 255, 255, 1) 100%);
-  padding-top: 20px;
 }
 
 .product-title {
@@ -129,15 +128,6 @@ $modal-footer-height: 90px;
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-.product__title,
-.product__variant-title,
-.product__variant-selectors,
-.product__price,
-.product-description {
-  padding-left: 20px;
-  padding-right: 20px;
 }
 
 @media (min-width: 801px) {
