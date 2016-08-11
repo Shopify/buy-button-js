@@ -16,6 +16,7 @@ const productSet = {
     wrapper: {},
   },
   products: {},
+  text: {},
 };
 
 const modalProduct = {
@@ -23,6 +24,23 @@ const modalProduct = {
     button: {},
     wrapper: {},
   },
+  text: {},
 };
 
-export default {product, productSet, modalProduct};
+const modal = {
+  styles: {
+    button: {},
+    wrapper: {},
+  },
+  text: {},
+};
+
+const cart = {
+  styles: {
+    button: {},
+    wrapper: {},
+  },
+  text: {},
+};
+
+export default {product, productSet, modalProduct, modal, cart};
