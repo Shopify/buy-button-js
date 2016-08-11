@@ -1,6 +1,7 @@
 export const attributes = [
   'shop',
   'product_handle',
+  'variant_id',
   'collection_handle',
   'embed_type',
   'display_size',
