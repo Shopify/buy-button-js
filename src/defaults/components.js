@@ -34,8 +34,8 @@ const defaults = {
       description: 'product-description',
       options: 'product__variant-selectors',
       disabled: 'btn-disabled',
-      quantity: 'cart-item__quantity-container',
-      quantityInput: 'cart-item__quantity',
+      quantity: 'quantity-container',
+      quantityInput: 'quantity',
       quantityButton: 'btn--seamless',
     },
     text: {

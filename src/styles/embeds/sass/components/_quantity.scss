@@ -1,4 +1,4 @@
-.cart-item__quantity-container {
+.quantity-container {
   border-radius: $border-radius;
   margin-left: 80px;
   overflow: hidden;
@@ -30,7 +30,7 @@
   border-radius: 0 $border-radius $border-radius 0;
 }
 
-.cart-item__quantity {
+.quantity {
   color: black;
   width: 38px;
   height: 21px;

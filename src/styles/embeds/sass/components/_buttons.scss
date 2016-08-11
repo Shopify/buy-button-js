@@ -61,3 +61,21 @@
 .btn[disabled] {
   background-color: #999;
 }
+
+.btn--close {
+  position: absolute;
+  right: 9px;
+  top: 8px;
+  font-size: 35px;
+  color: $color-title;
+  border: none;
+  background: transparent;
+  transition: transform 100ms ease;
+  cursor: pointer;
+  padding-right: 9px;
+
+  &:hover {
+    transform: scale(1.2);
+    color: darken($color-title, 5%);
+  }
+}

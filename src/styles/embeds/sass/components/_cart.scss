@@ -1,5 +1,14 @@
 $cart-item-height: 65px;
 
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 .cart-wrapper {
   height: 100%;
   padding-left: 10px;
@@ -7,7 +16,7 @@ $cart-item-height: 65px;
 
 .cart {
   height: 100%;
-  background: white;
+  background: $color-white;
   width: calc(100% - 10px);
   position: absolute;
   right: 0;
@@ -41,15 +50,6 @@ $cart-item-height: 65px;
   padding: 0 $gutter $gutter;
 }
 
-@keyframes fadein {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
 .cart-item {
   overflow: hidden;
   position: relative;
@@ -58,6 +58,7 @@ $cart-item-height: 65px;
   animation-name: fadein;
   animation-duration: .3s;
 }
+
 .cart-item__image {
   width: $cart-item-height;
   height: $cart-item-height;
@@ -90,14 +91,13 @@ $cart-item-height: 65px;
   font-weight: bold;
 }
 
-
 .cart-bottom {
   background: #fff;
   position: absolute;
   width: 100%;
   bottom: 0;
   padding: 20px;
-  border-top: 1px solid #999999;
+  border-top: 1px solid $color-border-primary;
 }
 
 .cart__subtotal__text {
@@ -120,29 +120,13 @@ $cart-item-height: 65px;
   clear: both;
   padding-top: 10px;
   text-align: center;
-  color: #767676;
+  color: $color-title;
 }
 
 .btn--cart-checkout {
   clear: both;
   margin-top: 15px;
   width: 100%;
-}
-
-.btn--close {
-  position: absolute;
-  right: 9px;
-  top: 8px;
-  font-size: 35px;
-  color: $color-title;
-  border: none;
-  background: transparent;
-  transition: transform 100ms ease;
-  cursor: pointer;
-  padding-right: 9px;
-
-  &:hover {
-    transform: scale(1.2);
-    color: darken($color-title, 5%);
-  }
+  padding: 10px 5px;
+  font-size: 16px;
 }
