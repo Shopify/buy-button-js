@@ -50,7 +50,7 @@ const defaults = {
       variantTitle: true,
       price: true,
       options: true,
-      quantity: true,
+      quantity: false,
       button: true,
       description: true,
     },
