@@ -18,6 +18,13 @@ class OptionsTransform {
     }, Object.assign({}, defaultOptions));
   }
   display_size_transform(value, options) {
+    let width = 450;
+    if (value === 'compact') {
+      width = 230;
+    } else if (parseInt(value, 10)) {
+      width = parseInt(value, 10);
+    }
+    options.product.styles.wrapper.width = `${width}px`;
   }
   has_image_transform(value, options) {
     options.product.contents.img = (value === 'true');
