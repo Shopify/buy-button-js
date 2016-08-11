@@ -119,6 +119,18 @@ $modal-footer-height: 90px;
   }
 }
 
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-200px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .product__title,
 .product__variant-title,
 .product__variant-selectors,
@@ -133,6 +145,17 @@ $modal-footer-height: 90px;
     margin: -#{$modal-height / 2}px auto 0 auto;
     top: 50%;
     max-height: #{$modal-height}px;
+    opacity: 0;
+    transform: translateY(-200px);
+    animation-name: slideOut;
+    animation-duration: 200ms;
+    animation-fill-mode: forwards;
+
+    &.js-active {
+      animation-name: slideIn;
+      animation-duration: 200ms;
+      animation-fill-mode: forwards;
+    }
   }
 
   .modal-footer {
