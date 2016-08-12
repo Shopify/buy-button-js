@@ -1,5 +1,9 @@
 @import "./select.scss";
 
+.product-wrapper {
+  overflow: hidden;
+}
+
 .product__variant-image {
   margin: 0 auto $gutter auto;
 }
