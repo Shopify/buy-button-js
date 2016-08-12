@@ -149,6 +149,7 @@ export default class Product extends Component {
     } else if (this.handle) {
       return this.props.client.fetchQueryProducts({handle: this.handle}).then((products) => products[0]);
     }
+    return Promise.resolve();
   }
 
   fetchData() {

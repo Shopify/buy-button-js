@@ -58,6 +58,15 @@ describe('Modal class', () => {
         done(e);
       });
     });
+
+    it('sets isVisible to true', (done) => {
+      modal.init(fakeProduct).then((what) => {
+        assert(modal.isVisible);
+        done();
+      }).catch((e) => {
+        done(e);
+      });
+    });
   });
 
   describe('getters', () => {
@@ -95,6 +104,17 @@ describe('Modal class', () => {
         assert.ok(modal.productModalContents.contents);
         assert.ok(modal.productModalContents.footer);
       });
+    });
+  });
+
+  describe('close', () => {
+    it('sets isVisible to false', () => {
+      modal.iframe = {
+        removeClass: sinon.spy()
+      }
+      modal.close();
+      assert.notOk(modal.isVisible);
+      assert.calledWith(modal.iframe.removeClass, 'js-active');
     });
   });
 

@@ -273,6 +273,45 @@ describe('Product class', () => {
     });
   });
 
+  describe('updateConfig', () => {
+    const newConfig = {
+      options: {
+        styles: {
+          button: {
+            'color': 'red',
+          },
+        },
+      },
+    }
+
+    let superSpy;
+
+    beforeEach(() => {
+      superSpy = sinon.stub(Component.prototype, 'updateConfig');
+      product.cart = {
+        updateConfig: sinon.spy()
+      }
+    });
+
+    afterEach(() => {
+      superSpy.restore();
+    });
+
+    it('calls updateConfig on cart', () => {
+      product.updateConfig(newConfig);
+      assert.calledWith(product.cart.updateConfig, newConfig);
+      assert.calledWith(superSpy, newConfig);
+    });
+
+    it('calls updateConfig on modal if modal exists', () => {
+      product.modal = {
+        updateConfig: sinon.spy()
+      }
+      product.updateConfig(newConfig);
+      assert.calledWith(product.cart.updateConfig, newConfig);
+      assert.calledWith(superSpy, newConfig);
+    });
+  });
   describe('setDefaultVariant', () => {
     it('sets selectedVariant to product.defalutVariantId', () => {
       product.defaultVariantId = 12347;

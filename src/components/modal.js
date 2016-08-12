@@ -38,7 +38,7 @@ export default class Modal extends Component {
   }
 
   get productModalTemplates() {
-    const quantity = this.product.config.modalProduct.contents.quantity ? thsi.product.templates.quantity : '';
+    const quantity = this.product.config.modalProduct.contents.quantity ? this.product.templates.quantity : '';
     return {
       img: `<div class="${this.classes.modal.img}">${this.product.templates.img}</div>`,
       contents: `<div class="${this.classes.modal.contents}"><div class="${this.classes.modal.scrollContents}">${this.productTemplate.masterTemplate}</div></div>`,
@@ -73,22 +73,19 @@ export default class Modal extends Component {
     return super.init(data);
   }
 
-  updateConfig(config) {
-    super.updateConfig(config);
-  }
-
   close() {
     this.isVisible = false;
     this.iframe.removeClass('js-active');
   }
 
   render() {
-    if (this.isVisible) {
-      super.render();
-      this.iframe.addClass('js-active');
-      this.product = new Product(this.productConfig, this.props);
-      this.product.template = new Template(this.productModalTemplates, this.productModalContents);
-      return this.product.init(this.model).then(() => this.loadImgs());
+    if (!this.isVisible) {
+      return Promise.resolve();
     }
+    super.render();
+    this.iframe.addClass('js-active');
+    this.product = new Product(this.productConfig, this.props);
+    this.product.template = new Template(this.productModalTemplates, this.productModalContents);
+    return this.product.init(this.model).then(() => this.loadImgs());
   }
 }

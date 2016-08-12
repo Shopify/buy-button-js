@@ -18,7 +18,8 @@ export default class ProductSet extends Component {
   }
 
   sdkFetch() {
-    // eslint-disable camelcase
+
+    /* eslint-disable camelcase */
     let method;
     if (this.id) {
       const queryKey = isArray(this.id) ? 'product_ids' : 'collection_id';
@@ -30,7 +31,8 @@ export default class ProductSet extends Component {
       });
     }
     return method;
-    // eslint-enable camelcase
+
+    /* eslint-enable camelcase */
   }
 
   fetchData() {

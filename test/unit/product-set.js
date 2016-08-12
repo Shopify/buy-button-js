@@ -1,4 +1,5 @@
 import ProductSet from '../../src/components/product-set';
+import Component from '../../src/component';
 import Product from '../../src/components/product';
 
 const config = {
@@ -143,6 +144,37 @@ describe('ProductSet class', () => {
       }).catch((e) => {
         done(e);
       });
+    });
+  });
+
+  describe('updateConfig', () => {
+    const newConfig = {
+      options: {
+        styles: {
+          button: {
+            'color': 'red',
+          },
+        },
+      },
+    }
+
+    let superSpy;
+
+    beforeEach(() => {
+      superSpy = sinon.stub(Component.prototype, 'updateConfig');
+      set.cart = {
+        updateConfig: sinon.spy()
+      }
+    });
+
+    afterEach(() => {
+      superSpy.restore();
+    });
+
+    it('calls updateConfig on cart', () => {
+      set.updateConfig(newConfig);
+      assert.calledWith(set.cart.updateConfig, newConfig);
+      assert.calledWith(superSpy, newConfig);
     });
   });
 });
