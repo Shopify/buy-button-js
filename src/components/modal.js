@@ -9,7 +9,6 @@ export default class Modal extends Component {
     this.node = document.body.appendChild(document.createElement('div'));
     this.node.className = 'shopify-buy-modal-wrapper';
     this.product = null;
-    this.isVisible = true;
   }
 
   get typeKey() {
