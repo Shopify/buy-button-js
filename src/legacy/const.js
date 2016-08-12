@@ -32,10 +32,20 @@ const product = {
   text: {},
   contents: {},
   styles: {
+    img: {
+      'margin-bottom': '0px',
+    },
+    title: {
+      'margin-top': '10px',
+      'margin-bottom': '20px',
+    },
     button: {},
     variantTitle: {},
-    title: {},
+    options: {
+      'margin-bottom': '0px',
+    },
     price: {},
+    prices: {},
     wrapper: {},
   },
 };
@@ -69,8 +79,22 @@ const cart = {
   styles: {
     button: {},
     wrapper: {},
+    header: {},
+    title: {},
+    lineItems: {},
+    subtotal: {},
+    cart: {},
+    footer: {},
   },
   text: {},
 };
 
-export const defaultOptions = {product, productSet, modalProduct, modal, cart};
+const toggle = {
+  styles: {
+    button: {},
+    wrapper: {},
+  },
+  text: {},
+};
+
+export const defaultOptions = {product, productSet, modalProduct, modal, cart, toggle};
