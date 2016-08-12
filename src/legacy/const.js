@@ -27,3 +27,50 @@ export const attributes = [
   'empty_cart_text',
   'next_page_button_text',
 ];
+
+const product = {
+  text: {},
+  contents: {},
+  styles: {
+    button: {},
+    variantTitle: {},
+    title: {},
+    price: {},
+    wrapper: {},
+  },
+};
+
+const productSet = {
+  styles: {
+    product: {},
+    wrapper: {},
+  },
+  products: {},
+  text: {},
+};
+
+const modalProduct = {
+  styles: {
+    button: {},
+    wrapper: {},
+  },
+  text: {},
+};
+
+const modal = {
+  styles: {
+    button: {},
+    wrapper: {},
+  },
+  text: {},
+};
+
+const cart = {
+  styles: {
+    button: {},
+    wrapper: {},
+  },
+  text: {},
+};
+
+export const defaultOptions = {product, productSet, modalProduct, modal, cart};

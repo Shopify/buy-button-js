@@ -1,23 +1,23 @@
-import {attributes} from './legacy-attributes';
 import OptionsTransform from './options-transform';
 
 class EmbedWrapper {
   constructor(element) {
     this.element = element;
-    const options = attributes.reduce((opts, attr) => {
-      opts[attr] = this.element.getAttribute(`data-${attr}`);
-      return opts;
-    }, {});
-    this.shop = options.shop;
-    this.embedType = options.embed_type;
-    this.handle = options[`${this.embedType}_handle`];
-    this.options = new OptionsTransform(this.embedType, options);
+    this.optionsTransform = new OptionsTransform(this.embedType, this.element);
+    this.shop = this.optionsTransform.legacyOptions.shop;
+    this.embedType = this.optionsTransform.legacyOptions.embed_type;
+    this.variantId = parseInt(this.optionsTransform.legacyOptions.variant_id, 10);
+    this.handle = this.optionsTransform.legacyOptions[`${this.embedType}_handle`];
+    this.options = this.optionsTransform.uiArguments;
   }
   render(ui) {
-    ui.createComponent(this.embedType, {
+    return ui.createComponent(this.embedType, {
       handle: this.handle,
       node: this.element,
-      options: this.options.process(),
+      options: this.options,
+    }).then((component) => {
+      this.component = component;
+      return this.component;
     });
   }
 }

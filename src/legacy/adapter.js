@@ -6,7 +6,6 @@ const appId = window.SHOPIFY_BUY_UI_ADAPTER_APP_ID || 6;
 
 class Adapter {
   constructor() {
-    this.clients = {};
     this.uis = {};
   }
   init() {
@@ -18,8 +17,7 @@ class Adapter {
   }
   getShopUI(shop) {
     if (!this.uis[shop]) {
-      this.clients[shop] = ShopifyBuy.buildClient({apiKey, appId, domain: shop});
-      this.uis[shop] = ShopifyBuy.UI.init(this.clients[shop]);
+      this.uis[shop] = ShopifyBuy.UI.init(ShopifyBuy.buildClient({apiKey, appId, domain: shop}));
     }
     return this.uis[shop];
   }
