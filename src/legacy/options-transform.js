@@ -1,24 +1,26 @@
 /* eslint-disable camelcase */
-import {attributes} from './legacy-attributes';
-import defaultOptions from './default-options';
+import merge from 'lodash.merge';
+import {defaultOptions, attributes} from './const';
 
 class OptionsTransform {
-  constructor(embedType, options) {
+  constructor(embedType, element) {
     this.embedType = embedType;
-    this.legacyOptions = options;
-  }
+    this.legacyOptions = attributes.reduce((opts, attr) => {
+      opts[attr] = element.getAttribute(`data-${attr}`);
+      return opts;
+    }, {});
 
-  process() {
     // STICKY, if it is not defined and not true then do not move the cart tab
     // to the side of the window, just place inline where it is in the DOM
-    return attributes.reduce((options, attr) => {
+    const newOptions = merge({}, defaultOptions);
+    this.uiArguments = attributes.reduce((options, attr) => {
       const transform = this[`${attr}_transform`];
       const value = this.legacyOptions[attr];
       if (transform && value) {
-        transform(value, options);
+        transform.call(this, value, options);
       }
       return options;
-    }, Object.assign({}, defaultOptions));
+    }, newOptions);
   }
 
   display_size_transform(value, options) {
@@ -95,6 +97,7 @@ class OptionsTransform {
     // NOT collections product background
     // cart background
     // modal background
+    options.product.styles.wrapper['background-color'] = `#${value}`;
   }
 
   show_product_price_transform(value, options) {
