@@ -55,9 +55,7 @@ class OptionsTransform {
     // if this equals modal, dont show, button, variants, or price.
     options.product.buttonDestination = value;
     if (value === 'modal') {
-      options.product.contents.options = false;
-      options.product.contents.price = false;
-      options.product.contents.button = false;
+      this.setupModalOptions(options);
     }
   }
 
@@ -68,9 +66,18 @@ class OptionsTransform {
       return;
     }
     options.product.buttonDestination = 'modal';
+    this.setupModalOptions(options);
+  }
+
+  setupModalOptions(options) {
     options.product.contents.options = false;
-    options.product.contents.price = false;
     options.product.contents.button = false;
+    options.product.styles.title['text-align'] = 'center';
+    options.product.styles.title['margin-top'] = '20px';
+    options.product.styles.prices['margin-left'] = '0px';
+    options.product.styles.prices.display = 'block';
+    options.product.styles.prices['text-align'] = 'center';
+    options.product.styles.prices['margin-bottom'] = '15px';
   }
 
   buy_button_text_transform(value, options) {
@@ -82,6 +89,7 @@ class OptionsTransform {
     options.cart.styles.button['background-color'] = `#${value}`;
     options.modalProduct.styles.button['background-color'] = `#${value}`;
     options.modal.styles.button['background-color'] = `#${value}`;
+    options.toggle.styles.wrapper['background-color'] = `#${value}`;
   }
 
   button_text_color_transform(value, options) {
@@ -89,6 +97,7 @@ class OptionsTransform {
     options.cart.styles.button.color = `#${value}`;
     options.modalProduct.styles.button.color = `#${value}`;
     options.modal.styles.button.color = `#${value}`;
+    options.toggle.styles.wrapper.color = `#${value}`;
   }
 
   background_color_transform(value, options) {
@@ -97,7 +106,20 @@ class OptionsTransform {
     // NOT collections product background
     // cart background
     // modal background
-    options.product.styles.wrapper['background-color'] = `#${value}`;
+    if (this.embedType !== 'collection') {
+      options.product.styles.wrapper['background-color'] = `#${value}`;
+      options.product.styles.title['margin-left'] = '20px';
+      options.product.styles.title['margin-right'] = '20px';
+      options.product.styles.options['margin-left'] = '20px';
+      options.product.styles.options['margin-right'] = '20px';
+      options.product.styles.button['margin-left'] = '20px';
+      options.product.styles.button['margin-bottom'] = '15px';
+    }
+    options.modalProduct.styles.wrapper['background-color'] = `#${value}`;
+    options.cart.styles.cart['background-color'] = `#${value}`;
+    options.cart.styles.header['background-color'] = `#${value}`;
+    options.cart.styles.lineItems['background-color'] = `#${value}`;
+    options.cart.styles.footer['background-color'] = `#${value}`;
   }
 
   show_product_price_transform(value, options) {
@@ -125,14 +147,20 @@ class OptionsTransform {
   }
 
   text_color_transform(value, options) {
-    // cart
-    //  title of the line items, quantity, price, total price.
-    options.product.styles.button.color = `#${value}`;
+    options.cart.styles.header.color = `#${value}`;
+    options.cart.styles.title.color = `#${value}`;
+    options.cart.styles.lineItems.color = `#${value}`;
+    options.cart.styles.subtotal.color = `#${value}`;
   }
 
   accent_color_transform(value, options) {
     // cart border color
-    options.cart.styles.wrapper['border-color'] = `#${value}`;
+    // cart title
+    // cart close button hover
+    // variant title
+    // line item quantity text color
+    // increment & decrement button text color
+    options.cart.styles.cart['border-color'] = `#${value}`;
   }
 
   cart_title_transform(value, options) {
