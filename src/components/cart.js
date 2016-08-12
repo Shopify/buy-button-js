@@ -103,6 +103,11 @@ export default class Cart extends Component {
     this.checkout.open(this.model.checkoutUrl);
   }
 
+  updateConfig(config) {
+    super.updateConfig(config);
+    this.toggle.updateConfig(config);
+  }
+
   updateQuantity(id, fn) {
     const item = this.model.lineItems.filter((lineItem) => lineItem.id === id)[0];
     const newQty = fn(item.quantity);

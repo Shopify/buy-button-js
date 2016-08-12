@@ -7,6 +7,12 @@ function isArray(arg) {
 }
 
 export default class ProductSet extends Component {
+  constructor(config, props) {
+    super(config, props);
+    this.products = [];
+    this.cart = null;
+  }
+
   get typeKey() {
     return 'productSet';
   }
@@ -35,6 +41,11 @@ export default class ProductSet extends Component {
     });
   }
 
+  updateConfig(config) {
+    super.updateConfig(config);
+    this.cart.updateConfig(config);
+  }
+
   render() {
     super.render();
     const productConfig = {
@@ -50,9 +61,14 @@ export default class ProductSet extends Component {
     };
 
     const promises = this.model.products.map((productModel) => {
-      return new Product(productConfig, this.props).init(productModel);
+      const product = new Product(productConfig, this.props);
+      this.products.push(product);
+      return product.init(productModel);
     });
 
-    return Promise.all(promises).then(() => this.loadImgs());
+    return Promise.all(promises).then(() => {
+      this.cart = this.products[0].cart;
+      return this.loadImgs();
+    });
   }
 }

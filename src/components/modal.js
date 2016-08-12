@@ -9,7 +9,7 @@ export default class Modal extends Component {
     this.node = document.body.appendChild(document.createElement('div'));
     this.node.className = 'shopify-buy-modal-wrapper';
     this.product = null;
-    this.isVisible = false;
+    this.isVisible = true;
   }
 
   get typeKey() {
@@ -68,15 +68,27 @@ export default class Modal extends Component {
     }
   }
 
+  init(data) {
+    this.isVisible = true;
+    return super.init(data);
+  }
+
+  updateConfig(config) {
+    super.updateConfig(config);
+  }
+
   close() {
+    this.isVisible = false;
     this.iframe.removeClass('js-active');
   }
 
   render() {
-    super.render();
-    this.iframe.addClass('js-active');
-    this.product = new Product(this.productConfig, this.props);
-    this.product.template = new Template(this.productModalTemplates, this.productModalContents);
-    return this.product.init(this.model).then(() => this.loadImgs());
+    if (this.isVisible) {
+      super.render();
+      this.iframe.addClass('js-active');
+      this.product = new Product(this.productConfig, this.props);
+      this.product.template = new Template(this.productModalTemplates, this.productModalContents);
+      return this.product.init(this.model).then(() => this.loadImgs());
+    }
   }
 }

@@ -158,7 +158,15 @@ export default class Product extends Component {
     });
   }
 
-  onButtonClick(evt) {
+  updateConfig(config) {
+    super.updateConfig(config);
+    this.cart.updateConfig(config);
+    if (this.modal) {
+      this.modal.updateConfig(config);
+    }
+  }
+
+  onButtonClick() {
     evt.stopPropagation();
     if (this.options.buttonDestination === 'cart') {
       this.props.closeModal();
