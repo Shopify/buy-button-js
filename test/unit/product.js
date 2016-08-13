@@ -107,6 +107,110 @@ describe('Product class', () => {
     });
   });
 
+  describe('get requiresCart', () => {
+    describe('if buttonDestination is cart', () => {
+      it('returns true', () => {
+        assert.ok(product.requiresCart);
+      });
+    });
+
+    describe('if buttonDestination is not cart', () => {
+      it('returns false', () => {
+        product.config.product.buttonDestination = 'checkout';
+        assert.notOk(product.requiresCart);
+      });
+    });
+  });
+
+  describe('get buttonActionAvailable', () => {
+    describe('if requriesCart is true', () => {
+      describe('if cart is not initialized', () => {
+        it('returns false', () => {
+          assert.notOk(product.buttonActionAvailable);
+        });
+      });
+      describe('if cart is initialized', () => {
+        it('returns true', () => {
+          product.init(testProductCopy).then(() => {
+            assert.ok(product.buttonActionAvailable);
+            done();
+          }).catch((e) => {
+            done(e);
+          });
+        });
+      });
+    });
+
+    describe('if requiresCart is false', () => {
+      it('returns true', () => {
+        product.config.product.buttonDestination = 'checkout';
+        assert.ok(product.buttonActionAvailable);
+      });
+    });
+  });
+
+  describe('get buttonEnabled', () => {
+    describe('if buttonActionAvailable is false', () => {
+      it('returns false', () => {
+        product.cart = null;
+        assert.notOk(product.buttonEnabled);
+      });
+    });
+    describe('if buttonActionAvailable is true', () => {
+      beforeEach((done) => {
+        product.init(testProductCopy).then(() => {
+          done();
+        }).catch((e) => {
+          done(e);
+        });
+      });
+      describe('if variant is in stock', () => {
+        it('returns true', () => {
+          assert.ok(product.buttonEnabled);
+        });
+      });
+      describe('if variant is not in stock', () => {
+        it('returns false', () => {
+          product.model.selectedVariant = {
+            attrs: {
+              variant: {
+                available: false,
+              },
+            },
+          }
+          assert.notOk(product.buttonEnabled);
+        });
+      });
+    });
+  });
+
+  describe('get buttonText', () => {
+    beforeEach((done) => {
+      product.init(testProductCopy).then(() => {
+        done();
+      }).catch((e) => {
+        done(e);
+      });
+    });
+    describe('if variant is in stock', () => {
+      it('returns "buy now"', () => {
+        assert.equal(product.buttonText, product.text.button);
+      });
+    });
+    describe('if variant is not in stock', () => {
+      it('returns "out of stock"', () => {
+        product.model.selectedVariant = {
+          attrs: {
+            variant: {
+              available: false,
+            },
+          },
+        }
+        assert.equal(product.buttonText, product.text.outOfStock);
+      });
+    });
+  });
+
   describe('get hasVariants', () => {
     describe('if multiple variants', () => {
       it('returns true', (done) => {
@@ -172,6 +276,11 @@ describe('Product class', () => {
           },
           {
             name: 'shark',
+            selected: false,
+            disabled: false
+          },
+          {
+            name: 'cat',
             selected: false,
             disabled: false
           }
@@ -241,7 +350,7 @@ describe('Product class', () => {
           options: config.options,
         }, {
           client: {
-            fetchProduct: sinon.spy()
+            fetchProduct: sinon.spy(),
           }
         });
       });
@@ -261,12 +370,12 @@ describe('Product class', () => {
           options: config.options,
         }, {
           client: {
-            fetchQueryProducts: sinon.stub().returns(Promise.resolve()),
+            fetchQueryProducts: sinon.stub().returns(Promise.resolve([{}])),
           }
         });
       });
 
-      it('calls fetchQueryProducts with product handel', () => {
+      it('calls fetchQueryProducts with product handle', () => {
         handleProduct.sdkFetch()
         assert.calledWith(handleProduct.client.fetchQueryProducts, {handle: 'hat'});
       });

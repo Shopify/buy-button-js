@@ -46,17 +46,17 @@ export default class Product extends Component {
 
   get viewData() {
     return merge(this.model, {
-      buttonText: this.variantAvailable ? this.text.button : 'Unavailable',
       optionsHtml: this.optionsHtml,
       currentImage: this.currentImage,
       buttonClass: this.buttonClass,
       hasVariants: this.hasVariants,
-      buttonDisabled: !this.cart && this.options.buttonDestination === 'cart',
+      buttonDisabled: !this.buttonEnabled,
       priceClass: this.model.selectedVariant.compareAtPrice ? 'price--lowered' : '',
       classes: this.classes,
       hasQuantity: this.options.contents.quantity,
       selectedQuantity: this.selectedQuantity,
-      wrapperClass: this.imageWrapperClass,
+      buttonText: this.buttonText,
+      buttonText: this.buttonText,
     });
   }
 
@@ -80,8 +80,36 @@ export default class Product extends Component {
     });
   }
 
+  get buttonClass() {
+    return `${this.buttonEnabled ? '' : this.classes.disabled} ${this.options.contents.quantity ? 'beside-quantity' : ''}`;
+  }
+
+  get buttonText() {
+    if (this.variantAvailable && this.variantInStock) {
+      return this.text.button;
+    } else {
+      return this.text.outOfStock;
+    }
+  }
+
+  get buttonEnabled() {
+    return this.buttonActionAvailable && this.variantAvailable && this.variantInStock;
+  }
+
   get variantAvailable() {
     return this.model.selectedVariant;
+  }
+
+  get variantInStock() {
+    return this.model.selectedVariant.attrs.variant.available;
+  }
+
+  get requiresCart() {
+    return this.options.buttonDestination === 'cart';
+  }
+
+  get buttonActionAvailable() {
+    return !this.requiresCart || this.cart;
   }
 
   get optionsHtml() {
