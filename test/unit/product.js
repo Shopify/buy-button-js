@@ -272,4 +272,13 @@ describe('Product class', () => {
       });
     });
   });
+
+  describe('setFixedVariant', () => {
+    it('sets selectedVariant to product.fixedVariantId', () => {
+      product.fixedVariantId = 12347;
+      const model = product.setFixedVariant(testProduct);
+      assert.equal(model.options[0].selected, 'shark');
+      assert.equal(model.options[1].selected, 'large');
+    });
+  });
 });
