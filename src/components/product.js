@@ -81,7 +81,9 @@ export default class Product extends Component {
   }
 
   get buttonClass() {
-    return `${this.buttonEnabled ? '' : this.classes.disabled} ${this.options.contents.quantity ? 'beside-quantity' : ''}`;
+    const disabledClass = this.buttonEnabled ? '' : this.classes.disabled;
+    const quantityClass = this.options.contents.quantity ? 'beside-quantity' : '';
+    return `${disabledClass} ${quantityClass}`;
   }
 
   get buttonText() {
