@@ -56,12 +56,7 @@ export default class Product extends Component {
       hasQuantity: this.options.contents.quantity,
       selectedQuantity: this.selectedQuantity,
       buttonText: this.buttonText,
-      buttonText: this.buttonText,
     });
-  }
-
-  get buttonClass() {
-    return `${this.variantAvailable ? '' : this.classes.disabled} ${this.options.contents.quantity ? 'beside-quantity' : ''}`;
   }
 
   get imageWrapperClass() {
