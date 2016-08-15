@@ -89,7 +89,7 @@ class OptionsTransform {
     options.cart.styles.button['background-color'] = `#${value}`;
     options.modalProduct.styles.button['background-color'] = `#${value}`;
     options.modal.styles.button['background-color'] = `#${value}`;
-    options.toggle.styles.wrapper['background-color'] = `#${value}`;
+    options.toggle.styles.toggle['background-color'] = `#${value}`;
   }
 
   button_text_color_transform(value, options) {
@@ -97,7 +97,7 @@ class OptionsTransform {
     options.cart.styles.button.color = `#${value}`;
     options.modalProduct.styles.button.color = `#${value}`;
     options.modal.styles.button.color = `#${value}`;
-    options.toggle.styles.wrapper.color = `#${value}`;
+    options.toggle.styles.toggle.color = `#${value}`;
   }
 
   background_color_transform(value, options) {
