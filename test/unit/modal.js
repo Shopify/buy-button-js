@@ -121,6 +121,7 @@ describe('Modal class', () => {
   describe('render', () => {
     beforeEach((done) => {
       modal.model = fakeProduct;
+      modal.isVisible = true;
       modal.setupView().then(() => modal.render()).then(() => done());
     });
 
