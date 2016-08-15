@@ -55,11 +55,16 @@ export default class Product extends Component {
       classes: this.classes,
       hasQuantity: this.options.contents.quantity,
       selectedQuantity: this.selectedQuantity,
+      wrapperClass: this.imageWrapperClass,
     });
   }
 
   get buttonClass() {
     return `${this.variantAvailable ? '' : this.classes.disabled} ${this.options.contents.quantity ? 'beside-quantity' : ''}`;
+  }
+
+  get imageWrapperClass() {
+    return this.currentImage ? 'has-image' : '';
   }
 
   get DOMEvents() {
@@ -78,12 +83,16 @@ export default class Product extends Component {
   }
 
   get optionsHtml() {
-    return this.decoratedOptions.reduce((acc, option) => {
-      const data = option;
-      data.classes = this.classes;
+    if (this.contents.options) {
+      return this.decoratedOptions.reduce((acc, option) => {
+        const data = option;
+        data.classes = this.classes;
 
-      return acc + this.childTemplate.render({data});
-    }, '');
+        return acc + this.childTemplate.render({data});
+      }, '');
+    } else {
+      return '';
+    }
   }
 
   get hasVariants() {

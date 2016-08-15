@@ -125,27 +125,37 @@ $modal-footer-height: 90px;
     max-height: #{$modal-height}px;
   }
 
-  .modal-img {
-    width: 60%;
-    float: left;
-    height: 100%;
-    border-right: 1px solid rgba(170,170,170,0.3);
-  }
-
   .product__variant-image {
     max-height: 100%;
   }
 
   .modal-contents {
-    float: right;
-    width: 40%;
     height: 100%;
   }
 
   .modal-footer {
-    left: 60%;
-    width: 40%;
+    width: 100%;
   }
+
+  .has-image {
+    .modal-contents {
+      float: right;
+      width: 40%;
+    }
+
+    .modal-img {
+      width: 60%;
+      float: left;
+      height: 100%;
+      border-right: 1px solid rgba(170,170,170,0.3);
+    }
+
+    .modal-footer {
+      left: 60%;
+      width: 40%;
+    }
+  }
+
 
   .btn.beside-quantity {
     margin-left: 0;
