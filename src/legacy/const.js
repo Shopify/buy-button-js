@@ -51,11 +51,6 @@ const product = {
 };
 
 const productSet = {
-  styles: {
-    product: {},
-    wrapper: {},
-  },
-  products: {},
   text: {},
 };
 
@@ -64,21 +59,17 @@ const modalProduct = {
     button: {},
     wrapper: {},
   },
-  text: {},
 };
 
 const modal = {
   styles: {
     button: {},
-    wrapper: {},
   },
-  text: {},
 };
 
 const cart = {
   styles: {
     button: {},
-    wrapper: {},
     header: {},
     title: {},
     lineItems: {},
@@ -91,10 +82,8 @@ const cart = {
 
 const toggle = {
   styles: {
-    button: {},
-    wrapper: {},
+    toggle: {},
   },
-  text: {},
 };
 
 export const defaultOptions = {product, productSet, modalProduct, modal, cart, toggle};
