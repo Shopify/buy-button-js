@@ -5,6 +5,7 @@ $modal-footer-height: 90px;
   right: 0px;
   top: 3px;
   line-height: 20px;
+  z-index: $max-z-index;
 }
 
 .btn {
@@ -104,7 +105,6 @@ $modal-footer-height: 90px;
 
   .btn--close {
     position: fixed;
-    z-index: $max-z-index;
   }
 
   .btn.beside-quantity {
@@ -155,7 +155,7 @@ $modal-footer-height: 90px;
     background-image: linear-gradient(to bottom,  rgba(256, 255, 255, 0.93) 0%,rgba(255, 255, 255, 1) 100%);
     padding-top: 20px;
   }
-  
+
   .has-image {
     .modal-img {
       width: 60%;
