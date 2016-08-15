@@ -55,6 +55,7 @@ export default class Product extends Component {
       classes: this.classes,
       hasQuantity: this.options.contents.quantity,
       selectedQuantity: this.selectedQuantity,
+      imgIsButton: !this.contents.button,
     });
   }
 

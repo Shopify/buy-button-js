@@ -1,5 +1,7 @@
 const productTemplate = {
-  img: '<img class="{{data.classes.product.img}}" data-src="{{data.currentImage.src}}" />',
+  img: `{{#data.imgIsButton}}<button class="{{data.classes.product.button}} {{data.classes.product.imgButton}}">{{/data.imgIsButton}}
+          <img class="{{data.classes.product.img}}" data-src="{{data.currentImage.src}}" />
+        {{#data.imgIsButton}}</button>{{/data.imgIsButton}}`,
   title: '<h1 class="{{data.classes.product.title}}">{{data.title}}</h1>',
   variantTitle: '{{#data.hasVariants}}<h2 class="{{data.classes.product.variantTitle}}">{{data.selectedVariant.title}}</h2>{{/data.hasVariants}}',
   options: '{{#data.hasVariants}}<div class="{{data.classes.product.options}}">{{{data.optionsHtml}}}</div>{{/data.hasVariants}}',
