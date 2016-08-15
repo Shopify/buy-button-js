@@ -38,7 +38,7 @@ export default class Modal extends Component {
   }
 
   get productModalTemplates() {
-    const quantity = this.product.config.modalProduct.contents.quantity ? thsi.product.templates.quantity : '';
+    const quantity = this.product.config.modalProduct.contents.quantity ? this.product.templates.quantity : '';
     return {
       img: `<div class="${this.classes.modal.img}">${this.product.templates.img}</div>`,
       contents: `<div class="${this.classes.modal.contents}"><div class="${this.classes.modal.scrollContents}">${this.productTemplate.masterTemplate}</div></div>`,

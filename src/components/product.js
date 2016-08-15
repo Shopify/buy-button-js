@@ -228,7 +228,7 @@ export default class Product extends Component {
     return satisfactoryVariants.length;
   }
 
-  closeCartOnBgClick(evt) {
+  closeCartOnBgClick() {
     if (this.cart.isVisible) {
       this.cart.close();
     }
