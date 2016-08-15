@@ -46,7 +46,11 @@ export default class UI {
 
   closeCart() {
     if (this.components.cart.length) {
-      this.components.cart.forEach((cart) => cart.close());
+      this.components.cart.forEach((cart) => {
+        if (cart.isVisible) {
+          cart.close()
+        }
+      });
     }
   }
 

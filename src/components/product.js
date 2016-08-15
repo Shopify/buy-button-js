@@ -143,7 +143,8 @@ export default class Product extends Component {
     });
   }
 
-  onButtonClick() {
+  onButtonClick(evt) {
+    evt.stopPropagation();
     if (this.options.buttonDestination === 'cart') {
       this.props.closeModal();
       this.cart.addVariantToCart(this.model.selectedVariant, this.model.selectedQuantity);
@@ -213,7 +214,7 @@ export default class Product extends Component {
   }
 
   closeCartOnBgClick(evt) {
-    if (!this.wrapper.querySelector(`.${this.classes.product.button}`).contains(evt.target)) {
+    if (this.cart.isVisible) {
       this.cart.close();
     }
   }
