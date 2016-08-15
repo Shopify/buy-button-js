@@ -5,7 +5,6 @@ $modal-footer-height: 90px;
   right: 0px;
   top: 3px;
   line-height: 20px;
-  z-index: 10000;
 }
 
 .btn {
@@ -21,7 +20,7 @@ $modal-footer-height: 90px;
   position: absolute;
   left: 0;
   right: 0;
-  z-index: 9000;
+  z-index: $max-z-index - 1;
   height: 100%;
 }
 
@@ -105,7 +104,7 @@ $modal-footer-height: 90px;
 
   .btn--close {
     position: fixed;
-    z-index: 10000;
+    z-index: $max-z-index;
   }
 
   .btn.beside-quantity {

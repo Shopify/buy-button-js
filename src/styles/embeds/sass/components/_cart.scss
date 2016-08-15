@@ -26,7 +26,7 @@ $cart-item-height: 65px;
 .cart__header {
   padding: $gutter;
   position: relative;
-  z-index: 5;
+  z-index: $max-z-index;
 }
 
 .cart__title {
