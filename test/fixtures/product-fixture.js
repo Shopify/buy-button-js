@@ -5,11 +5,7 @@ const testProduct = {
     id: 12345,
     productId: 123,
     title: 'sloth / small',
-    attrs: {
-      variant: {
-        available: true,
-      },
-    },
+    available: true,
     optionValues: [
       {
         name: 'Print',

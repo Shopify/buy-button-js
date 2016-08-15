@@ -103,7 +103,7 @@ export default class Product extends Component {
   }
 
   get variantInStock() {
-    return this.model.selectedVariant.attrs.variant.available;
+    return this.model.selectedVariant.available;
   }
 
   get requiresCart() {

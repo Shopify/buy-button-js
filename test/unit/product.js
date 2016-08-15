@@ -172,11 +172,7 @@ describe('Product class', () => {
       describe('if variant is not in stock', () => {
         it('returns false', () => {
           product.model.selectedVariant = {
-            attrs: {
-              variant: {
-                available: false,
-              },
-            },
+            available: false,
           }
           assert.notOk(product.buttonEnabled);
         });
@@ -200,11 +196,7 @@ describe('Product class', () => {
     describe('if variant is not in stock', () => {
       it('returns "out of stock"', () => {
         product.model.selectedVariant = {
-          attrs: {
-            variant: {
-              available: false,
-            },
-          },
+          available: false,
         }
         assert.equal(product.buttonText, product.text.outOfStock);
       });
