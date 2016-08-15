@@ -272,4 +272,13 @@ describe('Product class', () => {
       });
     });
   });
+
+  describe('setDefaultVariant', () => {
+    it('sets selectedVariant to product.defalutVariantId', () => {
+      product.defaultVariantId = 12347;
+      const model = product.setDefaultVariant(testProduct);
+      assert.equal(model.options[0].selected, 'shark');
+      assert.equal(model.options[1].selected, 'large');
+    });
+  });
 });

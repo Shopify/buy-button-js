@@ -6,6 +6,7 @@ import Checkout from './checkout';
 export default class Product extends Component {
   constructor(config, props) {
     super(config, props);
+    this.defaultVariantId = config.variantId;
     this.cachedImage = null;
     this.childTemplate = new Template(this.config.option.templates, this.config.option.contents, 'options');
     this.cart = null;
@@ -136,6 +137,12 @@ export default class Product extends Component {
     }));
   }
 
+  setupModel(data) {
+    return super.setupModel(data).then((model) => {
+      return this.setDefaultVariant(model);
+    });
+  }
+
   sdkFetch() {
     if (this.id) {
       return this.props.client.fetchProduct(this.id);
@@ -225,5 +232,23 @@ export default class Product extends Component {
     if (this.cart.isVisible) {
       this.cart.close();
     }
+  }
+
+  setDefaultVariant(model) {
+    if (!this.defaultVariantId) {
+      return model;
+    }
+
+    const selectedVariant = model.variants.filter((variant) => variant.id === this.defaultVariantId)[0];
+    if (selectedVariant) {
+      model.options.forEach((option) => {
+        option.selected = selectedVariant.optionValues.filter((optionValue) => optionValue.name === option.name)[0].value;
+      });
+    } else {
+
+      // eslint-disable-next-line
+      console.error('invalid variant ID');
+    }
+    return model;
   }
 }
