@@ -64,7 +64,7 @@ export default class Product extends Component {
   }
 
   get imageWrapperClass() {
-    return this.currentImage ? 'has-image' : '';
+    return this.currentImage ? 'has-image' : 'no-image';
   }
 
   get DOMEvents() {
@@ -83,16 +83,15 @@ export default class Product extends Component {
   }
 
   get optionsHtml() {
-    if (this.contents.options) {
-      return this.decoratedOptions.reduce((acc, option) => {
-        const data = option;
-        data.classes = this.classes;
-
-        return acc + this.childTemplate.render({data});
-      }, '');
-    } else {
-      return '';
+    if (!this.contents.options) {
+      return;
     }
+    return this.decoratedOptions.reduce((acc, option) => {
+      const data = option;
+      data.classes = this.classes;
+
+      return acc + this.childTemplate.render({data});
+    }, '');
   }
 
   get hasVariants() {
