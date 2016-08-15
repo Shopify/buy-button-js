@@ -18,4 +18,4 @@ mv $lint_output_file $CIRCLE_TEST_REPORTS/xunit/
 unset test_output_file
 unset lint_output_file
 
-exit $test_status || $lint_status
+exit ((test_status + lint_status))
