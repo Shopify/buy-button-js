@@ -53,21 +53,39 @@ $cart-item-height: 65px;
   perspective-origin: 50% 0px;
 }
 
+@keyframes flipIn {
+  from {
+    max-height: 0;
+    transform: rotateX(90deg) translateY(-50%);
+    margin-bottom: -65px;
+    opacity: 0;
+  }
+
+  to {
+    min-height: $cart-item-height;
+    margin-bottom: $gutter;
+    transform: none;
+    opacity: 1;
+  }
+}
+
 .cart-item {
+  min-height: $cart-item-height;
+  margin-bottom: 20px;
   overflow: hidden;
   position: relative;
-  min-height: $cart-item-height;
-  margin-bottom: $gutter;
   transition: all 200ms;
   backface-visibility: visible;
   transform-style: preserve-3d;
+  animation-name: flipIn;
+  animation-duration: 200ms;
 }
 
 .cart-item.is-hidden {
-  max-height: 0;
   transform: rotateX(90deg) translateY(-50%);
   margin-bottom: -65px;
   opacity: 0;
+  transition: all 200ms;
 }
 
 .cart-item__image {
