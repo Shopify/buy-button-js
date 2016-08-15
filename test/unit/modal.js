@@ -5,6 +5,7 @@ import Product from '../../src/components/product';
 const config = {
   options: {
     product: {
+      iframe: false,
       templates: {
         button: '<button id="button" class="button">Fake button</button>'
       }
