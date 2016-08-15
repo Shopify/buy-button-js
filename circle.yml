@@ -1,3 +1,6 @@
 machine:
   node:
     version: v5.5.0
+dependencies:
+  pre:
+    - npm set progerss=false

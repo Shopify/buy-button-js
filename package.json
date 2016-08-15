@@ -21,8 +21,10 @@
     "polyfill": "NODE_PATH=./node_modules node ./script/polyfill.js",
     "uglify": "uglifyjs build/shopify-buy-ui.globals.polyfilled.js --output build/shopify-buy-ui.globals.polyfilled.min.js",
     "lint": "eslint src/*",
+    "lint-ci": "eslint src -f junit > \"${lint_output_file}\"",
     "pretest": "npm run build:test",
-    "test": "testem ci",
+    "testem-ci": "testem ci -R xunit > \"${test_output_file}\"",
+    "test": "./test-ci",
     "test:dev": "npm run watch:test | testem",
     "postinstall": "npm run build"
   },
