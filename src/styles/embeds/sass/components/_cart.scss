@@ -123,6 +123,11 @@ $cart-item-height: 65px;
   color: $color-title;
 }
 
+.cart-empty-text {
+  padding: 10px $gutter;
+  text-align: center;
+}
+
 .btn--cart-checkout {
   clear: both;
   margin-top: 15px;

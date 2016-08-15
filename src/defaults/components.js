@@ -132,9 +132,11 @@ const defaults = {
       button: 'btn btn--cart-checkout',
       close: 'btn--close',
       cartScroll: 'cart-scroll',
+      emptyCart: 'cart-empty-text',
     },
     text: {
       title: 'Your cart',
+      empty: 'Your cart is empty.',
       button: 'Checkout',
       total: 'Total',
       currency: 'CAD',

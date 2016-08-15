@@ -43,6 +43,11 @@ $max-z-index: 2147483647;
   transform: translateY(-50%);
   max-width: 46px;
   z-index: $max-z-index - 2;
+  display: none;
+
+  &.is-active {
+    display: block;
+  }
 }
 
 .shopify-buy-frame--productSet {

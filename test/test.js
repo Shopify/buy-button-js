@@ -18,3 +18,4 @@ import './unit/cart';
 import './unit/checkout';
 import './unit/product-set';
 import './unit/modal';
+import './unit/toggle';

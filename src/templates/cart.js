@@ -6,7 +6,10 @@ const cartTemplates = {
               <span class="visuallyhidden">Close</span>
              </button>
           </div>`,
-  lineItems: '<div class="{{data.classes.cart.cartScroll}}"><div class="{{data.classes.cart.lineItems}}">{{{data.lineItemsHtml}}}</div></div>',
+  lineItems: `<div class="{{data.classes.cart.cartScroll}}">
+                {{#data.isEmpty}}<p class="{{data.classes.cart.emptyCart}}">{{data.text.empty}}</p>{{/data.isEmpty}}
+                <div class="{{data.classes.cart.lineItems}}">{{{data.lineItemsHtml}}}</div>
+              </div>`,
   footer: `<div class="{{data.classes.cart.footer}}">
             <p class="{{data.classes.cart.subtotalText}}">{{data.text.total}}</p>
             <p class="{{data.classes.cart.subtotal}}"><span class="{{data.classes.currency}}"></span>\${{data.subtotal}}</p>

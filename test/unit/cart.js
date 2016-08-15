@@ -75,6 +75,7 @@ describe('Cart class', () => {
       }
 
       let render = sinon.stub(cart, 'render');
+      let toggleRender = sinon.stub(cart.toggle, 'render');
       let updateLineItem = sinon.stub(cart.model, 'updateLineItem').returns(Promise.resolve({
         id: 1,
         lineItems: [{
@@ -92,6 +93,7 @@ describe('Cart class', () => {
           }]
         });
         assert.calledWith(updateLineItem, 1234, 6);
+        assert.calledOnce(toggleRender);
         done();
       }).catch((e) => {
         done(e);
