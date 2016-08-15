@@ -39,7 +39,7 @@
   min-width: inherit;
   width: auto;
   height: auto;
-  z-index: 2;
+  z-index: $max-z-index;
 
   &.js-active {
     transform: translateY(-50%);
