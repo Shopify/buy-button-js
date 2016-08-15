@@ -166,7 +166,7 @@ class OptionsTransform {
 
   setupModalOptions(options) {
     options.product.contents.options = false;
-    options.product.contents.button = false;
+    //options.product.contents.button = false;
     options.product.styles.title['text-align'] = 'center';
     options.product.styles.title['margin-top'] = '20px';
     options.product.styles.prices['margin-left'] = '0px';
