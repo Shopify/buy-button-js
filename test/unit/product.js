@@ -65,7 +65,7 @@ describe('Product class', () => {
 
   describe('get DOMEvents', () => {
     it('returns functions for bindings', () => {
-      assert.isFunction(product.DOMEvents['change .component-input--select__select']);
+      assert.isFunction(product.DOMEvents['change .option-select__select']);
       assert.isFunction(product.DOMEvents['click .btn']);
     });
   });

@@ -90,7 +90,7 @@ describe('ProductSet class', () => {
         });
       });
 
-      it('calls fetchQueryProducts with collection id', () => {
+      it('calls fetchQueryProducts with collection id', (done) => {
         collection.sdkFetch().then(() => {
           assert.calledWith(collection.client.fetchQueryCollections, {handle: 'hats'});
           assert.calledWith(collection.client.fetchQueryProducts, {collection_id: 2345});
