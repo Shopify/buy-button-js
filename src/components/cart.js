@@ -56,9 +56,11 @@ export default class Cart extends Component {
       return this.props.client.createCart().then((cart) => {
         try {
           this.storage.setItem('lastCartId', cart.id);
-        } finally {
-          return cart;
+        } catch (err) {
+          // eslint-disable-next-line
+          console.warn('localStorage unsupported');
         }
+        return cart;
       });
     }
   }
@@ -101,6 +103,11 @@ export default class Cart extends Component {
 
   onCheckout() {
     this.checkout.open(this.model.checkoutUrl);
+  }
+
+  updateConfig(config) {
+    super.updateConfig(config);
+    this.toggle.updateConfig(config);
   }
 
   updateQuantity(id, fn) {

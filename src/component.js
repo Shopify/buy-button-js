@@ -165,8 +165,8 @@ export default class Component {
 
   updateConfig(config) {
     this._userEvent('beforeUpdateConfig');
-    this.config = merge(componentDefaults, config.options);
-    this.template = new Template(this.templates, this.contents, this.typeKey);
+    this.config = merge(this.config, config.options);
+    this.template = new Template(this.templates, this.contents, this.classes[this.typeKey][this.typeKey]);
     if (this.iframe) {
       this.iframe.updateStyles(this.styles);
     }

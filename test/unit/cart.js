@@ -1,4 +1,5 @@
 import Cart from '../../src/components/cart';
+import Component from '../../src/component';
 import defaults from '../../src/defaults/components';
 
 let cart;
@@ -135,6 +136,35 @@ describe('Cart class', () => {
       }).catch((e) => {
         done(e);
       });
+    });
+  });
+
+  describe('updateConfig', () => {
+    const newConfig = {
+      options: {
+        styles: {
+          button: {
+            'color': 'red',
+          },
+        },
+      },
+    }
+
+    let superSpy;
+
+    beforeEach(() => {
+      superSpy = sinon.stub(Component.prototype, 'updateConfig');
+      cart.toggle.updateConfig = sinon.spy();
+    });
+
+    afterEach(() => {
+      superSpy.restore();
+    });
+
+    it('calls updateConfig on toggle', () => {
+      cart.updateConfig(newConfig);
+      assert.calledWith(cart.toggle.updateConfig, newConfig);
+      assert.calledWith(superSpy, newConfig);
     });
   });
 });

@@ -7,12 +7,19 @@ function isArray(arg) {
 }
 
 export default class ProductSet extends Component {
+  constructor(config, props) {
+    super(config, props);
+    this.products = [];
+    this.cart = null;
+  }
+
   get typeKey() {
     return 'productSet';
   }
 
   sdkFetch() {
-    // eslint-disable camelcase
+
+    /* eslint-disable camelcase */
     let method;
     if (this.id) {
       const queryKey = isArray(this.id) ? 'product_ids' : 'collection_id';
@@ -24,7 +31,8 @@ export default class ProductSet extends Component {
       });
     }
     return method;
-    // eslint-enable camelcase
+
+    /* eslint-enable camelcase */
   }
 
   fetchData() {
@@ -33,6 +41,11 @@ export default class ProductSet extends Component {
         products,
       };
     });
+  }
+
+  updateConfig(config) {
+    super.updateConfig(config);
+    this.cart.updateConfig(config);
   }
 
   render() {
@@ -50,9 +63,14 @@ export default class ProductSet extends Component {
     };
 
     const promises = this.model.products.map((productModel) => {
-      return new Product(productConfig, this.props).init(productModel);
+      const product = new Product(productConfig, this.props);
+      this.products.push(product);
+      return product.init(productModel);
     });
 
-    return Promise.all(promises).then(() => this.loadImgs());
+    return Promise.all(promises).then(() => {
+      this.cart = this.products[0].cart;
+      return this.loadImgs();
+    });
   }
 }

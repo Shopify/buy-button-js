@@ -58,6 +58,15 @@ describe('Modal class', () => {
         done(e);
       });
     });
+
+    it('sets isVisible to true', (done) => {
+      modal.init(fakeProduct).then((what) => {
+        assert(modal.isVisible);
+        done();
+      }).catch((e) => {
+        done(e);
+      });
+    });
   });
 
   describe('getters', () => {
@@ -98,9 +107,21 @@ describe('Modal class', () => {
     });
   });
 
+  describe('close', () => {
+    it('sets isVisible to false', () => {
+      modal.iframe = {
+        removeClass: sinon.spy()
+      }
+      modal.close();
+      assert.notOk(modal.isVisible);
+      assert.calledWith(modal.iframe.removeClass, 'js-active');
+    });
+  });
+
   describe('render', () => {
     beforeEach((done) => {
       modal.model = fakeProduct;
+      modal.isVisible = true;
       modal.setupView().then(() => modal.render()).then(() => done());
     });
 

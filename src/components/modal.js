@@ -9,7 +9,6 @@ export default class Modal extends Component {
     this.node = document.body.appendChild(document.createElement('div'));
     this.node.className = 'shopify-buy-modal-wrapper';
     this.product = null;
-    this.isVisible = false;
   }
 
   get typeKey() {
@@ -68,11 +67,20 @@ export default class Modal extends Component {
     }
   }
 
+  init(data) {
+    this.isVisible = true;
+    return super.init(data);
+  }
+
   close() {
+    this.isVisible = false;
     this.iframe.removeClass('js-active');
   }
 
   render() {
+    if (!this.isVisible) {
+      return Promise.resolve();
+    }
     super.render();
     this.iframe.addClass('js-active');
     this.product = new Product(this.productConfig, this.props);

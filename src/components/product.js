@@ -149,6 +149,7 @@ export default class Product extends Component {
     } else if (this.handle) {
       return this.props.client.fetchQueryProducts({handle: this.handle}).then((products) => products[0]);
     }
+    return Promise.resolve();
   }
 
   fetchData() {
@@ -158,7 +159,15 @@ export default class Product extends Component {
     });
   }
 
-  onButtonClick(evt) {
+  updateConfig(config) {
+    super.updateConfig(config);
+    this.cart.updateConfig(config);
+    if (this.modal) {
+      this.modal.updateConfig(config);
+    }
+  }
+
+  onButtonClick() {
     evt.stopPropagation();
     if (this.options.buttonDestination === 'cart') {
       this.props.closeModal();
