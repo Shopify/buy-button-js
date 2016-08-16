@@ -28,11 +28,11 @@
   display: inline-block;
   vertical-align: middle;
   margin-left: $gutter / 2;
+  margin-top: -3px;
 }
 
 .product__actual-price {
   font-size: 16px;
-  line-height: 22px;
   color: $color-grey;
   display: block;
 }
