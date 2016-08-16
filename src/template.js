@@ -1,10 +1,9 @@
 import hogan from 'hogan.js';
 
 export default class Template {
-  constructor(templates, contents, wrapper) {
+  constructor(templates, contents) {
     this.templates = templates;
     this.contents = contents;
-    this.wrapperFn = wrapper;
     this.templateFn = hogan.compile(this.masterTemplate);
   }
 
