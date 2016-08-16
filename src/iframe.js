@@ -44,9 +44,9 @@ function selectorStyleGroup(selector, selectorClass) {
             declarations: ruleDeclarations(selector[decKey]),
           });
         } else {
-          const s = selectorClass.split(' ').join('.');
+          const formattedSelector = selectorClass.split(' ').join('.');
           styleGroup.push({
-            selector: `.${s}`,
+            selector: `.${formattedSelector}`,
             declarations: ruleDeclarations(selector),
           });
         }
@@ -109,7 +109,7 @@ export default class iframe {
     Object.keys(this.customStylesHash).forEach((typeKey) => {
       if (this.customStylesHash[typeKey]) {
         Object.keys(this.customStylesHash[typeKey]).forEach((key) => {
-          const styleGroup = selectorStyleGroup(this.customStylesHash[typeKey][key], this.classes[typeKey][key])
+          const styleGroup = selectorStyleGroup(this.customStylesHash[typeKey][key], this.classes[typeKey][key]);
           customStyles = customStyles.concat(styleGroup);
         });
       }

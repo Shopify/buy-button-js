@@ -231,10 +231,7 @@ export default class Component {
       }
     });
     if (this.iframe) {
-      return Promise.all(promises).then(() => {
-        this.resize();
-        this.fadeIn();
-      });
+      return Promise.all(promises);
     } else {
       return Promise.resolve();
     }
