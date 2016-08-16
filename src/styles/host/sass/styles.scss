@@ -3,10 +3,16 @@ $max-z-index: 2147483647;
 
 .shopify-buy-frame {
   display: inline-block;
+  opacity: 0;
+  transition: opacity 250ms;
 
   iframe {
     width: 100%;
     display: block;
+  }
+
+  &.is-resolved {
+    opacity: 1;
   }
 }
 
