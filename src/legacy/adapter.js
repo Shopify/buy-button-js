@@ -2,6 +2,8 @@ import ShopifyBuy from '../shopify-buy-ui';
 import UI from '../ui';
 import EmbedWrapper from './embed-wrapper';
 
+// Use the Buy Button Channel API key
+const apiKey = window.SHOPIFY_BUY_UI_ADAPTER_API_KEY || '395ba487a5981e6e573b5ab104645271';
 const appId = window.SHOPIFY_BUY_UI_ADAPTER_APP_ID || 6;
 const apiHost = window.SHOPIFY_BUY_UI_API_HOST || 'https://widgets.shopifyapps.com';
 const apiPath = window.SHOPIFY_BUY_UI_API_PATH || '/v4/api_key';

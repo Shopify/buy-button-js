@@ -139,6 +139,18 @@ class OptionsTransform {
     options.product.styles.title.color = `#${value}`;
   }
 
+  buy_button_out_of_stock_text_transform(value, options) {
+    options.product.text.outOfStock = value;
+  }
+
+  buy_button_product_unavailable_text_transform(value, options) {
+    options.product.text.productUnavailable = value; // not implemented
+  }
+
+  checkout_button_text_transform(value, options) {
+    options.cart.text.button = value;
+  }
+
   text_color_transform(value, options) {
     options.cart.styles.lineItems.color = `#${value}`;
     options.cart.styles.subtotal.color = `#${value}`;
