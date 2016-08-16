@@ -15,7 +15,10 @@ export default class Template {
   get masterTemplate() {
     return Object.keys(this.contents)
         .filter((key) => this.contents[key])
-        .reduce((acc, key) => acc + this.templates[key], '');
+        .reduce((acc, key) => {
+          const string = this.templates[key] || '';
+          return acc + string;
+        }, '');
   }
 
   render(data) {

@@ -27,6 +27,35 @@ function ruleDeclarations(rule) {
   return Object.keys(rule).filter((key) => !isPseudoSelector(key) && !isMedia(key)).map((key) => ({property: key, value: rule[key]}));
 }
 
+function selectorStyleGroup(selector, selectorClass) {
+  const styleGroup = [];
+  if (selector) {
+    Object.keys(selector).forEach((decKey) => {
+      if (selector && selectorClass) {
+        if (isPseudoSelector(decKey)) {
+          styleGroup.push({
+            selector: `.${selectorClass}${decKey}`,
+            declarations: ruleDeclarations(selector[decKey]),
+          });
+        } else if (isMedia(decKey)) {
+          styleGroup.push({
+            media: decKey,
+            selector: `.${selectorClass}`,
+            declarations: ruleDeclarations(selector[decKey]),
+          });
+        } else {
+          const formattedSelector = selectorClass.split(' ').join('.');
+          styleGroup.push({
+            selector: `.${formattedSelector}`,
+            declarations: ruleDeclarations(selector),
+          });
+        }
+      }
+    });
+  }
+  return styleGroup;
+}
+
 export default class iframe {
   constructor(parent, classes, customStyles, stylesheet) {
     this.el = document.createElement('iframe');
@@ -78,31 +107,9 @@ export default class iframe {
     let customStyles = [];
 
     Object.keys(this.customStylesHash).forEach((typeKey) => {
-
       if (this.customStylesHash[typeKey]) {
         Object.keys(this.customStylesHash[typeKey]).forEach((key) => {
-          const styleGroup = [];
-
-          Object.keys(this.customStylesHash[typeKey][key]).forEach((decKey) => {
-            if (isPseudoSelector(decKey)) {
-              styleGroup.push({
-                selector: `.${this.classes[typeKey][key]}${decKey}`,
-                declarations: ruleDeclarations(this.customStylesHash[typeKey][key][decKey]),
-              });
-            } else if (isMedia(decKey)) {
-              styleGroup.push({
-                media: decKey,
-                selector: `.${this.classes[typeKey][key]}`,
-                declarations: ruleDeclarations(this.customStylesHash[typeKey][key][decKey]),
-              });
-            } else {
-              const selector = this.classes[typeKey][key].split(' ').join('.');
-              styleGroup.push({
-                selector: `.${selector}`,
-                declarations: ruleDeclarations(this.customStylesHash[typeKey][key]),
-              });
-            }
-          });
+          const styleGroup = selectorStyleGroup(this.customStylesHash[typeKey][key], this.classes[typeKey][key]);
           customStyles = customStyles.concat(styleGroup);
         });
       }
