@@ -115,11 +115,21 @@ describe('Modal class', () => {
   describe('close', () => {
     it('sets isVisible to false', () => {
       modal.iframe = {
-        removeClass: sinon.spy()
+        removeClass: sinon.spy(),
+        parent: {
+          addEventListener: sinon.spy(),
+        }
+      }
+      modal.wrapper = {
+        classList: {
+          remove: sinon.spy()
+        }
       }
       modal.close();
       assert.notOk(modal.isVisible);
-      assert.calledWith(modal.iframe.removeClass, 'js-active');
+      assert.calledWith(modal.iframe.removeClass, 'is-active');
+      assert.calledWith(modal.wrapper.classList.remove, 'is-active');
+      assert.calledWith(modal.iframe.parent.addEventListener, 'transitionend', sinon.match.func);
     });
   });
 
@@ -131,7 +141,7 @@ describe('Modal class', () => {
     });
 
     it('makes modal visible', () => {
-      assert.match(modal.iframe.parent.className, 'js-active');
+      assert.match(modal.iframe.parent.className, 'is-active');
     });
 
     it('replaces product template', () => {

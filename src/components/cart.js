@@ -41,7 +41,7 @@ export default class Cart extends Component {
 
   get viewData() {
     return merge(this.model, {
-      wrapperClass: this.isVisible ? 'js-active' : '',
+      wrapperClass: this.isVisible ? 'is-active' : '',
       text: this.text,
       classes: this.classes,
       lineItemsHtml: this.lineItemsHtml,
@@ -72,9 +72,9 @@ export default class Cart extends Component {
   render() {
     super.render();
     if (this.isVisible) {
-      this.iframe.addClass('js-active');
+      this.iframe.addClass('is-active');
     } else {
-      this.iframe.removeClass('js-active');
+      this.iframe.removeClass('is-active');
     }
   }
 
@@ -94,15 +94,26 @@ export default class Cart extends Component {
   }
 
   onQuantityBlur(evt, target) {
-    this.updateQuantity(target.getAttribute('data-line-item-id'), () => target.value);
+    this.setQuantity(target, () => target.value);
   }
 
   onQuantityIncrement(qty, evt, target) {
-    this.updateQuantity(target.getAttribute('data-line-item-id'), (prevQty) => prevQty + qty);
+    this.setQuantity(target, (prevQty) => prevQty + qty);
   }
 
-  onCheckout() {
-    this.checkout.open(this.model.checkoutUrl);
+  removeItem(id, target) {
+    const el = target.parentNode.parentNode;
+    return this.model.updateLineItem(id, 0).then((cart) => {
+      this.toggle.render();
+      this.model = cart;
+      el.classList.add('is-hidden');
+      el.addEventListener('transitionend', () => {
+        if (el.parentNode) {
+          el.parentNode.removeChild(el);
+        }
+      });
+      return el;
+    });
   }
 
   updateConfig(config) {
@@ -110,10 +121,8 @@ export default class Cart extends Component {
     this.toggle.updateConfig(config);
   }
 
-  updateQuantity(id, fn) {
-    const item = this.model.lineItems.filter((lineItem) => lineItem.id === id)[0];
-    const newQty = fn(item.quantity);
-    return this.model.updateLineItem(id, newQty).then((cart) => {
+  updateItem(id, qty) {
+    return this.model.updateLineItem(id, qty).then((cart) => {
       this.model = cart;
       this.render();
       this.toggle.render();
@@ -121,8 +130,24 @@ export default class Cart extends Component {
     });
   }
 
+  onCheckout() {
+    this.checkout.open(this.model.checkoutUrl);
+  }
+
+  setQuantity(target, fn) {
+    const id = target.getAttribute('data-line-item-id');
+    const item = this.model.lineItems.filter((lineItem) => lineItem.id === id)[0];
+    const newQty = fn(item.quantity);
+    if (newQty > 0) {
+      return this.updateItem(id, newQty);
+    } else {
+      return this.removeItem(id, target);
+    }
+  }
+
   addVariantToCart(variant, quantity = 1) {
     this.isVisible = true;
+    this.render();
     return this.model.addVariants({variant, quantity}).then((cart) => {
       this.render();
       this.toggle.render();

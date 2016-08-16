@@ -5,6 +5,7 @@ $modal-footer-height: 90px;
   right: 0px;
   top: 3px;
   line-height: 20px;
+  z-index: $max-z-index;
 }
 
 .btn {
@@ -104,7 +105,6 @@ $modal-footer-height: 90px;
 
   .btn--close {
     position: fixed;
-    z-index: $max-z-index;
   }
 
   .btn.beside-quantity {
@@ -118,11 +118,60 @@ $modal-footer-height: 90px;
   }
 }
 
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-200px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @media (min-width: 801px) {
   .modal-wrapper {
     margin: -#{$modal-height / 2}px auto 0 auto;
     top: 50%;
     max-height: #{$modal-height}px;
+    opacity: 0;
+    transform: translateY(-200px);
+    animation-name: slideOut;
+    animation-duration: 200ms;
+    animation-fill-mode: forwards;
+
+    &.is-active {
+      animation-name: slideIn;
+      animation-duration: 200ms;
+      animation-fill-mode: forwards;
+    }
+  }
+
+  .modal-footer {
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    background-image: linear-gradient(to bottom,  rgba(256, 255, 255, 0.93) 0%,rgba(255, 255, 255, 1) 100%);
+    padding-top: 20px;
+  }
+
+  .has-image {
+    .modal-img {
+      width: 60%;
+      float: left;
+      height: 100%;
+      border-right: 1px solid rgba(170,170,170,0.3);
+    }
+    .modal-contents {
+      float: right;
+      width: 40%;
+    }
+    .modal-footer {
+      left: 60%;
+      bottom: 0;
+      width: 40%;
+    }
   }
 
   .product__variant-image {
@@ -132,30 +181,6 @@ $modal-footer-height: 90px;
   .modal-contents {
     height: 100%;
   }
-
-  .modal-footer {
-    width: 100%;
-  }
-
-  .has-image {
-    .modal-contents {
-      float: right;
-      width: 40%;
-    }
-
-    .modal-img {
-      width: 60%;
-      float: left;
-      height: 100%;
-      border-right: 1px solid rgba(170,170,170,0.3);
-    }
-
-    .modal-footer {
-      left: 60%;
-      width: 40%;
-    }
-  }
-
 
   .btn.beside-quantity {
     margin-left: 0;
