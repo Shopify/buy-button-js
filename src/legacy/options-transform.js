@@ -3,17 +3,19 @@ import merge from 'lodash.merge';
 import {defaultOptions, attributes} from './const';
 
 class OptionsTransform {
-  constructor(embedType, element) {
-    this.embedType = embedType;
+  constructor(element) {
     this.legacyOptions = attributes.reduce((opts, attr) => {
-      opts[attr] = element.getAttribute(`data-${attr}`);
+      const value = element.getAttribute(`data-${attr}`);
+      if (value) {
+        opts[attr] = value;
+      }
       return opts;
     }, {});
+    this.embedType = this.legacyOptions.embed_type;
+    this.handle = this.legacyOptions[`${this.embedType}_handle`];
 
-    // STICKY, if it is not defined and not true then do not move the cart tab
-    // to the side of the window, just place inline where it is in the DOM
     const newOptions = merge({}, defaultOptions);
-    this.uiArguments = attributes.reduce((options, attr) => {
+    this.uiOptions = attributes.reduce((options, attr) => {
       const transform = this[`${attr}_transform`];
       const value = this.legacyOptions[attr];
       if (transform && value) {
@@ -24,17 +26,13 @@ class OptionsTransform {
   }
 
   display_size_transform(value, options) {
-    let width = 450;
-    if (value === 'compact') {
-      width = 230;
-    } else if (parseInt(value, 10)) {
-      width = parseInt(value, 10);
+    if (this.embedType === 'product') {
+      options.product.styles.wrapper.width = '230px';
     }
-    options.product.styles.wrapper.width = `${width}px`;
   }
 
   has_image_transform(value, options) {
-    if (value === 'true') {
+    if (this.isTruthy(value)) {
       return;
     }
     options.product.contents.img = false;
@@ -44,40 +42,28 @@ class OptionsTransform {
   }
 
   variant_id_transform(value, options) {
-    options.product.contents.options = false;
+    if (this.embedType === 'product') {
+      options.product.contents.options = false;
+    }
   }
 
   redirect_to_transform(value, options) {
-    // cart, checkout, modal, product
-    // default on collection is modal
-    // default on product is cart
-    // product opens a new tab with the product
-    // if this equals modal, dont show, button, variants, or price.
-    options.product.buttonDestination = value;
-    if (value === 'modal') {
+    if (value === 'product') {
+      options.product.buttonDestination = 'modal';
+    } else {
+      options.product.buttonDestination = value;
+    }
+    if (options.product.buttonDestination === 'modal') {
       this.setupModalOptions(options);
     }
   }
 
   product_modal_transform(value, options) {
-    // click on item and modal opens
-    // hide button and variants
-    if (value !== 'true') {
+    if (!this.isTruthy(value)) {
       return;
     }
     options.product.buttonDestination = 'modal';
     this.setupModalOptions(options);
-  }
-
-  setupModalOptions(options) {
-    options.product.contents.options = false;
-    //options.product.contents.button = false;
-    options.product.styles.title['text-align'] = 'center';
-    options.product.styles.title['margin-top'] = '20px';
-    options.product.styles.prices['margin-left'] = '0px';
-    options.product.styles.prices.display = 'block';
-    options.product.styles.prices['text-align'] = 'center';
-    options.product.styles.prices['margin-bottom'] = '15px';
   }
 
   buy_button_text_transform(value, options) {
@@ -101,11 +87,6 @@ class OptionsTransform {
   }
 
   background_color_transform(value, options) {
-    // product background
-    //    adds padding around variant inputs and button so that it looks like a contained component
-    // NOT collections product background
-    // cart background
-    // modal background
     if (this.embedType !== 'collection') {
       options.product.styles.wrapper['background-color'] = `#${value}`;
       options.product.styles.title['margin-left'] = '20px';
@@ -115,19 +96,19 @@ class OptionsTransform {
       options.product.styles.button['margin-left'] = '20px';
       options.product.styles.button['margin-bottom'] = '15px';
     }
-    options.modalProduct.styles.wrapper['background-color'] = `#${value}`;
+    options.modalProduct.styles.modal['background-color'] = `#${value}`;
     options.cart.styles.cart['background-color'] = `#${value}`;
-    options.cart.styles.header['background-color'] = `#${value}`;
-    options.cart.styles.lineItems['background-color'] = `#${value}`;
-    options.cart.styles.footer['background-color'] = `#${value}`;
+    options.cart.styles.header['background-color'] = 'transparent';
+    options.cart.styles.lineItems['background-color'] = 'transparent';
+    options.cart.styles.footer['background-color'] = 'transparent';
   }
 
   show_product_price_transform(value, options) {
-    options.product.contents.price = (value === 'true');
+    options.product.contents.price = this.isTruthy(value);
   }
 
   show_product_title_transform(value, options) {
-    options.product.contents.title = (value === 'true');
+    options.product.contents.title = this.isTruthy(value);
   }
 
   product_title_color_transform(value, options) {
@@ -135,7 +116,7 @@ class OptionsTransform {
   }
 
   buy_button_out_of_stock_text_transform(value, options) {
-    options.product.text.outOfStock = value; // not implemented
+    options.product.text.outOfStock = value;
   }
 
   buy_button_product_unavailable_text_transform(value, options) {
@@ -147,20 +128,19 @@ class OptionsTransform {
   }
 
   text_color_transform(value, options) {
-    options.cart.styles.header.color = `#${value}`;
-    options.cart.styles.title.color = `#${value}`;
     options.cart.styles.lineItems.color = `#${value}`;
     options.cart.styles.subtotal.color = `#${value}`;
   }
 
   accent_color_transform(value, options) {
-    // cart border color
-    // cart title
-    // cart close button hover
-    // variant title
-    // line item quantity text color
-    // increment & decrement button text color
-    options.cart.styles.cart['border-color'] = `#${value}`;
+    options.cart.styles.title.color = `#${value}`;
+    options.cart.styles.close.color = `#${value}`;
+    options.cart.styles.cart['border-left'] = `1px solid #${value}`;
+    options.cart.styles.footer['border-top'] = `1px solid #${value}`;
+    options.lineItem.styles.variantTitle.color = `#${value}`;
+    options.lineItem.styles.quantity.color = `#${value}`;
+    options.lineItem.styles.quantityInput.color = `#${value}`;
+    options.lineItem.styles.quantityButton.color = `#${value}`;
   }
 
   cart_title_transform(value, options) {
@@ -175,15 +155,27 @@ class OptionsTransform {
     options.cart.text.notice = value;
   }
 
-  sticky_transform(value, options) {
-  }
-
   empty_cart_text_transform(value, options) {
     options.cart.text.emptyCart = value; // not implemented
   }
 
   next_page_button_text_transform(value, options) {
     options.productSet.text.nextPageButton = value; // not implemented
+  }
+
+  setupModalOptions(options) {
+    options.product.contents.options = false;
+    options.product.contents.button = false;
+    options.product.styles.title['text-align'] = 'center';
+    options.product.styles.title['margin-top'] = '20px';
+    options.product.styles.prices['margin-left'] = '0px';
+    options.product.styles.prices.display = 'block';
+    options.product.styles.prices['text-align'] = 'center';
+    options.product.styles.prices['margin-bottom'] = '15px';
+  }
+
+  isTruthy(value) {
+    return value === 'true' || value === '1';
   }
 }
 
