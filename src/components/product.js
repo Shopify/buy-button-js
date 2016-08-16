@@ -146,7 +146,7 @@ export default class Product extends Component {
 
   wrapTemplate(html) {
     if (this.contents.button) {
-      return super.wrapTemplate(html);
+      return `<div class="${this.imageWrapperClass} ${this.classes.product.product}">${html}</div>`;
     } else {
       return `<button class="${this.classes.product.blockButton} ${this.classes.product.product}">${html}</button>`;
     }
