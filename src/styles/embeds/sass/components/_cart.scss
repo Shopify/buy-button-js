@@ -1,10 +1,17 @@
 $cart-item-height: 65px;
 
-@keyframes fadein {
+@keyframes flipin {
   from {
+    max-height: 0;
+    transform: rotatex(90deg) translatey(-50%);
+    margin-bottom: -65px;
     opacity: 0;
   }
+
   to {
+    min-height: $cart-item-height;
+    margin-bottom: $gutter;
+    transform: none;
     opacity: 1;
   }
 }
@@ -48,15 +55,28 @@ $cart-item-height: 65px;
   height: 100%;
   position: relative;
   padding: 0 $gutter $gutter;
+  -webkit-overflow-scrolling: touch;
+  perspective: 400px;
+  perspective-origin: 50% 0px;
 }
 
 .cart-item {
+  min-height: $cart-item-height;
+  margin-bottom: 20px;
   overflow: hidden;
   position: relative;
-  min-height: $cart-item-height;
-  margin-bottom: $gutter;
-  animation-name: fadein;
-  animation-duration: .3s;
+  transition: all 200ms;
+  backface-visibility: visible;
+  transform-style: preserve-3d;
+  animation-name: flipIn;
+  animation-duration: 200ms;
+}
+
+.cart-item.is-hidden {
+  transform: rotateX(90deg) translateY(-50%);
+  margin-bottom: -65px;
+  opacity: 0;
+  transition: all 200ms;
 }
 
 .cart-item__image {

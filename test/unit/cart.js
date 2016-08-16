@@ -65,36 +65,93 @@ describe('Cart class', () => {
     });
   });
 
-  describe('updateQuantity', () => {
-    it('sets line item quantity', (done) => {
+  describe('setQuantity', () => {
+    const node = {
+      getAttribute: () => 1234
+    };
+
+    beforeEach(() => {
       cart.model = {
         lineItems: [{
           id: 1234,
           quantity: 1
         }],
+      }
+      cart.updateItem = sinon.spy();
+      cart.removeItem = sinon.spy();
+    });
+
+    describe('when setting quantity > 0', () => {
+      it('calls updateItem', () => {
+        cart.setQuantity(node, (n) => n + 1);
+        assert.calledWith(cart.updateItem, 1234, 2);
+      });
+    });
+
+    describe('when setting quantity == 0', () => {
+      it('calls removeItem', () => {
+        cart.setQuantity(node, (n) => n - 1);
+        assert.calledWith(cart.removeItem, 1234, node);
+      });
+    });
+  });
+
+  describe('updateItem', () => {
+    let updateLineItemStub;
+
+    beforeEach(() => {
+      cart.model = {
         updateLineItem: () => {}
       }
+      updateLineItemStub = sinon.stub(cart.model, 'updateLineItem').returns(Promise.resolve({test: 'lol'}))
+      cart.render = sinon.spy();
+      cart.toggle.render = sinon.spy();
+    });
 
-      let render = sinon.stub(cart, 'render');
-      let toggleRender = sinon.stub(cart.toggle, 'render');
-      let updateLineItem = sinon.stub(cart.model, 'updateLineItem').returns(Promise.resolve({
-        id: 1,
-        lineItems: [{
-          id: 1234,
-          quantity: 6
-        }]
-      }));
+    it('calls updateLineItem', (done) => {
+      cart.updateItem(123, 3).then(() => {
+        assert.calledWith(updateLineItemStub, 123, 3);
+        assert.calledOnce(cart.render);
+        assert.calledOnce(cart.toggle.render);
+        assert.deepEqual(cart.model, {test: 'lol'});
+        done();
+      }).catch((e) => {
+        done(e);
+      });
+    });
+  });
 
-      cart.updateQuantity(1234, (qty) => qty + 5).then((c) => {
-        assert.deepEqual(cart.model, {
-          id: 1,
-          lineItems: [{
-            id: 1234,
-            quantity: 6
-          }]
-        });
-        assert.calledWith(updateLineItem, 1234, 6);
-        assert.calledOnce(toggleRender);
+
+  describe('removeItem', () => {
+    let updateLineItemStub;
+    let node;
+
+    beforeEach(() => {
+      cart.model = {
+        updateLineItem: () => {}
+      }
+      updateLineItemStub = sinon.stub(cart.model, 'updateLineItem').returns(Promise.resolve({test: 'lol'}))
+      cart.toggle.render = sinon.spy();
+
+      node = {
+        parentNode: {
+          parentNode: {
+            addEventListener: sinon.spy(),
+            classList: {
+              add: sinon.spy(),
+            },
+          },
+        },
+      };
+    });
+
+    it('calls updateLineItem', (done) => {
+      cart.removeItem(123, node).then(() => {
+        assert.calledWith(updateLineItemStub, 123, 0);
+        assert.deepEqual(cart.model, {test: 'lol'});
+        assert.calledOnce(cart.toggle.render);
+        assert.calledWith(node.parentNode.parentNode.classList.add, 'is-hidden');
+        assert.calledWith(node.parentNode.parentNode.addEventListener, 'transitionend');
         done();
       }).catch((e) => {
         done(e);

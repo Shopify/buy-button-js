@@ -25,7 +25,7 @@ $max-z-index: 2147483647;
     height: 100%;
   }
 
-  &.js-active {
+  &.is-active {
     transform: translateX(0);
   }
 }
@@ -62,6 +62,7 @@ $max-z-index: 2147483647;
   left: 0;
   z-index: $max-z-index - 1;
   display: none;
+  transition: background 300ms ease;
 
   iframe {
     height: 100%;
@@ -69,8 +70,11 @@ $max-z-index: 2147483647;
     max-width: none;
   }
 
-  &.js-active {
-    display: block;
+  &.is-active {
     background: rgba(0,0,0,0.3);
+  }
+
+  &.is-block {
+    display: block;
   }
 }
