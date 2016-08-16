@@ -50,6 +50,10 @@ $max-z-index: 2147483647;
   &.is-active {
     display: block;
   }
+
+  iframe {
+    height: auto;
+  }
 }
 
 .shopify-buy-frame--productSet {
