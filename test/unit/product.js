@@ -161,45 +161,92 @@ describe('Product class', () => {
 
 
   describe('get decoratedOptions', () => {
-    const expectedArray = [
-      {
-        name: 'Print',
-        values: [
-          {
-            name: 'sloth',
-            selected: true,
-            disabled: false
-          },
-          {
-            name: 'shark',
-            selected: false,
-            disabled: false
-          }
-        ]
-      },
-      {
-        name: 'Size',
-        values: [
-          {
-            name: 'small',
-            selected: true,
-            disabled: false
-          },
-          {
-            name: 'large',
-            selected: false,
-            disabled: true
-          }
-        ]
-      }
-    ];
-    it('it returns options with selected and disabled values', (done) => {
-      product.init(testProductCopy).then(() => {
-        product.updateVariant('Size', 'small');
-        assert.deepEqual(product.decoratedOptions, expectedArray);
-        done();
-      }).catch((e) => {
-        done(e);
+    describe('when one variant does not exist for selected options', () => {
+      const expectedArray = [
+        {
+          name: 'Print',
+          values: [
+            {
+              name: 'sloth',
+              selected: true,
+              disabled: false
+            },
+            {
+              name: 'shark',
+              selected: false,
+              disabled: false
+            }
+          ]
+        },
+        {
+          name: 'Size',
+          values: [
+            {
+              name: 'small',
+              selected: true,
+              disabled: false
+            },
+            {
+              name: 'large',
+              selected: false,
+              disabled: true
+            }
+          ]
+        }
+      ];
+      it('it returns options with selected and disabled values', (done) => {
+        product.init(testProductCopy).then(() => {
+          product.updateVariant('Size', 'small');
+          assert.deepEqual(product.decoratedOptions, expectedArray);
+          done();
+        }).catch((e) => {
+          done(e);
+        });
+      });
+    });
+
+    describe('when one variant out of stock for selected options', () => {
+      const expectedArray = [
+        {
+          name: 'Print',
+          values: [
+            {
+              name: 'sloth',
+              selected: false,
+              disabled: false
+            },
+            {
+              name: 'shark',
+              selected: true,
+              disabled: false
+            }
+          ]
+        },
+        {
+          name: 'Size',
+          values: [
+            {
+              name: 'small',
+              selected: true,
+              disabled: false
+            },
+            {
+              name: 'large',
+              selected: false,
+              disabled: true
+            }
+          ]
+        }
+      ];
+      it('it returns options with selected and disabled values', (done) => {
+        product.init(testProductCopy).then(() => {
+          product.updateVariant('Size', 'small');
+          product.updateVariant('Print', 'shark');
+          assert.deepEqual(product.decoratedOptions, expectedArray);
+          done();
+        }).catch((e) => {
+          done(e);
+        });
       });
     });
   });

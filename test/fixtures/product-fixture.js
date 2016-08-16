@@ -31,6 +31,7 @@ const testProduct = {
       id: 12345,
       productId: 123,
       title: 'sloth / small',
+      available: true,
       optionValues: [
         {
           name: 'Print',
@@ -44,6 +45,7 @@ const testProduct = {
     },
     {
       id: 12346,
+      available: true,
       productId: 123,
       title: 'shark / small',
       optionValues: [
@@ -60,6 +62,7 @@ const testProduct = {
     {
       id: 12347,
       productId: 123,
+      available: false,
       title: 'shark / large',
       optionValues: [
         {

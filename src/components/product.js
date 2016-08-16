@@ -85,7 +85,7 @@ export default class Product extends Component {
 
   get optionsHtml() {
     if (!this.contents.options) {
-      return;
+      return '';
     }
     return this.decoratedOptions.reduce((acc, option) => {
       const data = option;
@@ -104,6 +104,7 @@ export default class Product extends Component {
     this.variantsMemo = this.model.variants.map((variant) => {
       const betterVariant = {
         id: variant.id,
+        available: variant.available,
         optionValues: {},
       };
       variant.optionValues.forEach((optionValue) => {
@@ -167,7 +168,7 @@ export default class Product extends Component {
     }
   }
 
-  onButtonClick() {
+  onButtonClick(evt) {
     evt.stopPropagation();
     if (this.options.buttonDestination === 'cart') {
       this.props.closeModal();
@@ -230,7 +231,9 @@ export default class Product extends Component {
     selections[name] = value;
 
     const satisfactoryVariants = variants.filter((variant) => {
-      const matchingOptions = Object.keys(selections).filter((key) => variant.optionValues[key] === selections[key]);
+      const matchingOptions = Object.keys(selections).filter((key) => {
+        return variant.optionValues[key] === selections[key] && variant.available;
+      });
       return matchingOptions.length === Object.keys(selections).length;
     });
 
