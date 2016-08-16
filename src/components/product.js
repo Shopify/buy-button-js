@@ -73,6 +73,7 @@ export default class Product extends Component {
       click: this.closeCartOnBgClick.bind(this),
       [`change .${this.classes.option.select}`]: this.onOptionSelect.bind(this),
       [`click .${this.classes.product.button}`]: this.onButtonClick.bind(this),
+      [`click .${this.classes.product.blockButton}`]: this.onButtonClick.bind(this),
       [`click .${this.classes.product.quantityButton}.quantity-increment`]: this.onQuantityIncrement.bind(this, 1),
       [`click .${this.classes.product.quantityButton}.quantity-decrement`]: this.onQuantityIncrement.bind(this, -1),
       [`focusout .${this.classes.product.quantityInput}`]: this.onQuantityBlur.bind(this),
@@ -141,6 +142,14 @@ export default class Product extends Component {
     return super.setupModel(data).then((model) => {
       return this.setDefaultVariant(model);
     });
+  }
+
+  wrapTemplate(html) {
+    if (this.contents.button) {
+      return `<div class="${this.imageWrapperClass} ${this.classes.product.product}">${html}</div>`;
+    } else {
+      return `<button class="${this.classes.product.blockButton} ${this.classes.product.product}">${html}</button>`;
+    }
   }
 
   sdkFetch() {
