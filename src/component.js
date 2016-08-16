@@ -126,6 +126,13 @@ export default class Component {
     this.iframe.el.style.width = `${this.wrapper.clientWidth}px`;
   }
 
+  fadeIn() {
+    if (!this.iframe) {
+      return;
+    }
+    this.iframe.addClass('is-resolved');
+  }
+
   setupView() {
     if (this.iframe) {
       return Promise.resolve();
@@ -171,7 +178,6 @@ export default class Component {
       this.iframe.updateStyles(this.styles);
     }
     this.render();
-    this.resize();
     this._userEvent('afterUpdateConfig');
   }
 
@@ -188,7 +194,10 @@ export default class Component {
       this.wrapper.innerHTML = html;
     }
     this._userEvent('afterRender');
-    return this.loadImgs();
+    return this.loadImgs().then(() => {
+      this.resize();
+      this.fadeIn();
+    });
   }
 
   createWrapper() {
@@ -203,6 +212,7 @@ export default class Component {
   }
 
   loadImgs() {
+    this.iframe.removeClass('is-resolved');
     const imgs = Array.prototype.slice.call(this.wrapper.querySelectorAll('img'));
     const promises = imgs.map((img) => {
       const src = img.getAttribute('data-src');
@@ -221,7 +231,10 @@ export default class Component {
       }
     });
     if (this.iframe) {
-      return Promise.all(promises).then(() => this.resize());
+      return Promise.all(promises).then(() => {
+        this.resize();
+        this.fadeIn();
+      });
     } else {
       return Promise.resolve();
     }
