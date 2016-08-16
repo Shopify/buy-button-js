@@ -44,9 +44,9 @@ function selectorStyleGroup(selector, selectorClass) {
             declarations: ruleDeclarations(selector[decKey]),
           });
         } else {
-          const s = selectorClass.split(' ').join('.');
+          const formattedSelector = selectorClass.split(' ').join('.');
           styleGroup.push({
-            selector: `.${s}`,
+            selector: `.${formattedSelector}`,
             declarations: ruleDeclarations(selector),
           });
         }
