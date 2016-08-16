@@ -111,7 +111,8 @@ export default class Cart extends Component {
         if (el.parentNode) {
           el.parentNode.removeChild(el);
         }
-      })
+      });
+      return el;
     });
   }
 
@@ -134,7 +135,7 @@ export default class Cart extends Component {
   }
 
   setQuantity(target, fn) {
-    const id = target.getAttribute('data-line-item-id')
+    const id = target.getAttribute('data-line-item-id');
     const item = this.model.lineItems.filter((lineItem) => lineItem.id === id)[0];
     const newQty = fn(item.quantity);
     if (newQty > 0) {
@@ -145,7 +146,6 @@ export default class Cart extends Component {
   }
 
   addVariantToCart(variant, quantity = 1) {
-    const delay = this.isVisible ? 0 : 250;
     this.isVisible = true;
     this.render();
     return this.model.addVariants({variant, quantity}).then((cart) => {
