@@ -272,7 +272,6 @@ describe('Product class', () => {
       });
     });
   });
-
   describe('updateConfig', () => {
     const newConfig = {
       options: {
@@ -318,6 +317,23 @@ describe('Product class', () => {
       const model = product.setDefaultVariant(testProduct);
       assert.equal(model.options[0].selected, 'shark');
       assert.equal(model.options[1].selected, 'large');
+    });
+  });
+
+  describe('wrapTemplate', () => {
+    describe('when button exists', () => {
+      it('calls super', () => {
+        const string = product.wrapTemplate('test');
+        assert.equal(string, '<div class="product">test</div>');
+      });
+    });
+
+    describe('when button does not exist', () => {
+      it('wraps html in a button', () => {
+        product.config.product.contents.button = false;
+        const string = product.wrapTemplate('test');
+        assert.equal(string, '<button class="btn--parent product">test</button>');
+      });
     });
   });
 });

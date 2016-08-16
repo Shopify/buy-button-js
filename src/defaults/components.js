@@ -25,7 +25,7 @@ const defaults = {
       wrapper: 'product-wrapper',
       product: 'product',
       img: 'product__variant-image',
-      imgButton: 'btn--img',
+      blockButton: 'btn--parent',
       button: 'btn',
       title: 'product__title',
       prices: 'product__price',

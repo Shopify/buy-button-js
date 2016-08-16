@@ -184,4 +184,13 @@ describe('Component class', () => {
       });
     });
   });
+
+  describe('wrapTemplate', () => {
+    describe('when button exists', () => {
+      it('puts strings in a div', () => {
+        const string = component.wrapTemplate('test');
+        assert.equal(string, '<div class="product">test</div>');
+      });
+    });
+  });
 });

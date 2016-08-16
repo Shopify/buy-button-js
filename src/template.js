@@ -1,15 +1,11 @@
 import hogan from 'hogan.js';
 
 export default class Template {
-  constructor(templates, contents, className) {
+  constructor(templates, contents, wrapper) {
     this.templates = templates;
     this.contents = contents;
-    this.className = className;
+    this.wrapperFn = wrapper;
     this.templateFn = hogan.compile(this.masterTemplate);
-  }
-
-  wrapperClasses(data) {
-    return `${this.className} ${data.data.wrapperClass || ''}`;
   }
 
   get masterTemplate() {
@@ -18,11 +14,11 @@ export default class Template {
         .reduce((acc, key) => acc + this.templates[key], '');
   }
 
-  render(data) {
-    if (this.className) {
-      return `<div class="${this.wrapperClasses(data)}">${this.templateFn.render(data)}</div>`;
-    } else {
-      return `${this.templateFn.render(data)}`;
+  render(data, cb) {
+    const output = `${this.templateFn.render(data)}`;
+    if (!cb) {
+      return output;
     }
+    return cb(output);
   }
 }
