@@ -41,6 +41,8 @@ const defaults = {
     },
     text: {
       button: 'Add to cart',
+      outOfStock: 'Out of stock',
+      unavailable: 'Unavailable',
     },
   },
   modalProduct: {
