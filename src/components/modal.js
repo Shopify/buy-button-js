@@ -76,7 +76,7 @@ export default class Modal extends Component {
     this.wrapper.classList.remove('is-active');
     this.iframe.removeClass('is-active');
     this.iframe.parent.addEventListener('transitionend', () => {
-      this.iframe.removeClass('js-block');
+      this.iframe.removeClass('is-block');
     });
   }
 
@@ -86,7 +86,7 @@ export default class Modal extends Component {
     }
     super.render();
     this.iframe.addClass('is-active');
-    this.iframe.addClass('js-block');
+    this.iframe.addClass('is-block');
     this.wrapper.classList.add('is-active');
     this.product = new Product(this.productConfig, this.props);
     this.product.template = new Template(this.productModalTemplates, this.productModalContents);
