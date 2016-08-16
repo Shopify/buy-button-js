@@ -9,7 +9,7 @@ export default class Cart extends Component {
     super(config, props);
     this.storage = storage || window.localStorage;
     this.addVariantToCart = this.addVariantToCart.bind(this);
-    this.childTemplate = new Template(this.config.lineItem.templates, this.config.lineItem.contents, 'cart-item');
+    this.childTemplate = new Template(this.config.lineItem.templates, this.config.lineItem.contents);
     this.node = document.body.appendChild(document.createElement('div'));
     this.node.className = 'shopify-buy-cart-wrapper';
     this.isVisible = false;
@@ -35,7 +35,7 @@ export default class Cart extends Component {
     return this.model.lineItems.reduce((acc, lineItem) => {
       const data = lineItem;
       data.classes = this.classes;
-      return acc + this.childTemplate.render({data});
+      return acc + this.childTemplate.render({data}, (output) => `<div class=${this.classes.lineItem.lineItem}>${output}</div>`);
     }, '');
   }
 

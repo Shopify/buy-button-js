@@ -26,7 +26,7 @@ export default class Component {
     this.config = merge({}, componentDefaults, config.options || {});
     this.props = props;
     this.model = {};
-    this.template = new Template(this.templates, this.contents, this.classes[this.typeKey][this.typeKey]);
+    this.template = new Template(this.templates, this.contents);
     this.children = null;
   }
 
@@ -175,9 +175,15 @@ export default class Component {
     this._userEvent('afterUpdateConfig');
   }
 
+  wrapTemplate(html) {
+    return `<div class="${this.classes[this.typeKey][this.typeKey]}">${html}</div>`;
+  }
+
   render() {
     this._userEvent('beforeRender');
-    const html = this.template.render({data: this.viewData});
+    const html = this.template.render({data: this.viewData}, (data) => {
+      return this.wrapTemplate(data);
+    });
     if (this.wrapper && this.wrapper.innerHTML.length) {
       const div = this.document.createElement('div');
       div.innerHTML = html;
