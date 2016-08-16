@@ -216,7 +216,7 @@ describe('legacy/options-transform/cart', () => {
     it('should set the text of the empty cart', () => {
       cartNode = cart({empty_cart_text: 'nope'});
       subject = new OptionsTransform(cartNode);
-      assert.equal(subject.uiOptions.cart.text.emptyCart, 'nope');
+      assert.equal(subject.uiOptions.cart.text.empty, 'nope');
     });
   });
 
