@@ -231,7 +231,7 @@ describe('legacy/options-transform/product', () => {
     it('should set the text of the unavailable message', () => {
       productNode = product({buy_button_product_unavailable_text: 'nope'});
       subject = new OptionsTransform(productNode);
-      assert.equal(subject.uiOptions.product.text.productUnavailable, 'nope');
+      assert.equal(subject.uiOptions.product.text.unavailable, 'nope');
     });
   });
 

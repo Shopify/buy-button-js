@@ -120,7 +120,7 @@ class OptionsTransform {
   }
 
   buy_button_product_unavailable_text_transform(value, options) {
-    options.product.text.productUnavailable = value; // not implemented
+    options.product.text.unavailable = value; // not implemented
   }
 
   checkout_button_text_transform(value, options) {
@@ -156,7 +156,7 @@ class OptionsTransform {
   }
 
   empty_cart_text_transform(value, options) {
-    options.cart.text.emptyCart = value; // not implemented
+    options.cart.text.empty = value; // not implemented
   }
 
   next_page_button_text_transform(value, options) {
