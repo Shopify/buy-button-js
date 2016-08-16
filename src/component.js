@@ -197,6 +197,7 @@ export default class Component {
     return this.loadImgs().then(() => {
       this.resize();
       this.fadeIn();
+      return true;
     });
   }
 
