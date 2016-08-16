@@ -23,7 +23,12 @@ const fakeProduct = {
   options: [],
   variants: [],
   selectedVariant: {
-    compareAtPrice: '1'
+    compareAtPrice: '1',
+    attrs: {
+      variant: {
+        available: true,
+      }
+    }
   }
 }
 

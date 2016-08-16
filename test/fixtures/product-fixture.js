@@ -2,7 +2,20 @@ const testProduct = {
   title: 'test',
   id: 123,
   selectedVariant: {
-    id: 12345
+    id: 12345,
+    productId: 123,
+    title: 'sloth / small',
+    available: true,
+    optionValues: [
+      {
+        name: 'Print',
+        value: 'sloth'
+      },
+      {
+        name: 'Size',
+        value: 'small'
+      }
+    ]
   },
   selectedVariantImage: {
     img: 'http://test.com/test.jpg'
@@ -14,7 +27,8 @@ const testProduct = {
       selected: 'sloth',
       values: [
         'sloth',
-        'shark'
+        'shark',
+        'cat',
       ]
     },
     {
@@ -31,6 +45,7 @@ const testProduct = {
       id: 12345,
       productId: 123,
       title: 'sloth / small',
+      available: true,
       optionValues: [
         {
           name: 'Print',
@@ -46,6 +61,7 @@ const testProduct = {
       id: 12346,
       productId: 123,
       title: 'shark / small',
+      available: true,
       optionValues: [
         {
           name: 'Print',
@@ -61,6 +77,7 @@ const testProduct = {
       id: 12347,
       productId: 123,
       title: 'shark / large',
+      available: true,
       optionValues: [
         {
           name: 'Print',
@@ -69,6 +86,22 @@ const testProduct = {
         {
           name: 'Size',
           value: 'large'
+        }
+      ]
+    },
+    {
+      id: 12348,
+      productId: 123,
+      title: 'cat / small',
+      available: false,
+      optionValues: [
+        {
+          name: 'Print',
+          value: 'cat'
+        },
+        {
+          name: 'Size',
+          value: 'small'
         }
       ]
     },
