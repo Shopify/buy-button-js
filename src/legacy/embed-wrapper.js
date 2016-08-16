@@ -2,7 +2,12 @@ import OptionsTransform from './options-transform';
 
 class EmbedWrapper {
   constructor(element) {
-    this.element = element;
+    this.optionsTransform = new OptionsTransform(element);
+    this.shop = this.optionsTransform.legacyOptions.shop;
+
+    this.embedConfig = {
+      handle: this.optionsTransform.handle,
+      node: element,
   }
 
   render(ui) {
