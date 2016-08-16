@@ -62,7 +62,9 @@ class OptionsTransform {
   }
 
   variant_id_transform(value, options) {
-    options.product.contents.options = false;
+    if (this.embedType === 'product') {
+      options.product.contents.options = false;
+    }
   }
 
   redirect_to_transform(value, options) {
@@ -223,6 +225,21 @@ class OptionsTransform {
 
   clamp(val, min, max) {
     return Math.min(Math.max(min, val), max);
+  }
+
+  setupModalOptions(options) {
+    options.product.contents.options = false;
+    options.product.contents.button = false;
+    options.product.styles.title['text-align'] = 'center';
+    options.product.styles.title['margin-top'] = '20px';
+    options.product.styles.prices['margin-left'] = '0px';
+    options.product.styles.prices.display = 'block';
+    options.product.styles.prices['text-align'] = 'center';
+    options.product.styles.prices['margin-bottom'] = '15px';
+  }
+
+  isTruthy(value) {
+    return value === 'true' || value === '1';
   }
 }
 
