@@ -1,10 +1,17 @@
 $cart-item-height: 65px;
 
-@keyframes fadein {
+@keyframes flipin {
   from {
+    max-height: 0;
+    transform: rotatex(90deg) translatey(-50%);
+    margin-bottom: -65px;
     opacity: 0;
   }
+
   to {
+    min-height: $cart-item-height;
+    margin-bottom: $gutter;
+    transform: none;
     opacity: 1;
   }
 }
@@ -51,22 +58,6 @@ $cart-item-height: 65px;
   -webkit-overflow-scrolling: touch;
   perspective: 400px;
   perspective-origin: 50% 0px;
-}
-
-@keyframes flipIn {
-  from {
-    max-height: 0;
-    transform: rotateX(90deg) translateY(-50%);
-    margin-bottom: -65px;
-    opacity: 0;
-  }
-
-  to {
-    min-height: $cart-item-height;
-    margin-bottom: $gutter;
-    transform: none;
-    opacity: 1;
-  }
 }
 
 .cart-item {
