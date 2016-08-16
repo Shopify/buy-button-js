@@ -45,11 +45,7 @@ const testProduct = {
       id: 12345,
       productId: 123,
       title: 'sloth / small',
-      attrs: {
-        variant: {
-          available: true,
-        },
-      },
+      available: true,
       optionValues: [
         {
           name: 'Print',
@@ -65,11 +61,7 @@ const testProduct = {
       id: 12346,
       productId: 123,
       title: 'shark / small',
-      attrs: {
-        variant: {
-          available: true,
-        },
-      },
+      available: true,
       optionValues: [
         {
           name: 'Print',
@@ -85,11 +77,7 @@ const testProduct = {
       id: 12347,
       productId: 123,
       title: 'shark / large',
-      attrs: {
-        variant: {
-          available: true,
-        },
-      },
+      available: true,
       optionValues: [
         {
           name: 'Print',
@@ -105,11 +93,7 @@ const testProduct = {
       id: 12348,
       productId: 123,
       title: 'cat / small',
-      attrs: {
-        variant: {
-          available: false,
-        },
-      },
+      available: false,
       optionValues: [
         {
           name: 'Print',
