@@ -81,12 +81,12 @@ describe('Product class', () => {
     });
   });
 
-  describe('get variantAvailable', () => {
+  describe('get variantExists', () => {
     describe('if variant exists for selected options', (done) => {
       it('returns true', (done) => {
         product.init(testProductCopy).then(() => {
           product.model.selectedVariant = {id: 123};
-          assert.isOk(product.variantAvailable);
+          assert.isOk(product.variantExists);
           done();
         }).catch((e) => {
           done(e);
@@ -98,7 +98,7 @@ describe('Product class', () => {
       it('returns false', (done) => {
         product.init(testProductCopy).then(() => {
           product.model.selectedVariant = null;
-          assert.isNotOk(product.variantAvailable);
+          assert.isNotOk(product.variantExists);
           done();
         }).catch((e) => {
           done(e);
@@ -264,17 +264,14 @@ describe('Product class', () => {
           {
             name: 'sloth',
             selected: true,
-            disabled: false
           },
           {
             name: 'shark',
             selected: false,
-            disabled: false
           },
           {
             name: 'cat',
             selected: false,
-            disabled: false
           }
         ]
       },
@@ -284,17 +281,15 @@ describe('Product class', () => {
           {
             name: 'small',
             selected: true,
-            disabled: false
           },
           {
             name: 'large',
             selected: false,
-            disabled: true
           }
         ]
       }
     ];
-    it('it returns options with selected and disabled values', (done) => {
+    it('it returns options with selected', (done) => {
       product.init(testProductCopy).then(() => {
         product.updateVariant('Size', 'small');
         assert.deepEqual(product.decoratedOptions, expectedArray);
@@ -412,6 +407,7 @@ describe('Product class', () => {
       assert.calledWith(superSpy, newConfig);
     });
   });
+
   describe('setDefaultVariant', () => {
     it('sets selectedVariant to product.defalutVariantId', () => {
       product.defaultVariantId = 12347;
@@ -421,6 +417,38 @@ describe('Product class', () => {
     });
   });
 
+  describe('get buttonText', () => {
+    beforeEach((done) => {
+      product.init(testProductCopy).then(() => {
+        done();
+      }).catch((e) => {
+        done(e);
+      });
+    });
+
+    describe('when variant does not exist', () => {
+      it('returns unavailable text', () => {
+        product.model.selectedVariant = null;
+        assert.equal(product.buttonText, product.text.unavailable);
+      });
+    });
+    describe('when variant is out of stock', () => {
+      it('returns out of stock text', () => {
+        product.model.selectedVariant = {
+          available: false,
+        };
+        assert.equal(product.buttonText, product.text.outOfStock);
+      });
+    });
+    describe('when variant is available', () => {
+      it('returns button text', () => {
+        product.model.selectedVariant = {
+          available: true,
+        };
+        assert.equal(product.buttonText, product.text.button);
+      });
+    });
+  });
   describe('wrapTemplate', () => {
     describe('when button exists', () => {
       it('calls super', () => {

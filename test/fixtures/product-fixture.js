@@ -104,7 +104,7 @@ const testProduct = {
     {
       id: 12348,
       productId: 123,
-      title: 'shark / large',
+      title: 'cat / small',
       attrs: {
         variant: {
           available: false,

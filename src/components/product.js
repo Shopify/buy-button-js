@@ -51,7 +51,7 @@ export default class Product extends Component {
       buttonClass: this.buttonClass,
       hasVariants: this.hasVariants,
       buttonDisabled: !this.buttonEnabled,
-      priceClass: this.model.selectedVariant.compareAtPrice ? 'price--lowered' : '',
+      priceClass: this.model.selectedVariant && this.model.selectedVariant.compareAtPrice ? 'price--lowered' : '',
       classes: this.classes,
       hasQuantity: this.options.contents.quantity,
       selectedQuantity: this.selectedQuantity,
@@ -82,23 +82,25 @@ export default class Product extends Component {
   }
 
   get buttonText() {
-    if (this.variantAvailable && this.variantInStock) {
-      return this.text.button;
-    } else {
+    if (!this.variantExists) {
+      return this.text.unavailable;
+    }
+    if (!this.variantInStock) {
       return this.text.outOfStock;
     }
+    return this.text.button;
   }
 
   get buttonEnabled() {
-    return this.buttonActionAvailable && this.variantAvailable && this.variantInStock;
+    return this.buttonActionAvailable && this.variantExists && this.variantInStock;
   }
 
-  get variantAvailable() {
-    return this.model.selectedVariant;
+  get variantExists() {
+    return Boolean(this.model.selectedVariant);
   }
 
   get variantInStock() {
-    return this.model.selectedVariant.available;
+    return this.variantExists && this.model.selectedVariant.available;
   }
 
   get requiresCart() {
@@ -125,40 +127,12 @@ export default class Product extends Component {
     return this.model.variants.length > 1;
   }
 
-  get variantArray() {
-    delete this.variantsMemo;
-    this.variantsMemo = this.model.variants.map((variant) => {
-      const betterVariant = {
-        id: variant.id,
-        optionValues: {},
-      };
-      variant.optionValues.forEach((optionValue) => {
-        betterVariant.optionValues[optionValue.name] = optionValue.value;
-      });
-
-      return betterVariant;
-    });
-    return this.variantsMemo;
-  }
-
-  get selections() {
-    const selections = {};
-
-    this.model.selections.forEach((selection, index) => {
-      const option = this.model.options[index];
-      selections[option.name] = selection;
-    });
-
-    return selections;
-  }
-
   get decoratedOptions() {
     return this.model.options.map((option) => ({
       name: option.name,
       values: option.values.map((value) => ({
         name: value,
         selected: value === option.selected,
-        disabled: !this.optionValueCanBeSelected(merge({}, this.selections), option.name, value),
       })),
     }));
   }
@@ -252,23 +226,11 @@ export default class Product extends Component {
   updateVariant(optionName, value) {
     const updatedOption = this.model.options.filter((option) => option.name === optionName)[0];
     updatedOption.selected = value;
-    if (this.variantAvailable) {
+    if (this.variantExists) {
       this.cachedImage = this.model.selectedVariantImage;
     }
     this.render();
     return updatedOption;
-  }
-
-  optionValueCanBeSelected(selections, name, value) {
-    const variants = this.variantArray;
-    selections[name] = value;
-
-    const satisfactoryVariants = variants.filter((variant) => {
-      const matchingOptions = Object.keys(selections).filter((key) => variant.optionValues[key] === selections[key]);
-      return matchingOptions.length === Object.keys(selections).length;
-    });
-
-    return satisfactoryVariants.length;
   }
 
   closeCartOnBgClick() {
