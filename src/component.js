@@ -212,7 +212,6 @@ export default class Component {
   }
 
   loadImgs() {
-    this.iframe.removeClass('is-resolved');
     const imgs = Array.prototype.slice.call(this.wrapper.querySelectorAll('img'));
     const promises = imgs.map((img) => {
       const src = img.getAttribute('data-src');
