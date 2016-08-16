@@ -86,7 +86,7 @@ export default class Product extends Component {
 
   get optionsHtml() {
     if (!this.contents.options) {
-      return;
+      return '';
     }
     return this.decoratedOptions.reduce((acc, option) => {
       const data = option;
@@ -143,7 +143,8 @@ export default class Product extends Component {
       return this.setDefaultVariant(model);
     });
   }
- wrapTemplate(html) {
+
+  wrapTemplate(html) {
     if (this.contents.button) {
       return super.wrapTemplate(html);
     } else {
@@ -175,7 +176,7 @@ export default class Product extends Component {
     }
   }
 
-  onButtonClick() {
+  onButtonClick(evt) {
     evt.stopPropagation();
     if (this.options.buttonDestination === 'cart') {
       this.props.closeModal();
