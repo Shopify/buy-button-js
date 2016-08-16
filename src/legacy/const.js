@@ -46,7 +46,9 @@ const product = {
     },
     price: {},
     prices: {},
-    wrapper: {},
+    wrapper: {
+      width: '450px',
+    },
   },
 };
 
@@ -57,7 +59,7 @@ const productSet = {
 const modalProduct = {
   styles: {
     button: {},
-    wrapper: {},
+    modal: {},
   },
 };
 
@@ -76,8 +78,18 @@ const cart = {
     subtotal: {},
     cart: {},
     footer: {},
+    close: {},
   },
   text: {},
+};
+
+const lineItem = {
+  styles: {
+    variantTitle: {},
+    quantity: {},
+    quantityInput: {},
+    quantityButton: {},
+  },
 };
 
 const toggle = {
@@ -86,4 +98,4 @@ const toggle = {
   },
 };
 
-export const defaultOptions = {product, productSet, modalProduct, modal, cart, toggle};
+export const defaultOptions = {product, productSet, modalProduct, modal, cart, lineItem, toggle};

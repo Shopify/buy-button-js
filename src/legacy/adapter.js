@@ -1,10 +1,11 @@
 import ShopifyBuy from '../shopify-buy-ui';
 import EmbedWrapper from './embed-wrapper';
 
+// Use the Buy Button Channel API key
 const apiKey = window.SHOPIFY_BUY_UI_ADAPTER_API_KEY || '395ba487a5981e6e573b5ab104645271';
 const appId = window.SHOPIFY_BUY_UI_ADAPTER_APP_ID || 6;
 
-class Adapter {
+export class Adapter {
   constructor() {
     this.uis = {};
   }
