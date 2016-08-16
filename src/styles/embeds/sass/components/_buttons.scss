@@ -30,7 +30,8 @@
   -moz-appearance: none;
   -webkit-appearance: none;
 
-  &:hover {
+  &:hover,
+  &:focus {
     .product__variant-image {
       transition: all 0.3s ease;
       opacity: 0.7;
