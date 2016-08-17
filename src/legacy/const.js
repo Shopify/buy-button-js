@@ -59,13 +59,14 @@ const productSet = {
 const modalProduct = {
   styles: {
     button: {},
-    modal: {},
   },
 };
 
 const modal = {
   styles: {
     button: {},
+    wrapper: {},
+    footer: {},
   },
 };
 
