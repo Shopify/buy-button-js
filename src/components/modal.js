@@ -2,6 +2,7 @@ import merge from 'lodash.merge';
 import Component from '../component';
 import Product from './product';
 import Template from '../template';
+import {addClassToElement, removeClassFromElement} from '../utils/element-class';
 
 export default class Modal extends Component {
   constructor(config, props) {
@@ -73,11 +74,15 @@ export default class Modal extends Component {
   }
 
   close() {
-    this.wrapper.classList.remove('is-active');
+    removeClassFromElement('is-active', this.wrapper);
     this.iframe.removeClass('is-active');
-    this.iframe.parent.addEventListener('transitionend', () => {
+    if (this.props.browserFeatures.transition) {
+      this.iframe.parent.addEventListener('transitionend', () => {
+        this.iframe.removeClass('is-block');
+      });
+    } else {
       this.iframe.removeClass('is-block');
-    });
+    }
   }
 
   render() {
@@ -87,7 +92,7 @@ export default class Modal extends Component {
     super.render();
     this.iframe.addClass('is-active');
     this.iframe.addClass('is-block');
-    this.wrapper.classList.add('is-active');
+    addClassToElement('is-active', this.wrapper);
     this.product = new Product(this.productConfig, this.props);
     this.product.template = new Template(this.productModalTemplates, this.productModalContents);
     return this.product.init(this.model).then(() => this.loadImgs());

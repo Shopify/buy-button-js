@@ -1,5 +1,6 @@
 import hogan from 'hogan.js';
 import stylesTemplate from './templates/styles';
+import conditionalStyles from './styles/embeds/conditional';
 
 const iframeStyles = {
   width: '100%',
@@ -57,16 +58,17 @@ function selectorStyleGroup(selector, selectorClass) {
 }
 
 export default class iframe {
-  constructor(parent, classes, customStyles, stylesheet) {
+  constructor(node, config) {
     this.el = document.createElement('iframe');
-    this.parent = parent;
-    this.stylesheet = stylesheet;
+    this.parent = node;
+    this.stylesheet = config.stylesheet;
+    this.customStylesHash = config.customStyles || {};
+    this.classes = config.classes;
+    this.browserFeatures = config.browserFeatures;
     Object.keys(iframeStyles).forEach((key) => {
       this.el.style[key] = iframeStyles[key];
     });
     Object.keys(iframeAttrs).forEach((key) => this.el.setAttribute(key, iframeAttrs[key]));
-    this.customStylesHash = customStyles || {};
-    this.classes = classes;
     this.styleTag = null;
   }
 
@@ -118,11 +120,21 @@ export default class iframe {
     return customStyles;
   }
 
+  get conditionalCSS() {
+    if (this.browserFeatures.transition && this.browserFeatures.transform && this.browserFeatures.animation) {
+      return '';
+    }
+    return conditionalStyles;
+  }
+
+  get css() {
+    const compiled = hogan.compile(stylesTemplate);
+    return `${this.stylesheet} \n ${compiled.render({selectors: this.customStyles})} \n ${this.conditionalCSS}`;
+  }
+
   updateStyles(customStyles) {
     this.customStylesHash = customStyles;
-    const compiled = hogan.compile(stylesTemplate);
-    const stylesText = `${this.stylesheet} \n ${compiled.render({selectors: this.customStyles})}`;
-    this.styleTag.innerHTML = stylesText;
+    this.styleTag.innerHTML = this.css;
   }
 
   appendStyleTag() {
@@ -130,13 +142,11 @@ export default class iframe {
       return;
     }
     this.styleTag = this.document.createElement('style');
-    const compiled = hogan.compile(stylesTemplate);
-    const stylesText = `${this.stylesheet} \n ${compiled.render({selectors: this.customStyles})}`;
 
     if (this.styleTag.styleSheet) {
-      this.styleTag.styleSheet.cssText = stylesText;
+      this.styleTag.styleSheet.cssText = this.css;
     } else {
-      this.styleTag.appendChild(this.document.createTextNode(stylesText));
+      this.styleTag.appendChild(this.document.createTextNode(this.css));
     }
 
     this.document.head.appendChild(this.styleTag);

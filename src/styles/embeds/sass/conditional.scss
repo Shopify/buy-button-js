@@ -1,0 +1,10 @@
+.modal-wrapper {
+  display: none;
+
+  &.is-active {
+    display: block;
+    opacity: 1;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}

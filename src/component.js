@@ -135,7 +135,12 @@ export default class Component {
       return Promise.resolve();
     }
     if (this.options.iframe) {
-      this.iframe = new Iframe(this.node, this.classes, this.styles, styles[this.typeKey]);
+      this.iframe = new Iframe(this.node, {
+        classes: this.classes,
+        customStyles: this.styles,
+        stylesheet: styles[this.typeKey],
+        browserFeatures: this.props.browserFeatures,
+      });
       this.node.className += ` shopify-buy-frame shopify-buy-frame--${this.typeKey}`;
       return this.iframe.load();
     } else {
@@ -189,7 +194,7 @@ export default class Component {
       return this.wrapTemplate(data);
     });
     if (this.wrapper && this.wrapper.innerHTML.length) {
-      const div = this.document.createElement('div');
+      const div = document.createElement('div');
       div.innerHTML = html;
       morphdom(this.wrapper, div, this.morphCallbacks);
       this.wrapper.className = this.classes[this.typeKey].wrapper;
@@ -202,7 +207,7 @@ export default class Component {
   }
 
   createWrapper() {
-    const wrapper = this.document.createElement('div');
+    const wrapper = document.createElement('div');
     wrapper.className = this.classes[this.typeKey].wrapper;
     if (this.iframe) {
       this.document.body.appendChild(wrapper);
