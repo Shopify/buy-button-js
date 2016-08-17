@@ -12,6 +12,11 @@
   min-width: 46px;
   margin-right: 0;
   cursor: pointer;
+  transition: background 200ms ease;
+
+  &:hover {
+    background-color: $color-primary-hover;
+  }
 }
 
 .cart-toggle__count {

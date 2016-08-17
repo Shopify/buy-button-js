@@ -8,16 +8,14 @@
   flex-wrap: wrap;
   margin-left: -$gutter;
 
-  .collection-product {
-    max-width: 230px;
-    margin-left: $gutter;
-    margin-bottom: $gutter;
-    flex: 0 0 auto;
-    display: inline-block;
-  }
-
   @media (max-width: 600px) {
     display: block;
   }
 }
 
+.collection-product {
+  margin-left: $gutter;
+  margin-bottom: $gutter;
+  flex: 0 0 auto;
+  display: inline-block;
+}
