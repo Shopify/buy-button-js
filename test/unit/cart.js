@@ -141,6 +141,12 @@ describe('Cart class', () => {
         parentNode: {
           parentNode: {
             addEventListener: sinon.spy(),
+            classList: {
+              add: sinon.spy(),
+            },
+            parentNode: {
+
+            }
           },
         },
       };
