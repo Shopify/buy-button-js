@@ -1,4 +1,5 @@
 import ShopifyBuy from '../../../src/shopify-buy-ui';
+import UI from '../../../src/ui';
 import adapter, {Adapter} from '../../../src/legacy/adapter';
 import EmbedWrapper from '../../../src/legacy/embed-wrapper';
 import {product} from '../../fixtures/legacy/elements';
@@ -8,7 +9,7 @@ describe('legacy/adapter', () => {
   let productNode;
 
   beforeEach(() => {
-    subject = new Adapter;
+    subject = new Adapter();
     productNode = product();
     document.body.appendChild(productNode);
   });
@@ -28,16 +29,14 @@ describe('legacy/adapter', () => {
   });
 
   it('should create a client and ui for each shop', () => {
-    let uiMock = {createComponent: ()=> true};
-    let createComponentStub = sinon.stub(uiMock, 'createComponent', () => Promise.resolve());
+    let createComponentStub = sinon.stub(UI.prototype, 'createComponent', () => {
+      return Promise.resolve();
+    });
     let buildClientStub = sinon.stub(ShopifyBuy, 'buildClient');
-    let initStub = sinon.stub(ShopifyBuy.UI, 'init', () => uiMock);
     subject.init();
     assert.called(buildClientStub);
-    assert.called(initStub);
     assert.called(createComponentStub);
     buildClientStub.restore();
-    initStub.restore();
   });
 
 });
