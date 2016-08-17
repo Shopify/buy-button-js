@@ -74,7 +74,6 @@ class OptionsTransform {
     options.product.styles.button['background-color'] = `#${value}`;
     options.cart.styles.button['background-color'] = `#${value}`;
     options.modalProduct.styles.button['background-color'] = `#${value}`;
-    options.modal.styles.button['background-color'] = `#${value}`;
     options.toggle.styles.toggle['background-color'] = `#${value}`;
   }
 
@@ -82,7 +81,6 @@ class OptionsTransform {
     options.product.styles.button.color = `#${value}`;
     options.cart.styles.button.color = `#${value}`;
     options.modalProduct.styles.button.color = `#${value}`;
-    options.modal.styles.button.color = `#${value}`;
     options.toggle.styles.toggle.color = `#${value}`;
   }
 
@@ -96,7 +94,10 @@ class OptionsTransform {
       options.product.styles.button['margin-left'] = '20px';
       options.product.styles.button['margin-bottom'] = '15px';
     }
-    options.modalProduct.styles.modal['background-color'] = `#${value}`;
+    options.modal.styles.wrapper['background-color'] = `#${value}`;
+    options.modal.styles.footer['background-color'] = `#${value}`;
+    options.modal.styles.footer['background-image'] = 'none';
+
     options.cart.styles.cart['background-color'] = `#${value}`;
     options.cart.styles.header['background-color'] = 'transparent';
     options.cart.styles.lineItems['background-color'] = 'transparent';
