@@ -118,7 +118,6 @@ describe('legacy/options-transform/cart', () => {
       assert.equal(subject.uiOptions.product.styles.button['background-color'], '#abc123');
       assert.equal(subject.uiOptions.cart.styles.button['background-color'], '#abc123');
       assert.equal(subject.uiOptions.modalProduct.styles.button['background-color'], '#abc123');
-      assert.equal(subject.uiOptions.modal.styles.button['background-color'], '#abc123');
       assert.equal(subject.uiOptions.toggle.styles.toggle['background-color'], '#abc123');
     });
   });
@@ -130,7 +129,6 @@ describe('legacy/options-transform/cart', () => {
       assert.equal(subject.uiOptions.product.styles.button.color, '#abc123');
       assert.equal(subject.uiOptions.cart.styles.button.color, '#abc123');
       assert.equal(subject.uiOptions.modalProduct.styles.button.color, '#abc123');
-      assert.equal(subject.uiOptions.modal.styles.button.color, '#abc123');
       assert.equal(subject.uiOptions.toggle.styles.toggle.color, '#abc123');
     });
   });
@@ -139,7 +137,9 @@ describe('legacy/options-transform/cart', () => {
     it('should set modal background', () => {
       cartNode = cart({background_color: 'abc123'});
       subject = new OptionsTransform(cartNode);
-      assert.equal(subject.uiOptions.modalProduct.styles.modal['background-color'], '#abc123');
+      assert.equal(subject.uiOptions.modal.styles.wrapper['background-color'], '#abc123');
+      assert.equal(subject.uiOptions.modal.styles.footer['background-color'], '#abc123');
+      assert.equal(subject.uiOptions.modal.styles.footer['background-image'], 'none');
     })
 
     it('should set cart styles', () => {
