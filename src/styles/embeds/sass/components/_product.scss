@@ -24,13 +24,6 @@
   margin-bottom: 15px;
 }
 
-.product__price {
-  display: inline-block;
-  vertical-align: middle;
-  margin-left: $gutter / 2;
-  margin-top: -3px;
-}
-
 .product__actual-price {
   font-size: 16px;
   color: $color-grey;
@@ -42,10 +35,6 @@
   text-decoration: line-through;
   color: $color-faint;
   display: block;
-}
-
-.price--lowered {
-  color: $color-red;
 }
 
 .product__variant-selectors {
