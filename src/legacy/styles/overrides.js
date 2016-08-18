@@ -11,7 +11,7 @@ export const modalProductStyles = {
     'margin-left': 0,
   },
   compareAt: {
-    'display': 'none',
+    display: 'none',
   },
   options: {
     'margin-bottom': '20px',
@@ -19,26 +19,26 @@ export const modalProductStyles = {
   quantity: {
     '@media (max-width: 800px)': {
       'margin-left': '20px',
-      'background': '#fff',
+      background: '#fff',
     },
     '@media (min-width: 801px)': {
       'padding-left': '20px',
-      'width': '110px',
-      'background': '#fff',
-    }
+      width: '110px',
+      background: '#fff',
+    },
   },
   buttonBesideQty: {
     '@media (max-width: 800px)': {
-      'width': 'calc(100% - 140px)',
-      'display': 'block',
+      width: 'calc(100% - 140px)',
+      display: 'block',
     },
     '@media (min-width: 801px)': {
       'margin-left': 0,
-      'float': 'left',
-      'width': 'calc(100% - 140px)',
-    }
-  }
-}
+      float: 'left',
+      width: 'calc(100% - 140px)',
+    },
+  },
+};
 
 export const modalStyles = {
   img: {
@@ -48,68 +48,61 @@ export const modalStyles = {
     },
     '@media (min-width: 801px)': {
       'border-right': '1px solid rgba(170,170,170,0.3)',
-    }
+    },
   },
   footer: {
-    'padding': '20px',
-    'position': 'absolute',
-    'bottom': 0,
+    padding: '20px',
+    position: 'absolute',
+    bottom: 0,
     'background-image': 'linear-gradient(to bottom,  rgba(256, 255, 255, 0.93) 0%,rgba(255, 255, 255, 1) 100%)',
     '@media (max-width: 800px)': {
-      'left': 0,
-      'width': '100%'
+      left: 0,
+      width: '100%',
     },
     '@media (min-width: 801px)': {
-      'width': '100%',
-      'position': 'absolute',
-      'bottom': '0',
+      width: '100%',
+      position: 'absolute',
+      bottom: '0',
       'background-image': 'linear-gradient(to bottom,  rgba(256, 255, 255, 0.93) 0%,rgba(255, 255, 255, 1) 100%)',
       'padding-top': '20px',
-    }
+    },
   },
   contents: {
-    'position': 'relative',
+    position: 'relative',
   },
   contentsWithImg: {
     '@media (min-width: 801px)': {
-      'float': 'right',
-      'width': '40%',
-    }
+      float: 'right',
+      width: '40%',
+    },
   },
   footerWithImg: {
     '@media (min-width: 801px)': {
-      'width': '40%',
-      'bottom': '0',
-      'left': '60%',
-    }
+      width: '40%',
+      bottom: '0',
+      left: '60%',
+    },
   },
   scrollContents: {
     'line-height': '1.4',
     'font-size': '14px',
-    'padding': '20px 20px 90px',
-    'position': 'absolute',
-    'height': '100%',
-    'width': '100%',
-    'overflow': 'auto',
+    padding: '20px 20px 90px',
+    position: 'absolute',
+    height: '100%',
+    width: '100%',
+    overflow: 'auto',
     '-webkit-overflow-scrolling': 'touch',
   },
   close: {
     '@media (max-width: 800px)': {
-      'position': 'fixed'
-    }
-  },
-  footerWithImg: {
-    '@media (min-width: 801px)': {
-      'left': '60%',
-      'bottom': '0',
-      'width': '40%',
-    }
+      position: 'fixed',
+    },
   },
   wrapper: {
     '@media (min-width: 801px)': {
-      'margin': '-285px auto 0 auto',
-      'top': '50%',
+      margin: '-285px auto 0 auto',
+      top: '50%',
       'max-height': '570px',
-    }
-  }
-}
+    },
+  },
+};

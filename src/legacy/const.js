@@ -1,5 +1,4 @@
 import {modalProductStyles, modalStyles} from './styles/overrides';
-import Template from '../template';
 
 export const attributes = [
   'shop',
@@ -65,10 +64,10 @@ const modalProduct = {
     wrapper: {},
   }),
   events: {
-    beforeRender: function (product) {
-      product.template.contents.footer = true;
-    }
-  }
+    beforeRender: (productInstance) => {
+      productInstance.template.contents.footer = true;
+    },
+  },
 };
 
 const modal = {
@@ -78,10 +77,10 @@ const modal = {
     footer: {},
   }),
   events: {
-    beforeRender: function (modal) {
-      modal.config.modalProduct.contents.button = false;
-    }
-  }
+    beforeRender: (modalInstance) => {
+      modalInstance.config.modalProduct.contents.button = false;
+    },
+  },
 };
 
 const cart = {
