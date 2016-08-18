@@ -1,0 +1,1 @@
+export default ".modal-wrapper {\n  display: none; }\n  .modal-wrapper.is-active {\n    display: block;\n    opacity: 1;\n    margin-left: auto;\n    margin-right: auto; }\n"

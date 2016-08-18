@@ -2,8 +2,10 @@ import Product from './components/product';
 import Modal from './components/modal';
 import ProductSet from './components/product-set';
 import Cart from './components/cart';
-import hostStyles from './styles/host/main';
+import hostStyles from './styles/host/host';
+import conditionalStyles from './styles/host/conditional';
 import throttle from './utils/throttle';
+import browserFeatures from './utils/detect-features';
 
 const DATA_ATTRIBUTE = 'data-shopify-buy-ui';
 const ESC_KEY = 27;
@@ -94,7 +96,15 @@ export default class UI {
       closeCart: this.closeCart.bind(this),
       createModal: this.createModal.bind(this),
       closeModal: this.closeModal.bind(this),
+      browserFeatures,
     };
+  }
+
+  get styleText() {
+    if (browserFeatures.transition && browserFeatures.transform && browserFeatures.animation) {
+      return hostStyles;
+    }
+    return hostStyles + conditionalStyles;
   }
 
   _queryEntryNode() {
@@ -109,9 +119,9 @@ export default class UI {
   _appendStyleTag() {
     const styleTag = document.createElement('style');
     if (styleTag.styleSheet) {
-      styleTag.styleSheet.cssText = hostStyles;
+      styleTag.styleSheet.cssText = this.styleText;
     } else {
-      styleTag.appendChild(document.createTextNode(hostStyles));
+      styleTag.appendChild(document.createTextNode(this.styleText));
     }
     document.head.appendChild(styleTag);
   }

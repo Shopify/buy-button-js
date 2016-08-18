@@ -1,13 +1,17 @@
 var sass = require('node-sass');
 var fs = require('fs');
 
-sass.render({
-  file: './src/styles/host/sass/styles.scss'
-}, function (err, css) {
-  if (err) {
-    console.log(err);
-  } else {
-    var js = css.css.toString();
-    fs.writeFileSync('src/styles/host/main.js', 'export default ' + JSON.stringify(js));
-  }
-})
+fs.readdirSync('src/styles/host/sass').forEach(function (file) {
+  sass.render({
+    file: './src/styles/host/sass/' + file,
+  }, function (err, css) {
+    if (err) {
+      console.log(err);
+    } else {
+      var js = css.css.toString();
+      var fileName = 'src/styles/host/' + file.replace('.scss', '.js');
+      fs.writeFileSync(fileName, 'export default ' + JSON.stringify(js));
+    }
+  })
+});
+

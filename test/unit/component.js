@@ -27,7 +27,13 @@ describe('Component class', () => {
     config.node.setAttribute('id', 'fixture');
     document.body.appendChild(config.node);
     Component.prototype.typeKey = 'product'
-    component = new Component(config, {client: {}, imageCache: {}});
+    component = new Component(config, {client: {},
+      browserFeatures: {
+        transition: true,
+        animation: true,
+        transform: true,
+      }
+    });
   });
 
   afterEach(() => {
@@ -115,7 +121,13 @@ describe('Component class', () => {
         const iframeComponent = new Component({
           node: document.getElementById('fixture'),
           id: 123,
-          options: { product: {iframe: true}}}, {client: {}, imageCache: {}},
+          options: { product: {iframe: true}}}, {client: {},
+            browserFeatures: {
+              transition: true,
+              animation: true,
+              transform: true,
+            }
+          },
           'product');
         const setupModel = sinon.stub(iframeComponent, 'setupModel').returns(Promise.resolve({ title: 'test' }));
         iframeComponent.init().then(() => {

@@ -3,6 +3,7 @@ import Component from '../component';
 import CartToggle from './toggle';
 import Template from '../template';
 import Checkout from './checkout';
+import {addClassToElement} from '../utils/element-class';
 
 export default class Cart extends Component {
   constructor(config, props, storage) {
@@ -106,12 +107,16 @@ export default class Cart extends Component {
     return this.model.updateLineItem(id, 0).then((cart) => {
       this.toggle.render();
       this.model = cart;
-      el.classList.add('is-hidden');
-      el.addEventListener('transitionend', () => {
-        if (el.parentNode) {
+      addClassToElement('is-hidden', el);
+      if (el.parentNode) {
+        if (this.props.browserFeatures.transition) {
+          el.addEventListener('transitionend', () => {
+            el.parentNode.removeChild(el);
+          });
+        } else {
           el.parentNode.removeChild(el);
         }
-      });
+      }
       return el;
     });
   }

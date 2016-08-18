@@ -1,4 +1,4 @@
-import frameUtils from '../polyfills/request-animation-frame';
+import frameUtils from './frame-utils';
 
 function CustomEvent ( event, params ) {
   params = params || { bubbles: false, cancelable: false, detail: undefined };

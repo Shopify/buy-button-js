@@ -130,7 +130,7 @@ describe('Product class', () => {
         });
       });
       describe('if cart is initialized', () => {
-        it('returns true', () => {
+        it('returns true', (done) => {
           product.init(testProductCopy).then(() => {
             assert.ok(product.buttonActionAvailable);
             done();

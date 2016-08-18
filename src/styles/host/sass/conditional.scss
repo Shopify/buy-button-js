@@ -1,0 +1,7 @@
+.shopify-buy-frame--cart {
+  display: none;
+
+  &.is-active {
+    display: block;
+  }
+}

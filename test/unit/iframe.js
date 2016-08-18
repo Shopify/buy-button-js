@@ -12,19 +12,28 @@ describe('Iframe class', () => {
     parent.setAttribute('id', 'fixture');
     document.body.appendChild(parent);
     iframe = new Iframe(parent, {
-      product: {
-        button: 'btn'
-      }
-    }, {
-      product: {
-        button: {
-          'color': 'red',
-          ':hover': {
-            'color': 'green'
+      classes: {
+        product: {
+          button: 'btn',
+        }
+      },
+      customStyles: {
+        product: {
+          button: {
+            'color': 'red',
+            ':hover': {
+              'color': 'green'
+            }
           }
         }
+      },
+      stylesheet: defaultCSS,
+      browserFeatures: {
+        transition: true,
+        animation: true,
+        transform: true,
       }
-    }, defaultCSS);
+    });
   });
 
   afterEach(() => {
@@ -34,28 +43,30 @@ describe('Iframe class', () => {
   });
 
   describe('load', () => {
-    it('appends an iframe', (done) => {
-      iframe.appendStyleTag = function () {
-        assert.isOk(true);
-      };
-
+    beforeEach((done) => {
       iframe.load().then(() => {
-        assert.equal('IFRAME', parent.children[0].tagName);
         done();
       }).catch((e) => {
         done(e)
       });
     });
 
-    it('adds style tag with valid css', (done) => {
+    it('appends an iframe', () => {
+      assert.equal('IFRAME', parent.children[0].tagName);
+    });
+
+    it('appends style tag to head', () => {
+      const styleTags = iframe.document.head.getElementsByTagName('style');
+      assert.equal(styleTags.length, 1);
+    });
+  });
+
+  describe('get css', () => {
+    it('returns properly formatted CSS', (done) => {
       iframe.load().then(() => {
-        const styleTag = iframe.el.contentDocument.head.children[0];
-        assert.equal('STYLE', styleTag.tagName);
-        assert.include(styleTag.innerHTML, defaultCSS, 'css is formatted correctly');
-        assert.include(styleTag.innerHTML, customCSS, 'appends custom css');
+        assert.include(iframe.css, defaultCSS, 'css is formatted correctly');
+        assert.include(iframe.css, customCSS, 'appends custom css');
         done();
-      }).catch((e) => {
-        done(e)
       });
     });
   });

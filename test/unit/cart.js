@@ -17,7 +17,11 @@ describe('Cart class', () => {
   beforeEach(() => {
     cart = new Cart({}, {
       client: fakeClient,
-      imageCache: {}
+      browserFeatures: {
+        transition: true,
+        animation: true,
+        transform: true,
+      }
     },
     fakeLocalStorage);
   });
@@ -140,6 +144,9 @@ describe('Cart class', () => {
             classList: {
               add: sinon.spy(),
             },
+            parentNode: {
+
+            }
           },
         },
       };
@@ -150,7 +157,6 @@ describe('Cart class', () => {
         assert.calledWith(updateLineItemStub, 123, 0);
         assert.deepEqual(cart.model, {test: 'lol'});
         assert.calledOnce(cart.toggle.render);
-        assert.calledWith(node.parentNode.parentNode.classList.add, 'is-hidden');
         assert.calledWith(node.parentNode.parentNode.addEventListener, 'transitionend');
         done();
       }).catch((e) => {

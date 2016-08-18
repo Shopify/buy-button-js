@@ -15,7 +15,12 @@ const config = {
 
 const props = {
   client: {},
-  createCart: function () {return Promise.resolve()}
+  createCart: function () {return Promise.resolve()},
+  browserFeatures: {
+    transition: true,
+    animation: true,
+    transform: true,
+  }
 }
 
 const fakeProduct = {
