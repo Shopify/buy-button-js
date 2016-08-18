@@ -31,8 +31,6 @@ export default class Modal extends Component {
   get productTemplate() {
     return new Template(this.product.templates, Object.assign({}, this.product.config.modalProduct.contents, {
       img: false,
-      button: false,
-      quantity: false,
     }));
   }
 
@@ -41,10 +39,6 @@ export default class Modal extends Component {
     return {
       img: `<div class="${this.classes.modal.img}">${this.product.templates.img}</div>`,
       contents: `<div class="${this.classes.modal.contents}"><div class="${this.classes.modal.scrollContents}">${this.productTemplate.masterTemplate}</div></div>`,
-      footer: `<div class="${this.classes.modal.footer}">
-                ${quantity}
-                ${this.product.templates.button}
-              </div>`,
     };
   }
 
@@ -52,7 +46,6 @@ export default class Modal extends Component {
     return {
       img: true,
       contents: true,
-      footer: true,
     };
   }
 
