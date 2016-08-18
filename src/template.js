@@ -8,7 +8,7 @@ export default class Template {
   }
 
   get masterTemplate() {
-    return this.contents
+    return Object.keys(this.contents)
         .reduce((acc, key) => {
           const string = this.templates[key] || '';
           return acc + string;

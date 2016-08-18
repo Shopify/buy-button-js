@@ -209,12 +209,13 @@ describe('Component class', () => {
     it('returns a hash with keys ordered according to order array', () => {
       component.config.product.order = ['title', 'image', 'button'];
       component.config.product.contents = {
+        title: true,
+        button: true,
         image: false,
       }
       assert.deepEqual(component.contents, {
         title: true,
-        image: false,
-        button: false,
+        button: true,
       });
     });
   });

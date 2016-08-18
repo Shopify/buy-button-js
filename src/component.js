@@ -48,13 +48,12 @@ export default class Component {
   }
 
   get contents() {
-    // return this.options.order.reduce((items, key) => {
-    //   if (this.options.contents[key]) {
-    //     items[key] = true;
-    //   }
-    //   return items;
-    // }, {});
-    return this.options.contents.slice(0);
+    return this.options.order.reduce((items, key) => {
+      if (this.options.contents[key]) {
+        items[key] = true;
+      }
+      return items;
+    }, {});
   }
 
   get text() {
