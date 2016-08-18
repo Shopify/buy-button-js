@@ -453,7 +453,7 @@ describe('Product class', () => {
     describe('when button exists', () => {
       it('calls super', () => {
         const string = product.wrapTemplate('test');
-        assert.equal(string, '<div class="no-image product">test</div>');
+        assert.equal(string, '<div class="product">test</div>');
       });
     });
 
