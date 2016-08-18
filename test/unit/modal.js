@@ -90,8 +90,6 @@ describe('Modal class', () => {
       it('instantiates a Template', () => {
         assert.deepEqual(modal.productTemplate.templates, modal.product.templates);
         assert.isFalse(modal.productTemplate.contents.img);
-        assert.isFalse(modal.productTemplate.contents.button);
-        assert.isFalse(modal.productTemplate.contents.quantity);
       });
     });
 
@@ -99,7 +97,6 @@ describe('Modal class', () => {
       it('returns a hash of strings', () => {
         assert.typeOf(modal.productModalTemplates.img, 'string');
         assert.typeOf(modal.productModalTemplates.contents, 'string');
-        assert.typeOf(modal.productModalTemplates.footer, 'string');
       });
     });
 
@@ -107,7 +104,6 @@ describe('Modal class', () => {
       it('returns a hash of template keys', () => {
         assert.ok(modal.productModalContents.img);
         assert.ok(modal.productModalContents.contents);
-        assert.ok(modal.productModalContents.footer);
       });
     });
   });
