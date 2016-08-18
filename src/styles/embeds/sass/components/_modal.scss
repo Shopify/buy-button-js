@@ -82,12 +82,13 @@ $modal-footer-height: 90px;
     }
   }
 
+  .modal-img {
+    width: 60%;
+    float: left;
+    height: 100%;
+  }
+
   .has-image {
-    .modal-img {
-      width: 60%;
-      float: left;
-      height: 100%;
-    }
     .modal-contents {
       float: right;
       width: 40%;

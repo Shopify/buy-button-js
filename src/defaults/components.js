@@ -77,12 +77,11 @@ const defaults = {
       footer: 'modal-footer',
       footerWithImg: 'modal-footer--has-img',
       imgWithImg: 'modal-img--has-img',
+      contentsWithImg: 'modal-contents--has-img',
       scrollContents: 'modal-scroll-contents',
     },
     contents: {
       contents: true,
-      img: true,
-      footer: false,
     },
     templates: modalTemplates,
   },

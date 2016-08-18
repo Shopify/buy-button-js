@@ -67,7 +67,6 @@ const modalProduct = {
   events: {
     beforeRender: function (product) {
       product.template.contents.footer = true;
-      console.log(product.template);
     }
   }
 };

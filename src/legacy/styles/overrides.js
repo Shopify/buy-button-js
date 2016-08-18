@@ -41,10 +41,13 @@ export const modalProductStyles = {
 }
 
 export const modalStyles = {
-  image: {
+  img: {
     '@media (max-width: 800px)': {
       'border-bottom': '1px solid rgba(170,170,170,0.3)',
       'max-height': '570px',
+    },
+    '@media (min-width: 801px)': {
+      'border-right': '1px solid rgba(170,170,170,0.3)',
     }
   },
   footer: {
@@ -67,6 +70,19 @@ export const modalStyles = {
   contents: {
     'position': 'relative',
   },
+  contentsWithImg: {
+    '@media (min-width: 801px)': {
+      'float': 'right',
+      'width': '40%',
+    }
+  },
+  footerWithImg: {
+    '@media (min-width: 801px)': {
+      'width': '40%',
+      'bottom': '0',
+      'left': '60%',
+    }
+  },
   scrollContents: {
     'line-height': '1.4',
     'font-size': '14px',
@@ -87,11 +103,6 @@ export const modalStyles = {
       'left': '60%',
       'bottom': '0',
       'width': '40%',
-    }
-  },
-  imgWithImg: {
-    '@media (min-width: 801px)': {
-      'border-right': '1px solid rgba(170,170,170,0.3)',
     }
   },
   wrapper: {

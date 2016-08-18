@@ -85,6 +85,7 @@ export default class Product extends Component {
   }
 
   get viewData() {
+    console.log(this.contentsWrapperClass);
     return merge(this.model, {
       optionsHtml: this.optionsHtml,
       currentImage: this.currentImage,
@@ -97,10 +98,6 @@ export default class Product extends Component {
       selectedQuantity: this.selectedQuantity,
       buttonText: this.buttonText,
     });
-  }
-
-  get imageWrapperClass() {
-    return this.currentImage ? 'has-image' : 'no-image';
   }
 
   get DOMEvents() {
@@ -185,7 +182,7 @@ export default class Product extends Component {
 
   wrapTemplate(html) {
     if (this.contents.button) {
-      return `<div class="${this.imageWrapperClass} ${this.classes.product.product}">${html}</div>`;
+      return `<div class="${this.classes.product.product}">${html}</div>`;
     } else {
       return `<button class="${this.classes.product.blockButton} ${this.classes.product.product}">${html}</button>`;
     }
