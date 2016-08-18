@@ -26,7 +26,9 @@ export default class Product extends Component {
 
   createCart() {
     if (this.options.buttonDestination === 'cart' || this.config.modalProduct.buttonDestination === 'cart') {
-      return this.props.createCart(this.config);
+      return this.props.createCart({
+        options: this.config
+      });
     } else {
       return Promise.resolve();
     }
