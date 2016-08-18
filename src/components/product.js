@@ -24,6 +24,8 @@ const propertiesWhitelist = [
   'text-transform',
   'text-shadow',
   'box-shadow',
+  'font-size',
+  'font-family',
 ];
 
 function whitelistedProperties(selectorStyles) {
