@@ -3,6 +3,42 @@ import Component from '../component';
 import Template from '../template';
 import Checkout from './checkout';
 
+function isPseudoSelector(key) {
+  return key.charAt(0) === ':';
+}
+
+function isMedia(key) {
+  return key.charAt(0) === '@';
+}
+
+const propertiesWhitelist = [
+  'background',
+  'background-color',
+  'border',
+  'border-radius',
+  'color',
+  'border-color',
+  'border-width',
+  'border-style',
+  'transition',
+  'text-transform',
+  'text-shadow',
+  'box-shadow',
+];
+
+function whitelistedProperties(selectorStyles) {
+  return Object.keys(selectorStyles).reduce((filteredStyles, propertyName) => {
+    if (isPseudoSelector(propertyName) || isMedia(propertyName)) {
+      filteredStyles[propertyName] = whitelistedProperties(selectorStyles[propertyName]);
+      return filteredStyles;
+    }
+    if (propertiesWhitelist.indexOf(propertyName) > -1) {
+      filteredStyles[propertyName] = selectorStyles[propertyName];
+    }
+    return filteredStyles;
+  }, {});
+}
+
 export default class Product extends Component {
   constructor(config, props) {
     super(config, props);
@@ -27,7 +63,7 @@ export default class Product extends Component {
   createCart() {
     if (this.options.buttonDestination === 'cart' || this.config.modalProduct.buttonDestination === 'cart') {
       return this.props.createCart({
-        options: this.config
+        options: this.config,
       });
     } else {
       return Promise.resolve();
@@ -189,12 +225,27 @@ export default class Product extends Component {
     }
   }
 
+  get modalProductConfig() {
+    let modalProductStyles;
+    if (this.config.product.styles) {
+       modalProductStyles= Object.assign({}, Object.keys(this.config.product.styles).reduce((productStyles, selectorKey) => {
+        productStyles[selectorKey] = whitelistedProperties(this.config.product.styles[selectorKey]);
+        return productStyles;
+      }, {}), this.config.modalProduct.styles);
+    } else {
+      modalProductStyles = {};
+    }
+
+    return Object.assign({}, this.config.modalProduct, {
+      styles: modalProductStyles,
+    });
+  }
+
   openModal() {
     if (!this.modal) {
-      const productConfig = merge({}, this.config.product, this.config.modalProduct);
       this.modal = this.props.createModal({
-        options: merge({}, this.config, {
-          product: productConfig,
+        options: Object.assign({}, this.config, {
+          product: this.modalProductConfig,
         }),
       }, this.props);
     }
