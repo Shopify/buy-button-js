@@ -81,6 +81,8 @@ const defaults = {
     },
     contents: {
       contents: true,
+      img: true,
+      footer: false,
     },
     templates: modalTemplates,
   },

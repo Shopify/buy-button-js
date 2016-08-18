@@ -4,7 +4,10 @@ export default class Template {
   constructor(templates, contents) {
     this.templates = templates;
     this.contents = contents;
-    this.templateFn = hogan.compile(this.masterTemplate);
+  }
+
+  get templateFn() {
+    return hogan.compile(this.masterTemplate);
   }
 
   get masterTemplate() {
