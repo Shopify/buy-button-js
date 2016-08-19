@@ -35,9 +35,6 @@ export default class UI {
 
   createCart(config) {
     if (this.components.cart.length) {
-      if (config.options && config.options.cart) {
-        this.components.cart.forEach((cart) => cart.updateConfig(config));
-      }
       return Promise.resolve(this.components.cart[0]);
     } else {
       const cart = new Cart(config, this.componentProps);
