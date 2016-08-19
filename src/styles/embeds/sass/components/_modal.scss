@@ -82,16 +82,15 @@ $modal-footer-height: 90px;
     }
   }
 
-  .has-image {
-    .modal-img {
-      width: 60%;
-      float: left;
-      height: 100%;
-    }
-    .modal-contents {
-      float: right;
-      width: 40%;
-    }
+  .modal-img {
+    width: 60%;
+    float: left;
+    height: 100%;
+  }
+
+  .modal-contents--has-img {
+    float: right;
+    width: 40%;
   }
 
   .product__variant-img {

@@ -269,7 +269,7 @@ export default class Product extends Component {
   get modalProductConfig() {
     let modalProductStyles;
     if (this.config.product.styles) {
-       modalProductStyles = merge({}, Object.keys(this.config.product.styles).reduce((productStyles, selectorKey) => {
+      modalProductStyles = merge({}, Object.keys(this.config.product.styles).reduce((productStyles, selectorKey) => {
         productStyles[selectorKey] = whitelistedProperties(this.config.product.styles[selectorKey]);
         return productStyles;
       }, {}), this.config.modalProduct.styles);
