@@ -32,13 +32,17 @@ export default class Modal extends Component {
   get productTemplate() {
     return new Template(this.product.templates, Object.assign({}, this.product.config.modalProduct.contents, {
       img: false,
-    }));
+    }), this.product.config.modalProduct.order);
   }
 
   get productModalTemplates() {
     return {
       img: `<div class="${this.classes.modal.img}">${this.product.templates.img}</div>`,
-      contents: `<div class="${this.classes.modal.contents}"><div class="${this.classes.modal.scrollContents}">${this.productTemplate.masterTemplate}</div></div>`,
+      contents: `<div class="${this.classes.modal.contents} {{#data.currentImage}}${this.classes.modal.contentsWithImg}{{/data.currentImage}}"><div class="${this.classes.modal.scrollContents}">${this.productTemplate.masterTemplate}</div></div>`,
+      footer: `<div class="${this.classes.modal.footer} {{#data.currentImage}}${this.classes.modal.footerWithImg}{{/data.currentImage}}">
+                ${quantity}
+                ${this.product.templates.button}
+              </div>`,
     };
   }
 
@@ -46,7 +50,12 @@ export default class Modal extends Component {
     return {
       img: true,
       contents: true,
+      footer: false,
     };
+  }
+
+  get productModalOrder() {
+    return ['img', 'contents', 'footer'];
   }
 
   delegateEvents() {
@@ -86,7 +95,7 @@ export default class Modal extends Component {
     this.iframe.addClass('is-block');
     addClassToElement('is-active', this.wrapper);
     this.product = new Product(this.productConfig, this.props);
-    this.product.template = new Template(this.productModalTemplates, this.productModalContents);
+    this.product.template = new Template(this.productModalTemplates, this.productModalContents, this.productModalOrder);
     return this.product.init(this.model).then(() => this.loadImgs());
   }
 }

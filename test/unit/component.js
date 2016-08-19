@@ -13,6 +13,10 @@ const config = {
       iframe: false,
       templates: {
         button: '<button id="button" class="button">Fake button</button>'
+      },
+      contents: {
+        title: true,
+        button: true,
       }
     }
   }
@@ -52,6 +56,7 @@ describe('Component class', () => {
       assert.isOk(component.client);
       assert.equal(component.options.iframe, config.options.product.iframe);
       assert.deepEqual(component.templates.button, config.options.product.templates.button);
+      assert.deepEqual(component.contents.button, config.options.product.contents.button);
     });
 
     it('instantiates a template', () => {
@@ -201,21 +206,6 @@ describe('Component class', () => {
       it('puts strings in a div', () => {
         const string = component.wrapTemplate('test');
         assert.equal(string, '<div class="product">test</div>');
-      });
-    });
-  });
-
-  describe('get contents', () => {
-    it('returns a hash with keys ordered according to order array', () => {
-      component.config.product.order = ['title', 'image', 'button'];
-      component.config.product.contents = {
-        title: true,
-        button: true,
-        image: false,
-      }
-      assert.deepEqual(component.contents, {
-        title: true,
-        button: true,
       });
     });
   });

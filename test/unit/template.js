@@ -3,21 +3,32 @@ import Template from '../../src/template';
 const contents = {
   title: true,
   button: true,
+  description: false,
 }
 const templates = {
+  button: '<button>BUTTON</button>',
   title: '<h1>BUY MY BUTTONS {{data.name}}</h1>',
-  button: '<button>BUTTON</button>'
+  description: 'footer',
 }
+
+const order = ['title', 'button', 'description'];
 
 let template;
 
 describe('Template class', () => {
   beforeEach(() => {
-    template = new Template(templates, contents);
+    template = new Template(templates, contents, order);
   });
 
   afterEach(() => {
     template = null;
+  });
+
+  describe('get masterTemplate', () => {
+    it('returns a string template', () => {
+      const expectedString = '<h1>BUY MY BUTTONS {{data.name}}</h1><button>BUTTON</button>';
+      assert.equal(template.masterTemplate, expectedString);
+    });
   });
 
   describe('render', () => {

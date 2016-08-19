@@ -1,18 +1,21 @@
 import hogan from 'hogan.js';
 
 export default class Template {
-  constructor(templates, contents) {
+  constructor(templates, contents, order) {
     this.templates = templates;
     this.contents = contents;
+    this.order = order;
     this.templateFn = hogan.compile(this.masterTemplate);
   }
 
   get masterTemplate() {
-    return Object.keys(this.contents)
-        .reduce((acc, key) => {
-          const string = this.templates[key] || '';
-          return acc + string;
-        }, '');
+    return this.order.reduce((acc, key) => {
+      let string = '';
+      if (this.contents[key]) {
+        string = this.templates[key] || '';
+      }
+      return acc + string;
+    }, '');
   }
 
   render(data, cb) {

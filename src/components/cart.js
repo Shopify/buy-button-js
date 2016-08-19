@@ -10,7 +10,7 @@ export default class Cart extends Component {
     super(config, props);
     this.storage = storage || window.localStorage;
     this.addVariantToCart = this.addVariantToCart.bind(this);
-    this.childTemplate = new Template(this.config.lineItem.templates, this.config.lineItem.contents);
+    this.childTemplate = new Template(this.config.lineItem.templates, this.config.lineItem.contents, this.config.lineItem.order);
     this.node = document.body.appendChild(document.createElement('div'));
     this.node.className = 'shopify-buy-cart-wrapper';
     this.isVisible = false;
