@@ -1,3 +1,5 @@
+import {modalProductStyles, modalStyles} from './styles/overrides';
+
 export const attributes = [
   'shop',
   'product_handle',
@@ -57,16 +59,27 @@ const productSet = {
 };
 
 const modalProduct = {
-  styles: {
+  styles: Object.assign({}, modalProductStyles, {
     button: {},
+    wrapper: {},
+  }),
+  events: {
+    beforeRender: (productInstance) => {
+      productInstance.template.contents.footer = true;
+    },
   },
 };
 
 const modal = {
-  styles: {
+  styles: Object.assign({}, modalStyles, {
     button: {},
     wrapper: {},
     footer: {},
+  }),
+  events: {
+    beforeRender: (modalInstance) => {
+      modalInstance.config.modalProduct.contents.button = false;
+    },
   },
 };
 
