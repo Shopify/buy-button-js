@@ -70,6 +70,8 @@ export const defaultOptions = {
   modal: {
     styles: Object.assign({}, modalStyles),
     events: {
+  }),
+  events: {
       beforeRender: (modalInstance) => {
         modalInstance.config.modalProduct.contents.button = false;
       },
@@ -78,6 +80,9 @@ export const defaultOptions = {
   cart: {
     styles: Object.assign({}, cartStyles),
     text: {},
+  }),
+  events: {
+    beforeRender: (modalInstance) => {
       modalInstance.config.modalProduct.contents.button = false;
     },
   },
