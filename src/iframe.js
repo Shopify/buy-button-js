@@ -30,7 +30,7 @@ function ruleDeclarations(rule) {
 
 function selectorStyleGroup(selector, selectorClass) {
   const styleGroup = [];
-  if (selector) {
+  if (selector && selectorClass) {
     Object.keys(selector).forEach((decKey) => {
       if (selector && selectorClass) {
         if (isPseudoSelector(decKey)) {
@@ -44,14 +44,13 @@ function selectorStyleGroup(selector, selectorClass) {
             selector: `.${selectorClass}`,
             declarations: ruleDeclarations(selector[decKey]),
           });
-        } else {
-          const formattedSelector = selectorClass.split(' ').join('.');
-          styleGroup.push({
-            selector: `.${formattedSelector}`,
-            declarations: ruleDeclarations(selector),
-          });
         }
       }
+    });
+    const formattedSelector = selectorClass.split(' ').join('.');
+    styleGroup.push({
+      selector: `.${formattedSelector}`,
+      declarations: ruleDeclarations(selector),
     });
   }
   return styleGroup;
@@ -107,7 +106,6 @@ export default class iframe {
 
   get customStyles() {
     let customStyles = [];
-
     Object.keys(this.customStylesHash).forEach((typeKey) => {
       if (this.customStylesHash[typeKey]) {
         Object.keys(this.customStylesHash[typeKey]).forEach((key) => {
@@ -116,7 +114,6 @@ export default class iframe {
         });
       }
     });
-
     return customStyles;
   }
 
