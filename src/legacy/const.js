@@ -78,6 +78,8 @@ export const defaultOptions = {
   cart: {
     styles: Object.assign({}, cartStyles),
     text: {},
+      modalInstance.config.modalProduct.contents.button = false;
+    },
   },
   lineItem: {
     styles: Object.assign({}, lineItemStyles),
