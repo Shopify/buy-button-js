@@ -3,6 +3,7 @@ import Product from '../../src/components/product';
 import Template from '../../src/template';
 import Component from '../../src/component';
 import testProduct from '../fixtures/product-fixture';
+import windowUtils from '../../src/utils/window-utils';
 import hogan from 'hogan.js';
 
 const config = {
@@ -19,7 +20,11 @@ const config = {
 }
 
 const props = {
-  client: {},
+  client: {
+    config: {
+      domain: 'test.myshopify.com'
+    }
+  },
   createCart: function () {return Promise.resolve()}
 }
 
@@ -524,6 +529,41 @@ describe('Product class', () => {
       assert.deepEqual(product.modalProductConfig, Object.assign({}, product.config.modalProduct, {
         styles: expectedStyles,
       }));
+    });
+  });
+
+  describe('onlineStore methods', () => {
+    let windowStub;
+    const expectedQs = '?channel=buy_button&referrer=http%3A%2F%2Ftest.com&variant=123&';
+
+    beforeEach(() => {
+      windowStub = sinon.stub(windowUtils, 'location').returns('http://test.com');
+      product.model.selectedVariant = {id: 123};
+    });
+
+    afterEach(() => {
+      windowStub.restore();
+    });
+
+    describe('get onlineStoreParams', () => {
+      it('returns an object with url params', () => {
+        assert.deepEqual(product.onlineStoreParams, {
+          channel: 'buy_button',
+          referrer: 'http%3A%2F%2Ftest.com',
+          variant: 123,
+        });
+      });
+      describe('get onlineStoreQueryString', () => {
+        it('returns query string from online store params', () => {
+          assert.equal(product.onlineStoreQueryString, expectedQs);
+        });
+      });
+
+      describe('get onlineStoreURL', () => {
+        it('returns URL for a product on online store', () => {
+          assert.equal(product.onlineStoreURL, `https://test.myshopify.com/products/123${expectedQs}`);
+        });
+      });
     });
   });
 });
