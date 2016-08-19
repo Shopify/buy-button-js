@@ -2,6 +2,7 @@ import merge from 'lodash.merge';
 import Component from '../component';
 import Template from '../template';
 import Checkout from './checkout';
+import windowUtils from '../utils/window-utils';
 
 function isPseudoSelector(key) {
   return key.charAt(0) === ':';
@@ -222,6 +223,8 @@ export default class Product extends Component {
       this.cart.addVariantToCart(this.model.selectedVariant, this.model.selectedQuantity);
     } else if (this.options.buttonDestination === 'modal') {
       this.openModal();
+    } else if (this.options.buttonDestination === 'onlineStore') {
+      this.openOnlineStore();
     } else {
       new Checkout(this.config).open(this.model.selectedVariant.checkoutUrl(1));
     }
@@ -241,6 +244,28 @@ export default class Product extends Component {
     return Object.assign({}, this.config.modalProduct, {
       styles: modalProductStyles,
     });
+  }
+
+  get onlineStoreParams() {
+    return {
+      channel: 'buy_button',
+      referrer: encodeURIComponent(windowUtils.location()),
+      variant: this.model.selectedVariant.id,
+    }
+  }
+
+  get onlineStoreQueryString() {
+    return Object.keys(this.onlineStoreParams).reduce((string, key) => {
+      return `${string}${key}=${this.onlineStoreParams[key]}&`;
+    }, '?');
+  }
+
+  get onlineStoreURL() {
+    return `https://${this.props.client.config.domain}/products/${this.id}${this.onlineStoreQueryString}`;
+  }
+
+  openOnlineStore() {
+    window.open(this.onlineStoreURL);
   }
 
   openModal() {
