@@ -123,6 +123,10 @@ $modal-footer-height: 90px;
     max-height: $modal-height;
     width: 50%;
     float: left;
+    height: 100%;
+  }
+
+  .modal-contents--has-img {
     padding-right: $gutter * 2;
   }
 
