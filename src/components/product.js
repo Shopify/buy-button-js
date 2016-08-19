@@ -42,6 +42,44 @@ function whitelistedProperties(selectorStyles) {
   }, {});
 }
 
+function isPseudoSelector(key) {
+  return key.charAt(0) === ':';
+}
+
+function isMedia(key) {
+  return key.charAt(0) === '@';
+}
+
+const propertiesWhitelist = [
+  'background',
+  'background-color',
+  'border',
+  'border-radius',
+  'color',
+  'border-color',
+  'border-width',
+  'border-style',
+  'transition',
+  'text-transform',
+  'text-shadow',
+  'box-shadow',
+  'font-size',
+  'font-family',
+];
+
+function whitelistedProperties(selectorStyles) {
+  return Object.keys(selectorStyles).reduce((filteredStyles, propertyName) => {
+    if (isPseudoSelector(propertyName) || isMedia(propertyName)) {
+      filteredStyles[propertyName] = whitelistedProperties(selectorStyles[propertyName]);
+      return filteredStyles;
+    }
+    if (propertiesWhitelist.indexOf(propertyName) > -1) {
+      filteredStyles[propertyName] = selectorStyles[propertyName];
+    }
+    return filteredStyles;
+  }, {});
+}
+
 export default class Product extends Component {
   constructor(config, props) {
     super(config, props);
