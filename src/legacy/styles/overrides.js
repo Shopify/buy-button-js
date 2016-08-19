@@ -68,7 +68,8 @@ export const modalStyles = {
     },
   },
   contents: {
-    position: 'relative',
+    position: 'absolute',
+    right: '0',
   },
   contentsWithImg: {
     '@media (min-width: 801px)': {

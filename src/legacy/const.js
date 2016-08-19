@@ -1,4 +1,5 @@
 import {modalProductStyles, modalStyles} from './styles/overrides';
+import merge from 'lodash.merge';
 
 export const attributes = [
   'shop',
@@ -59,7 +60,7 @@ const productSet = {
 };
 
 const modalProduct = {
-  styles: Object.assign({}, modalProductStyles, {
+  styles: merge({}, modalProductStyles, {
     button: {},
     wrapper: {},
   }),
@@ -71,7 +72,7 @@ const modalProduct = {
 };
 
 const modal = {
-  styles: Object.assign({}, modalStyles, {
+  styles: merge({}, modalStyles, {
     button: {},
     wrapper: {},
     footer: {},
