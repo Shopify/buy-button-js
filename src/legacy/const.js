@@ -1,3 +1,4 @@
+<<<<<<< 96d139857abfef0a2416ea4b1228b85ea489805d
 import optionTemplates from './templates/option';
 import {
   productStyles,
@@ -8,6 +9,9 @@ import {
   cartStyles,
   toggleStyles,
 } from './styles/overrides';
+=======
+import {modalProductStyles, modalStyles} from './styles/overrides';
+>>>>>>> Legacy modal (#67)
 
 export const attributes = [
   'shop',
