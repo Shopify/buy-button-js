@@ -465,4 +465,65 @@ describe('Product class', () => {
       });
     });
   });
+
+  describe('openModal', () => {
+
+    describe('if modal exists', () => {
+      beforeEach(() => {
+        product.modal = {
+          init: sinon.spy(),
+        }
+      });
+
+      it('re-initializes modal with model', () => {
+        product.openModal();
+        assert.calledWith(product.modal.init, product.model);
+      });
+    });
+
+    describe('if modal does not exist', () => {
+      let initSpy;
+
+      beforeEach(() => {
+        initSpy = sinon.spy();
+        product.modal = null;
+        product.props.createModal = sinon.stub().returns({
+          init: initSpy,
+        });
+      });
+
+      it('creates Modal and initializes modal with model', () => {
+        product.openModal();
+        assert.calledWith(product.props.createModal, sinon.match.object, product.props);
+        assert.calledWith(initSpy, product.model);
+      });
+    });
+  });
+
+  describe('get modalProductConfig', () => {
+    it('returns an object with whitelisted styles', () => {
+      product.config.product.styles = {
+        button: {
+          'background': 'red',
+          'margin-top': '100px',
+          ':hover': {
+            'background': 'red',
+          }
+        }
+      }
+
+      const expectedStyles = Object.assign({}, product.config.modalProduct.styles, {
+        button: {
+          'background': 'red',
+          ':hover': {
+            'background': 'red',
+          }
+        }
+      });
+
+      assert.deepEqual(product.modalProductConfig, Object.assign({}, product.config.modalProduct, {
+        styles: expectedStyles,
+      }));
+    });
+  });
 });
