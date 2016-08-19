@@ -11,6 +11,7 @@ export default class Product extends Component {
     this.childTemplate = new Template(this.config.option.templates, this.config.option.contents, 'options');
     this.cart = null;
     this.modal = null;
+    this.imgStyle = '';
     this.selectedQuantity = 1;
   }
 
@@ -27,7 +28,7 @@ export default class Product extends Component {
   createCart() {
     if (this.options.buttonDestination === 'cart' || this.config.modalProduct.buttonDestination === 'cart') {
       return this.props.createCart({
-        options: this.config
+        options: this.config,
       });
     } else {
       return Promise.resolve();
@@ -58,6 +59,7 @@ export default class Product extends Component {
       hasQuantity: this.options.contents.quantity,
       selectedQuantity: this.selectedQuantity,
       buttonText: this.buttonText,
+      imgStyle: this.imgStyle,
     });
   }
 
@@ -231,7 +233,12 @@ export default class Product extends Component {
     if (this.variantExists) {
       this.cachedImage = this.model.selectedVariantImage;
     }
+    const img = this.wrapper.getElementsByClassName(this.classes.product.img)[0];
+    this.imgStyle = `min-height: ${img.clientHeight}px;`;
     this.render();
+    img.addEventListener('load', () => {
+      img.parentNode.style.minHeight = img.clientHeight;
+    });
     return updatedOption;
   }
 

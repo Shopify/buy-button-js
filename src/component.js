@@ -5,6 +5,7 @@ import componentDefaults from './defaults/components';
 import Iframe from './iframe';
 import Template from './template';
 import styles from './styles/embeds/all';
+import {addClassToElement, removeClassFromElement} from './utils/element-class';
 
 const delegateEventSplitter = /^(\S+)\s*(.*)$/;
 const ESC_KEY = 27;
@@ -220,10 +221,12 @@ export default class Component {
   loadImgs() {
     const imgs = Array.prototype.slice.call(this.wrapper.querySelectorAll('img'));
     const promises = imgs.map((img) => {
+      addClassToElement('is-transitioning', img);
       const src = img.getAttribute('data-src');
       if (src) {
         return new Promise((resolve) => {
           img.addEventListener('load', (evt) => {
+            removeClassFromElement('is-transitioning', img);
             return resolve(evt);
           });
           img.addEventListener('error', (evt) => {
