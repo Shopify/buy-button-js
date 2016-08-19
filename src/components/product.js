@@ -233,13 +233,19 @@ export default class Product extends Component {
     if (this.variantExists) {
       this.cachedImage = this.model.selectedVariantImage;
     }
+    this.renderWithNewImg();
+    return updatedOption;
+  }
+
+  renderWithNewImg() {
     const img = this.wrapper.getElementsByClassName(this.classes.product.img)[0];
-    this.imgStyle = `min-height: ${img.clientHeight}px;`;
+    this.imgStyle = this.imgStyle || `min-height: ${img.clientHeight}px;`;
     this.render();
     img.addEventListener('load', () => {
-      img.parentNode.style.minHeight = img.clientHeight;
+      const height = img.clientHeight;
+      img.parentNode.style.minHeight = height;
+      this.imgStyle = `min-height: ${height}px;`;
     });
-    return updatedOption;
   }
 
   closeCartOnBgClick() {
