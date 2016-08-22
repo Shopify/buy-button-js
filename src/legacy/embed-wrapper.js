@@ -2,24 +2,41 @@ import OptionsTransform from './options-transform';
 
 class EmbedWrapper {
   constructor(element) {
-    this.optionsTransform = new OptionsTransform(element);
-    this.shop = this.optionsTransform.legacyOptions.shop;
-
-    this.embedConfig = {
-      handle: this.optionsTransform.handle,
-      node: element,
-      options: this.optionsTransform.uiOptions,
-    };
-
-    if (this.optionsTransform.legacyOptions.variant_id) {
-      this.embedConfig.variantId = parseInt(this.optionsTransform.legacyOptions.variant_id, 10);
-    }
+    this.element = element;
   }
+
   render(ui) {
-    return ui.createComponent(this.optionsTransform.embedType, this.embedConfig).then((component) => {
+    return ui.createComponent(this.options.embedType, this.embedConfig).then((component) => {
       this.component = component;
       return this.component;
-    });
+    }).catch(this.handleError.bind(this));
+  }
+
+  handleError(error) {
+    this.element.innerHTML = `Buy Button ${error}`;
+  }
+
+  get options() {
+    this.optionsTransform = this.optionsTransform || new OptionsTransform(this.element);
+    return this.optionsTransform;
+  }
+
+  get embedConfig() {
+    const config = {
+      handle: this.options.handle,
+      node: this.element,
+      options: this.options.ui,
+    };
+
+    if (this.options.variantId) {
+      config.variantId = parseInt(this.options.variantId, 10);
+    }
+
+    return config;
+  }
+
+  get shop() {
+    return this.options.shop;
   }
 }
 

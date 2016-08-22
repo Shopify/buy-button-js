@@ -2,28 +2,43 @@ import ShopifyBuy from '../shopify-buy-ui';
 import UI from '../ui';
 import EmbedWrapper from './embed-wrapper';
 
-// Use the Buy Button Channel API key
-const apiKey = window.SHOPIFY_BUY_UI_ADAPTER_API_KEY || '395ba487a5981e6e573b5ab104645271';
 const appId = window.SHOPIFY_BUY_UI_ADAPTER_APP_ID || 6;
+const apiHost = window.SHOPIFY_BUY_UI_API_HOST || 'https://widgets.shopifyapps.com';
+const apiPath = window.SHOPIFY_BUY_UI_API_PATH || '/v4/api_key';
 
 export class Adapter {
   constructor() {
     this.uis = {};
+    this.promises = {};
   }
+
   init() {
     this.elements = [...document.querySelectorAll('[data-embed_type]')].map((element) => {
-      const elem = new EmbedWrapper(element);
-      elem.render(this.getShopUI(elem.shop)).catch((error) => {
-        element.innerHTML = `Buy Button ${error}`;
-      });
-      return elem;
+      const wrapper = new EmbedWrapper(element);
+      this.getShopUI(wrapper.shop)
+        .then(wrapper.render.bind(wrapper))
+        .catch(wrapper.handleError.bind(wrapper));
+      return wrapper;
     });
   }
+
   getShopUI(domain) {
     if (!this.uis[domain]) {
-      this.uis[domain] = new UI(ShopifyBuy.buildClient({apiKey, appId, domain}));
+      if (this.promises[domain]) {
+        return this.promises[domain];
+      }
+
+      this.promises[domain] = fetch(`${apiHost}${apiPath}?domain=${domain}`)
+        .then((resp) => resp.json())
+        .then((data) => {
+          this.uis[domain] = new UI(ShopifyBuy.buildClient({apiKey: data.api_key, appId, domain}));
+          this.promises[domain] = null;
+          return this.uis[domain];
+        });
+
+      return this.promises[domain];
     }
-    return this.uis[domain];
+    return Promise.resolve(this.uis[domain]);
   }
 }
 

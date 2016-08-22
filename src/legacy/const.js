@@ -1,5 +1,12 @@
-import {modalProductStyles, modalStyles} from './styles/overrides';
-import merge from 'lodash.merge';
+import {
+  productStyles,
+  productSetStyles,
+  modalProductStyles,
+  modalStyles,
+  lineItemStyles,
+  cartStyles,
+  toggleStyles,
+} from './styles/overrides';
 
 export const attributes = [
   'shop',
@@ -31,86 +38,40 @@ export const attributes = [
   'next_page_button_text',
 ];
 
-const product = {
-  text: {},
-  contents: {},
-  styles: {
-    img: {
-      'margin-bottom': '0px',
-    },
-    title: {
-      'margin-top': '10px',
-      'margin-bottom': '20px',
-    },
-    button: {},
-    variantTitle: {},
-    options: {
-      'margin-bottom': '0px',
-    },
-    price: {},
-    prices: {},
-    wrapper: {
-      width: '450px',
+export const defaultOptions = {
+  product: {
+    text: {},
+    contents: {},
+    styles: Object.assign({}, productStyles),
+  },
+  productSet: {
+    styles: Object.assign({}, productSetStyles),
+    text: {},
+  },
+  modalProduct: {
+    styles: Object.assign({}, modalProductStyles),
+    events: {
+      beforeRender: (productInstance) => {
+        productInstance.template.contents.footer = true;
+      },
     },
   },
-};
-
-const productSet = {
-  text: {},
-};
-
-const modalProduct = {
-  styles: merge({}, modalProductStyles, {
-    button: {},
-    wrapper: {},
-  }),
-  events: {
-    beforeRender: (productInstance) => {
-      productInstance.template.contents.footer = true;
+  modal: {
+    styles: Object.assign({}, modalStyles),
+    events: {
+      beforeRender: (modalInstance) => {
+        modalInstance.config.modalProduct.contents.button = false;
+      },
     },
   },
-};
-
-const modal = {
-  styles: merge({}, modalStyles, {
-    button: {},
-    wrapper: {},
-    footer: {},
-  }),
-  events: {
-    beforeRender: (modalInstance) => {
-      modalInstance.config.modalProduct.contents.button = false;
-    },
+  cart: {
+    styles: Object.assign({}, cartStyles),
+    text: {},
+  },
+  lineItem: {
+    styles: Object.assign({}, lineItemStyles),
+  },
+  toggle: {
+    styles: Object.assign({}, toggleStyles),
   },
 };
-
-const cart = {
-  styles: {
-    button: {},
-    header: {},
-    title: {},
-    lineItems: {},
-    subtotal: {},
-    cart: {},
-    footer: {},
-    close: {},
-  },
-  text: {},
-};
-
-const lineItem = {
-  styles: {
-    variantTitle: {},
-    quantity: {},
-    quantityInput: {},
-    quantityButton: {},
-  },
-};
-
-const toggle = {
-  styles: {
-    toggle: {},
-  },
-};
-
-export const defaultOptions = {product, productSet, modalProduct, modal, cart, lineItem, toggle};

@@ -4,31 +4,51 @@ import {defaultOptions, attributes} from './const';
 
 class OptionsTransform {
   constructor(element) {
-    this.legacyOptions = attributes.reduce((opts, attr) => {
-      const value = element.getAttribute(`data-${attr}`);
+    this.element = element;
+  }
+
+  get embedType() {
+    return this.legacy.embed_type;
+  }
+
+  get handle() {
+    return this.legacy[`${this.embedType}_handle`];
+  }
+
+  get variantId() {
+    return this.legacy.variant_id;
+  }
+
+  get shop() {
+    return this.legacy.shop;
+  }
+
+  get legacy() {
+    this.legacyOptions = this.legacyOptions || attributes.reduce((opts, attr) => {
+      const value = this.element.getAttribute(`data-${attr}`);
       if (value) {
         opts[attr] = value;
       }
       return opts;
     }, {});
-    this.embedType = this.legacyOptions.embed_type;
-    this.handle = this.legacyOptions[`${this.embedType}_handle`];
+    return this.legacyOptions;
+  }
 
-    const newOptions = merge({}, defaultOptions);
-    this.uiOptions = attributes.reduce((options, attr) => {
+  get ui() {
+    this.uiOptions = this.uiOptions || attributes.reduce((options, attr) => {
       const transform = this[`${attr}_transform`];
       const value = this.legacyOptions[attr];
       if (transform && value) {
         transform.call(this, value, options);
       }
       return options;
-    }, newOptions);
+    }, merge({}, defaultOptions));
+    return this.uiOptions;
   }
 
   display_size_transform(value, options) {
-    if (this.embedType === 'product') {
-      options.product.styles.wrapper.width = '230px';
-    }
+    options.product.styles.wrapper.width = '230px';
+    options.productSet.styles.product.width = '230px';
   }
 
   has_image_transform(value, options) {
@@ -49,7 +69,7 @@ class OptionsTransform {
 
   redirect_to_transform(value, options) {
     if (value === 'product') {
-      options.product.buttonDestination = 'modal';
+      options.product.buttonDestination = 'onlineStore';
     } else {
       options.product.buttonDestination = value;
     }
