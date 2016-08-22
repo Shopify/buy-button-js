@@ -16,6 +16,7 @@ export const productStyles = {
   wrapper: {
     width: '450px',
   },
+  description: {},
 };
 
 export const productSetStyles = {
@@ -157,4 +158,5 @@ export const lineItemStyles = {
 
 export const toggleStyles = {
   toggle: {},
+  icon: {},
 };

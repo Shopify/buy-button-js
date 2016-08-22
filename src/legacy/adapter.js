@@ -46,4 +46,5 @@ const adapter = new Adapter();
 
 document.addEventListener('DOMContentLoaded', adapter.init.bind(adapter));
 
+window.BuyButtonUIAdapter = adapter;
 export default adapter;
