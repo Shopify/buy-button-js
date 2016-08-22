@@ -1,4 +1,32 @@
+export const productStyles = {
+  img: {
+    'margin-bottom': '0px',
+  },
+  title: {
+    'margin-top': '10px',
+    'margin-bottom': '20px',
+  },
+  button: {},
+  variantTitle: {},
+  options: {
+    'margin-bottom': '0px',
+  },
+  price: {},
+  prices: {},
+  wrapper: {
+    width: '450px',
+  },
+};
+
+export const productSetStyles = {
+  product: {
+    width: '450px',
+  },
+};
+
 export const modalProductStyles = {
+  button: {},
+  wrapper: {},
   title: {
     'padding-top': '20px',
     'font-size': '18px',
@@ -41,6 +69,7 @@ export const modalProductStyles = {
 };
 
 export const modalStyles = {
+  button: {},
   img: {
     '@media (max-width: 800px)': {
       'border-bottom': '1px solid rgba(170,170,170,0.3)',
@@ -106,4 +135,26 @@ export const modalStyles = {
       'max-height': '570px',
     },
   },
+};
+
+export const cartStyles = {
+  button: {},
+  header: {},
+  title: {},
+  lineItems: {},
+  subtotal: {},
+  cart: {},
+  footer: {},
+  close: {},
+};
+
+export const lineItemStyles = {
+  variantTitle: {},
+  quantity: {},
+  quantityInput: {},
+  quantityButton: {},
+};
+
+export const toggleStyles = {
+  toggle: {},
 };
