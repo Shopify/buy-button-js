@@ -50,6 +50,9 @@ export const defaultOptions = {
   },
   modalProduct: {
     styles: Object.assign({}, modalProductStyles),
+    contents: {
+      variantTitle: false,
+    },
     events: {
       beforeRender: (productInstance) => {
         productInstance.template.contents.footer = true;

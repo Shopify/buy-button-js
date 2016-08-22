@@ -62,9 +62,7 @@ class OptionsTransform {
   }
 
   variant_id_transform(value, options) {
-    if (this.embedType === 'product') {
-      options.product.contents.options = false;
-    }
+    options.product.contents.options = false;
   }
 
   redirect_to_transform(value, options) {
@@ -91,10 +89,15 @@ class OptionsTransform {
   }
 
   button_background_color_transform(value, options) {
-    options.product.styles.button['background-color'] = `#${value}`;
-    options.cart.styles.button['background-color'] = `#${value}`;
-    options.modalProduct.styles.button['background-color'] = `#${value}`;
-    options.toggle.styles.toggle['background-color'] = `#${value}`;
+    [
+      options.product.styles.button,
+      options.cart.styles.button,
+      options.toggle.styles.toggle,
+    ].forEach((el) => {
+      el['background-color'] = `#${value}`;
+      el[':hover'] = {'background-color': this.adjustLuminance(value, -0.08)};
+      el['border-color'] = this.adjustLuminance(value, -0.05);
+    });
   }
 
   button_text_color_transform(value, options) {
@@ -102,6 +105,8 @@ class OptionsTransform {
     options.cart.styles.button.color = `#${value}`;
     options.modalProduct.styles.button.color = `#${value}`;
     options.toggle.styles.toggle.color = `#${value}`;
+    options.toggle.styles.toggle.stroke = `#${value}`;
+    options.toggle.styles.toggle.fill = `#${value}`;
   }
 
   background_color_transform(value, options) {
@@ -151,17 +156,23 @@ class OptionsTransform {
   text_color_transform(value, options) {
     options.cart.styles.lineItems.color = `#${value}`;
     options.cart.styles.subtotal.color = `#${value}`;
+    options.modalProduct.styles.description.color = `#${value}`;
+    options.product.styles.description.color = `#${value}`;
+    options.modal.styles.contents.color = `#${value}`;
   }
 
   accent_color_transform(value, options) {
     options.cart.styles.title.color = `#${value}`;
     options.cart.styles.close.color = `#${value}`;
-    options.cart.styles.cart['border-left'] = `1px solid #${value}`;
+    options.cart.styles.close[':hover'] = {color: this.adjustLuminance(value, -0.1)};
     options.cart.styles.footer['border-top'] = `1px solid #${value}`;
     options.lineItem.styles.variantTitle.color = `#${value}`;
     options.lineItem.styles.quantity.color = `#${value}`;
     options.lineItem.styles.quantityInput.color = `#${value}`;
     options.lineItem.styles.quantityButton.color = `#${value}`;
+    options.modalProduct.styles.title.color = `#${value}`;
+    options.modal.styles.close.color = `#${value}`;
+    options.modal.styles.close[':hover'] = {color: this.adjustLuminance(value, -0.1)};
   }
 
   cart_title_transform(value, options) {
@@ -197,6 +208,16 @@ class OptionsTransform {
 
   isTruthy(value) {
     return value === 'true' || value === '1';
+  }
+
+  adjustLuminance(hex, lum) {
+    let rgb = '#';
+    for (let i = 0; i < 3; i++) {
+      let color = parseInt(hex.substr(i * 2, 2), 16);
+      color = Math.round(Math.min(Math.max(0, color + (color * lum)), 255)).toString(16);
+      rgb += (`00${color}`).substr(color.length);
+    }
+    return rgb;
   }
 }
 

@@ -12,6 +12,12 @@ class EmbedWrapper {
     }).catch(this.handleError.bind(this));
   }
 
+  update(newOptions) {
+    this.component.updateConfig({
+      options: newOptions || this.options.ui,
+    });
+  }
+
   handleError(error) {
     this.element.innerHTML = `Buy Button ${error}`;
   }
