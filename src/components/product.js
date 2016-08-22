@@ -50,6 +50,7 @@ export default class Product extends Component {
     this.childTemplate = new Template(this.config.option.templates, this.config.option.contents, 'options');
     this.cart = null;
     this.modal = null;
+    this.imgStyle = '';
     this.selectedQuantity = 1;
   }
 
@@ -97,6 +98,7 @@ export default class Product extends Component {
       hasQuantity: this.options.contents.quantity,
       selectedQuantity: this.selectedQuantity,
       buttonText: this.buttonText,
+      imgStyle: this.imgStyle,
     });
   }
 
@@ -309,8 +311,19 @@ export default class Product extends Component {
     if (this.variantExists) {
       this.cachedImage = this.model.selectedVariantImage;
     }
-    this.render();
+    this.renderWithNewImg();
     return updatedOption;
+  }
+
+  renderWithNewImg() {
+    const img = this.wrapper.getElementsByClassName(this.classes.product.img)[0];
+    this.imgStyle = this.imgStyle || `min-height: ${img.clientHeight}px;`;
+    this.render();
+    img.addEventListener('load', () => {
+      const height = img.clientHeight;
+      img.parentNode.style.minHeight = height;
+      this.imgStyle = `min-height: ${height}px;`;
+    });
   }
 
   closeCartOnBgClick() {

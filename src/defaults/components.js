@@ -24,7 +24,8 @@ const defaults = {
     classes: {
       wrapper: 'product-wrapper',
       product: 'product',
-      img: 'product__variant-image',
+      img: 'product__variant-img',
+      imgWrapper: 'product-img-wrapper',
       blockButton: 'btn--parent',
       button: 'btn',
       title: 'product__title',
