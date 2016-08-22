@@ -52,6 +52,7 @@ export default class Product extends Component {
     this.modal = null;
     this.imgStyle = '';
     this.selectedQuantity = 1;
+    console.log('constructor');
   }
 
   init(data) {
