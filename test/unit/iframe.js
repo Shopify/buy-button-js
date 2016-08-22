@@ -1,7 +1,7 @@
 import Iframe from '../../src/iframe';
 
 const defaultCSS = '* { box-sizing: border-box; }';
-const customCSS = '.btn { color: red; } .btn:hover { color: green; }';
+const customCSS = '.btn:hover { color: green; } .btn { color: red; }';
 
 let iframe;
 let parent;
@@ -67,6 +67,8 @@ describe('Iframe class', () => {
         assert.include(iframe.css, defaultCSS, 'css is formatted correctly');
         assert.include(iframe.css, customCSS, 'appends custom css');
         done();
+      }).catch((e) => {
+        done(e);
       });
     });
   });

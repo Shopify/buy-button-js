@@ -66,19 +66,6 @@ describe('ui class', () => {
           done(e);
         });
       });
-
-      it('updates config of cart if passed', (done) => {
-        let updateStub = sinon.stub(Cart.prototype, 'updateConfig');
-
-        ui.createCart({options: {}}).then(() => ui.createCart({options: { cart: {test: true }}})).then(() => {
-          assert.calledWith(updateStub, {options: {cart: {test: true}}});
-          ui.destroyComponent('cart', ui.components.cart[0].model.id);
-          updateStub.restore();
-          done();
-        }).catch((e) => {
-          done(e);
-        });
-      });
     });
   });
 
