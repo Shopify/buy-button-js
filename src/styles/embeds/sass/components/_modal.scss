@@ -93,6 +93,11 @@ $modal-footer-height: 90px;
     width: 40%;
   }
 
+  .product-img-wrapper {
+    height: 100%;
+    max-height: $modal-height;
+  }
+
   .product__variant-img {
     max-height: 100%;
   }
