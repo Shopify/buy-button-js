@@ -22,6 +22,7 @@ export const productStyles = {
 export const productSetStyles = {
   product: {
     width: '450px',
+    padding: '2px 6px 3px',
   },
 };
 

@@ -1,3 +1,4 @@
+import optionTemplates from './templates/option';
 import {
   productStyles,
   productSetStyles,
@@ -76,5 +77,8 @@ export const defaultOptions = {
   },
   toggle: {
     styles: Object.assign({}, toggleStyles),
+  },
+  option: {
+    templates: optionTemplates,
   },
 };
