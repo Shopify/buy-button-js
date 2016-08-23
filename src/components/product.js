@@ -47,7 +47,7 @@ export default class Product extends Component {
     super(config, props);
     this.defaultVariantId = config.variantId;
     this.cachedImage = null;
-    this.childTemplate = new Template(this.config.option.templates, this.config.option.contents, 'options');
+    this.childTemplate = new Template(this.config.option.templates, this.config.option.contents, this.config.option.order);
     this.cart = null;
     this.modal = null;
     this.imgStyle = '';

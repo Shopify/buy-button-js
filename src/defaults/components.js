@@ -10,13 +10,26 @@ const defaults = {
     iframe: true,
     buttonDestination: 'cart',
     manifest: ['product', 'option'],
+    order: [
+      'img',
+      'title',
+      'variantTitle',
+      'options',
+      'quantityDecrement',
+      'quantityInput',
+      'quantityIncrement',
+      'button',
+      'price',
+    ],
     contents: {
       img: true,
       title: true,
       variantTitle: false,
       price: true,
       options: true,
-      quantity: false,
+      quantityIncrement: false,
+      quantityDecrement: false,
+      quantityInput: true,
       button: true,
       description: false,
     },
@@ -39,6 +52,8 @@ const defaults = {
       quantity: 'quantity-container',
       quantityInput: 'quantity',
       quantityButton: 'btn--seamless',
+      quantityIncrement: 'quantity-increment',
+      quantityDecrement: 'quantity-decrement',
     },
     text: {
       button: 'Add to cart',
@@ -58,6 +73,16 @@ const defaults = {
       button: true,
       description: true,
     },
+    order: [
+      'img',
+      'title',
+      'variantTitle',
+      'price',
+      'options',
+      'quantity',
+      'button',
+      'description',
+    ],
     classes: {
       wrapper: 'modal-product-wrapper',
     },
@@ -79,6 +104,7 @@ const defaults = {
     contents: {
       contents: true,
     },
+    order: ['contents'],
     templates: modalTemplates,
   },
   productSet: {
@@ -88,6 +114,7 @@ const defaults = {
       title: false,
       products: true,
     },
+    order: ['title', 'products'],
     templates: {
       title: '<h2 class="{{data.classes.productSet.title}}">{{data.collection.attrs.title}}</h2>',
       products: '<div class="{{data.classes.productSet.products}}"></div>',
@@ -106,6 +133,7 @@ const defaults = {
     contents: {
       option: true,
     },
+    order: ['option'],
     classes: {
       option: 'option-select',
       wrapper: 'option-select-wrapper',
@@ -122,6 +150,7 @@ const defaults = {
       lineItems: true,
       footer: true,
     },
+    order: ['title', 'lineItems', 'footer'],
     classes: {
       wrapper: 'cart-wrapper',
       cart: 'cart',
@@ -156,6 +185,13 @@ const defaults = {
       price: true,
       quantity: true,
     },
+    order: [
+      'image',
+      'variantTitle',
+      'title',
+      'price',
+      'quantity',
+    ],
     classes: {
       lineItem: 'cart-item',
       image: 'cart-item__image',
@@ -176,6 +212,11 @@ const defaults = {
       icon: true,
       title: false,
     },
+    order: [
+      'count',
+      'icon',
+      'title',
+    ],
     classes: {
       wrapper: 'cart-toggle-wrapper',
       toggle: 'cart-toggle',

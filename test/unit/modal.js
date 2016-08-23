@@ -94,7 +94,6 @@ describe('Modal class', () => {
     describe('get productTemplate', () => {
       it('instantiates a Template', () => {
         assert.deepEqual(modal.productTemplate.templates, modal.product.templates);
-        assert.isFalse(modal.productTemplate.contents.img);
       });
     });
 

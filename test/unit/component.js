@@ -13,6 +13,10 @@ const config = {
       iframe: false,
       templates: {
         button: '<button id="button" class="button">Fake button</button>'
+      },
+      contents: {
+        title: true,
+        button: true,
       }
     }
   }
@@ -52,7 +56,7 @@ describe('Component class', () => {
       assert.isOk(component.client);
       assert.equal(component.options.iframe, config.options.product.iframe);
       assert.deepEqual(component.templates.button, config.options.product.templates.button);
-      assert.deepEqual(component.contents, componentDefaults.product.contents);
+      assert.deepEqual(component.contents.button, config.options.product.contents.button);
     });
 
     it('instantiates a template', () => {
