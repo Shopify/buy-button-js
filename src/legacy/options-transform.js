@@ -155,6 +155,7 @@ class OptionsTransform {
     options.lineItem.styles.quantityInput.color = `#${value}`;
     options.lineItem.styles.quantityButton.color = `#${value}`;
     options.modalProduct.styles.title.color = `#${value}`;
+    options.modalProduct.styles.description.color = `#${value}`;
     options.modal.styles.close.color = `#${value}`;
     options.modal.styles.close[':hover'] = {color: this.adjustLuminance(value, -0.1)};
   }
@@ -197,7 +198,7 @@ class OptionsTransform {
 
   setupModalOptions(options) {
     options.product.contents.options = false;
-    //options.product.contents.button = false;
+    options.product.contents.button = false;
     options.product.styles.title['text-align'] = 'center';
     options.product.styles.title['margin-top'] = '20px';
     options.product.styles.prices['margin-left'] = '0px';

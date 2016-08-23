@@ -49,7 +49,6 @@ export default class Modal extends Component {
     return {
       img: true,
       contents: true,
-      footer: false,
     };
   }
 
