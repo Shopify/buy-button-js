@@ -69,6 +69,7 @@ export default class ProductSet extends Component {
     });
 
     return Promise.all(promises).then(() => {
+      this.resize();
       this.cart = this.products[0].cart;
       return this.loadImgs();
     });
