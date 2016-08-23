@@ -37,7 +37,7 @@ class OptionsTransform {
   get ui() {
     this.uiOptions = this.uiOptions || attributes.reduce((options, attr) => {
       const transform = this[`${attr}_transform`];
-      const value = this.legacyOptions[attr];
+      const value = this.legacy[attr];
       if (transform && value) {
         transform.call(this, value, options);
       }
@@ -82,10 +82,6 @@ class OptionsTransform {
     }
     options.product.buttonDestination = 'modal';
     this.setupModalOptions(options);
-  }
-
-  buy_button_text_transform(value, options) {
-    options.product.text.button = value;
   }
 
   button_background_color_transform(value, options) {
@@ -141,18 +137,6 @@ class OptionsTransform {
     options.product.styles.title.color = `#${value}`;
   }
 
-  buy_button_out_of_stock_text_transform(value, options) {
-    options.product.text.outOfStock = value;
-  }
-
-  buy_button_product_unavailable_text_transform(value, options) {
-    options.product.text.unavailable = value; // not implemented
-  }
-
-  checkout_button_text_transform(value, options) {
-    options.cart.text.button = value;
-  }
-
   text_color_transform(value, options) {
     options.cart.styles.lineItems.color = `#${value}`;
     options.cart.styles.subtotal.color = `#${value}`;
@@ -175,6 +159,22 @@ class OptionsTransform {
     options.modal.styles.close[':hover'] = {color: this.adjustLuminance(value, -0.1)};
   }
 
+  buy_button_text_transform(value, options) {
+    options.product.text.button = value;
+  }
+
+  buy_button_out_of_stock_text_transform(value, options) {
+    options.product.text.outOfStock = value;
+  }
+
+  buy_button_product_unavailable_text_transform(value, options) {
+    options.product.text.unavailable = value;
+  }
+
+  checkout_button_text_transform(value, options) {
+    options.cart.text.button = value;
+  }
+
   cart_title_transform(value, options) {
     options.cart.text.title = value;
   }
@@ -188,11 +188,11 @@ class OptionsTransform {
   }
 
   empty_cart_text_transform(value, options) {
-    options.cart.text.empty = value; // not implemented
+    options.cart.text.empty = value;
   }
 
   next_page_button_text_transform(value, options) {
-    options.productSet.text.nextPageButton = value; // not implemented
+    options.productSet.text.nextPageButton = value;
   }
 
   setupModalOptions(options) {
@@ -214,10 +214,14 @@ class OptionsTransform {
     let rgb = '#';
     for (let i = 0; i < 3; i++) {
       let color = parseInt(hex.substr(i * 2, 2), 16);
-      color = Math.round(Math.min(Math.max(0, color + (color * lum)), 255)).toString(16);
-      rgb += (`00${color}`).substr(color.length);
+      color = Math.round(this.clamp(color + (color * lum), 0, 255)).toString(16);
+      rgb += `00${color}`.substr(color.length);
     }
     return rgb;
+  }
+
+  clamp(val, min, max) {
+    return Math.min(Math.max(min, val), max);
   }
 }
 
