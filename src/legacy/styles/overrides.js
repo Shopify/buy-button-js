@@ -11,8 +11,12 @@ export const productStyles = {
   options: {
     'margin-bottom': '0px',
   },
-  price: {},
-  prices: {},
+  price: {
+  },
+  prices: {
+    display: 'inline-block',
+    'margin-left': '10px',
+  },
   wrapper: {
     width: '450px',
   },

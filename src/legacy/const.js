@@ -42,7 +42,13 @@ export const attributes = [
 export const defaultOptions = {
   product: {
     text: {},
-    contents: {},
+    contents: {
+      quantity: false,
+      quantityInput: false,
+      quantityButton: false,
+      quantityIncrement: false,
+      quantityDecrement: false,
+    },
     styles: Object.assign({}, productStyles),
   },
   productSet: {
@@ -53,6 +59,7 @@ export const defaultOptions = {
     styles: Object.assign({}, modalProductStyles),
     contents: {
       variantTitle: false,
+      footer: true,
     },
     events: {
       beforeRender: (productInstance) => {
