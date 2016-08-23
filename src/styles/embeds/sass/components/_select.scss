@@ -1,5 +1,5 @@
 .option-select-wrapper {
-  border: 1px solid #a9a9a9;
+  border: 1px solid $color-border;
   border-radius: 3px;
   box-sizing: border-box;
   position: relative;
@@ -23,7 +23,9 @@
 }
 
 .option-select {
-  margin-bottom: 10px;
+  & + & {
+    margin-top: $gutter / 2;
+  }
 }
 
 .option-select__label {
@@ -43,4 +45,3 @@
   -webkit-appearance: none;
   -moz-appearance: none;
 }
-

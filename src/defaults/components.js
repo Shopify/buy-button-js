@@ -14,12 +14,12 @@ const defaults = {
       'img',
       'title',
       'variantTitle',
+      'price',
       'options',
       'quantityDecrement',
       'quantityInput',
       'quantityIncrement',
       'button',
-      'price',
     ],
     contents: {
       img: true,
@@ -56,7 +56,7 @@ const defaults = {
       quantityDecrement: 'quantity-decrement',
     },
     text: {
-      button: 'Add to cart',
+      button: 'SHOP NOW',
       outOfStock: 'Out of stock',
       unavailable: 'Unavailable',
     },
@@ -66,10 +66,10 @@ const defaults = {
     contents: {
       img: true,
       title: true,
-      variantTitle: true,
+      variantTitle: false,
       price: true,
       options: true,
-      quantity: false,
+      quantity: true,
       button: true,
       description: true,
     },
@@ -87,6 +87,9 @@ const defaults = {
       wrapper: 'modal-product-wrapper',
     },
     buttonDestination: 'cart',
+    text: {
+      button: 'ADD TO CART',
+    },
   },
   modal: {
     iframe: true,

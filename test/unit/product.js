@@ -309,7 +309,7 @@ describe('Product class', () => {
     it('returns supplemental view info', (done) => {
       product.init(testProductCopy).then(() => {
         const viewData = product.viewData;
-        assert.equal(viewData.buttonText, 'Add to cart');
+        assert.equal(viewData.buttonText, 'SHOP NOW');
         assert.ok(viewData.optionsHtml);
         assert.equal(viewData.currentImage.img, 'http://test.com/test.jpg');
         assert.ok(viewData.hasVariants);

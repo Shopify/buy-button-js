@@ -154,4 +154,3 @@ describe('Modal class', () => {
     });
   });
 });
-

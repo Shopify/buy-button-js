@@ -19,7 +19,7 @@
   cursor: pointer;
   font-size: 18px;
   text-align: center;
-  border: 1px solid #a9a9a9;
+  border: 1px solid $color-border;
 }
 
 .quantity-decrement {
@@ -39,12 +39,11 @@
   text-align: center;
   -moz-appearance: textfield;
   background: transparent;
-  display: block;
-  float: left;
+  display: inline-block;
   padding: 0;
   border-radius: 0;
-  border-top: 1px solid #a9a9a9;
-  border-bottom: 1px solid #a9a9a9;
+  border-top: 1px solid $color-border;
+  border-bottom: 1px solid $color-border;
 }
 
 input[type=number]::-webkit-inner-spin-button,
