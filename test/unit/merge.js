@@ -46,9 +46,14 @@ describe('merge util', () => {
     }
 
     const patch = {color: 'green'};
-    assert.equal(merge(original, patch).lol, true);
-    assert.equal(merge(original, patch).a, 'gotten');
-    assert.equal(merge(original, patch).color, 'green');
+
+    const expected = {
+      lol: true,
+      a: 'gotten',
+      color: 'green',
+    }
+
+    assert.deepEqual(merge(original, patch), expected);
   });
 
   it('does not merge arrays', () => {

@@ -5,14 +5,13 @@ function isObject(value) {
 function merge(target, ...sources) {
   sources.forEach((source) => {
     if (source) {
-      let descriptors = Object.keys(source).reduce((descriptors, key) => {
+      var shit = Object.keys(source).reduce((acc, key) => {
         if (isObject(source[key])) {
           source[key] = merge(target[key] || {}, source[key]);
         }
-        descriptors[key] = Object.getOwnPropertyDescriptor(source, key);
-        return descriptors;
+        target[key] = source[key];
       }, {});
-      Object.defineProperties(target, descriptors);
+      return Object.assign(target, shit);
     }
   });
   return target;
