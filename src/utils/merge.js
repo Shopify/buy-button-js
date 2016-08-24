@@ -1,20 +1,12 @@
-
-
-function typeOf(value) {
-  if (typeof Array.isArray !== 'undefined' && Array.isArray(value)) {
-    return 'array';
-  }
-
-  if (Object.prototype.toString.call(value) === '[object Object]') {
-   return 'object';
-  }
+function isObject(value) {
+  return Object.prototype.toString.call(value) === '[object Object]';
 }
 
 function merge(target, ...sources) {
   sources.forEach((source) => {
     if (source) {
       let descriptors = Object.keys(source).reduce((descriptors, key) => {
-        if (typeOf(source[key]) === 'object') {
+        if (isObject(source[key])) {
           source[key] = merge(target[key] || {}, source[key]);
         }
         descriptors[key] = Object.getOwnPropertyDescriptor(source, key);
