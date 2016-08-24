@@ -1,5 +1,5 @@
 import morphdom from 'morphdom';
-import merge from 'lodash.merge';
+import merge from './utils/merge';
 import isFunction from './utils/is-function';
 import componentDefaults from './defaults/components';
 import Iframe from './iframe';
