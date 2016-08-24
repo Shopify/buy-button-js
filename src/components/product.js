@@ -1,4 +1,4 @@
-import merge from 'lodash.merge';
+import merge from '../utils/merge';
 import Component from '../component';
 import Template from '../template';
 import Checkout from './checkout';
@@ -148,7 +148,7 @@ export default class Product extends Component {
   }
 
   get buttonActionAvailable() {
-    return !this.requiresCart || this.cart;
+    return !this.requiresCart || Boolean(this.cart);
   }
 
   get optionsHtml() {

@@ -1,5 +1,6 @@
 import componentDefaults from '../../src/defaults/components';
 import Product from '../../src/components/product';
+import Cart from '../../src/components/cart';
 import Template from '../../src/template';
 import Component from '../../src/component';
 import testProduct from '../fixtures/product-fixture';
@@ -25,25 +26,27 @@ const props = {
       domain: 'test.myshopify.com'
     }
   },
-  createCart: function () {return Promise.resolve()}
+  createCart: function () {return Promise.resolve(new Cart(config))}
 }
 
 let product;
 let testProductCopy;
+let configCopy;
 
 describe('Product class', () => {
   beforeEach(() => {
-    config.node = document.createElement('div');
-    config.node.setAttribute('id', 'fixture');
-    document.body.appendChild(config.node);
+    configCopy = Object.assign({}, config)
+    configCopy.node = document.createElement('div');
+    configCopy.node.setAttribute('id', 'fixture');
+    document.body.appendChild(configCopy.node);
     testProductCopy = Object.assign({}, testProduct);
-    product = new Product(config, props);
+    product = new Product(configCopy, props);
   });
   afterEach(() => {
     product = null;
     testProductCopy = null;
-    document.body.removeChild(config.node);
-    config.node = null;
+    document.body.removeChild(configCopy.node);
+    configCopy.node = null;
   });
 
   it('has a childTemplate for options', () => {
@@ -131,6 +134,7 @@ describe('Product class', () => {
     describe('if requriesCart is true', () => {
       describe('if cart is not initialized', () => {
         it('returns false', () => {
+          product.config.product.buttonDestination = 'cart';
           assert.notOk(product.buttonActionAvailable);
         });
       });
@@ -339,7 +343,7 @@ describe('Product class', () => {
       beforeEach(() => {
         idProduct = new Product({
           id: 1234,
-          options: config.options,
+          options: configCopy.options,
         }, {
           client: {
             fetchProduct: sinon.spy(),
@@ -359,7 +363,7 @@ describe('Product class', () => {
       beforeEach(() => {
         handleProduct = new Product({
           handle: 'hat',
-          options: config.options,
+          options: configCopy.options,
         }, {
           client: {
             fetchQueryProducts: sinon.stub().returns(Promise.resolve([{}])),

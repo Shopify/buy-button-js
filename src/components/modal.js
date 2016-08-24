@@ -1,4 +1,4 @@
-import merge from 'lodash.merge';
+import merge from '../utils/merge';
 import Component from '../component';
 import Product from './product';
 import Template from '../template';
