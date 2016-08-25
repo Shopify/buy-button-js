@@ -56,7 +56,7 @@ const defaults = {
       quantityDecrement: 'quantity-decrement',
     },
     text: {
-      button: 'Add to cart',
+      button: 'SHOP NOW',
       outOfStock: 'Out of stock',
       unavailable: 'Unavailable',
     },
