@@ -4,16 +4,6 @@ import productJSON from '../fixtures/pretender/product';
 import collectionJSON from '../fixtures/pretender/collection';
 import Pretender from 'fetch-pretender';
 
-const server = new Pretender();
-
-server.get('https://embeds.myshopify.com/api/apps/6/product_listings/6640244678', (request) => {
-  return [200, {"Content-Type": "application/json"}, JSON.stringify(productJSON)];
-});
-
-server.unhandledRequest = function(verb, path, request) {
-  console.warn(`unhandled path: ${path}`);
-}
-
 const config = {
   id: 6640244678,
 }
@@ -69,8 +59,19 @@ const fancyOptions = {
 
 let product;
 let ui;
+let server;
 
 describe.skip('ShopifyBuy.UI', () => {
+  before(() => {
+    server = new Pretender();
+    server.get('https://embeds.myshopify.com/api/apps/6/product_listings/6640244678', (request) => {
+      return [200, {"Content-Type": "application/json"}, JSON.stringify(productJSON)];
+    });
+    server.unhandledRequest = function(verb, path, request) {
+      console.warn(`unhandled path: ${path}`);
+    }
+  });
+
   beforeEach(() => {
     config.node = document.createElement('div');
     config.node.setAttribute('id', 'fixture');
@@ -82,6 +83,10 @@ describe.skip('ShopifyBuy.UI', () => {
     config.node = null;
     product = null;
     ShopifyBuy.UI.ui = null;
+  });
+
+  after(() => {
+    server.shutdown();
   });
 
   describe('init', () => {
