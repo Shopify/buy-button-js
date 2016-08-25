@@ -23,22 +23,17 @@ export class Adapter {
   }
 
   getShopUI(domain) {
-    if (!this.uis[domain]) {
-      if (this.promises[domain]) {
-        return this.promises[domain];
-      }
-
-      this.promises[domain] = fetch(`${apiHost}${apiPath}?domain=${domain}`)
-        .then((resp) => resp.json())
-        .then((data) => {
-          this.uis[domain] = new UI(ShopifyBuy.buildClient({apiKey: data.api_key, appId, domain}));
-          this.promises[domain] = null;
-          return this.uis[domain];
-        });
-
-      return this.promises[domain];
+    if (this.uis[domain]) {
+      return Promise.resolve(this.uis[domain]);
     }
-    return Promise.resolve(this.uis[domain]);
+    this.promises[domain] = this.promises[domain] || fetch(`${apiHost}${apiPath}?domain=${domain}`)
+      .then((resp) => resp.json())
+      .then((data) => {
+        this.uis[domain] = new UI(ShopifyBuy.buildClient({apiKey: data.api_key, appId, domain}));
+        this.promises[domain] = null;
+        return this.uis[domain];
+      });
+    return this.promises[domain];
   }
 }
 
