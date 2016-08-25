@@ -20,3 +20,5 @@ import './unit/product-set';
 import './unit/modal';
 import './unit/toggle';
 import './unit/legacy';
+
+import './integration/shopify-buy-ui';

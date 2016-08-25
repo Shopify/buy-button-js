@@ -3,7 +3,7 @@ import UI from '../../src/ui';
 
 describe('ShopifyBuy.UI', () => {
   const configAttrs = {
-    domain: 'buckets-o-stuff.myshopify.com',
+    domain: 'embeds.myshopify.com',
     apiKey: 123,
     appId: 6
   };
