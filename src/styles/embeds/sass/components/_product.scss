@@ -5,6 +5,7 @@
 }
 
 .product.layout-vertical {
+  text-align: center;
 }
 
 .product__variant-img {
@@ -23,6 +24,7 @@
   color: $color-black;
   margin-bottom: 0;
   font-weight: 400;
+  text-align: center;
 }
 
 .product__variant-title {
@@ -34,6 +36,7 @@
 }
 
 .product__price {
+  text-align: center;
   margin-top: $gutter;
 }
 

@@ -67,7 +67,7 @@ const defaults = {
     contents: {
       img: true,
       title: true,
-      variantTitle: true,
+      variantTitle: false,
       price: true,
       options: true,
       button: true,
@@ -92,6 +92,9 @@ const defaults = {
       hasImage: 'has-image',
     },
     buttonDestination: 'cart',
+    text: {
+      button: 'ADD TO CART',
+    },
   },
   modal: {
     iframe: true,
