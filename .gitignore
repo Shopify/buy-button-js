@@ -4,5 +4,6 @@ npm-debug.log
 /tmp
 /test/build/test.js
 index.html
+legacy.html
 /src/styles/embeds/all.js
 /src/styles/host/main.js
