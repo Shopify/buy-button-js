@@ -19,4 +19,6 @@ import './unit/checkout';
 import './unit/product-set';
 import './unit/modal';
 import './unit/toggle';
+
+import './unit/merge';
 import './integration/shopify-buy-ui';
