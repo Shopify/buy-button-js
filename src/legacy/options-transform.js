@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-import merge from 'lodash.merge';
+import merge from '../utils/merge';
 import {defaultOptions, attributes} from './const';
 
 class OptionsTransform {
@@ -62,9 +62,7 @@ class OptionsTransform {
   }
 
   variant_id_transform(value, options) {
-    if (this.embedType === 'product') {
-      options.product.contents.options = false;
-    }
+    options.product.contents.options = false;
   }
 
   redirect_to_transform(value, options) {

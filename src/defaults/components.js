@@ -63,6 +63,7 @@ const defaults = {
   },
   modalProduct: {
     iframe: false,
+    manifest: ['modal', 'product', 'option'],
     contents: {
       img: true,
       title: true,
