@@ -15,7 +15,7 @@ describe('legacy/options-transform/product', () => {
   });
 
   it('should parse legacy options from the element', () => {
-    assert.deepEqual(subject.legacyOptions, {
+    assert.deepEqual(subject.legacy, {
       embed_type: 'product',
       shop: 'can-i-buy-a-feeling.myshopify.com',
       product_handle: 'anger',
@@ -26,13 +26,13 @@ describe('legacy/options-transform/product', () => {
     it('should handle display_size="compact"', () => {
       productNode = product({display_size: 'compact'});
       subject = new OptionsTransform(productNode);
-      assert.equal(subject.uiOptions.product.styles.wrapper.width, '230px');
+      assert.equal(subject.ui.product.styles.wrapper.width, '230px');
     });
 
     it('should default to 450px', () => {
       productNode = product();
       subject = new OptionsTransform(productNode);
-      assert.equal(subject.uiOptions.product.styles.wrapper.width, '450px');
+      assert.equal(subject.ui.product.styles.wrapper.width, '450px');
     });
   })
 
@@ -41,19 +41,19 @@ describe('legacy/options-transform/product', () => {
     it('should do nothing if has_image is truthy', () => {
       productNode = product({has_image: '1'});
       subject = new OptionsTransform(productNode);
-      assert.equal(subject.uiOptions.product.contents.img, undefined);
+      assert.equal(subject.ui.product.contents.img, undefined);
       productNode = product({has_image: 'true'});
       subject = new OptionsTransform(productNode);
-      assert.equal(subject.uiOptions.product.contents.img, undefined);
+      assert.equal(subject.ui.product.contents.img, undefined);
     });
 
     it('should hide image, price, title, and options if false', () => {
       productNode = product({has_image: 'false'});
       subject = new OptionsTransform(productNode);
-      assert.equal(subject.uiOptions.product.contents.img, false);
-      assert.equal(subject.uiOptions.product.contents.price, false);
-      assert.equal(subject.uiOptions.product.contents.title, false);
-      assert.equal(subject.uiOptions.product.contents.options, false);
+      assert.equal(subject.ui.product.contents.img, false);
+      assert.equal(subject.ui.product.contents.price, false);
+      assert.equal(subject.ui.product.contents.title, false);
+      assert.equal(subject.ui.product.contents.options, false);
     });
 
   });
@@ -63,7 +63,7 @@ describe('legacy/options-transform/product', () => {
     it('should hide the options', () => {
       productNode = product({variant_id: 123});
       subject = new OptionsTransform(productNode);
-      assert.equal(subject.uiOptions.product.contents.options, false);
+      assert.equal(subject.ui.product.contents.options, false);
     });
 
   });
@@ -73,27 +73,27 @@ describe('legacy/options-transform/product', () => {
     it('should set buttonDestination to modal if vaue is "product"', () => {
       productNode = product({redirect_to: 'product'});
       subject = new OptionsTransform(productNode);
-      assert.equal(subject.uiOptions.product.buttonDestination, 'modal');
+      assert.equal(subject.ui.product.buttonDestination, 'onlineStore');
     });
 
     it('should set the buttonDestination', () => {
       productNode = product({redirect_to: 'checkout'});
       subject = new OptionsTransform(productNode);
-      assert.equal(subject.uiOptions.product.buttonDestination, 'checkout');
+      assert.equal(subject.ui.product.buttonDestination, 'checkout');
     });
 
     it('should style the product when destination is modal', () => {
       productNode = product({redirect_to: 'modal'});
       subject = new OptionsTransform(productNode);
-      assert.equal(subject.uiOptions.product.buttonDestination, 'modal');
-      assert.equal(subject.uiOptions.product.contents.options, false);
-      assert.equal(subject.uiOptions.product.contents.button, false);
-      assert.equal(subject.uiOptions.product.styles.title['text-align'], 'center');
-      assert.equal(subject.uiOptions.product.styles.title['margin-top'], '20px');
-      assert.equal(subject.uiOptions.product.styles.prices['margin-left'], '0px');
-      assert.equal(subject.uiOptions.product.styles.prices.display, 'block');
-      assert.equal(subject.uiOptions.product.styles.prices['text-align'], 'center');
-      assert.equal(subject.uiOptions.product.styles.prices['margin-bottom'], '15px');
+      assert.equal(subject.ui.product.buttonDestination, 'modal');
+      assert.equal(subject.ui.product.contents.options, false);
+      assert.equal(subject.ui.product.contents.button, false);
+      assert.equal(subject.ui.product.styles.title['text-align'], 'center');
+      assert.equal(subject.ui.product.styles.title['margin-top'], '20px');
+      assert.equal(subject.ui.product.styles.prices['margin-left'], '0px');
+      assert.equal(subject.ui.product.styles.prices.display, 'block');
+      assert.equal(subject.ui.product.styles.prices['text-align'], 'center');
+      assert.equal(subject.ui.product.styles.prices['margin-bottom'], '15px');
     });
 
   });
@@ -102,22 +102,22 @@ describe('legacy/options-transform/product', () => {
     it('should do nothing', () => {
       productNode = product({product_modal: 'false'});
       subject = new OptionsTransform(productNode);
-      assert.equal(subject.uiOptions.product.buttonDestination, undefined);
-      assert.equal(subject.uiOptions.product.contents.options, undefined);
+      assert.equal(subject.ui.product.buttonDestination, undefined);
+      assert.equal(subject.ui.product.contents.options, undefined);
     });
 
     it('should style the product when true', () => {
       productNode = product({product_modal: 'true'});
       subject = new OptionsTransform(productNode);
-      assert.equal(subject.uiOptions.product.buttonDestination, 'modal');
-      assert.equal(subject.uiOptions.product.contents.options, false);
-      assert.equal(subject.uiOptions.product.contents.button, false);
-      assert.equal(subject.uiOptions.product.styles.title['text-align'], 'center');
-      assert.equal(subject.uiOptions.product.styles.title['margin-top'], '20px');
-      assert.equal(subject.uiOptions.product.styles.prices['margin-left'], '0px');
-      assert.equal(subject.uiOptions.product.styles.prices.display, 'block');
-      assert.equal(subject.uiOptions.product.styles.prices['text-align'], 'center');
-      assert.equal(subject.uiOptions.product.styles.prices['margin-bottom'], '15px');
+      assert.equal(subject.ui.product.buttonDestination, 'modal');
+      assert.equal(subject.ui.product.contents.options, false);
+      assert.equal(subject.ui.product.contents.button, false);
+      assert.equal(subject.ui.product.styles.title['text-align'], 'center');
+      assert.equal(subject.ui.product.styles.title['margin-top'], '20px');
+      assert.equal(subject.ui.product.styles.prices['margin-left'], '0px');
+      assert.equal(subject.ui.product.styles.prices.display, 'block');
+      assert.equal(subject.ui.product.styles.prices['text-align'], 'center');
+      assert.equal(subject.ui.product.styles.prices['margin-bottom'], '15px');
     });
 
   });
@@ -126,7 +126,7 @@ describe('legacy/options-transform/product', () => {
     it('should set the text of the buy button', () => {
       productNode = product({buy_button_text: 'test text'});
       subject = new OptionsTransform(productNode);
-      assert.equal(subject.uiOptions.product.text.button, 'test text');
+      assert.equal(subject.ui.product.text.button, 'test text');
     });
   });
 
@@ -134,10 +134,9 @@ describe('legacy/options-transform/product', () => {
     it('should set all the button styles', () => {
       productNode = product({button_background_color: 'abc123'});
       subject = new OptionsTransform(productNode);
-      assert.equal(subject.uiOptions.product.styles.button['background-color'], '#abc123');
-      assert.equal(subject.uiOptions.cart.styles.button['background-color'], '#abc123');
-      assert.equal(subject.uiOptions.modalProduct.styles.button['background-color'], '#abc123');
-      assert.equal(subject.uiOptions.toggle.styles.toggle['background-color'], '#abc123');
+      assert.equal(subject.ui.product.styles.button['background-color'], '#abc123');
+      assert.equal(subject.ui.cart.styles.button['background-color'], '#abc123');
+      assert.equal(subject.ui.toggle.styles.toggle['background-color'], '#abc123');
     });
   });
 
@@ -145,10 +144,10 @@ describe('legacy/options-transform/product', () => {
     it('should set all the button styles', () => {
       productNode = product({button_text_color: 'abc123'});
       subject = new OptionsTransform(productNode);
-      assert.equal(subject.uiOptions.product.styles.button.color, '#abc123');
-      assert.equal(subject.uiOptions.cart.styles.button.color, '#abc123');
-      assert.equal(subject.uiOptions.modalProduct.styles.button.color, '#abc123');
-      assert.equal(subject.uiOptions.toggle.styles.toggle.color, '#abc123');
+      assert.equal(subject.ui.product.styles.button.color, '#abc123');
+      assert.equal(subject.ui.cart.styles.button.color, '#abc123');
+      assert.equal(subject.ui.modalProduct.styles.button.color, '#abc123');
+      assert.equal(subject.ui.toggle.styles.toggle.color, '#abc123');
     });
   });
 
@@ -156,10 +155,10 @@ describe('legacy/options-transform/product', () => {
     it('should set all the button styles', () => {
       productNode = product({button_text_color: 'abc123'});
       subject = new OptionsTransform(productNode);
-      assert.equal(subject.uiOptions.product.styles.button.color, '#abc123');
-      assert.equal(subject.uiOptions.cart.styles.button.color, '#abc123');
-      assert.equal(subject.uiOptions.modalProduct.styles.button.color, '#abc123');
-      assert.equal(subject.uiOptions.toggle.styles.toggle.color, '#abc123');
+      assert.equal(subject.ui.product.styles.button.color, '#abc123');
+      assert.equal(subject.ui.cart.styles.button.color, '#abc123');
+      assert.equal(subject.ui.modalProduct.styles.button.color, '#abc123');
+      assert.equal(subject.ui.toggle.styles.toggle.color, '#abc123');
     });
   });
 
@@ -167,30 +166,30 @@ describe('legacy/options-transform/product', () => {
     it('should set product styles', () => {
       productNode = product({background_color: 'abc123'});
       subject = new OptionsTransform(productNode);
-      assert.equal(subject.uiOptions.product.styles.wrapper['background-color'], '#abc123');
-      assert.equal(subject.uiOptions.product.styles.title['margin-left'], '20px');
-      assert.equal(subject.uiOptions.product.styles.title['margin-right'], '20px');
-      assert.equal(subject.uiOptions.product.styles.options['margin-left'], '20px');
-      assert.equal(subject.uiOptions.product.styles.options['margin-right'], '20px');
-      assert.equal(subject.uiOptions.product.styles.button['margin-left'], '20px');
-      assert.equal(subject.uiOptions.product.styles.button['margin-bottom'], '15px');
+      assert.equal(subject.ui.product.styles.wrapper['background-color'], '#abc123');
+      assert.equal(subject.ui.product.styles.title['margin-left'], '20px');
+      assert.equal(subject.ui.product.styles.title['margin-right'], '20px');
+      assert.equal(subject.ui.product.styles.options['margin-left'], '20px');
+      assert.equal(subject.ui.product.styles.options['margin-right'], '20px');
+      assert.equal(subject.ui.product.styles.button['margin-left'], '20px');
+      assert.equal(subject.ui.product.styles.button['margin-bottom'], '15px');
     });
 
     it('should set modal background', () => {
       productNode = product({background_color: 'abc123'});
       subject = new OptionsTransform(productNode);
-      assert.equal(subject.uiOptions.modal.styles.wrapper['background-color'], '#abc123');
-      assert.equal(subject.uiOptions.modal.styles.footer['background-color'], '#abc123');
-      assert.equal(subject.uiOptions.modal.styles.footer['background-image'], 'none');
+      assert.equal(subject.ui.modal.styles.wrapper['background-color'], '#abc123');
+      assert.equal(subject.ui.modal.styles.footer['background-color'], '#abc123');
+      assert.equal(subject.ui.modal.styles.footer['background-image'], 'none');
     })
 
     it('should set cart styles', () => {
       productNode = product({background_color: 'abc123'});
       subject = new OptionsTransform(productNode);
-      assert.equal(subject.uiOptions.cart.styles.cart['background-color'], '#abc123');
-      assert.equal(subject.uiOptions.cart.styles.header['background-color'], 'transparent');
-      assert.equal(subject.uiOptions.cart.styles.lineItems['background-color'], 'transparent');
-      assert.equal(subject.uiOptions.cart.styles.footer['background-color'], 'transparent');
+      assert.equal(subject.ui.cart.styles.cart['background-color'], '#abc123');
+      assert.equal(subject.ui.cart.styles.header['background-color'], 'transparent');
+      assert.equal(subject.ui.cart.styles.lineItems['background-color'], 'transparent');
+      assert.equal(subject.ui.cart.styles.footer['background-color'], 'transparent');
     });
   });
 
@@ -198,7 +197,7 @@ describe('legacy/options-transform/product', () => {
     it('should set the visibility of the price', () => {
       productNode = product({show_product_price: 'true'});
       subject = new OptionsTransform(productNode);
-      assert.equal(subject.uiOptions.product.contents.price, true);
+      assert.equal(subject.ui.product.contents.price, true);
     });
   });
 
@@ -206,7 +205,7 @@ describe('legacy/options-transform/product', () => {
     it('should set the visibility of the title', () => {
       productNode = product({show_product_title: 'true'});
       subject = new OptionsTransform(productNode);
-      assert.equal(subject.uiOptions.product.contents.title, true);
+      assert.equal(subject.ui.product.contents.title, true);
     });
   });
 
@@ -214,7 +213,7 @@ describe('legacy/options-transform/product', () => {
     it('should set the color of the title', () => {
       productNode = product({product_title_color: 'abc123'});
       subject = new OptionsTransform(productNode);
-      assert.equal(subject.uiOptions.product.styles.title.color, '#abc123');
+      assert.equal(subject.ui.product.styles.title.color, '#abc123');
     });
   });
 
@@ -222,7 +221,7 @@ describe('legacy/options-transform/product', () => {
     it('should set the text of the stock message', () => {
       productNode = product({buy_button_out_of_stock_text: 'nope'});
       subject = new OptionsTransform(productNode);
-      assert.equal(subject.uiOptions.product.text.outOfStock, 'nope');
+      assert.equal(subject.ui.product.text.outOfStock, 'nope');
     });
   });
 
@@ -230,7 +229,7 @@ describe('legacy/options-transform/product', () => {
     it('should set the text of the unavailable message', () => {
       productNode = product({buy_button_product_unavailable_text: 'nope'});
       subject = new OptionsTransform(productNode);
-      assert.equal(subject.uiOptions.product.text.unavailable, 'nope');
+      assert.equal(subject.ui.product.text.unavailable, 'nope');
     });
   });
 

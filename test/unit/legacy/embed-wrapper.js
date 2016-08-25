@@ -16,7 +16,7 @@ describe('legacy/embed-wrapper', () => {
   });
 
   it('should create an OptionsTransform', () => {
-    assert.isOk(subject.optionsTransform instanceof OptionsTransform);
+    assert.isOk(subject.options instanceof OptionsTransform);
   });
 
   it('should set the embeds shop', () => {
