@@ -70,7 +70,9 @@ export default class Modal extends Component {
 
   init(data) {
     this.isVisible = true;
-    return super.init(data);
+    return super.init(data).then(() => {
+      return this.product.init(this.model).then(() => this.loadImgs());
+    });
   }
 
   close() {
@@ -95,6 +97,5 @@ export default class Modal extends Component {
     addClassToElement('is-active', this.wrapper);
     this.product = new Product(this.productConfig, this.props);
     this.product.template = new Template(this.productModalTemplates, this.productModalContents, this.productModalOrder);
-    return this.product.init(this.model).then(() => this.loadImgs());
   }
 }
