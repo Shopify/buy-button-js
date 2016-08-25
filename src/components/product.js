@@ -95,7 +95,7 @@ export default class Product extends Component {
       buttonDisabled: !this.buttonEnabled,
       priceClass: this.model.selectedVariant && this.model.selectedVariant.compareAtPrice ? 'price--lowered' : '',
       classes: this.classes,
-      hasQuantity: this.options.contents.quantity,
+      hasQuantity: this.options.contents.quantityInput,
       selectedQuantity: this.selectedQuantity,
       buttonText: this.buttonText,
       imgStyle: this.imgStyle,
@@ -120,7 +120,7 @@ export default class Product extends Component {
 
   get buttonClass() {
     const disabledClass = this.buttonEnabled ? '' : this.classes.disabled;
-    const quantityClass = this.options.contents.quantity ? 'beside-quantity' : '';
+    const quantityClass = this.options.contents.quantityInput ? 'beside-quantity' : '';
     return `${disabledClass} ${quantityClass}`;
   }
 
@@ -235,7 +235,7 @@ export default class Product extends Component {
   get modalProductConfig() {
     let modalProductStyles;
     if (this.config.product.styles) {
-       modalProductStyles = merge({}, Object.keys(this.config.product.styles).reduce((productStyles, selectorKey) => {
+      modalProductStyles = merge({}, Object.keys(this.config.product.styles).reduce((productStyles, selectorKey) => {
         productStyles[selectorKey] = whitelistedProperties(this.config.product.styles[selectorKey]);
         return productStyles;
       }, {}), this.config.modalProduct.styles);
@@ -253,7 +253,7 @@ export default class Product extends Component {
       channel: 'buy_button',
       referrer: encodeURIComponent(windowUtils.location()),
       variant: this.model.selectedVariant.id,
-    }
+    };
   }
 
   get onlineStoreQueryString() {

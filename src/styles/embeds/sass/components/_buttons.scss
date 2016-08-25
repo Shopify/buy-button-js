@@ -1,8 +1,9 @@
 .btn {
-  color: white;
-  font-size: 14px;
+  color: #fff;
+  font-size: 15px;
   background: $color-primary;
-  padding: 4px 8px;
+  padding: 12px 40px;
+  letter-spacing: .3px;
   display: block;
   border-radius: 3px;
   cursor: pointer;
@@ -10,8 +11,8 @@
   max-width: 100%;
   text-overflow: ellipsis;
   overflow: hidden;
-  line-height: 20px;
-  border: none;
+  line-height: 1.2;
+  border: 0;
   -moz-appearance: none;
   -webkit-appearance: none;
 
@@ -33,8 +34,8 @@
   &:hover,
   &:focus {
     .product__variant-image {
-      transition: all 0.3s ease;
-      opacity: 0.7;
+      transition: all .3s ease;
+      opacity: .7;
     }
   }
 }
