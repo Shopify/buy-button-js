@@ -1,18 +1,19 @@
-const eventTypes = {
-  ADD_TO_CART: 'Added product'
-}
-
-export default function track(fn, event, properties) {
+export function withTracking(fn, event, properties) {
   return function () {
+    const props = properties(...arguments)
     const returnValue = fn(...arguments);
     if (returnValue && returnValue.then) {
       return returnValue.then((val) => {
-        console.log(event, properties(...arguments));
+        trackEvent(event, props);
         return val;
       });
     }
-    console.log(event, properties(...arguments));
+    trackEvent(event, props);
     return returnValue;
   }
 }
 
+export function trackEvent(event, properties) {
+  properties.pageurl = document.referrer;
+  console.info(event, properties);
+}

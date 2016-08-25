@@ -1,4 +1,5 @@
 import merge from 'lodash.merge';
+import {withTracking} from '../utils/track';
 import Component from '../component';
 import CartToggle from './toggle';
 import Template from '../template';
@@ -16,6 +17,11 @@ export default class Cart extends Component {
     this.isVisible = false;
     this.toggle = new CartToggle(config, Object.assign({}, this.props, {cart: this}));
     this.checkout = new Checkout(this.config);
+
+    this.addVariantToCart = withTracking(this.addVariantToCart.bind(this), 'CART_ADD', (variant, qty) =>
+        this.variantProps(variant, qty));
+    this.removeItem = withTracking(this.removeItem.bind(this), 'CART_REMOVE', (id) =>
+        this.lineItemProps(this.lineItemFromId(id), 0));
   }
 
   get typeKey() {
@@ -111,7 +117,9 @@ export default class Cart extends Component {
       if (el.parentNode) {
         if (this.props.browserFeatures.transition) {
           el.addEventListener('transitionend', () => {
+            if (el.parentNode) {
             el.parentNode.removeChild(el);
+            }
           });
         } else {
           el.parentNode.removeChild(el);
@@ -147,6 +155,30 @@ export default class Cart extends Component {
       return this.updateItem(id, newQty);
     } else {
       return this.removeItem(id, target);
+    }
+  }
+
+  lineItemFromId(id) {
+    return this.model.lineItems.filter((lineItem) => lineItem.id === id)[0];
+  }
+
+  lineItemProps(lineItem, quantity) {
+    return {
+      id: lineItem.variant_id,
+      title: lineItem.title,
+      price: lineItem.price,
+      quantity: quantity,
+      sku: null
+    }
+  }
+
+  variantProps(variant, quantity = 0) {
+    return {
+      id: variant.id,
+      title: variant.productTitle,
+      price: variant.price,
+      sku: null,
+      quantity,
     }
   }
 
