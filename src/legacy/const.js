@@ -1,4 +1,5 @@
 import optionTemplates from './templates/option';
+import productModalTemplates from './templates/product-modal';
 import {
   productStyles,
   productSetStyles,
@@ -7,6 +8,7 @@ import {
   lineItemStyles,
   cartStyles,
   toggleStyles,
+  optionStyles,
 } from './styles/overrides';
 
 export const attributes = [
@@ -59,11 +61,13 @@ export const defaultOptions = {
     styles: Object.assign({}, modalProductStyles),
     contents: {
       variantTitle: false,
-      footer: true,
+      contents: true,
     },
+    order: ['contents'],
+    templates: productModalTemplates,
     events: {
       beforeRender: (productInstance) => {
-        productInstance.template.contents.footer = true;
+        // console.log(productInstance);
       },
     },
   },
@@ -98,5 +102,6 @@ const lineItem = {
   },
   option: {
     templates: optionTemplates,
+    styles: Object.assign({}, optionStyles),
   },
 };

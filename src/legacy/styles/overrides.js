@@ -32,23 +32,40 @@ export const productSetStyles = {
 
 export const modalProductStyles = {
   button: {},
-  wrapper: {},
+  product: {
+    'padding': 0
+  },
   title: {
-    'padding-top': '20px',
+    'padding-top': '10px',
+    'margin': 0,
     'font-size': '18px',
     'font-weight': '400',
+    'text-align': 'left',
+  },
+  imgWrapper: {
+    'width': 'auto',
+    'max-width': '100%',
+    'float': 'none',
+  },
+  img: {
+    'height': '100%',
   },
   description: {
     'margin-bottom': '20px',
   },
   price: {
     'margin-left': 0,
+    'text-align': 'left',
+    'margin-top': 0,
+    'padding-top': 0,
+    'color': '#767676',
+    'font-size': '16px'
   },
   compareAt: {
     display: 'none',
   },
   options: {
-    'margin-bottom': '20px',
+    'margin': '0 0 20px',
   },
   quantity: {
     '@media (max-width: 800px)': {
@@ -60,6 +77,10 @@ export const modalProductStyles = {
       width: '110px',
       background: '#fff',
     },
+  },
+  button: {
+    'margin': 0,
+    'width': '100%',
   },
   buttonBesideQty: {
     '@media (max-width: 800px)': {
@@ -79,10 +100,12 @@ export const modalStyles = {
   img: {
     '@media (max-width: 800px)': {
       'border-bottom': '1px solid rgba(170,170,170,0.3)',
+      'height': '40%',
       'max-height': '570px',
     },
     '@media (min-width: 801px)': {
       'border-right': '1px solid rgba(170,170,170,0.3)',
+      'width': '60%'
     },
   },
   footer: {
@@ -103,8 +126,16 @@ export const modalStyles = {
     },
   },
   contents: {
-    position: 'absolute',
-    right: '0',
+    '@media (max-width: 800px)': {
+      position: 'relative',
+      height: '60%',
+    },
+    '@media (min-width: 801px)': {
+      height: '100%',
+      position: 'absolute',
+      right: '0',
+      top: '0',
+    }
   },
   contentsWithImg: {
     '@media (min-width: 801px)': {
@@ -130,11 +161,22 @@ export const modalStyles = {
     '-webkit-overflow-scrolling': 'touch',
   },
   close: {
+    'top': 0,
+    'font-weight': 300,
+    'right': '8px',
     '@media (max-width: 800px)': {
       position: 'fixed',
     },
   },
+  modal: {
+    '@media (max-width: 800px)': {
+      'height': '100%',
+    },
+  },
   wrapper: {
+    '@media (max-width: 800px)': {
+      'height': '100%',
+    },
     '@media (min-width: 801px)': {
       margin: '-285px auto 0 auto',
       top: '50%',
@@ -165,3 +207,9 @@ export const toggleStyles = {
   toggle: {},
   icon: {},
 };
+
+export const optionStyles = {
+  label: {
+    display: 'none',
+  }
+}
