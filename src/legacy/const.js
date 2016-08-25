@@ -60,7 +60,6 @@ export const defaultOptions = {
   modalProduct: {
     styles: Object.assign({}, modalProductStyles),
     contents: {
-      variantTitle: false,
       contents: true,
     },
     order: ['contents'],
@@ -73,11 +72,6 @@ export const defaultOptions = {
     styles: Object.assign({}, cartStyles),
     text: {},
   }),
-  events: {
-    beforeRender: (modalInstance) => {
-      modalInstance.config.modalProduct.contents.button = false;
-    },
-  },
   lineItem: {
     styles: Object.assign({}, lineItemStyles),
   },
