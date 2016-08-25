@@ -74,6 +74,10 @@ export default class Product extends Component {
     }
   }
 
+  get iframeClass() {
+    return `layout-${this.options.layout}`;
+  }
+
   get typeKey() {
     return 'product';
   }
@@ -96,15 +100,15 @@ export default class Product extends Component {
       buttonDisabled: !this.buttonEnabled,
       priceClass: this.model.selectedVariant && this.model.selectedVariant.compareAtPrice ? 'price--lowered' : '',
       classes: this.classes,
-      hasQuantity: this.options.contents.quantityInput,
+      hasQuantity: this.options.contents.quantity,
       selectedQuantity: this.selectedQuantity,
       buttonText: this.buttonText,
       imgStyle: this.imgStyle,
     });
   }
 
-  get imageWrapperClass() {
-    return this.currentImage ? 'has-image' : 'no-image';
+  get wrapperClass() {
+    return `${this.currentImage ? 'has-image' : 'no-image'} layout-${this.options.layout}`;
   }
 
   get DOMEvents() {
@@ -121,7 +125,7 @@ export default class Product extends Component {
 
   get buttonClass() {
     const disabledClass = this.buttonEnabled ? '' : this.classes.disabled;
-    const quantityClass = this.options.contents.quantityInput ? 'beside-quantity' : '';
+    const quantityClass = this.options.contents.quantity ? 'beside-quantity' : '';
     return `${disabledClass} ${quantityClass}`;
   }
 
@@ -189,7 +193,7 @@ export default class Product extends Component {
 
   wrapTemplate(html) {
     if (this.contents.button) {
-      return `<div class="${this.imageWrapperClass} ${this.classes.product.product}">${html}</div>`;
+      return `<div class="${this.wrapperClass} ${this.classes.product.product}">${html}</div>`;
     } else {
       return `<button class="${this.classes.product.blockButton} ${this.classes.product.product}">${html}</button>`;
     }
