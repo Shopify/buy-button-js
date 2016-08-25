@@ -62,9 +62,7 @@ class OptionsTransform {
   }
 
   variant_id_transform(value, options) {
-    if (this.embedType === 'product') {
-      options.product.contents.options = false;
-    }
+    options.product.contents.options = false;
   }
 
   redirect_to_transform(value, options) {
@@ -137,18 +135,6 @@ class OptionsTransform {
 
   product_title_color_transform(value, options) {
     options.product.styles.title.color = `#${value}`;
-  }
-
-  buy_button_out_of_stock_text_transform(value, options) {
-    options.product.text.outOfStock = value;
-  }
-
-  buy_button_product_unavailable_text_transform(value, options) {
-    options.product.text.productUnavailable = value; // not implemented
-  }
-
-  checkout_button_text_transform(value, options) {
-    options.cart.text.button = value;
   }
 
   text_color_transform(value, options) {
