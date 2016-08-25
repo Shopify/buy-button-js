@@ -42,8 +42,12 @@ const fancyOptions = {
       'variantTitle',
       'options',
       'quantity',
+      'quantityDecrement',
+      'quantityInput',
+      'quantityIncrement',
       'button',
       'price',
+      'title',
     ],
     templates: {
       button: '<button class="fancy-button {{data.classes.product.button}}">{{data.buttonText}}</button>'

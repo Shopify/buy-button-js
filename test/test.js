@@ -21,4 +21,5 @@ import './unit/modal';
 import './unit/toggle';
 import './unit/merge';
 import './unit/legacy';
+
 import './integration/shopify-buy-ui';
