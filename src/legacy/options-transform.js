@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-import merge from 'lodash.merge';
+import merge from '../utils/merge';
 import {defaultOptions, attributes} from './const';
 
 class OptionsTransform {
