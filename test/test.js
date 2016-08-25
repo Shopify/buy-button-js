@@ -5,7 +5,7 @@ window.chai = chai;
 window.sinon = sinon;
 
 window.assert = chai.assert;
-
+chai.config.truncateThreshold = 0;
 sinon.assert.expose(chai.assert, {prefix: ''});
 
 import './unit/shopify-buy-ui';
