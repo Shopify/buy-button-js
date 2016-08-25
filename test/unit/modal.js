@@ -63,6 +63,7 @@ describe('Modal class', () => {
     it('initializes a Product', (done) => {
       modal.init(fakeProduct).then((what) => {
         assert.calledWith(initSpy, fakeProduct);
+        assert.deepEqual(modal.product.model, fakeProduct);
         done();
       }).catch((e) => {
         done(e);
@@ -147,10 +148,6 @@ describe('Modal class', () => {
     it('replaces product template', () => {
       assert.deepEqual(modal.product.template.templates, modal.productModalTemplates);
       assert.deepEqual(modal.product.template.contents, modal.productModalContents);
-    });
-
-    it('initializes product', () => {
-      assert.deepEqual(modal.product.model, fakeProduct);
     });
   });
 });

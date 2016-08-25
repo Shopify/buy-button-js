@@ -278,7 +278,7 @@ export default class Product extends Component {
         }),
       }, this.props);
     }
-    this.modal.init(this.model);
+    return this.modal.init(this.model);
   }
 
   onOptionSelect(evt) {
