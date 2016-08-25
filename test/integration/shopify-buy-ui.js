@@ -66,7 +66,7 @@ const fancyOptions = {
 let product;
 let ui;
 
-describe('ShopifyBuy.UI', () => {
+describe.skip('ShopifyBuy.UI', () => {
   beforeEach(() => {
     config.node = document.createElement('div');
     config.node.setAttribute('id', 'fixture');
