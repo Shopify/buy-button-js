@@ -82,21 +82,11 @@ describe('Cart class', () => {
         }],
       }
       cart.updateItem = sinon.spy();
-      cart.removeItem = sinon.spy();
     });
 
-    describe('when setting quantity > 0', () => {
-      it('calls updateItem', () => {
-        cart.setQuantity(node, (n) => n + 1);
-        assert.calledWith(cart.updateItem, 1234, 2);
-      });
-    });
-
-    describe('when setting quantity == 0', () => {
-      it('calls removeItem', () => {
-        cart.setQuantity(node, (n) => n - 1);
-        assert.calledWith(cart.removeItem, 1234, node);
-      });
+    it('calls updateItem', () => {
+      cart.setQuantity(node, (n) => n + 1);
+      assert.calledWith(cart.updateItem, 1234, 2);
     });
   });
 
@@ -126,42 +116,23 @@ describe('Cart class', () => {
   });
 
 
-  describe('removeItem', () => {
-    let updateLineItemStub;
+  describe('animateRemoveItem', () => {
     let node;
 
     beforeEach(() => {
-      cart.model = {
-        updateLineItem: () => {}
-      }
-      updateLineItemStub = sinon.stub(cart.model, 'updateLineItem').returns(Promise.resolve({test: 'lol'}))
-      cart.toggle.render = sinon.spy();
-
-      node = {
-        parentNode: {
-          parentNode: {
-            addEventListener: sinon.spy(),
-            classList: {
-              add: sinon.spy(),
-            },
-            parentNode: {
-
-            }
-          },
-        },
-      };
+      node = cart.document.createElement('div');
+      node.setAttribute('id', 123);
+      cart.document.body.appendChild(node);
+      node.addEventListener = sinon.spy();
     });
 
-    it('calls updateLineItem', (done) => {
-      cart.removeItem(123, node).then(() => {
-        assert.calledWith(updateLineItemStub, 123, 0);
-        assert.deepEqual(cart.model, {test: 'lol'});
-        assert.calledOnce(cart.toggle.render);
-        assert.calledWith(node.parentNode.parentNode.addEventListener, 'transitionend');
-        done();
-      }).catch((e) => {
-        done(e);
-      });
+    afterEach(() => {
+      cart.document.body.removeChild(node);
+    });
+
+    it('calls updateLineItem', () => {
+      cart.animateRemoveItem(123);
+      assert.calledWith(node.addEventListener, 'transitionend');
     });
   });
 
