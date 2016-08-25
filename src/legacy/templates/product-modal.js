@@ -14,7 +14,7 @@ const productModalTemplate = {
     <div class="{{data.classes.modal.footer}} {{#data.currentImage}}{{data.classes.modal.footerWithImg}}{{/data.currentImage}}">
       ${productTemplates.button}
     </div>
-  `
-}
+  `,
+};
 
 export default productModalTemplate;

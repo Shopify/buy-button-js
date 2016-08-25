@@ -65,21 +65,9 @@ export const defaultOptions = {
     },
     order: ['contents'],
     templates: productModalTemplates,
-    events: {
-      beforeRender: (productInstance) => {
-        // console.log(productInstance);
-      },
-    },
   },
   modal: {
     styles: Object.assign({}, modalStyles),
-    events: {
-  }),
-  events: {
-      beforeRender: (modalInstance) => {
-        modalInstance.config.modalProduct.contents.button = false;
-      },
-    modal: {},
   },
   cart: {
     styles: Object.assign({}, cartStyles),
