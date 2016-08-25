@@ -80,12 +80,8 @@ export const defaultOptions = {
   },
   lineItem: {
     styles: Object.assign({}, lineItemStyles),
-    close: {},
   },
   toggle: {
-};
-
-const lineItem = {
     styles: Object.assign({}, toggleStyles),
   },
   option: {
