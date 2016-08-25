@@ -123,10 +123,10 @@ export default class Component {
     if (!this.iframe) {
       return;
     }
-    if ((this.typeKey === 'product' && this.options.layout === 'vertical' )) {
+    if (this.typeKey === 'product' && this.options.layout === 'vertical' ) {
       this.resizeX();
     }
-    if (this.typeKey === 'product'|| this.typeKey === 'productSet') {
+    if (this.typeKey === 'product' || this.typeKey === 'productSet') {
       this.resizeY();
     }
   }
