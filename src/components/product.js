@@ -89,6 +89,7 @@ export default class Product extends Component {
   get viewData() {
     return merge(this.model, {
       optionsHtml: this.optionsHtml,
+      contents: this.contents,
       currentImage: this.currentImage,
       buttonClass: this.buttonClass,
       hasVariants: this.hasVariants,
@@ -235,7 +236,7 @@ export default class Product extends Component {
   get modalProductConfig() {
     let modalProductStyles;
     if (this.config.product.styles) {
-       modalProductStyles = merge({}, Object.keys(this.config.product.styles).reduce((productStyles, selectorKey) => {
+      modalProductStyles = merge({}, Object.keys(this.config.product.styles).reduce((productStyles, selectorKey) => {
         productStyles[selectorKey] = whitelistedProperties(this.config.product.styles[selectorKey]);
         return productStyles;
       }, {}), this.config.modalProduct.styles);
@@ -253,7 +254,7 @@ export default class Product extends Component {
       channel: 'buy_button',
       referrer: encodeURIComponent(windowUtils.location()),
       variant: this.model.selectedVariant.id,
-    }
+    };
   }
 
   get onlineStoreQueryString() {
