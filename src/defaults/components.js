@@ -9,15 +9,16 @@ const defaults = {
   product: {
     iframe: true,
     buttonDestination: 'cart',
+    layout: 'vertical',
     manifest: ['product', 'option'],
     order: [
       'img',
       'title',
       'variantTitle',
-      'price',
       'options',
       'quantity',
       'button',
+      'price',
     ],
     contents: {
       img: true,
@@ -65,11 +66,14 @@ const defaults = {
     contents: {
       img: true,
       title: true,
-      variantTitle: false,
+      variantTitle: true,
       price: true,
       options: true,
-      quantity: true,
       button: true,
+      quantity: true,
+      quantityIncrement: false,
+      quantityDecrement: false,
+      quantityInput: true,
       description: true,
     },
     order: [
@@ -86,9 +90,6 @@ const defaults = {
       wrapper: 'modal-product-wrapper',
     },
     buttonDestination: 'cart',
-    text: {
-      button: 'ADD TO CART',
-    },
   },
   modal: {
     iframe: true,

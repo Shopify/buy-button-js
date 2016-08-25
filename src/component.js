@@ -96,6 +96,10 @@ export default class Component {
     return {};
   }
 
+  get iframeClass() {
+    return '';
+  }
+
   delegateEvents() {
     this._userEvent('beforeDelegateEvents');
     this._closeComponentsOnEsc();
@@ -119,7 +123,7 @@ export default class Component {
     if (!this.iframe) {
       return;
     }
-    if (this.typeKey === 'product') {
+    if (this.typeKey === 'product' && this.options.layout === 'vertical' ) {
       this.resizeX();
     }
     if (this.typeKey === 'product' || this.typeKey === 'productSet') {
@@ -147,6 +151,7 @@ export default class Component {
         browserFeatures: this.props.browserFeatures,
       });
       this.node.className += ` shopify-buy-frame shopify-buy-frame--${this.typeKey}`;
+      this.iframe.addClass(this.iframeClass);
       return this.iframe.load();
     } else {
       this.iframe = null;
