@@ -15,10 +15,10 @@ const defaults = {
       'img',
       'title',
       'variantTitle',
+      'price',
       'options',
       'quantity',
       'button',
-      'price',
     ],
     contents: {
       img: true,
@@ -187,6 +187,9 @@ const defaults = {
       title: true,
       price: true,
       quantity: true,
+      quantityIncrement: true,
+      quantityDecrement: true,
+      quantityInput: true,
     },
     order: [
       'image',
