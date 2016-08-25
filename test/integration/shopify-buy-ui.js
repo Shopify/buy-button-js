@@ -38,14 +38,12 @@ const fancyOptions = {
       image: false,
     },
     order: [
+      'title',
       'variantTitle',
       'options',
-      'quantityDecrement',
-      'quantityInput',
-      'quantityIncrement',
+      'quantity',
       'button',
       'price',
-      'title',
     ],
     templates: {
       button: '<button class="fancy-button {{data.classes.product.button}}">{{data.buttonText}}</button>'

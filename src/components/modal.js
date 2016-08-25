@@ -89,7 +89,7 @@ export default class Modal extends Component {
 
   render() {
     if (!this.isVisible) {
-      return Promise.resolve();
+      return;
     }
     super.render();
     this.iframe.addClass('is-active');

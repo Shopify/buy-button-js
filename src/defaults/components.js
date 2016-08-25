@@ -16,9 +16,7 @@ const defaults = {
       'variantTitle',
       'price',
       'options',
-      'quantityDecrement',
-      'quantityInput',
-      'quantityIncrement',
+      'quantity',
       'button',
     ],
     contents: {
@@ -27,6 +25,7 @@ const defaults = {
       variantTitle: false,
       price: true,
       options: true,
+      quantity: true,
       quantityIncrement: false,
       quantityDecrement: false,
       quantityInput: true,
