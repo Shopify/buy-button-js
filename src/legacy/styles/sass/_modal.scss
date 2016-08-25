@@ -67,7 +67,7 @@ $modal-footer-height: 90px;
   }
 
   .btn.beside-quantity {
-    width: calc(100% - 140px);
+    max-width: calc(100% - 140px);
     display: block;
   }
 
@@ -100,7 +100,7 @@ $modal-footer-height: 90px;
   .btn.beside-quantity {
     margin-left: 0;
     float: left;
-    width: calc(100% - 140px);
+    max-width: calc(100% - 140px);
   }
 
   .quantity-container {
