@@ -19,7 +19,7 @@ import './unit/checkout';
 import './unit/product-set';
 import './unit/modal';
 import './unit/toggle';
+import './unit/tracker';
 import './unit/legacy';
-
 import './unit/merge';
 import './integration/shopify-buy-ui';
