@@ -49,6 +49,7 @@ const defaults = {
       description: 'product-description',
       options: 'product__variant-selectors',
       disabled: 'btn-disabled',
+      buttonBesideQty: 'beside-quantity',
       quantity: 'quantity-container',
       quantityInput: 'quantity',
       quantityButton: 'btn--seamless',
@@ -66,7 +67,7 @@ const defaults = {
     contents: {
       img: true,
       title: true,
-      variantTitle: true,
+      variantTitle: false,
       price: true,
       options: true,
       button: true,
@@ -88,8 +89,12 @@ const defaults = {
     ],
     classes: {
       wrapper: 'modal-product-wrapper',
+      hasImage: 'has-image',
     },
     buttonDestination: 'cart',
+    text: {
+      button: 'ADD TO CART',
+    },
   },
   modal: {
     iframe: true,
@@ -102,6 +107,9 @@ const defaults = {
       product: 'product-modal',
       img: 'modal-img',
       footer: 'modal-footer',
+      footerWithImg: 'modal-footer--has-img',
+      imgWithImg: 'modal-img--has-img',
+      contentsWithImg: 'modal-contents--has-img',
       scrollContents: 'modal-scroll-contents',
     },
     contents: {
