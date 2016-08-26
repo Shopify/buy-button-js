@@ -23,9 +23,10 @@ export class Adapter {
       return elements;
     }, []).map((element) => {
       const wrapper = new EmbedWrapper(element, this.cart);
-      return this.getShopUI(wrapper.shop)
+      this.getShopUI(wrapper.shop)
         .then(wrapper.render.bind(wrapper))
         .catch(wrapper.handleError.bind(wrapper));
+      return wrapper;
     });
   }
 

@@ -26,9 +26,13 @@ class OptionsTransform {
 
   get legacy() {
     this.legacyOptions = this.legacyOptions || attributes.reduce((opts, attr) => {
-      const value = this.element.getAttribute(`data-${attr}`) || this.cart.getAttribute(`data-${attr}`);
+      const value = this.element.getAttribute(`data-${attr}`);
       if (value) {
         opts[attr] = value;
+      } else {
+        if (this.cart) {
+          opts[attr] = this.cart.getAttribute(`data-${attr}`);
+        }
       }
       return opts;
     }, {});
