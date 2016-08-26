@@ -2,6 +2,7 @@ import Product from './components/product';
 import Modal from './components/modal';
 import ProductSet from './components/product-set';
 import Cart from './components/cart';
+import Tracker from './utils/track';
 import hostStyles from './styles/host/host';
 import conditionalStyles from './styles/host/conditional';
 import throttle from './utils/throttle';
@@ -11,7 +12,7 @@ const DATA_ATTRIBUTE = 'data-shopify-buy-ui';
 const ESC_KEY = 27;
 
 export default class UI {
-  constructor(client) {
+  constructor(client, trackingLib) {
     this.client = client;
     this.iframeComponents = [];
     this.components = {
@@ -27,6 +28,7 @@ export default class UI {
       collection: ProductSet,
       productSet: ProductSet,
     };
+    this.tracker = new Tracker(trackingLib);
     this._appendStyleTag();
     this._bindResize();
     this._bindHostClick();
@@ -93,6 +95,7 @@ export default class UI {
       closeCart: this.closeCart.bind(this),
       createModal: this.createModal.bind(this),
       closeModal: this.closeModal.bind(this),
+      tracker: this.tracker,
       browserFeatures,
     };
   }

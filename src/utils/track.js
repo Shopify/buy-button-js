@@ -1,20 +1,24 @@
 export default class Tracker {
+  constructor(lib) {
+    this.lib = lib || null;
+  }
+
   trackMethod(fn, event, properties) {
     const self = this;
     return function () {
       const returnValue = fn(...arguments);
       if (returnValue && returnValue.then) {
         return returnValue.then((val) => {
-          self.callTricorder(event, properties);
+          self.callLib(event, properties);
           return val;
         });
       }
-      self.callTricorder(event, properties);
+      self.callLib(event, properties);
       return returnValue;
     }
   }
 
-  callTricorder(eventName, properties) {
+  callLib(eventName, properties) {
     switch(eventName) {
       case 'CART_UPDATE':
         if (properties.quantity < 1) {
@@ -30,6 +34,8 @@ export default class Tracker {
   }
 
   track(eventName, properties) {
-    console.info(eventName, properties);
+    if (this.lib) {
+      this.lib.track(eventName, properties);
+    }
   }
 }
