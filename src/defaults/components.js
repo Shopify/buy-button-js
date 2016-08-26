@@ -228,6 +228,8 @@ const defaults = {
       toggle: 'cart-toggle',
       title: 'cart-toggle__title',
       count: 'cart-toggle__count',
+      icon: 'icon-cart icon-cart--side',
+      iconPath: 'icon-cart__group',
     },
     text: {
       title: 'cart',
