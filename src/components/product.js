@@ -125,7 +125,7 @@ export default class Product extends Component {
 
   get buttonClass() {
     const disabledClass = this.buttonEnabled ? '' : this.classes.disabled;
-    const quantityClass = this.options.contents.quantityInput ? 'beside-quantity' : '';
+    const quantityClass = this.options.contents.quantity ? 'beside-quantity' : '';
     return `${disabledClass} ${quantityClass}`;
   }
 

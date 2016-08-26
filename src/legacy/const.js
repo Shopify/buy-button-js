@@ -60,6 +60,7 @@ export const defaultOptions = {
     styles: Object.assign({}, modalProductStyles),
     contents: {
       contents: true,
+      quantity: false,
     },
     order: ['contents'],
     templates: productModalTemplates,
