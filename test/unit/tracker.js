@@ -14,7 +14,7 @@ describe('Tracker', () => {
 
   describe('trackMethod', () => {
     beforeEach(() => {
-      tracker.callTricorder = sinon.spy();
+      tracker.callLib = sinon.spy();
     });
 
     describe('with a sync method', () => {
@@ -22,7 +22,7 @@ describe('Tracker', () => {
         let spy = sinon.spy();
         tracker.trackMethod(spy, 'TEST_EVENT', {test: true})('argument');
         assert.calledWith(spy, 'argument');
-        assert.calledWith(tracker.callTricorder, 'TEST_EVENT', {test: true});
+        assert.calledWith(tracker.callLib, 'TEST_EVENT', {test: true});
       });
     });
 
@@ -31,14 +31,14 @@ describe('Tracker', () => {
         let spy = sinon.stub().returns(Promise.resolve());
         tracker.trackMethod(spy, 'TEST_EVENT', {test: true})('argument').then(() => {
           assert.calledWith(spy, 'argument');
-          assert.calledWith(tracker.callTricorder, 'TEST_EVENT', {test: true});
+          assert.calledWith(tracker.callLib, 'TEST_EVENT', {test: true});
           done();
         });
       });
     });
   });
 
-  describe('callTricorder', () => {
+  describe('callLib', () => {
     beforeEach(() => {
       tracker.track = sinon.spy();
     });
@@ -47,7 +47,7 @@ describe('Tracker', () => {
       const props = {
         id: 123,
       }
-      tracker.callTricorder('TEST_EVENT', props);
+      tracker.callLib('TEST_EVENT', props);
       assert.calledWith(tracker.track, 'TEST_EVENT', props);
     });
 
@@ -59,7 +59,7 @@ describe('Tracker', () => {
             quantity: 2,
             prevQuantity: 1,
           }
-          tracker.callTricorder('CART_UPDATE', props);
+          tracker.callLib('CART_UPDATE', props);
           assert.calledWith(tracker.track, 'CART_INCREMENT', props);
         });
       });
@@ -70,7 +70,7 @@ describe('Tracker', () => {
             quantity: 2,
             prevQuantity: 3,
           }
-          tracker.callTricorder('CART_UPDATE', props);
+          tracker.callLib('CART_UPDATE', props);
           assert.calledWith(tracker.track, 'CART_DECREMENT', props);
         });
       });
@@ -81,7 +81,7 @@ describe('Tracker', () => {
             quantity: 0,
             prevQuantity: 3,
           }
-          tracker.callTricorder('CART_UPDATE', props);
+          tracker.callLib('CART_UPDATE', props);
           assert.calledWith(tracker.track, 'CART_REMOVE', props);
         });
       });
