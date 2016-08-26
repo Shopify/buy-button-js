@@ -1,4 +1,3 @@
-import trackMethod from '../utils/track';
 import merge from '../utils/merge';
 import Component from '../component';
 import CartToggle from './toggle';
@@ -168,6 +167,6 @@ export default class Cart extends Component {
       price: item.price,
       prevQuantity: item.quantity,
       quantity: parseFloat(quantity),
-    }
+    };
   }
 }

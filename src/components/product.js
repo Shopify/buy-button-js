@@ -227,8 +227,7 @@ export default class Product extends Component {
     evt.stopPropagation();
     if (this.options.buttonDestination === 'cart') {
       this.props.closeModal();
-      this.props.tracker.trackMethod(this.cart.addVariantToCart.bind(this), 'CART_ADD', this.selectedVariantTrackingInfo)
-        (this.model.selectedVariant, this.model.selectedQuantity);
+      this.props.tracker.trackMethod(this.cart.addVariantToCart.bind(this), 'CART_ADD', this.selectedVariantTrackingInfo)(this.model.selectedVariant, this.model.selectedQuantity);
     } else if (this.options.buttonDestination === 'modal') {
       this.openModal();
     } else if (this.options.buttonDestination === 'onlineStore') {
@@ -246,7 +245,7 @@ export default class Product extends Component {
       quantity: this.model.selectedQuantity,
       sku: null,
       price: variant.price,
-    }
+    };
   }
 
   get modalProductConfig() {
