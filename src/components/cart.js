@@ -128,6 +128,8 @@ export default class Cart extends Component {
     if (el.parentNode) {
       if (this.props.browserFeatures.transition) {
         el.addEventListener('transitionend', () => {
+          // eslint-disable-next-line
+          // TODO: why is transitionend sometimes called twice?
           if (el.parentNode) {
             el.parentNode.removeChild(el);
           }
