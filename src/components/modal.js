@@ -1,7 +1,6 @@
 import merge from '../utils/merge';
 import Component from '../component';
 import Product from './product';
-import Template from '../template';
 import {addClassToElement, removeClassFromElement} from '../utils/element-class';
 
 export default class Modal extends Component {
