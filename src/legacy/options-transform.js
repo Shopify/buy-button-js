@@ -3,8 +3,9 @@ import merge from '../utils/merge';
 import {defaultOptions, attributes} from './const';
 
 class OptionsTransform {
-  constructor(element) {
+  constructor(element, cart) {
     this.element = element;
+    this.cart = cart;
   }
 
   get embedType() {
@@ -25,7 +26,7 @@ class OptionsTransform {
 
   get legacy() {
     this.legacyOptions = this.legacyOptions || attributes.reduce((opts, attr) => {
-      const value = this.element.getAttribute(`data-${attr}`);
+      const value = this.element.getAttribute(`data-${attr}`) || this.cart.getAttribute(`data-${attr}`);
       if (value) {
         opts[attr] = value;
       }

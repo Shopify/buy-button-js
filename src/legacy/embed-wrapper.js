@@ -1,8 +1,9 @@
 import OptionsTransform from './options-transform';
 
 class EmbedWrapper {
-  constructor(element) {
+  constructor(element, cart) {
     this.element = element;
+    this.cart = cart;
   }
 
   render(ui) {
@@ -23,7 +24,7 @@ class EmbedWrapper {
   }
 
   get options() {
-    this.optionsTransform = this.optionsTransform || new OptionsTransform(this.element);
+    this.optionsTransform = this.optionsTransform || new OptionsTransform(this.element, this.cart);
     return this.optionsTransform;
   }
 

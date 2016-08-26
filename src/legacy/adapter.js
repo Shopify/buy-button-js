@@ -10,15 +10,22 @@ export class Adapter {
   constructor() {
     this.uis = {};
     this.promises = {};
+    this.cart = null;
   }
 
   init() {
-    this.elements = [...document.querySelectorAll('[data-embed_type]')].map((element) => {
-      const wrapper = new EmbedWrapper(element);
-      this.getShopUI(wrapper.shop)
+    this.elements = [...document.querySelectorAll('[data-embed_type]')].reduce((elements, element) => {
+      if (element.getAttribute('data-embed_type') === 'cart') {
+        this.cart = element;
+      } else {
+        elements.push(element);
+      }
+      return elements;
+    }, []).map((element) => {
+      const wrapper = new EmbedWrapper(element, this.cart);
+      return this.getShopUI(wrapper.shop)
         .then(wrapper.render.bind(wrapper))
         .catch(wrapper.handleError.bind(wrapper));
-      return wrapper;
     });
   }
 
