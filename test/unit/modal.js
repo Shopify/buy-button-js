@@ -91,26 +91,6 @@ describe('Modal class', () => {
         assert.typeOf(modal.productConfig.node, 'HTMLDivElement');
       });
     });
-
-    describe('get productTemplate', () => {
-      it('instantiates a Template', () => {
-        assert.deepEqual(modal.productTemplate.templates, modal.product.templates);
-      });
-    });
-
-    describe('get productModalTemplates', () => {
-      it('returns a hash of strings', () => {
-        assert.typeOf(modal.productModalTemplates.img, 'string');
-        assert.typeOf(modal.productModalTemplates.contents, 'string');
-      });
-    });
-
-    describe('get productModalContents', () => {
-      it('returns a hash of template keys', () => {
-        assert.ok(modal.productModalContents.img);
-        assert.ok(modal.productModalContents.contents);
-      });
-    });
   });
 
   describe('close', () => {
@@ -143,11 +123,6 @@ describe('Modal class', () => {
 
     it('makes modal visible', () => {
       assert.match(modal.iframe.parent.className, 'is-active');
-    });
-
-    it('replaces product template', () => {
-      assert.deepEqual(modal.product.template.templates, modal.productModalTemplates);
-      assert.deepEqual(modal.product.template.contents, modal.productModalContents);
     });
   });
 });
