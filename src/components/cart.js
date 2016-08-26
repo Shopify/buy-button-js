@@ -36,7 +36,7 @@ export default class Cart extends Component {
     return this.model.lineItems.reduce((acc, lineItem) => {
       const data = lineItem;
       data.classes = this.classes;
-      return acc + this.childTemplate.render({data}, (output) => `<div class=${this.classes.lineItem.lineItem}>${output}</div>`);
+      return acc + this.childTemplate.render({data}, (output) => `<div id="${lineItem.id}" class=${this.classes.lineItem.lineItem}>${output}</div>`);
     }, '');
   }
 
@@ -102,23 +102,42 @@ export default class Cart extends Component {
     this.setQuantity(target, (prevQty) => prevQty + qty);
   }
 
-  removeItem(id, target) {
-    const el = target.parentNode.parentNode;
-    return this.model.updateLineItem(id, 0).then((cart) => {
-      this.toggle.render();
+  setQuantity(target, fn) {
+    const id = target.getAttribute('data-line-item-id');
+    const item = this.model.lineItems.filter((lineItem) => lineItem.id === id)[0];
+    const newQty = fn(item.quantity);
+    return this.updateItem(id, newQty);
+  }
+
+  updateItem(id, qty) {
+    return this.model.updateLineItem(id, qty).then((cart) => {
       this.model = cart;
-      addClassToElement('is-hidden', el);
-      if (el.parentNode) {
-        if (this.props.browserFeatures.transition) {
-          el.addEventListener('transitionend', () => {
-            el.parentNode.removeChild(el);
-          });
-        } else {
-          el.parentNode.removeChild(el);
-        }
+      this.toggle.render();
+      if (qty > 0) {
+        this.render();
+      } else {
+        this.animateRemoveItem(id);
       }
-      return el;
+      return cart;
     });
+  }
+
+  animateRemoveItem(id) {
+    const el = this.document.getElementById(id);
+    addClassToElement('is-hidden', el);
+    if (el.parentNode) {
+      if (this.props.browserFeatures.transition) {
+        el.addEventListener('transitionend', () => {
+          // eslint-disable-next-line
+          // TODO: why is transitionend sometimes called twice?
+          if (el.parentNode) {
+            el.parentNode.removeChild(el);
+          }
+        });
+      } else {
+        el.parentNode.removeChild(el);
+      }
+    }
   }
 
   updateConfig(config) {
@@ -126,28 +145,8 @@ export default class Cart extends Component {
     this.toggle.updateConfig(config);
   }
 
-  updateItem(id, qty) {
-    return this.model.updateLineItem(id, qty).then((cart) => {
-      this.model = cart;
-      this.render();
-      this.toggle.render();
-      return cart;
-    });
-  }
-
   onCheckout() {
     this.checkout.open(this.model.checkoutUrl);
-  }
-
-  setQuantity(target, fn) {
-    const id = target.getAttribute('data-line-item-id');
-    const item = this.model.lineItems.filter((lineItem) => lineItem.id === id)[0];
-    const newQty = fn(item.quantity);
-    if (newQty > 0) {
-      return this.updateItem(id, newQty);
-    } else {
-      return this.removeItem(id, target);
-    }
   }
 
   addVariantToCart(variant, quantity = 1) {
