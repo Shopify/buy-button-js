@@ -6,7 +6,6 @@ class EmbedWrapper {
   }
 
   render(ui) {
-    console.log(this.options);
     return ui.createComponent(this.options.embedType, this.embedConfig).then((component) => {
       this.component = component;
       return this.component;
