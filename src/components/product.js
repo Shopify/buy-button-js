@@ -227,13 +227,25 @@ export default class Product extends Component {
     evt.stopPropagation();
     if (this.options.buttonDestination === 'cart') {
       this.props.closeModal();
-      this.cart.addVariantToCart(this.model.selectedVariant, this.model.selectedQuantity);
+      this.props.tracker.trackMethod(this.cart.addVariantToCart.bind(this), 'CART_ADD', this.selectedVariantTrackingInfo)
+        (this.model.selectedVariant, this.model.selectedQuantity);
     } else if (this.options.buttonDestination === 'modal') {
       this.openModal();
     } else if (this.options.buttonDestination === 'onlineStore') {
       this.openOnlineStore();
     } else {
       new Checkout(this.config).open(this.model.selectedVariant.checkoutUrl(1));
+    }
+  }
+
+  get selectedVariantTrackingInfo() {
+    const variant = this.model.selectedVariant;
+    return {
+      id: variant.id,
+      name: variant.productTitle,
+      quantity: this.model.selectedQuantity,
+      sku: null,
+      price: variant.price,
     }
   }
 

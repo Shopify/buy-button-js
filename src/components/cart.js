@@ -1,3 +1,4 @@
+import trackMethod from '../utils/track';
 import merge from '../utils/merge';
 import Component from '../component';
 import CartToggle from './toggle';
@@ -106,7 +107,7 @@ export default class Cart extends Component {
     const id = target.getAttribute('data-line-item-id');
     const item = this.model.lineItems.filter((lineItem) => lineItem.id === id)[0];
     const newQty = fn(item.quantity);
-    return this.updateItem(id, newQty);
+    return this.props.tracker.trackMethod(this.updateItem.bind(this), 'CART_UPDATE', this.cartItemTrackingInfo(item, newQty))(id, newQty);
   }
 
   updateItem(id, qty) {
@@ -157,5 +158,16 @@ export default class Cart extends Component {
       this.toggle.render();
       return cart;
     });
+  }
+
+  cartItemTrackingInfo(item, quantity) {
+    return {
+      id: item.variant_id,
+      name: item.title,
+      sku: null,
+      price: item.price,
+      prevQuantity: item.quantity,
+      quantity: parseFloat(quantity),
+    }
   }
 }
