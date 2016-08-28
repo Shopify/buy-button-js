@@ -3,7 +3,7 @@
     "Chrome"
   ],
   "launch_in_ci": [
-    "PhantomJS"
+    "Chrome"
   ],
   "test_page": [
     "test/unit.html",
