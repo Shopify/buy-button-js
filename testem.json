@@ -3,9 +3,10 @@
     "Chrome"
   ],
   "launch_in_ci": [
-    "Chrome",
-    "Firefox"
+    "Chrome"
   ],
-  "framework": "mocha",
-  "src_files": "test/build/test.js"
+  "test_page": [
+    "test/unit.html",
+    "test/integration.html"
+  ]
 }

@@ -1,0 +1,19 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mocha/3.0.2/mocha.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mocha/3.0.2/mocha.min.js"></script>
+    <script src="/testem.js"></script>
+    <script>mocha.setup('bdd')</script>
+    <script src="../tmp/integration-tests.js"></script>
+    <title>integration tests</title>
+  </head>
+  <body>
+  <div id="mocha"></div>
+  <script>
+  mocha.run()
+  </script>
+  </body>
+</html>

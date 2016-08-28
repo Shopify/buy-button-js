@@ -57,7 +57,7 @@ let product;
 let ui;
 let server;
 
-describe.skip('ShopifyBuy.UI', () => {
+describe('ShopifyBuy.UI', () => {
   before(() => {
     server = new Pretender();
     server.get('https://embeds.myshopify.com/api/apps/6/product_listings/6640244678', (request) => {
