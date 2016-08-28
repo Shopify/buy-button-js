@@ -3,10 +3,8 @@
     "Chrome"
   ],
   "launch_in_ci": [
-    "Chrome",
-    "Firefox"
+    "PhantomJS"
   ],
-  "framework": "mocha",
   "test_page": [
     "test/unit.html",
     "test/integration.html"
