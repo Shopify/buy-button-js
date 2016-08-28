@@ -7,3 +7,7 @@ index.html
 legacy.html
 /src/styles/embeds/all.js
 /src/styles/host/main.js
+selenium-standalone.jar
+WDIO.*.xml
+test-output.xml
+lint-output.xml
