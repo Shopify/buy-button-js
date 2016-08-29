@@ -178,5 +178,26 @@ describe('ProductSet class', () => {
       assert.calledWith(superSpy, newConfig);
     });
   });
+
+  describe('showPagination', () => {
+    let sdkFetchSpy;
+    let updateNodeSpy;
+    const newCollection = [{title: 'vapebelt'}, {title: 'vapeglasses'}];
+
+    beforeEach(() => {
+      set.id = 1234;
+      sdkFetchSpy = sinon.stub(set, 'sdkFetch').returns(Promise.resolve(newCollection));
+      updateNodeSpy = sinon.stub(set, 'updateNode');
+    });
+
+    it('sets nextModel and rerenders pagintaiton button', (done) => {
+      set.showPagination().then(() => {
+        assert.deepEqual(set.nextModel, {products: newCollection});
+        assert.calledWith(sdkFetchSpy, 2);
+        assert.calledWith(updateNodeSpy, set.classes.productSet.paginationButton, set.templates.pagination);
+        done();
+      });
+    });
+  });
 });
 
