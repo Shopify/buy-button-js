@@ -1,4 +1,5 @@
 import optionTemplates from './templates/option';
+import productModalTemplates from './templates/product-modal';
 import {
   productStyles,
   productSetStyles,
@@ -58,22 +59,14 @@ export const defaultOptions = {
   modalProduct: {
     styles: Object.assign({}, modalProductStyles),
     contents: {
-      variantTitle: false,
-      footer: true,
+      contents: true,
+      quantity: false,
     },
-    events: {
-      beforeRender: (productInstance) => {
-        productInstance.template.contents.footer = true;
-      },
-    },
+    order: ['contents'],
+    templates: productModalTemplates,
   },
   modal: {
     styles: Object.assign({}, modalStyles),
-    events: {
-      beforeRender: (modalInstance) => {
-        modalInstance.config.modalProduct.contents.button = false;
-      },
-    },
   },
   cart: {
     styles: Object.assign({}, cartStyles),
