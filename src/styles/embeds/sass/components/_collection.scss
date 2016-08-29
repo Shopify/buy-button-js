@@ -19,3 +19,11 @@
   flex: 0 0 auto;
   display: inline-block;
 }
+
+.collection-pagination-button  {
+  display: none;
+
+  &.is-active {
+    display: block;
+  }
+}
