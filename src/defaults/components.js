@@ -4,6 +4,7 @@ import optionTemplates from '../templates/option';
 import toggleTemplates from '../templates/toggle';
 import lineItemTemplates from '../templates/line-item';
 import modalTemplates from '../templates/modal';
+import collectionTemplates from '../templates/collection';
 
 const defaults = {
   product: {
@@ -131,6 +132,9 @@ const defaults = {
       title: '<h2 class="{{data.classes.productSet.title}}">{{data.collection.attrs.title}}</h2>',
       products: '<div class="{{data.classes.productSet.products}}"></div>',
       pagination: '<button class="{{data.classes.productSet.paginationButton}} {{data.nextButtonClass}}">{{data.text.nextPageButton}}</button>',
+    },
+    text: {
+      next: 'Next page',
     },
     classes: {
       wrapper: 'collection-wrapper',

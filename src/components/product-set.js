@@ -14,6 +14,8 @@ export default class ProductSet extends Component {
     super(config, props);
     this.products = [];
     this.cart = null;
+    this.height = 0;
+    this.initialResize = false;
     this.page = 1;
     this.nextModel = {products: []};
     this.height = 0;
@@ -71,7 +73,6 @@ export default class ProductSet extends Component {
   }
 
   sdkFetch(options = {}) {
-
     /* eslint-disable camelcase */
     const queryOptions = Object.assign({}, this.fetchQuery, options);
     let method;
@@ -79,7 +80,7 @@ export default class ProductSet extends Component {
       const queryKey = isArray(this.id) ? 'product_ids' : 'collection_id';
       method = this.props.client.fetchQueryProducts(Object.assign({}, queryOptions, {[queryKey]: this.id}));
     } else if (this.handle) {
-      method = this.props.client.fetchQueryCollections({handle: this.handle}).then((collections) => {
+      method = this.props.client.fetchQueryCollections({handle: this.handle, page, limit}).then((collections) => {
         const collection = collections[0];
         return this.props.client.fetchQueryProducts(Object.assign({}, queryOptions, {collection_id: collection.attrs.collection_id}));
       });
@@ -102,6 +103,7 @@ export default class ProductSet extends Component {
 
   showPagination() {
     return this.sdkFetch({page: this.page + 1}).then((data) => {
+    this.sdkFetch(page).then((data) => {
       this.nextModel = {products: data};
       this.renderChild(this.classes.productSet.paginationButton, this.paginationTemplate);
       this.resize();
@@ -163,6 +165,14 @@ export default class ProductSet extends Component {
       return product.init(productModel);
     });
 
-    return Promise.all(promises).then(() => this.resizeUntilFits());
+    return Promise.all(promises).then(() => {
+      this.resizeUntilFits();
+      this.showPagination();
+    });
+  }
+
+  render() {
+    super.render()
+    return this.renderProducts(this.model.products);
   }
 }
