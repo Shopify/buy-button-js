@@ -21,6 +21,13 @@ describe('Cart class', () => {
         transition: true,
         animation: true,
         transform: true,
+      },
+      tracker: {
+        trackMethod: (fn) => {
+          return function () {
+            fn(...arguments);
+          }
+        }
       }
     },
     fakeLocalStorage);
