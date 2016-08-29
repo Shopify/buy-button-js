@@ -73,6 +73,7 @@ export default class ProductSet extends Component {
   }
 
   sdkFetch(options = {}) {
+
     /* eslint-disable camelcase */
     const queryOptions = Object.assign({}, this.fetchQuery, options);
     let method;
@@ -172,7 +173,7 @@ export default class ProductSet extends Component {
   }
 
   render() {
-    super.render()
+    super.render();
     return this.renderProducts(this.model.products);
   }
 }
