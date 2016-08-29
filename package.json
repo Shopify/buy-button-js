@@ -34,6 +34,7 @@
     "pretest": "npm run build:test",
     "testem-ci": "testem ci -R xunit > \"${test_output_file}\"",
     "test:dev": "npm run watch:test | testem",
+    "test:wdio": "npm run serve | wdio wdio.conf.js",
     "postinstall": "npm run build"
   },
   "author": "Shopify Inc.",
