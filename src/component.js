@@ -1,4 +1,5 @@
 import morphdom from 'morphdom';
+import hogan from 'hogan.js';
 import merge from './utils/merge';
 import isFunction from './utils/is-function';
 import componentDefaults from './defaults/components';
@@ -214,6 +215,16 @@ export default class Component {
     }
     this._userEvent('afterRender');
     return this.loadImgs();
+  }
+
+  updateNode(className, template) {
+    const selector = `.${className.split(' ').join('.')}`;
+    const node = this.wrapper.querySelector(selector);
+    const compiled = hogan.compile(template);
+    const div = document.createElement('div');
+    const html = compiled.render({data: this.viewData});
+    div.innerHTML = html;
+    morphdom(node, div.firstElementChild);
   }
 
   createWrapper() {
