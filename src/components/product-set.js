@@ -1,7 +1,6 @@
 import merge from '../utils/merge';
 import Component from '../component';
 import Product from './product';
-import {addClassToElement, removeClassFromElement} from '../utils/element-class';
 
 function isArray(arg) {
   return Object.prototype.toString.call(arg) === '[object Array]';
