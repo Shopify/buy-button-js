@@ -16,13 +16,14 @@ export class Adapter {
   init() {
     this.elements = [...document.querySelectorAll('[data-embed_type]')].reduce((elements, element) => {
       if (element.getAttribute('data-embed_type') === 'cart') {
-        this.cart = element;
+        this.cart = this.cart || element;
       } else {
         elements.push(element);
       }
       return elements;
     }, []).map((element) => {
-      const wrapper = new EmbedWrapper(element, this.cart);
+      const cartRef = element.embedType === 'cart' ? null : this.cart;
+      const wrapper = new EmbedWrapper(element, cartRef);
       this.getShopUI(wrapper.shop)
         .then(wrapper.render.bind(wrapper))
         .catch(wrapper.handleError.bind(wrapper));

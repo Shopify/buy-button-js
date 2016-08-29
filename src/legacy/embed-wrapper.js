@@ -21,6 +21,7 @@ class EmbedWrapper {
 
   handleError(error) {
     this.element.innerHTML = `Buy Button ${error}`;
+    throw error;
   }
 
   get options() {

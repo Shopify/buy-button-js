@@ -179,7 +179,7 @@ const defaults = {
       emptyCart: 'cart-empty-text',
     },
     text: {
-      title: 'Your cart',
+      title: 'Cart',
       empty: 'Your cart is empty.',
       button: 'Checkout',
       total: 'Total',
