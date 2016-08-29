@@ -4,7 +4,6 @@ import optionTemplates from '../templates/option';
 import toggleTemplates from '../templates/toggle';
 import lineItemTemplates from '../templates/line-item';
 import modalTemplates from '../templates/modal';
-import collectionTemplates from '../templates/collection';
 
 const defaults = {
   product: {
