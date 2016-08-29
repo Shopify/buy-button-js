@@ -1,6 +1,6 @@
 import hogan from 'hogan.js';
 import stylesTemplate from './templates/styles';
-import conditionalStyles from './styles/embeds/conditional';
+coa conditionalStyles from './styles/embeds/conditional';
 
 const iframeStyles = {
   width: '100%',

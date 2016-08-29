@@ -13,7 +13,7 @@ exports.config = {
   logLevel: 'error',
   reporterOptions: {
     junit: {
-      outputDir: './'
+      outputDir: '${selenium_output_path}'
     }
   },
   coloredLogs: true,

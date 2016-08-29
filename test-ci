@@ -2,25 +2,10 @@
 
 set +x
 
-export test_output_file="test-output.xml"
-export lint_output_file="lint-output.xml"
-
-(npm run lint-ci)
-lint_status=$?
-
-(npm run testem-ci)
-test_status=$?
-
-(npm run selenium-ci)
-selenium_status=$?
-
 mkdir -p $CIRCLE_TEST_REPORTS/xunit
 
-mv $test_output_file $CIRCLE_TEST_REPORTS/xunit/
-mv $lint_output_file $CIRCLE_TEST_REPORTS/xunit/
-mv WDIO.*.xml $CIRCLE_TEST_REPORTS/xunit/
+export test_output_file="${CIRCLE_TEST_REPORTS}/xunit/test-output.xml"
+export lint_output_file="${CIRCLE_TEST_REPORTS}/xunit/lint-output.xml"
+export selenium_output_path="${CIRCLE_TEST_REPORTS}/xunit/"
 
-unset test_output_file
-unset lint_output_file
-
-exit $((test_status + lint_status + selenium_status))
+npm run lint-ci && npm run testem-ci && npm run selenium-ci
