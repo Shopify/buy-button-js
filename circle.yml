@@ -4,3 +4,4 @@ machine:
 dependencies:
   pre:
     - npm set progress=false
+    - ./ci/deps
