@@ -30,7 +30,7 @@
     "uglify": "npm run uglify:lib && npm run uglify:adapter",
     "uglify:lib": "uglifyjs build/shopify-buy-ui.globals.polyfilled.js --output build/shopify-buy-ui.globals.polyfilled.min.js",
     "uglify:adapter": "uglifyjs build/adapter.globals.polyfilled.js --output build/adapter.globals.polyfilled.min.js",
-    "lint-ci": "eslint src -f junit > \"${lint_output_file}\"",
+    "lint-ci": "eslint src --max-warnings=0 -f junit > \"${lint_output_file}\"",
     "pretest": "npm run build:test",
     "testem-ci": "testem ci -R xunit > \"${test_output_file}\"",
     "selenium-ci": "NODE_PATH=./node_modules node script/selenium-test.js",
