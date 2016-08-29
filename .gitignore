@@ -11,3 +11,4 @@ selenium-standalone.jar
 WDIO.*.xml
 test-output.xml
 lint-output.xml
+/errorShots

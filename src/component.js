@@ -139,6 +139,16 @@ export default class Component {
     this.iframe.el.style.width = `${this.wrapper.clientWidth}px`;
   }
 
+  get name() {
+    let uniqueHandle = '';
+    if (this.id) {
+      uniqueHandle = `-${this.id}`;
+    } else if (this.handle) {
+      uniqueHandle = `-${this.handle}`;
+    }
+    return `frame-${this.typeKey}${uniqueHandle}`;
+  }
+
   setupView() {
     if (this.iframe) {
       return Promise.resolve();
@@ -152,6 +162,7 @@ export default class Component {
       });
       this.node.className += ` shopify-buy-frame shopify-buy-frame--${this.typeKey}`;
       this.iframe.addClass(this.iframeClass);
+      this.iframe.setName(this.name);
       return this.iframe.load();
     } else {
       this.iframe = null;

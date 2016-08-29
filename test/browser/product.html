@@ -7,7 +7,7 @@
   </head>
   <body>
     <script data-shopify-buy-ui>
-      var scriptURL = "../../build/shopify-buy-ui.globals.js";
+      var scriptURL = "../../build/shopify-buy-ui.globals.polyfilled.js";
       if (window.ShopifyBuy && window.ShopifyBuy.UI) {
         ShopifyBuyInit();
       } else {
@@ -37,6 +37,12 @@
                 }
               }
             }
+          }
+        });
+
+        ui.createComponent('product', {
+				  id: 3614411907,
+          options: {
           }
         });
       }

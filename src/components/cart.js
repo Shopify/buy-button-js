@@ -132,6 +132,7 @@ export default class Cart extends Component {
           // TODO: why is transitionend sometimes called twice?
           if (el.parentNode) {
             el.parentNode.removeChild(el);
+            this.render();
           }
         });
       } else {

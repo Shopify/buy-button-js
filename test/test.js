@@ -22,4 +22,3 @@ import './unit/toggle';
 import './unit/tracker';
 import './unit/legacy';
 import './unit/merge';
-import './integration/shopify-buy-ui';
