@@ -63,6 +63,7 @@ describe('Tracker', () => {
           assert.calledWith(tracker.track, 'CART_INCREMENT', props);
         });
       });
+
       describe('if quantity decreases', () => {
         it('calls tricorder with CART_DECREMENT event name', () => {
           const props = {
@@ -74,6 +75,7 @@ describe('Tracker', () => {
           assert.calledWith(tracker.track, 'CART_DECREMENT', props);
         });
       });
+
       describe('if quantity is zero', () => {
         it('calls tricorder with CART_REMOVE event name', () => {
           const props = {
