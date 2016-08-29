@@ -93,7 +93,16 @@ export default class Component {
   }
 
   get morphCallbacks() {
-    return {};
+    return {
+      onBeforeElUpdated(fromEl, toEl) {
+        if (fromEl.tagName === 'IMG') {
+          if (fromEl.src === toEl.getAttribute('data-src')) {
+            return false;
+          }
+        }
+        return true;
+      },
+    };
   }
 
   get iframeClass() {
