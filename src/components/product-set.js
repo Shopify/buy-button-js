@@ -84,6 +84,9 @@ export default class ProductSet extends Component {
   }
 
   renderProducts() {
+    if (!this.model.products.length) {
+      return Promise.resolve();
+    }
     const productConfig = {
       node: this.document.querySelector(`.${this.classes.productSet.products}`),
       options: merge({}, this.config, {
@@ -104,7 +107,9 @@ export default class ProductSet extends Component {
 
     return Promise.all(promises).then(() => {
       this.resize();
-      this.cart = this.cart || this.products[0].cart;
+      if (this.products.length) {
+        this.cart = this.cart || this.products[0].cart;
+      }
       return this.loadImgs().then(() => this.showPagination());
     });
   }
