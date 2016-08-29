@@ -126,6 +126,9 @@ export default class ProductSet extends Component {
   }
 
   renderProducts() {
+    if (!this.model.products.length) {
+      return Promise.resolve();
+    }
     const productConfig = {
       node: this.document.querySelector(`.${this.classes.productSet.products}`),
       options: merge({}, this.config, {
