@@ -53,6 +53,7 @@ export default class ProductSet extends Component {
   }
 
   sdkFetch(page = 1, limit = 30) {
+
     /* eslint-disable camelcase */
     let method;
     if (this.id) {
@@ -82,9 +83,10 @@ export default class ProductSet extends Component {
 
   showPagination() {
     const page = this.page + 1;
-    this.sdkFetch(page).then((data) => {
-      this.nextModel = data.length ? { products: data } : null;
+    return this.sdkFetch(page).then((data) => {
+      this.nextModel = data.length ? {products: data} : null;
       this.updateNode(this.classes.productSet.paginationButton, this.templates.pagination);
+      return;
     });
   }
 
@@ -126,7 +128,7 @@ export default class ProductSet extends Component {
   }
 
   render() {
-    super.render()
+    super.render();
     return this.renderProducts(this.model.products);
   }
 }
