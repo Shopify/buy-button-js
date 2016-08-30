@@ -213,7 +213,7 @@ const defaults = {
       itemTitle: 'cart-item__title',
       price: 'cart-item__price',
       quantity: 'quantity-container',
-      quantityInput: 'quantity',
+      quantityInput: 'quantity cart-item__quantity-input',
       quantityButton: 'btn--seamless',
     },
   },
