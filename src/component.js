@@ -1,5 +1,4 @@
 import morphdom from 'morphdom';
-import hogan from 'hogan.js';
 import merge from './utils/merge';
 import isFunction from './utils/is-function';
 import componentDefaults from './defaults/components';
