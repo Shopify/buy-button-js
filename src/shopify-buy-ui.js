@@ -16,9 +16,9 @@ ShopifyBuy.UI = {
     return {
       templates: {
         product: productTemplates,
-      }
-    }
-  }
+      },
+    };
+  },
 };
 
 window.ShopifyBuy = ShopifyBuy;
