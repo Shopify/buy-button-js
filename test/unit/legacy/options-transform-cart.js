@@ -206,4 +206,19 @@ describe('legacy/options-transform/cart', () => {
     });
   });
 
+  describe('data-sticky', () => {
+    it('should set legacy config values if not present', () => {
+      cartNode = cart();
+      subject = new OptionsTransform(cartNode, cartNode);
+      assert.equal(subject.cartUi.toggle.sticky, false);
+      assert.deepEqual(subject.cartUi.toggle.order, ['icon', 'title', 'count']);
+      assert.deepEqual(subject.cartUi.toggle.contents,  {title: true});
+    });
+
+    it('should not legacy config values if present', () => {
+      cartNode = cart({sticky: true});
+      subject = new OptionsTransform(cartNode, cartNode);
+      assert.equal(subject.cartUi.toggle.sticky, true);
+    });
+  });
 });

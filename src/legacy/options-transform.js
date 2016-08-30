@@ -275,14 +275,15 @@ class OptionsTransform {
   }
 
   cart_sticky_transform(value, options) {
-    if (value) {
-      return;
+    if (value && value === 'true') {
+      options.toggle.sticky = true;
+    } else {
+      options.toggle.sticky = false;
+      options.toggle.order = ['icon', 'title', 'count'];
+      options.toggle.contents = {
+        title: true,
+      };
     }
-    options.toggle.sticky = false;
-    options.toggle.order = ['icon', 'title', 'count'];
-    options.toggle.contents = {
-      title: true,
-    };
   }
 
   cart_start_toggled_transform(value, options) {
