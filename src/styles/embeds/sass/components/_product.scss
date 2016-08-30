@@ -61,18 +61,24 @@
 
 .quantity-container {
   display: inline-block;
+  margin-top: $gutter + 5;
 }
 
 .quantity {
+  border-left: 1px solid $color-border;
+  border-top-left-radius: 3px;
+  border-bottom-left-radius: 3px;
+}
+
+.quantity,
+.quantity-increment,
+.quantity-decrement {
+
+  line-height: 1.2;
   font-size: 15px;
   height: auto;
   padding-top: 12px;
   padding-bottom: 12px;
-  border-left: 1px solid $color-border;
-  border-top-left-radius: 3px;
-  border-bottom-left-radius: 3px;
-  line-height: 1.2;
-  margin-top: $gutter + 5;
 }
 
 .btn {

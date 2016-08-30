@@ -6,8 +6,8 @@
 .quantity-decrement, .quantity-increment {
   color: $color-title;
   display: block;
-  float: left;
   height: 21px;
+  float: left;
   line-height: 16px;
   font-family: monospace;
   width: 25px;
@@ -50,3 +50,13 @@ input[type=number]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+
+.quantity-container.with-buttons {
+  display: inline-block;
+
+  .quantity {
+    border-left: 0;
+    float: left;
+  }
+}
+
