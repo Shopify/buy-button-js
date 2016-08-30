@@ -43,17 +43,25 @@ export default class ProductSet extends Component {
     return this._paginationTemplate;
   }
 
-  sdkFetch(page = 1, limit = 30) {
+  get fetchQuery() {
+    return {
+      limit: 30,
+      page: 1,
+    }
+  }
+
+  sdkFetch(options = {}) {
 
     /* eslint-disable camelcase */
+    options = Object.assign({}, this.fetchQuery, options);
     let method;
     if (this.id) {
       const queryKey = isArray(this.id) ? 'product_ids' : 'collection_id';
-      method = this.props.client.fetchQueryProducts({[queryKey]: this.id, page, limit});
+      method = this.props.client.fetchQueryProducts(Object.assign({}, options, {[queryKey]: this.id}));
     } else if (this.handle) {
-      method = this.props.client.fetchQueryCollections({handle: this.handle, page, limit}).then((collections) => {
+      method = this.props.client.fetchQueryCollections({handle: this.handle}).then((collections) => {
         const collection = collections[0];
-        return this.props.client.fetchQueryProducts({collection_id: collection.attrs.collection_id, page, limit});
+        return this.props.client.fetchQueryProducts(Object.assign({}, options, {collection_id: collection.attrs.collection_id}));
       });
     }
     return method;
@@ -70,10 +78,10 @@ export default class ProductSet extends Component {
   }
 
   showPagination() {
-    const page = this.page + 1;
-    return this.sdkFetch(page).then((data) => {
+    return this.sdkFetch({page: this.page + 1}).then((data) => {
       this.nextModel = data.length ? {products: data} : null;
       this.updateNode(this.classes.productSet.paginationButton, this.paginationTemplate);
+      this.resize();
       return;
     });
   }
