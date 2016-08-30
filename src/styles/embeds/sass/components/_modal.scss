@@ -84,6 +84,10 @@ $modal-footer-height: 90px;
   margin: 0;
 }
 
+.option-select {
+  text-align: left;
+}
+
 @media (max-width: 800px) {
   .modal {
     min-height: 100vh;

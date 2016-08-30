@@ -6,6 +6,8 @@
   background: $color-white;
   overflow: hidden;
   vertical-align: bottom;
+  display: inline-block;
+  display: flex;
 }
 
 .shopify-select-icon {
@@ -23,25 +25,39 @@
 }
 
 .option-select {
+  text-align: center;
+
   & + & {
     margin-top: $gutter / 2;
   }
 }
 
 .option-select__label {
-  display: block;
+  display: inline-block;
   font-size: 14px;
-  margin-top: 15px;
-  margin-bottom: 5px;
+  padding: 7px 5px 7px 7px;
+  font-weight: bold;
+  position: relative;
+
+  &:after {
+    content: ":";
+    display: block;
+    position: absolute;
+    right: 0px;
+    top: 7px;
+  }
 }
 
 .option-select__select {
+  display: inline-block;
+  flex: 1 1 auto;
   font-size: inherit;
   padding: 7px 10px;
   padding-right: 32px;
   border: 0;
-  width: 100%;
   background: transparent;
   -webkit-appearance: none;
   -moz-appearance: none;
+
+
 }

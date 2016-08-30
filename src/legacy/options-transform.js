@@ -226,7 +226,7 @@ class OptionsTransform {
   }
 
   next_page_button_text_transform(value, options) {
-    options.productSet.text.nextPageButton = value;
+    options.productSet.text.next = value;
   }
 
   cart_checkout_button_text_transform(value, options) {
