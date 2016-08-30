@@ -13,7 +13,7 @@ export default class ProductSet extends Component {
     this.products = [];
     this.cart = null;
     this.page = 1;
-    this.nextModel = null;
+    this.nextModel = {products: []};
   }
 
   get typeKey() {
@@ -21,7 +21,7 @@ export default class ProductSet extends Component {
   }
 
   get nextButtonClass() {
-    return this.nextModel ? 'is-active' : '';
+    return this.nextModel.products.length ? 'is-active' : '';
   }
 
   get shouldResizeY() {
@@ -97,7 +97,7 @@ export default class ProductSet extends Component {
 
   showPagination() {
     return this.sdkFetch({page: this.page + 1}).then((data) => {
-      this.nextModel = data.length ? {products: data} : null;
+      this.nextModel = {products: data};
       this.updateNode(this.classes.productSet.paginationButton, this.paginationTemplate);
       this.resize();
       return;
