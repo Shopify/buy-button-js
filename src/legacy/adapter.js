@@ -24,7 +24,7 @@ export class Adapter {
     }, []).map((element) => {
       return this.renderComponent(element);
     });
-    if (!this.elements.length) {
+    if (!this.elements.length && this.cart) {
       this.renderComponent(this.cart);
     }
   }
