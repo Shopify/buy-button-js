@@ -40,6 +40,19 @@ export const attributes = [
   'next_page_button_text',
 ];
 
+export const cartAttributes = [
+  'checkout_button_text',
+  'cart_button_text',
+  'button_text_color',
+  'button_background_color',
+  'background_color',
+  'text_color',
+  'accent_color',
+  'cart_title',
+  'discount_notice_text',
+  'cart_total_text',
+];
+
 export const defaultOptions = {
   product: {
     text: {},
@@ -77,6 +90,7 @@ export const defaultOptions = {
   },
   toggle: {
     styles: Object.assign({}, toggleStyles),
+    text: {},
   },
   option: {
     templates: optionTemplates,

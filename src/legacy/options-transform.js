@@ -1,10 +1,11 @@
 /* eslint-disable camelcase */
 import merge from '../utils/merge';
-import {defaultOptions, attributes} from './const';
+import {defaultOptions, attributes, cartAttributes} from './const';
 
 class OptionsTransform {
-  constructor(element) {
+  constructor(element, cart) {
     this.element = element;
+    this.cart = cart;
   }
 
   get embedType() {
@@ -28,10 +29,24 @@ class OptionsTransform {
       const value = this.element.getAttribute(`data-${attr}`);
       if (value) {
         opts[attr] = value;
+      } else {
+        if (this.cart) {
+          opts[attr] = this.cart.getAttribute(`data-${attr}`);
+        }
       }
       return opts;
     }, {});
     return this.legacyOptions;
+  }
+
+  get legacyCart() {
+    if (this.cart) {
+      this.legacyCartOptions = this.legacyCartOptions || cartAttributes.reduce((opts, attr) => {
+        opts[attr] = this.cart.getAttribute(`data-${attr}`);
+        return opts;
+      }, {});
+    }
+    return this.legacyCartOptions || {};
   }
 
   get ui() {
@@ -43,9 +58,24 @@ class OptionsTransform {
       }
       return options;
     }, merge({}, defaultOptions));
+    if (this.cart) {
+      this.uiOptions.cart = merge({}, this.uiOptions.cart, this.cartUi.cart);
+    }
     window.a1 = defaultOptions;
     window.a2 = merge({}, defaultOptions);
     return this.uiOptions;
+  }
+
+  get cartUi() {
+    this.cartUiOptions = this.cartUiOptions || cartAttributes.reduce((options, attr) => {
+      const transform = this[`cart_${attr}_transform`];
+      const value = this.legacyCart[attr];
+      if (transform && value) {
+        transform.call(this, value, options);
+      }
+      return options;
+    }, merge({}, defaultOptions));
+    return this.cartUiOptions;
   }
 
   display_size_transform(value, options) {
@@ -159,7 +189,6 @@ class OptionsTransform {
     options.lineItem.styles.quantityInput.color = `#${value}`;
     options.lineItem.styles.quantityButton.color = `#${value}`;
     options.modalProduct.styles.title.color = `#${value}`;
-    options.modalProduct.styles.description.color = `#${value}`;
     options.modal.styles.close.color = `#${value}`;
     options.modal.styles.close[':hover'] = {color: this.adjustLuminance(value, -0.1)};
   }
@@ -198,6 +227,52 @@ class OptionsTransform {
 
   next_page_button_text_transform(value, options) {
     options.productSet.text.nextPageButton = value;
+  }
+
+  cart_checkout_button_text_transform(value, options) {
+    options.cart.text.button = value;
+  }
+
+  cart_cart_button_text_transform(value, options) {
+    options.toggle.text.title = value;
+  }
+
+  cart_button_text_color_transform(value, options) {
+    options.cart.styles.button.color = `#${value}`;
+  }
+
+  cart_button_background_color_transform(value, options) {
+    options.cart.styles.button['background-color'] = `#${value}`;
+    options.cart.styles.button[':hover'] = {'background-color': this.adjustLuminance(value, -0.08)};
+    options.cart.styles.button['border-color'] = this.adjustLuminance(value, -0.05);
+  }
+
+  cart_background_color_transform(value, options) {
+    options.cart.styles.cart['background-color'] = `#${value}`;
+  }
+
+  cart_text_color_transform(value, options) {
+    options.cart.styles.lineItems.color = `#${value}`;
+    options.cart.styles.subtotal.color = `#${value}`;
+  }
+
+  cart_accent_color_transform(value, options) {
+    options.cart.styles.title.color = `#${value}`;
+    options.cart.styles.close.color = `#${value}`;
+    options.cart.styles.close[':hover'] = {color: this.adjustLuminance(value, -0.1)};
+    options.cart.styles.footer['border-top'] = `1px solid #${value}`;
+  }
+
+  cart_cart_title_transform(value, options) {
+    options.cart.text.title = value;
+  }
+
+  cart_discount_notice_text_transform(value, options) {
+    options.cart.text.notice = value;
+  }
+
+  cart_cart_total_text_transform(value, options) {
+    options.cart.text.total = value;
   }
 
   adjustLuminance(hex, lum) {

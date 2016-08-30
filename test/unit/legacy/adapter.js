@@ -4,13 +4,14 @@ import UI from '../../../src/ui';
 import adapter, {Adapter} from '../../../src/legacy/adapter';
 import EmbedWrapper from '../../../src/legacy/embed-wrapper';
 import productJSON from '../../fixtures/pretender/product';
-import {product} from '../../fixtures/legacy/elements';
+import {product, cart} from '../../fixtures/legacy/elements';
 
 let server;
 
 describe('legacy/adapter', () => {
   let subject;
   let productNode;
+  let cartNode;
 
   before(() => {
     server = new Pretender();
@@ -28,11 +29,14 @@ describe('legacy/adapter', () => {
   beforeEach(() => {
     subject = new Adapter();
     productNode = product();
+    cartNode = cart();
     document.body.appendChild(productNode);
+    document.body.appendChild(cartNode);
   });
 
   afterEach(() => {
     document.body.removeChild(productNode);
+    document.body.removeChild(cartNode);
   });
 
   after(() => {
@@ -43,14 +47,23 @@ describe('legacy/adapter', () => {
     assert.isOk(adapter instanceof Adapter);
   });
 
-  it('should create embed wrappers for each data-embed_type element', () => {
+  it('should create embed wrappers for each data-embed_type element that is not a cart', () => {
     subject.init();
     assert.equal(subject.elements.length, 1);
     assert.isOk(subject.elements[0] instanceof EmbedWrapper);
   });
 
+  it('should save a reference to any cart embeds', () => {
+    subject.init();
+    assert.isOk(subject.cart);
+  });
+
+  it('should pass a reference to cart to other embeds', () => {
+    subject.init();
+    assert.isOk(subject.elements[0].cart);
+  });
+
   it('should create a client and ui for each shop', () => {
     subject.init();
   });
-
 });

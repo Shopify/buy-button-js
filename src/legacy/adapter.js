@@ -10,11 +10,20 @@ export class Adapter {
   constructor() {
     this.uis = {};
     this.promises = {};
+    this.cart = null;
   }
 
   init() {
-    this.elements = [...document.querySelectorAll('[data-embed_type]')].map((element) => {
-      const wrapper = new EmbedWrapper(element);
+    this.elements = [...document.querySelectorAll('[data-embed_type]')].reduce((elements, element) => {
+      if (element.getAttribute('data-embed_type') === 'cart') {
+        this.cart = this.cart || element;
+      } else {
+        elements.push(element);
+      }
+      return elements;
+    }, []).map((element) => {
+      const cartRef = element.embedType === 'cart' ? null : this.cart;
+      const wrapper = new EmbedWrapper(element, cartRef);
       this.getShopUI(wrapper.shop)
         .then(wrapper.render.bind(wrapper))
         .catch(wrapper.handleError.bind(wrapper));
