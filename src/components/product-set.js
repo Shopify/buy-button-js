@@ -167,8 +167,9 @@ export default class ProductSet extends Component {
     });
   }
 
-  render() {
-    super.render();
-    return this.renderProducts(this.model.products);
+  init() {
+    return super.init().then(() => {
+      return this.renderProducts(this.model.products);
+    });
   }
 }

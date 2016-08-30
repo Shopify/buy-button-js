@@ -129,11 +129,12 @@ describe('ProductSet class', () => {
     });
   });
 
-  describe('render', () => {
+  describe('renderProducts', () => {
     let initSpy;
 
     beforeEach(() => {
       initSpy = sinon.spy(Product.prototype, 'init');
+      set.render();
     });
 
     afterEach(() => {
@@ -143,8 +144,12 @@ describe('ProductSet class', () => {
     it('initializes an array of products', () => {
       set.model.products = [fakeProduct];
 
-      set.render();
-      assert.calledWith(initSpy, fakeProduct);
+      set.renderProducts().then((data) => {
+        assert.calledWith(initSpy, fakeProduct);
+        done();
+      }).catch((e) => {
+        done(e);
+      });
     });
   });
 
