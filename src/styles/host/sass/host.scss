@@ -47,13 +47,15 @@ $max-z-index: 2147483647;
 }
 
 .shopify-buy-frame--toggle {
-  position: fixed;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  max-width: 46px;
-  z-index: $max-z-index - 2;
-  display: none;
+  &.is-sticky {
+    display: none;
+    position: fixed;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    max-width: 46px;
+    z-index: $max-z-index - 2;
+  }
 
   &.is-active {
     display: block;

@@ -22,13 +22,19 @@ export class Adapter {
       }
       return elements;
     }, []).map((element) => {
-      const cartRef = element.embedType === 'cart' ? null : this.cart;
-      const wrapper = new EmbedWrapper(element, cartRef);
-      this.getShopUI(wrapper.shop)
-        .then(wrapper.render.bind(wrapper))
-        .catch(wrapper.handleError.bind(wrapper));
-      return wrapper;
+      return this.renderComponent(element);
     });
+    if (!this.elements.length) {
+      this.renderComponent(this.cart);
+    }
+  }
+
+  renderComponent(element) {
+    const wrapper = new EmbedWrapper(element, this.cart);
+    this.getShopUI(wrapper.shop)
+      .then(wrapper.render.bind(wrapper))
+      .catch(wrapper.handleError.bind(wrapper));
+    return wrapper;
   }
 
   getShopUI(domain) {

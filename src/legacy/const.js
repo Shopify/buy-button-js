@@ -51,6 +51,8 @@ export const cartAttributes = [
   'cart_title',
   'discount_notice_text',
   'cart_total_text',
+  'start_toggled',
+  'sticky',
 ];
 
 export const defaultOptions = {

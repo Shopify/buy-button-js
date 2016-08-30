@@ -29,14 +29,33 @@ export default class CartToggle extends Component {
     };
   }
 
+  get shoudldResizeY() {
+    return !this.options.sticky;
+  }
+
+  get shoudldResizeX() {
+    return !this.options.sticky;
+  }
+
+  get stickyClass() {
+    return this.options.sticky ? 'is-sticky' : 'is-inline';
+  }
+
   get DOMEvents() {
     return merge({}, this.options.DOMEvents, {
       [`click .${this.classes.toggle.toggle}`]: this.props.cart.toggleVisibility.bind(this.props.cart),
     });
   }
 
+  wrapTemplate(html) {
+    return `<div class="${this.stickyClass} ${this.classes.toggle.toggle}">${html}</div>`;
+  }
+
   render() {
     super.render();
+    if (this.options.sticky) {
+      this.iframe.addClass('is-sticky');
+    }
     if (this.isVisible) {
       this.iframe.addClass('is-active');
     } else {

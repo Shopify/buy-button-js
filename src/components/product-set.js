@@ -17,6 +17,10 @@ export default class ProductSet extends Component {
     return 'productSet';
   }
 
+  get shouldResizeY() {
+    return true;
+  }
+
   sdkFetch() {
 
     /* eslint-disable camelcase */

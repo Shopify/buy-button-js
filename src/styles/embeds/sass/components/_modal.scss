@@ -23,17 +23,6 @@ $modal-footer-height: 90px;
   z-index: $max-z-index - 1;
 }
 
-.modal-img {
-  padding: $gutter * 3;
-  padding-right: $gutter * 1.5;
-}
-
-.modal-contents {
-  position: relative;
-  padding: $gutter * 3;
-  padding-left: $gutter * 1.5;
-}
-
 .product {
   text-align: left;
 }
