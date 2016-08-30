@@ -1,6 +1,7 @@
 import merge from '../utils/merge';
 import Component from '../component';
 import Product from './product';
+import hogan from 'hogan.js';
 
 function isArray(arg) {
   return Object.prototype.toString.call(arg) === '[object Array]';
@@ -37,6 +38,11 @@ export default class ProductSet extends Component {
     });
   }
 
+  get paginationTemplate() {
+    this._paginationTemplate = this._paginationTemplate || hogan.compile(this.templates.pagination);
+    return this._paginationTemplate;
+  }
+
   sdkFetch(page = 1, limit = 30) {
 
     /* eslint-disable camelcase */
@@ -67,7 +73,7 @@ export default class ProductSet extends Component {
     const page = this.page + 1;
     return this.sdkFetch(page).then((data) => {
       this.nextModel = data.length ? {products: data} : null;
-      this.updateNode(this.classes.productSet.paginationButton, this.templates.pagination);
+      this.updateNode(this.classes.productSet.paginationButton, this.paginationTemplate);
       return;
     });
   }
