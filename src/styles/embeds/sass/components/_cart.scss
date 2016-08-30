@@ -117,7 +117,7 @@ $cart-item-height: 65px;
   width: 100%;
   bottom: 0;
   padding: 20px;
-  border-top: 1px solid $color-border-primary;
+  border-top: 1px solid $color-border;
 }
 
 .cart__subtotal__text {
@@ -154,4 +154,12 @@ $cart-item-height: 65px;
   width: 100%;
   padding: 10px 5px;
   font-size: 16px;
+}
+
+.quantity-container {
+  margin-left: 80px;
+}
+
+.cart-item__quantity-input {
+  float: left;
 }

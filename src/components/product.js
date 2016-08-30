@@ -104,6 +104,7 @@ export default class Product extends Component {
       selectedQuantity: this.selectedQuantity,
       buttonText: this.buttonText,
       imgStyle: this.imgStyle,
+      quantityClass: this.quantityClass,
     });
   }
 
@@ -127,6 +128,10 @@ export default class Product extends Component {
     const disabledClass = this.buttonEnabled ? '' : this.classes.disabled;
     const quantityClass = this.options.contents.quantity ? 'beside-quantity' : '';
     return `${disabledClass} ${quantityClass}`;
+  }
+
+  get quantityClass() {
+    return this.options.contents.quantityIncrement || this.options.contents.quantityDecrement ? 'with-buttons' : '';
   }
 
   get buttonText() {

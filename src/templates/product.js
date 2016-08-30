@@ -11,7 +11,7 @@ const productTemplate = {
           </div>`,
   description: '<div class="{{data.classes.product.description}}">{{{data.description}}}</div>',
   button: '<button {{#data.buttonDisabled}}disabled{{/data.buttonDisabled}} class="{{data.classes.product.button}} {{data.buttonClass}}">{{data.buttonText}}</button>',
-  quantity: `<div class="{{data.classes.product.quantity}}">
+  quantity: `<div class="{{data.classes.product.quantity}} {{data.quantityClass}}">
               {{#data.contents.quantityDecrement}}
                 <button class="{{data.classes.product.quantityButton}} {{data.classes.product.quantityDecrement}}" type="button"><span>-</span><span class="visuallyhidden">Decrement</span></button>
               {{/data.contents.quantityDecrement}}
