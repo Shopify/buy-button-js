@@ -98,7 +98,7 @@ describe('ProductSet class', () => {
 
       it('calls fetchQueryProducts with collection id', (done) => {
         collection.sdkFetch().then(() => {
-          assert.calledWith(collection.client.fetchQueryCollections, {handle: 'hats', page: 1, limit: 30});
+          assert.calledWith(collection.client.fetchQueryCollections, {handle: 'hats'});
           assert.calledWith(collection.client.fetchQueryProducts, {collection_id: 2345, page: 1, limit: 30});
           done();
         }).catch((e) => {
@@ -186,20 +186,24 @@ describe('ProductSet class', () => {
   describe('showPagination', () => {
     let sdkFetchSpy;
     let updateNodeSpy;
+    let resizeSpy;
     const newCollection = [{title: 'vapebelt'}, {title: 'vapeglasses'}];
 
     beforeEach(() => {
       set.id = 1234;
       sdkFetchSpy = sinon.stub(set, 'sdkFetch').returns(Promise.resolve(newCollection));
       updateNodeSpy = sinon.stub(set, 'updateNode');
+      resizeSpy = sinon.stub(set, 'resize');
     });
 
     it('sets nextModel and rerenders pagintaiton button', (done) => {
       set.showPagination().then(() => {
         assert.deepEqual(set.nextModel, {products: newCollection});
-        assert.calledWith(sdkFetchSpy, 2);
-        assert.calledWith(updateNodeSpy, set.classes.productSet.paginationButton, set.templates.pagination);
+        assert.calledWith(sdkFetchSpy, {page: 2});
+        assert.calledWith(updateNodeSpy, set.classes.productSet.paginationButton, set.paginationTemplate);
         done();
+      }).catch((e) => {
+        done(e);
       });
     });
   });
