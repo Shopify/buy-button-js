@@ -87,6 +87,10 @@ export default class iframe {
     }
   }
 
+  setName(name) {
+    this.el.setAttribute('name', name);
+  }
+
   removeClass(className) {
     const newClass = this.parent.className.replace(className, '');
     this.parent.className = newClass;

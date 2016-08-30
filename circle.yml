@@ -3,4 +3,5 @@ machine:
     version: v5.5.0
 dependencies:
   pre:
-    - npm set progerss=false
+    - npm set progress=false
+    - ./ci/deps

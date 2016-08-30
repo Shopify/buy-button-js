@@ -30,10 +30,12 @@
     "uglify": "npm run uglify:lib && npm run uglify:adapter",
     "uglify:lib": "uglifyjs build/shopify-buy-ui.globals.polyfilled.js --output build/shopify-buy-ui.globals.polyfilled.min.js",
     "uglify:adapter": "uglifyjs build/adapter.globals.polyfilled.js --output build/adapter.globals.polyfilled.min.js",
-    "lint-ci": "eslint src -f junit > \"${lint_output_file}\"",
+    "lint-ci": "eslint src --max-warnings=0 -f junit > \"${lint_output_file}\"",
     "pretest": "npm run build:test",
     "testem-ci": "testem ci -R xunit > \"${test_output_file}\"",
+    "selenium-ci": "NODE_PATH=./node_modules node script/selenium-test.js",
     "test:dev": "npm run watch:test | testem",
+    "test:selenium": "NODE_PATH=./node_modules node script/selenium-test.js",
     "postinstall": "npm run build"
   },
   "author": "Shopify Inc.",
@@ -64,13 +66,18 @@
     "eslint": "2.13.1",
     "eslint-plugin-shopify": "13.0",
     "fetch-pretender": "1.5.0",
+    "global-npm": "0.3.0",
     "http-server": "0.9.0",
     "mocha": "2.5.3",
     "pretender": "1.1.0",
     "sinon": "1.17.5",
     "testem": "1.9.1",
     "watch": "0.19.1",
-    "watchify": "3.7.0"
+    "watchify": "3.7.0",
+    "wdio-dot-reporter": "0.0.6",
+    "wdio-junit-reporter": "0.1.0",
+    "wdio-mocha-framework": "^0.4.0",
+    "webdriverio": "4.2.8"
   },
   "dependencies": {
     "uglify-js": "2.7.0",

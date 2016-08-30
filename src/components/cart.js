@@ -125,18 +125,18 @@ export default class Cart extends Component {
   animateRemoveItem(id) {
     const el = this.document.getElementById(id);
     addClassToElement('is-hidden', el);
-    if (el.parentNode) {
-      if (this.props.browserFeatures.transition) {
-        el.addEventListener('transitionend', () => {
-          // eslint-disable-next-line
-          // TODO: why is transitionend sometimes called twice?
-          if (el.parentNode) {
-            el.parentNode.removeChild(el);
-          }
-        });
-      } else {
+    if (this.props.browserFeatures.transition) {
+      el.addEventListener('transitionend', () => {
+        // eslint-disable-next-line
+        // TODO: why is transitionend sometimes called twice?
+        if (!el.parentNode) {
+          return;
+        }
         el.parentNode.removeChild(el);
-      }
+        this.render();
+      });
+    } else {
+      el.parentNode.removeChild(el);
     }
   }
 
