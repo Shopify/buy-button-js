@@ -120,6 +120,8 @@ const defaults = {
   },
   productSet: {
     iframe: true,
+    sortBy: 'title-ascending',
+    limit: 30,
     manifest: ['product', 'option', 'productSet'],
     contents: {
       title: false,

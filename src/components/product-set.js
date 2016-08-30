@@ -44,15 +44,16 @@ export default class ProductSet extends Component {
   }
 
   get fetchQuery() {
+
+    /* eslint-disable camelcase */
     return {
-      limit: 30,
+      limit: this.options.limit,
       page: 1,
+      sort_by: this.options.sortBy,
     }
   }
 
   sdkFetch(options = {}) {
-
-    /* eslint-disable camelcase */
     options = Object.assign({}, this.fetchQuery, options);
     let method;
     if (this.id) {

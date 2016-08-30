@@ -76,7 +76,7 @@ describe('ProductSet class', () => {
 
       it('calls fetchQueryProducts with collection id', () => {
         collection.sdkFetch();
-        assert.calledWith(collection.client.fetchQueryProducts, {collection_id: 1234, page: 1, limit: 30});
+        assert.calledWith(collection.client.fetchQueryProducts, {collection_id: 1234, page: 1, limit: 30, sort_by: 'title-ascending'});
       });
     });
 
@@ -99,7 +99,7 @@ describe('ProductSet class', () => {
       it('calls fetchQueryProducts with collection id', (done) => {
         collection.sdkFetch().then(() => {
           assert.calledWith(collection.client.fetchQueryCollections, {handle: 'hats'});
-          assert.calledWith(collection.client.fetchQueryProducts, {collection_id: 2345, page: 1, limit: 30});
+          assert.calledWith(collection.client.fetchQueryProducts, {collection_id: 2345, page: 1, limit: 30, sort_by: 'title-ascending'});
           done();
         }).catch((e) => {
           done(e);
@@ -124,7 +124,7 @@ describe('ProductSet class', () => {
 
       it('calls fetchQueryProducts with collection id', () => {
         collection.sdkFetch();
-        assert.calledWith(collection.client.fetchQueryProducts, {product_ids: [1234, 2345], page: 1, limit: 30});
+        assert.calledWith(collection.client.fetchQueryProducts, {product_ids: [1234, 2345], page: 1, limit: 30, sort_by: 'title-ascending'});
       });
     });
   });
