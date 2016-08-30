@@ -69,7 +69,7 @@ class OptionsTransform {
     this.cartUiOptions = this.cartUiOptions || cartAttributes.reduce((options, attr) => {
       const transform = this[`cart_${attr}_transform`];
       const value = this.legacyCart[attr];
-      if ((transform && value) || attr === 'sticky') {
+      if (transform && (value || attr === 'sticky')) {
         transform.call(this, value, options);
       }
       return options;
