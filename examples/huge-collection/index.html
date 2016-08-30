@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>test</title>
+  </head>
+  <body>
+    <!-- <script src="build/shopify-buy-ui.globals.js"></script> -->
+    <!-- <script src="build/shopify-buy-ui.globals.polyfilled.js"></script> -->
+    <!-- <script src="build/shopify-buy-ui.globals.polyfilled.min.js"></script> -->
+    <script src="../../tmp/shopify-buy-ui.dev.js"></script>
+
+    <div id="test"></div>
+
+    <!-- all prdoucts collection: 317738502 -->
+    <!-- many variants product: 6640244678-->
+    <!-- single variants product: 3030475907-->
+
+    <script data-shopify-buy-ui>
+      var scriptURL = "../../tmp/shopify-buy-ui.dev.js";
+      if (window.ShopifyBuy && window.ShopifyBuy.UI) {
+        ShopifyBuyInit();
+      } else {
+        var script = document.createElement('script');
+        script.async = true;
+        script.src = scriptURL;
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(script);
+        script.onload = ShopifyBuyInit;
+      }
+      function ShopifyBuyInit() {
+        var client = ShopifyBuy.buildClient({
+           apiKey: 'bf081e860bc9dc1ce0654fdfbc20892d',
+           domain: 'embeds.myshopify.com',
+           appId: '6'
+         });
+
+        var ui = ShopifyBuy.UI.init(client);
+        ui.createComponent('collection', {
+                  id: 336903494,
+          options: {
+            product: {
+              buttonDestination: 'modal',
+              contents: {
+              },
+              styles: {
+                product: {
+                  width: '250px'
+                }
+              }
+            },
+            toggle: {
+              styles: {
+                iconPath: {
+                  fill: 'red'
+                }
+              }
+            }
+          }
+        });
+      }
+    </script>
+  </body>
+</html>
