@@ -132,9 +132,6 @@ const defaults = {
       products: '<div class="{{data.classes.productSet.products}}"></div>',
       pagination: '<button class="{{data.classes.productSet.paginationButton}} {{data.nextButtonClass}}">{{data.text.nextPageButton}}</button>',
     },
-    text: {
-      next: 'Next page',
-    },
     classes: {
       wrapper: 'collection-wrapper',
       productSet: 'collection',

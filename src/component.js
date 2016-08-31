@@ -230,7 +230,7 @@ export default class Component {
   }
 
   wrapTemplate(html) {
-    return `<div class="${this.classes[this.typeKey][this.typeKey]}">${html}</div>`;
+    return html;
   }
 
   render() {
