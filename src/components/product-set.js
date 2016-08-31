@@ -85,10 +85,6 @@ export default class ProductSet extends Component {
     /* eslint-enable camelcase */
   }
 
-  wrapTemplate(html) {
-    return `<div class="${this.classes.productSet.productSet}">${html}</div>`;
-  }
-
   fetchData() {
     return this.sdkFetch().then((products) => {
       if (products.length) {
