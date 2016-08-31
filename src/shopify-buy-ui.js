@@ -12,7 +12,7 @@ ShopifyBuy.UI = {
     return this.ui;
   },
 
-  adapterHelper: {
+  adapterHelpers: {
     templates: {
       product: productTemplates,
     },
