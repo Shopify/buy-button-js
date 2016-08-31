@@ -130,10 +130,7 @@ const defaults = {
     templates: {
       title: '<h2 class="{{data.classes.productSet.title}}">{{data.collection.attrs.title}}</h2>',
       products: '<div class="{{data.classes.productSet.products}}"></div>',
-      pagination: '<button class="{{data.classes.productSet.paginationButton}} {{data.nextButtonClass}}">{{data.text.next}}</button>',
-    },
-    text: {
-      next: 'Next page',
+      pagination: '<button class="{{data.classes.productSet.paginationButton}} {{data.nextButtonClass}}">{{data.text.nextPageButton}}</button>',
     },
     classes: {
       wrapper: 'collection-wrapper',

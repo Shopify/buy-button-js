@@ -66,6 +66,10 @@ export default class Cart extends Component {
     }
   }
 
+  wrapTemplate(html) {
+    return `<div class="${this.classes.cart.cart}">${html}</div>`;
+  }
+
   init(data) {
     return super.init(data).then((cart) => this.toggle.init({lineItems: cart.model.lineItems}).then(() => this));
   }
