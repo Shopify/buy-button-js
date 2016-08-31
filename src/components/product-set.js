@@ -101,7 +101,7 @@ export default class ProductSet extends Component {
   showPagination() {
     return this.sdkFetch({page: this.page + 1}).then((data) => {
       this.nextModel = {products: data};
-      this.updateNode(this.classes.productSet.paginationButton, this.paginationTemplate);
+      this.renderChild(this.classes.productSet.paginationButton, this.paginationTemplate);
       this.resize();
       return;
     });

@@ -239,10 +239,7 @@ export default class Component {
       return this.wrapTemplate(data);
     });
     if (this.wrapper && this.wrapper.innerHTML.length) {
-      const div = document.createElement('div');
-      div.innerHTML = html;
-      morphdom(this.wrapper, div, this.morphCallbacks);
-      this.wrapper.className = this.classes[this.typeKey].wrapper;
+      this.updateNode(this.wrapper, html);
     } else {
       this.wrapper = this.createWrapper();
       this.wrapper.innerHTML = html;
@@ -251,18 +248,22 @@ export default class Component {
     this._userEvent('afterRender');
   }
 
-  updateNode(className, template) {
+  renderChild(className, template) {
     const selector = `.${className.split(' ').join('.')}`;
     const node = this.wrapper.querySelector(selector);
-    const div = document.createElement('div');
     const html = template.render({data: this.viewData});
+    this.updateNode(node, html);
+  }
+
+  updateNode(node, html) {
+    const div = document.createElement('div');
     div.innerHTML = html;
     morphdom(node, div.firstElementChild);
   }
 
   createWrapper() {
     const wrapper = document.createElement('div');
-    wrapper.className = this.classes[this.typeKey].wrapper;
+    wrapper.className = this.classes[this.typeKey][this.typeKey];
     if (this.iframe) {
       this.document.body.appendChild(wrapper);
     } else {

@@ -186,14 +186,14 @@ describe('ProductSet class', () => {
 
   describe('showPagination', () => {
     let sdkFetchSpy;
-    let updateNodeSpy;
+    let renderChildStub;
     let resizeSpy;
     const newCollection = [{title: 'vapebelt'}, {title: 'vapeglasses'}];
 
     beforeEach(() => {
       set.id = 1234;
       sdkFetchSpy = sinon.stub(set, 'sdkFetch').returns(Promise.resolve(newCollection));
-      updateNodeSpy = sinon.stub(set, 'updateNode');
+      renderChildStub = sinon.stub(set, 'renderChild');
       resizeSpy = sinon.stub(set, 'resize');
     });
 
@@ -201,7 +201,7 @@ describe('ProductSet class', () => {
       set.showPagination().then(() => {
         assert.deepEqual(set.nextModel, {products: newCollection});
         assert.calledWith(sdkFetchSpy, {page: 2});
-        assert.calledWith(updateNodeSpy, set.classes.productSet.paginationButton, set.paginationTemplate);
+        assert.calledWith(renderChildStub, set.classes.productSet.paginationButton, set.paginationTemplate);
         done();
       }).catch((e) => {
         done(e);
