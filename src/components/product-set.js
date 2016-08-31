@@ -51,7 +51,7 @@ export default class ProductSet extends Component {
     return {
       limit: 30,
       page: 1,
-    }
+    };
   }
 
   init(data) {
@@ -69,15 +69,15 @@ export default class ProductSet extends Component {
   sdkFetch(options = {}) {
 
     /* eslint-disable camelcase */
-    options = Object.assign({}, this.fetchQuery, options);
+    const queryOptions = Object.assign({}, this.fetchQuery, options);
     let method;
     if (this.id) {
       const queryKey = isArray(this.id) ? 'product_ids' : 'collection_id';
-      method = this.props.client.fetchQueryProducts(Object.assign({}, options, {[queryKey]: this.id}));
+      method = this.props.client.fetchQueryProducts(Object.assign({}, queryOptions, {[queryKey]: this.id}));
     } else if (this.handle) {
       method = this.props.client.fetchQueryCollections({handle: this.handle}).then((collections) => {
         const collection = collections[0];
-        return this.props.client.fetchQueryProducts(Object.assign({}, options, {collection_id: collection.attrs.collection_id}));
+        return this.props.client.fetchQueryProducts(Object.assign({}, queryOptions, {collection_id: collection.attrs.collection_id}));
       });
     }
     return method;
