@@ -19,6 +19,10 @@ ShopifyBuy.UI = {
       },
     };
   },
+
+  get UIConstructor() {
+    return UI;
+  }
 };
 
 window.ShopifyBuy = ShopifyBuy;
