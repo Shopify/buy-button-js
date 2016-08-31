@@ -218,4 +218,14 @@ describe('Component class', () => {
       assert.equal(div.innerHTML, html);
     });
   });
+
+
+  describe('wrapTemplate', () => {
+    describe('when button exists', () => {
+      it('puts strings in a div', () => {
+        const string = component.wrapTemplate('test');
+        assert.equal(string, '<div class="product">test</div>');
+      });
+    });
+  });
 });

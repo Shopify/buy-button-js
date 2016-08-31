@@ -257,7 +257,6 @@ export default class Component {
 
   updateNode(node, html) {
     const div = document.createElement('div');
-    const html = compiled.render({data: this.viewData});
     div.innerHTML = html;
     morphdom(node, div.firstElementChild);
   }
