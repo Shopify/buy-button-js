@@ -112,6 +112,7 @@ describe('Component class', () => {
       testComponent.init({}).then(() => {
         testComponent.render();
         testComponent.delegateEvents();
+        console.log(testComponent.wrapper);
         testComponent.document.getElementById('button').click();
         assert.calledWith(clickSpy, sinon.match.instanceOf(Event), sinon.match.instanceOf(window.Node));
         done();
