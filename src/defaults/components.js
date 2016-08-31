@@ -138,6 +138,9 @@ const defaults = {
       products: 'collection-products',
       product: 'collection-product',
     },
+    text: {
+      nextPageButton: 'Next page',
+    },
   },
   option: {
     templates: optionTemplates,
