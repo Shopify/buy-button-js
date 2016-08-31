@@ -1,7 +1,7 @@
 import merge from '../utils/merge';
 import Component from '../component';
 import Product from './product';
-import hogan from 'hogan.js';
+import Template from '../template';
 
 function isArray(arg) {
   return Object.prototype.toString.call(arg) === '[object Array]';
@@ -44,8 +44,8 @@ export default class ProductSet extends Component {
     });
   }
 
- get paginationTemplate() {
-    this._paginationTemplate = this._paginationTemplate || hogan.compile(this.templates.pagination);
+  get paginationTemplate() {
+    this._paginationTemplate = this._paginationTemplate || new Template({pagination: this.templates.pagination}, {pagination: true}, ['pagination']);
     return this._paginationTemplate;
   }
 
