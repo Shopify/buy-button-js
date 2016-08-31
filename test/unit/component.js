@@ -112,6 +112,7 @@ describe('Component class', () => {
       testComponent.init({}).then(() => {
         testComponent.render();
         testComponent.delegateEvents();
+        console.log(testComponent.wrapper);
         testComponent.document.getElementById('button').click();
         assert.calledWith(clickSpy, sinon.match.instanceOf(Event), sinon.match.instanceOf(window.Node));
         done();
@@ -230,15 +231,6 @@ describe('Component class', () => {
         done();
       }).catch((e) => {
         done(e);
-      });
-    });
-  });
-
-  describe('wrapTemplate', () => {
-    describe('when button exists', () => {
-      it('puts strings in a div', () => {
-        const string = component.wrapTemplate('test');
-        assert.equal(string, '<div class="product">test</div>');
       });
     });
   });
