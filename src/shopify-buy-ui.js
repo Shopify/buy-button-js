@@ -12,17 +12,13 @@ ShopifyBuy.UI = {
     return this.ui;
   },
 
-  get adapterHelpers() {
-    return {
-      templates: {
-        product: productTemplates,
-      },
-    };
+  adapterHelper: {
+    templates: {
+      product: productTemplates,
+    },
   },
 
-  get UIConstructor() {
-    return UI;
-  }
+  UIConstructor: UI,
 };
 
 window.ShopifyBuy = ShopifyBuy;
