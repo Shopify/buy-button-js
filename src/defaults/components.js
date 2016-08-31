@@ -158,6 +158,7 @@ const defaults = {
   cart: {
     iframe: true,
     templates: cartTemplates,
+    startOpen: false,
     manifest: ['cart', 'lineItem'],
     contents: {
       title: true,
@@ -224,6 +225,7 @@ const defaults = {
     templates: toggleTemplates,
     manifest: ['toggle'],
     iframe: true,
+    sticky: true,
     contents: {
       count: true,
       icon: true,

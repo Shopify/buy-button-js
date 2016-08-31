@@ -29,10 +29,8 @@ class OptionsTransform {
       const value = this.element.getAttribute(`data-${attr}`);
       if (value) {
         opts[attr] = value;
-      } else {
-        if (this.cart) {
-          opts[attr] = this.cart.getAttribute(`data-${attr}`);
-        }
+      } else if (this.cart) {
+        opts[attr] = this.cart.getAttribute(`data-${attr}`);
       }
       return opts;
     }, {});
@@ -60,6 +58,7 @@ class OptionsTransform {
     }, merge({}, defaultOptions));
     if (this.cart) {
       this.uiOptions.cart = merge({}, this.uiOptions.cart, this.cartUi.cart);
+      this.uiOptions.toggle = merge({}, this.uiOptions.toggle, this.cartUi.toggle);
     }
     window.a1 = defaultOptions;
     window.a2 = merge({}, defaultOptions);
@@ -70,7 +69,7 @@ class OptionsTransform {
     this.cartUiOptions = this.cartUiOptions || cartAttributes.reduce((options, attr) => {
       const transform = this[`cart_${attr}_transform`];
       const value = this.legacyCart[attr];
-      if (transform && value) {
+      if (transform && (value || attr === 'sticky')) {
         transform.call(this, value, options);
       }
       return options;
@@ -273,6 +272,22 @@ class OptionsTransform {
 
   cart_cart_total_text_transform(value, options) {
     options.cart.text.total = value;
+  }
+
+  cart_sticky_transform(value, options) {
+    if (value && value === 'true') {
+      options.toggle.sticky = true;
+    } else {
+      options.toggle.sticky = false;
+      options.toggle.order = ['icon', 'title', 'count'];
+      options.toggle.contents = {
+        title: true,
+      };
+    }
+  }
+
+  cart_start_toggled_transform(value, options) {
+    options.cart.startOpen = (value === 'true');
   }
 
   adjustLuminance(hex, lum) {

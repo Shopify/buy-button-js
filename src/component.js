@@ -128,14 +128,22 @@ export default class Component {
     this._userEvent('afterDelegateEvents');
   }
 
+  get shouldResizeX() {
+    return false;
+  }
+
+  get shouldResizeY() {
+    return false;
+  }
+
   resize() {
     if (!this.iframe) {
       return;
     }
-    if (this.typeKey === 'product' && this.options.layout === 'vertical') {
+    if (this.shouldResizeX) {
       this.resizeX();
     }
-    if (this.typeKey === 'product' || this.typeKey === 'productSet') {
+    if (this.shouldResizeY) {
       this.resizeY();
     }
   }

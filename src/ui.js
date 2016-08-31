@@ -2,6 +2,7 @@ import Product from './components/product';
 import Modal from './components/modal';
 import ProductSet from './components/product-set';
 import Cart from './components/cart';
+import CartToggle from './components/toggle';
 import Tracker from './utils/track';
 import hostStyles from './styles/host/host';
 import conditionalStyles from './styles/host/conditional';
@@ -21,12 +22,14 @@ export default class UI {
       collection: [],
       productSet: [],
       modal: [],
+      toggle: [],
     };
     this.componentTypes = {
       product: Product,
       cart: Cart,
       collection: ProductSet,
       productSet: ProductSet,
+      toggle: CartToggle,
     };
     this.tracker = new Tracker(trackingLib);
     this._appendStyleTag();

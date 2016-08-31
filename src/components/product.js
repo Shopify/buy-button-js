@@ -190,6 +190,14 @@ export default class Product extends Component {
     }));
   }
 
+  get shouldResizeX() {
+    return this.options.layout === 'vertical';
+  }
+
+  get shouldResizeY() {
+    return true;
+  }
+
   setupModel(data) {
     return super.setupModel(data).then((model) => {
       return this.setDefaultVariant(model);
