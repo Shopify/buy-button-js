@@ -229,13 +229,13 @@ export default class Product extends Component {
   }
 
   updateConfig(config) {
-    super.updateConfig(config);
-    this.cart.updateConfig(config);
     if (this.iframe) {
       this.iframe.removeClass('layout-vertical');
       this.iframe.removeClass('layout-horizontal');
       this.iframe.addClass(this.iframeClass);
     }
+    super.updateConfig(config);
+    this.cart.updateConfig(config);
     if (this.modal) {
       this.modal.updateConfig(config);
     }
