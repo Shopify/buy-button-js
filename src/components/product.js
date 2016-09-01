@@ -1,5 +1,4 @@
 import merge from '../utils/merge';
-import throwNotFound from '../utils/throw-not-found';
 import Component from '../component';
 import Template from '../template';
 import Checkout from './checkout';
@@ -232,8 +231,6 @@ export default class Product extends Component {
     return this.sdkFetch().then((model) => {
       model.selectedQuantity = 0;
       return model;
-    }).catch(() => {
-      throwNotFound(this);
     });
   }
 

@@ -1,8 +1,10 @@
+import logger from './logger';
+
 function isArray(arg) {
   return Object.prototype.toString.call(arg) === '[object Array]';
 }
 
-export default function throwNotFound(component) {
+export default function logNotFound(component) {
   let errInfo = '';
   if (component.id) {
     if (isArray(component.id)) {
@@ -13,6 +15,6 @@ export default function throwNotFound(component) {
   } else if (component.handle) {
     errInfo = `for handle "${component.handle}.`;
   }
-  const message = `DataNotFound: ${component.typeKey} not found ${errInfo}`;
-  throw new Error(message);
+  const message = `Not Found: ${component.typeKey} not found ${errInfo}`;
+  logger.warn(message);
 }

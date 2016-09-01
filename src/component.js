@@ -2,6 +2,7 @@ import morphdom from 'morphdom';
 import merge from './utils/merge';
 import isFunction from './utils/is-function';
 import componentDefaults from './defaults/components';
+import logNotFound from './utils/throw-not-found';
 import Iframe from './iframe';
 import Template from './template';
 import styles from './styles/embeds/all';
@@ -198,8 +199,8 @@ export default class Component {
       return this;
     })
     .catch((err) => {
-      if (err.message.indexOf('DataNotFound') > -1) {
-        logger.warn(err);
+      if (err.message.indexOf('Not Found') > -1) {
+        logNotFound(this);
       } else {
         throw err;
       }
