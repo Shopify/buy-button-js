@@ -470,7 +470,7 @@ describe('Product class', () => {
       it('wraps html in a button', () => {
         product.config.product.contents.button = false;
         const string = product.wrapTemplate('test');
-        assert.equal(string, '<button class="btn--parent product">test</button>');
+        assert.equal(string, '<button class="btn--parent no-image layout-vertical product">test</button>');
       });
     });
   });
