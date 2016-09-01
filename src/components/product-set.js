@@ -1,4 +1,5 @@
 import merge from '../utils/merge';
+import throwNotFound from '../utils/throw-not-found';
 import Component from '../component';
 import Product from './product';
 
@@ -32,6 +33,8 @@ export default class ProductSet extends Component {
       method = this.props.client.fetchQueryCollections({handle: this.handle}).then((collections) => {
         const collection = collections[0];
         return this.props.client.fetchQueryProducts({collection_id: collection.attrs.collection_id});
+      }).catch((e) => {
+        return throwNotFound(this);
       });
     }
     return method;
@@ -72,10 +75,17 @@ export default class ProductSet extends Component {
       return product.init(productModel);
     });
 
-    return Promise.all(promises).then(() => {
-      this.resize();
-      this.cart = this.products[0].cart;
-      return this.loadImgs();
-    });
+    if (promises.length) {
+      return Promise.all(promises).then(() => {
+        this.resize();
+        this.cart = this.products[0].cart;
+        return this.loadImgs();
+      });
+    } else {
+      return this.props.createCart({options: this.config}).then((cart) => {
+        this.cart = cart;
+        return this;
+      });
+    }
   }
 }

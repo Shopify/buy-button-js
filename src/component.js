@@ -5,18 +5,11 @@ import componentDefaults from './defaults/components';
 import Iframe from './iframe';
 import Template from './template';
 import styles from './styles/embeds/all';
+import logger from './utils/logger';
 import {addClassToElement, removeClassFromElement} from './utils/element-class';
 
 const delegateEventSplitter = /^(\S+)\s*(.*)$/;
 const ESC_KEY = 27;
-
-function logEvent(event, type) {
-
-  /* eslint-disable no-console */
-  console.log(`EVENT: ${event} (${type})`);
-
-  /* eslint-enable no-console  */
-}
 
 export default class Component {
   constructor(config, props) {
@@ -203,6 +196,12 @@ export default class Component {
       this.delegateEvents();
       this._userEvent('afterInit');
       return this;
+    }).catch((e) => {
+      if (e.message.indexOf('DataNotFound') > -1) {
+        logger.warn(e);
+      } else {
+        throw e;
+      }
     });
   }
 
@@ -297,7 +296,7 @@ export default class Component {
 
   _userEvent(methodName) {
     if (this.debug) {
-      logEvent(methodName, this.typeKey);
+      logger.log(`EVENT: ${methodName} (${this.typeKey})`);
     }
     if (isFunction(this.events[methodName])) {
       this.events[methodName].call(this, this);
