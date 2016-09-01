@@ -2,7 +2,7 @@ import morphdom from 'morphdom';
 import merge from './utils/merge';
 import isFunction from './utils/is-function';
 import componentDefaults from './defaults/components';
-import logNotFound from './utils/throw-not-found';
+import logNotFound from './utils/log-not-found';
 import Iframe from './iframe';
 import Template from './template';
 import styles from './styles/embeds/all';

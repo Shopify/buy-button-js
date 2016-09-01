@@ -57,9 +57,8 @@ export default class ProductSet extends Component {
         return {
           products,
         };
-      } else {
-        throw new Error('Not Found');
       }
+      throw new Error('Not Found');
     });
   }
 
