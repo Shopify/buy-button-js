@@ -232,7 +232,7 @@ export default class Product extends Component {
     if (this.iframe) {
       this.iframe.removeClass('layout-vertical');
       this.iframe.removeClass('layout-horizontal');
-      this.iframe.addClass(this.iframeClass);
+      this.iframe.addClass(`layout-${config.options.product.layout}`);
     }
     super.updateConfig(config);
     this.cart.updateConfig(config);
