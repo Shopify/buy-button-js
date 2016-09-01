@@ -140,7 +140,7 @@ export default class Component {
     if (!this.iframe) {
       return;
     }
-    console.log('resize', this.wrapper.clientHeight, this.wrappper.clientWidth);
+    console.log('resize', this.wrapper);
     if (this.shouldResizeX) {
       this.resizeX();
     }
