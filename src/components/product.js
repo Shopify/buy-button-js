@@ -191,7 +191,7 @@ export default class Product extends Component {
   }
 
   get shouldResizeX() {
-    return this.options.layout === 'vertical';
+    return this.options.layout === 'horizontal';
   }
 
   get shouldResizeY() {
