@@ -191,7 +191,7 @@ export default class Product extends Component {
   }
 
   get shouldResizeX() {
-    return this.options.layout === 'vertical';
+    return this.options.layout === 'horizontal';
   }
 
   get shouldResizeY() {
@@ -229,6 +229,11 @@ export default class Product extends Component {
   }
 
   updateConfig(config) {
+    if (this.iframe) {
+      this.iframe.removeClass('layout-vertical');
+      this.iframe.removeClass('layout-horizontal');
+      this.iframe.addClass(`layout-${config.options.product.layout}`);
+    }
     super.updateConfig(config);
     this.cart.updateConfig(config);
     if (this.modal) {

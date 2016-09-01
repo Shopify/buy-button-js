@@ -41,7 +41,11 @@ $max-z-index: 2147483647;
   &.layout-horizontal {
     display: block;
     iframe {
-      max-width: 950px;
+      max-width: 100%;
+
+      @media (min-width: 801px) {
+        max-width: 950px;
+      }
     }
   }
 }
