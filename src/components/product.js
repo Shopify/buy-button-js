@@ -191,7 +191,7 @@ export default class Product extends Component {
   }
 
   get shouldResizeX() {
-    return this.options.layout === 'vertical';
+    return this.options.layout === 'horizontal';
   }
 
   get shouldResizeY() {
@@ -208,7 +208,7 @@ export default class Product extends Component {
     if (this.contents.button) {
       return `<div class="${this.wrapperClass} ${this.classes.product.product}">${html}</div>`;
     } else {
-      return `<button class="${this.classes.product.blockButton} ${this.classes.product.product}">${html}</button>`;
+      return `<button class="${this.classes.product.blockButton} ${this.wrapperClass} ${this.classes.product.product}">${html}</button>`;
     }
   }
 
@@ -229,6 +229,11 @@ export default class Product extends Component {
   }
 
   updateConfig(config) {
+    if (this.iframe) {
+      this.iframe.removeClass('layout-vertical');
+      this.iframe.removeClass('layout-horizontal');
+      this.iframe.addClass(`layout-${config.options.product.layout || this.options.layout}`);
+    }
     super.updateConfig(config);
     this.cart.updateConfig(config);
     if (this.modal) {

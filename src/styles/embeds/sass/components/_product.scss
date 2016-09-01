@@ -2,9 +2,7 @@
 
 .product-wrapper {
   overflow: hidden;
-}
-
-.product.layout-vertical {
+  width: 100%;
 }
 
 .product__variant-img {
@@ -104,7 +102,6 @@
 
     .product-img-wrapper {
       float: left;
-      margin-right: $gutter;
       width: 50%;
     }
 
@@ -115,6 +112,7 @@
     .btn,
     .product__variant-selectors {
       overflow: hidden;
+      padding-left: $gutter;
     }
   }
 }
