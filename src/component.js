@@ -137,6 +137,7 @@ export default class Component {
   }
 
   resize() {
+    console.log('resize', this.wrapper.clientHeight, this.wrappper.clientWidth);
     if (!this.iframe) {
       return;
     }
