@@ -1,5 +1,6 @@
 import ShopifyBuy from 'shopify-buy';
 import UI from './ui';
+import productTemplates from './templates/product';
 
 ShopifyBuy.UI = {
   ui: null,
@@ -10,6 +11,14 @@ ShopifyBuy.UI = {
     }
     return this.ui;
   },
+
+  adapterHelpers: {
+    templates: {
+      product: productTemplates,
+    },
+  },
+
+  UIConstructor: UI,
 };
 
 window.ShopifyBuy = ShopifyBuy;

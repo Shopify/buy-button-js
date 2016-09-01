@@ -7,7 +7,7 @@ describe('it loads', function () {
       window.localStorage.clear()
     });
     var iframe = browser.element('iframe[name=frame-product-6640244678]');
-    iframe.waitForExist(500);
+    iframe.waitForExist(1000);
     browser.frame('frame-product-6640244678');
     browser.waitForText('.product__title', 'Ankle socks');
   });
@@ -35,7 +35,7 @@ describe('it loads', function () {
       browser.click('.btn');
       browser.frame(null);
       var modalFrame = browser.element('iframe[name=frame-modal]');
-      modalFrame.waitForExist(500);
+      modalFrame.waitForExist(1000);
       browser.frame('frame-modal');
       browser.waitForText('.product-description', 'Sockness Monster');
     });
