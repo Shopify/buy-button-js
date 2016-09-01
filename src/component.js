@@ -196,11 +196,12 @@ export default class Component {
       this.delegateEvents();
       this._userEvent('afterInit');
       return this;
-    }).catch((e) => {
-      if (e.message.indexOf('DataNotFound') > -1) {
-        logger.warn(e);
+    })
+    .catch((err) => {
+      if (err.message.indexOf('DataNotFound') > -1) {
+        logger.warn(err);
       } else {
-        throw e;
+        throw err;
       }
     });
   }

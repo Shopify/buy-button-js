@@ -232,7 +232,7 @@ export default class Product extends Component {
     return this.sdkFetch().then((model) => {
       model.selectedQuantity = 0;
       return model;
-    }).catch((e) => {
+    }).catch(() => {
       throwNotFound(this);
     });
   }

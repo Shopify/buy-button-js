@@ -33,7 +33,7 @@ export default class ProductSet extends Component {
       method = this.props.client.fetchQueryCollections({handle: this.handle}).then((collections) => {
         const collection = collections[0];
         return this.props.client.fetchQueryProducts({collection_id: collection.attrs.collection_id});
-      }).catch((e) => {
+      }).catch(() => {
         return throwNotFound(this);
       });
     }
