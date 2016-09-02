@@ -74,6 +74,12 @@ export default class Component {
     }, {});
   }
 
+  get googleFonts() {
+    return this.manifest
+      .filter((component) => this.config[component].googleFonts)
+      .reduce((fonts, component) => fonts.concat(this.config[component].googleFonts), []);
+  }
+
   get document() {
     return this.iframe ? this.iframe.document : window.document;
   }
@@ -169,7 +175,7 @@ export default class Component {
         customStyles: this.styles,
         stylesheet: styles[this.typeKey],
         browserFeatures: this.props.browserFeatures,
-        googleFonts: this.options.googleFonts,
+        googleFonts: this.googleFonts,
         name: this.name,
       });
       this.node.className += ` shopify-buy-frame shopify-buy-frame--${this.typeKey}`;
