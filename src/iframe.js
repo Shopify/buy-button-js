@@ -114,6 +114,9 @@ export default class iframe {
       };
       fontScript.src = webfontScript;
       document.head.appendChild(fontScript);
+      setTimeout(() => {
+        resolve();
+      }, 500);
     });
   }
 
