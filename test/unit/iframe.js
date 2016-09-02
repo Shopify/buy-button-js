@@ -61,8 +61,10 @@ describe('Iframe class', () => {
     });
   });
 
-  describe('loadFonts', () => {
+  describe('loadFontScript', () => {
+    let scriptTags;
     beforeEach((done) => {
+      scriptTags = document.head.getElementsByTagName('script').length;
       iframe.googleFonts = ['Lato'];
       iframe.load().then(() => {
         done();
@@ -70,8 +72,8 @@ describe('Iframe class', () => {
     });
 
     it('appends a script tag', () => {
-      const scriptTags = iframe.document.head.getElementsByTagName('script');
-      assert.equal(scriptTags.length, 1);
+      const newScriptTags = document.head.getElementsByTagName('script');
+      assert.equal(newScriptTags.length, scriptTags + 1);
     });
   });
 

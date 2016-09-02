@@ -16,6 +16,8 @@ const iframeAttrs = {
   scrolling: 'false',
 };
 
+const webfontScript = 'https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js';
+
 function isPseudoSelector(key) {
   return key.charAt(0) === ':';
 }
@@ -65,10 +67,12 @@ export default class iframe {
     this.classes = config.classes;
     this.browserFeatures = config.browserFeatures;
     this.googleFonts = config.googleFonts || [];
+    this.name = config.name;
     Object.keys(iframeStyles).forEach((key) => {
       this.el.style[key] = iframeStyles[key];
     });
     Object.keys(iframeAttrs).forEach((key) => this.el.setAttribute(key, iframeAttrs[key]));
+    this.el.setAttribute('name', config.name);
     this.styleTag = null;
   }
 
@@ -86,18 +90,29 @@ export default class iframe {
 
   loadFonts() {
     if (!this.googleFonts.length) {
+     return Promise.resolve();
+    }
+    return this.loadFontScript().then(() => {
+      window.WebFont.load({
+        google: {
+          families: this.googleFonts,
+        },
+        context: frames[this.name]
+      });
+    });
+  }
+
+  loadFontScript() {
+    if (window.WebFont) {
       return Promise.resolve();
     }
-    this.el.contentWindow.ShopifyBuyConfig = {
-      googleFonts: this.googleFonts,
-    };
-    const fontScript = this.document.createElement('script');
+    const fontScript = document.createElement('script');
     return new Promise((resolve) => {
       fontScript.onload = () => {
         resolve();
       };
-      fontScript.src = 'tmp/google-fonts.js';
-      this.document.head.appendChild(fontScript);
+      fontScript.src = webfontScript;
+      document.head.appendChild(fontScript);
     });
   }
 
