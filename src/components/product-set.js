@@ -38,7 +38,7 @@ export default class ProductSet extends Component {
     };
   }
 
- get DOMEvents() {
+  get DOMEvents() {
     return Object.assign({}, this.options.DOMEvents, {
       [`click .${this.classes.productSet.paginationButton}`]: this.nextPage.bind(this),
     });
@@ -49,7 +49,7 @@ export default class ProductSet extends Component {
     return this._paginationTemplate;
   }
 
- get fetchQuery() {
+  get fetchQuery() {
     return {
       limit: 30,
       page: 1,
@@ -61,7 +61,7 @@ export default class ProductSet extends Component {
       this.props.createCart({options: this.config}).then((cart) => {
         this.cart = cart;
         if (model) {
-          this.renderProducts();
+          return this.renderProducts(this.model.products);
         }
         return model;
       })
@@ -167,9 +167,4 @@ export default class ProductSet extends Component {
     });
   }
 
-  init() {
-    return super.init().then(() => {
-      return this.renderProducts(this.model.products);
-    });
-  }
 }
