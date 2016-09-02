@@ -35,7 +35,7 @@ export default class ProductSet extends Component {
   get viewData() {
     return {
       classes: this.classes,
-      text: this.text,
+      text: this.options.text,
       nextButtonClass: this.nextButtonClass,
     };
   }
@@ -47,7 +47,7 @@ export default class ProductSet extends Component {
   }
 
   get paginationTemplate() {
-    this._paginationTemplate = this._paginationTemplate || new Template({pagination: this.templates.pagination}, {pagination: true}, ['pagination']);
+    this._paginationTemplate = this._paginationTemplate || new Template({pagination: this.options.templates.pagination}, {pagination: true}, ['pagination']);
     return this._paginationTemplate;
   }
 
@@ -87,6 +87,10 @@ export default class ProductSet extends Component {
     return method;
 
     /* eslint-enable camelcase */
+  }
+
+  wrapTemplate(html) {
+    return `<div class="${this.classes.productSet.productSet}">${html}</div>`;
   }
 
   fetchData() {
@@ -157,19 +161,16 @@ export default class ProductSet extends Component {
       }),
     };
 
-    const imgs = [];
-
     const promises = this.model.products.map((productModel) => {
       const product = new Product(productConfig, this.props);
-
       this.products.push(product);
       return product.init(productModel);
     });
 
-    Promise.all(promises).then((product) => {
+    return Promise.all(promises).then(() => {
       this.resizeUntilFits();
       this.showPagination();
-      return this;
+      return;
     });
   }
 

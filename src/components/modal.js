@@ -32,6 +32,10 @@ export default class Modal extends Component {
     };
   }
 
+  wrapTemplate(html) {
+    return html;
+  }
+
   delegateEvents() {
     super.delegateEvents();
     this.document.body.addEventListener('click', this.closeOnBgClick.bind(this));
