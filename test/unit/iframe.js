@@ -61,6 +61,22 @@ describe('Iframe class', () => {
     });
   });
 
+  describe('loadFontScript', () => {
+    let scriptTags;
+    beforeEach((done) => {
+      scriptTags = document.head.getElementsByTagName('script').length;
+      iframe.googleFonts = ['Lato'];
+      iframe.load().then(() => {
+        done();
+      });
+    });
+
+    it('appends a script tag', () => {
+      const newScriptTags = document.head.getElementsByTagName('script');
+      assert.equal(newScriptTags.length, scriptTags + 1);
+    });
+  });
+
   describe('get css', () => {
     it('returns properly formatted CSS', (done) => {
       iframe.load().then(() => {

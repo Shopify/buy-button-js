@@ -170,10 +170,11 @@ export default class Component {
         customStyles: this.styles,
         stylesheet: styles[this.typeKey],
         browserFeatures: this.props.browserFeatures,
+        googleFonts: this.options.googleFonts,
+        name: this.name,
       });
       this.node.className += ` shopify-buy-frame shopify-buy-frame--${this.typeKey}`;
       this.iframe.addClass(this.iframeClass);
-      this.iframe.setName(this.name);
       return this.iframe.load();
     } else {
       this.iframe = null;

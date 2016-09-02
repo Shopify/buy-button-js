@@ -16,6 +16,8 @@ const iframeAttrs = {
   scrolling: 'false',
 };
 
+const webfontScript = 'https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js';
+
 function isPseudoSelector(key) {
   return key.charAt(0) === ':';
 }
@@ -64,20 +66,57 @@ export default class iframe {
     this.customStylesHash = config.customStyles || {};
     this.classes = config.classes;
     this.browserFeatures = config.browserFeatures;
+    this.googleFonts = config.googleFonts || [];
+    this.name = config.name;
     Object.keys(iframeStyles).forEach((key) => {
       this.el.style[key] = iframeStyles[key];
     });
     Object.keys(iframeAttrs).forEach((key) => this.el.setAttribute(key, iframeAttrs[key]));
+    this.el.setAttribute('name', config.name);
     this.styleTag = null;
   }
 
   load() {
     return new Promise((resolve) => {
       this.el.onload = () => {
-        this.appendStyleTag();
-        resolve();
+        return this.loadFonts().then(() => {
+          this.appendStyleTag();
+          return resolve();
+        });
       };
       this.parent.appendChild(this.el);
+    });
+  }
+
+  loadFonts() {
+    if (!this.googleFonts.length) {
+      return Promise.resolve(true);
+    }
+    return this.loadFontScript().then(() => {
+      window.WebFont.load({
+        google: {
+          families: this.googleFonts,
+        },
+        context: frames[this.name],
+      });
+      return true;
+    });
+  }
+
+  loadFontScript() {
+    if (window.WebFont) {
+      return Promise.resolve();
+    }
+    const fontScript = document.createElement('script');
+    return new Promise((resolve) => {
+      fontScript.onload = () => {
+        resolve();
+      };
+      fontScript.src = webfontScript;
+      document.head.appendChild(fontScript);
+      setTimeout(() => {
+        resolve();
+      }, 500);
     });
   }
 
