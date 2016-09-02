@@ -2,21 +2,15 @@ import morphdom from 'morphdom';
 import merge from './utils/merge';
 import isFunction from './utils/is-function';
 import componentDefaults from './defaults/components';
+import logNotFound from './utils/log-not-found';
 import Iframe from './iframe';
 import Template from './template';
 import styles from './styles/embeds/all';
+import logger from './utils/logger';
 import {addClassToElement, removeClassFromElement} from './utils/element-class';
 
 const delegateEventSplitter = /^(\S+)\s*(.*)$/;
 const ESC_KEY = 27;
-
-function logEvent(event, type) {
-
-  /* eslint-disable no-console */
-  console.log(`EVENT: ${event} (${type})`);
-
-  /* eslint-enable no-console  */
-}
 
 export default class Component {
   constructor(config, props) {
@@ -203,6 +197,13 @@ export default class Component {
       this.delegateEvents();
       this._userEvent('afterInit');
       return this;
+    })
+    .catch((err) => {
+      if (err.message.indexOf('Not Found') > -1) {
+        logNotFound(this);
+      } else {
+        throw err;
+      }
     });
   }
 
@@ -297,7 +298,7 @@ export default class Component {
 
   _userEvent(methodName) {
     if (this.debug) {
-      logEvent(methodName, this.typeKey);
+      logger.log(`EVENT: ${methodName} (${this.typeKey})`);
     }
     if (isFunction(this.events[methodName])) {
       this.events[methodName].call(this, this);

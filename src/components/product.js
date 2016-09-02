@@ -58,20 +58,26 @@ export default class Product extends Component {
     return super.init.call(this, data).then((model) => (
       this.createCart().then((cart) => {
         this.cart = cart;
-        this.render();
+        if (model) {
+          this.render();
+        }
         return model;
       })
     ));
   }
 
   createCart() {
-    if (this.options.buttonDestination === 'cart' || this.config.modalProduct.buttonDestination === 'cart') {
+    if (this.shouldCreateCart) {
       return this.props.createCart({
         options: this.config,
       });
     } else {
-      return Promise.resolve();
+      return Promise.resolve(null);
     }
+  }
+
+  get shouldCreateCart() {
+    return this.options.buttonDestination === 'cart' || (this.options.buttonDestination === 'modal' && this.config.modalProduct.buttonDestination === 'cart');
   }
 
   get iframeClass() {
