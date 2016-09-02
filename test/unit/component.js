@@ -216,20 +216,6 @@ describe('Component class', () => {
       const html = '<h1>SO FRESH</h1>';
       component.updateNode(div, `<div>${html}</div>`);
       assert.equal(div.innerHTML, html);
-    });
-  });
-
-  describe('loadImgs', () => {
-    it('sets the src of an image', (done) => {
-      const testHTML = '<img data-src="foo.jpg">';
-      const tmplRender = sinon.stub(component.template, 'render').returns(testHTML);
-      component.render();
-      component.loadImgs().then(() => {
-        const src = component.node.querySelector('img').getAttribute('src');
-        assert.equal('foo.jpg', src);
-        done();
-      }).catch((e) => {
-        done(e);
       });
     });
   });
