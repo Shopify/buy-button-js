@@ -42,7 +42,7 @@ export default class Modal extends Component {
   init(data) {
     this.isVisible = true;
     return super.init(data).then(() => {
-      return this.product.init(this.model).then(() => this.loadImgs());
+      return this.product.init(this.model).then(() => this.resize());
     });
   }
 

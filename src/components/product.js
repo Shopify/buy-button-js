@@ -307,15 +307,17 @@ export default class Product extends Component {
   }
 
   resizeUntilLoaded() {
-    if (this.iframe) {
-      const img = this.wrapper.getElementsByClassName(this.classes.product.img)[0];
-      const productResize = setInterval(() => {
-        if (this.model.selectedVariantImage && img.clientHeight > 0) {
-          this.resize();
-          clearInterval(productResize);
-        }
-      }, 200);
+    if (!this.iframe) {
+      return;
     }
+    const img = this.wrapper.getElementsByClassName(this.classes.product.img)[0];
+    const productResize = setInterval(() => {
+      if (!this.model.selectedVariantImage || img.clientHeight > 0) {
+        return;
+      }
+      this.resize();
+      clearInterval(productResize);
+    }, 200);
   }
 
   render() {

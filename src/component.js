@@ -7,7 +7,6 @@ import Iframe from './iframe';
 import Template from './template';
 import styles from './styles/embeds/all';
 import logger from './utils/logger';
-import {addClassToElement, removeClassFromElement} from './utils/element-class';
 
 const delegateEventSplitter = /^(\S+)\s*(.*)$/;
 const ESC_KEY = 27;

@@ -70,23 +70,24 @@ export default class ProductSet extends Component {
   }
 
   resizeUntilFits() {
-    if (this.iframe && !this.initialResize) {
-      const maxResizes = this.products.length;
-      let resizes = 0;
-
-      this.height = this.wrapper.clientHeight;
-      this.resize();
-      const productSetResize = setInterval(() => {
-        if (this.wrapper.clientHeight > this.height) {
-          resizes++;
-          this.resize();
-        }
-        if (resizes > maxResizes) {
-          this.initialResize = true;
-          clearInterval(productSetResize);
-        }
-      }, 200);
+    if (!this.iframe || this.initialResize) {
+      return;
     }
+    const maxResizes = this.products.length;
+    let resizes = 0;
+
+    this.height = this.wrapper.clientHeight;
+    this.resize();
+    const productSetResize = setInterval(() => {
+      if (this.wrapper.clientHeight > this.height) {
+        resizes++;
+        this.resize();
+      }
+      if (resizes > maxResizes) {
+        this.initialResize = true;
+        clearInterval(productSetResize);
+      }
+    }, 200);
   }
 
   render() {
@@ -109,6 +110,6 @@ export default class ProductSet extends Component {
       return product.init(productModel);
     });
 
-    Promise.all(promises).then(() => this.resizeUntilFits());
+    return Promise.all(promises).then(() => this.resizeUntilFits());
   }
 }

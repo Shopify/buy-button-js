@@ -186,21 +186,6 @@ describe('Component class', () => {
     });
   });
 
-  describe('loadImgs', () => {
-    it('sets the src of an image', (done) => {
-      const testHTML = '<img data-src="foo.jpg">';
-      const tmplRender = sinon.stub(component.template, 'render').returns(testHTML);
-      component.render();
-      component.loadImgs().then(() => {
-        const src = component.node.querySelector('img').getAttribute('src');
-        assert.equal('foo.jpg', src);
-        done();
-      }).catch((e) => {
-        done(e);
-      });
-    });
-  });
-
   describe('wrapTemplate', () => {
     describe('when button exists', () => {
       it('puts strings in a div', () => {

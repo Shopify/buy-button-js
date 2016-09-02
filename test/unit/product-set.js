@@ -140,15 +140,11 @@ describe('ProductSet class', () => {
       initSpy.restore();
     });
 
-    it('initializes an array of products', (done) => {
+    it('initializes an array of products', () => {
       set.model.products = [fakeProduct];
 
-      set.render().then((data) => {
-        assert.calledWith(initSpy, fakeProduct);
-        done();
-      }).catch((e) => {
-        done(e);
-      });
+      set.render();
+      assert.calledWith(initSpy, fakeProduct);
     });
   });
 
