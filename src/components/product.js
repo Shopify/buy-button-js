@@ -306,7 +306,7 @@ export default class Product extends Component {
           product: this.modalProductConfig,
           modal: {
             googleFonts: this.options.googleFonts,
-          }
+          },
         }),
       }, this.props);
     }
