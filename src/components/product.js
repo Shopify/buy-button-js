@@ -324,7 +324,9 @@ export default class Product extends Component {
 
   render() {
     super.render();
-    this.resizeUntilLoaded();
+    if (this.iframe) {
+      this.resizeUntilLoaded();
+    }
   }
 
   openOnlineStore() {
