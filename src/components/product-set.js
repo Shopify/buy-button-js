@@ -163,6 +163,6 @@ export default class ProductSet extends Component {
       return product.init(productModel);
     });
 
-    Promise.all(promises).then(() => this.resizeUntilFits());
+    return Promise.all(promises).then(() => this.resizeUntilFits());
   }
 }
