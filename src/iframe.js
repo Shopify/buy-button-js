@@ -90,7 +90,7 @@ export default class iframe {
 
   loadFonts() {
     if (!this.googleFonts.length) {
-      return Promise.resolve();
+      return Promise.resolve(true);
     }
     return this.loadFontScript().then(() => {
       window.WebFont.load({
