@@ -306,6 +306,19 @@ export default class Product extends Component {
     return `https://${this.props.client.config.domain}/products/${this.id}${this.onlineStoreQueryString}`;
   }
 
+  render() {
+    super.render();
+    if (this.iframe) {
+      const img = this.wrapper.getElementsByClassName(this.classes.product.img)[0];
+      const productResize = setInterval(() => {
+        if (this.model.selectedVariantImage && img.clientHeight > 0) {
+          this.resize();
+          clearInterval(productResize);
+        }
+      }, 200);
+    }
+  }
+
   openOnlineStore() {
     window.open(this.onlineStoreURL);
   }

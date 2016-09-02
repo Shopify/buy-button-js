@@ -14,6 +14,7 @@ export default class ProductSet extends Component {
     this.cart = null;
     this.page = 1;
     this.nextModel = {products: []};
+    this.imagesRendered = false;
   }
 
   get typeKey() {
@@ -132,19 +133,48 @@ export default class ProductSet extends Component {
       }),
     };
 
+    const imgs = [];
+
     const promises = this.model.products.map((productModel) => {
       const product = new Product(productConfig, this.props);
+
       this.products.push(product);
       return product.init(productModel);
     });
 
-    return Promise.all(promises).then(() => {
-      this.resize();
-      if (this.products.length) {
-        this.cart = this.cart || this.products[0].cart;
-      }
-      return this.loadImgs().then(() => this.showPagination());
-    });
-  }
+    Promise.all(promises).then((product) => {
+      let imgs = [...this.wrapper.getElementsByTagName('img')]
+        .filter((img) => img.src.indexOf('cdn.shopify.com') > -1)
+        .map((img) => {
+          return {
+            img,
+            loaded: img.naturalWidth > 0,
+          }
+        });
 
+      this.resize();
+      this.showPagination()
+      let iterations = imgs.length;
+
+      if (!this.imagesRendered) {
+        this.imagesRendered = true;
+        const collectionResize = setInterval(() => {
+          iterations++;
+          imgs = imgs.map((img) => {
+            return {
+              img: img.img,
+              loaded: img.img.naturalWidth > 0,
+            }
+          });
+          const loadedImgs = imgs.filter((img) => img.loaded);
+          this.resize();
+          if (loadedImgs.length === imgs.length || iterations > imgs.length) {
+            clearInterval(collectionResize);
+          }
+        }, 200);
+      };
+
+    });
+
+  }
 }
