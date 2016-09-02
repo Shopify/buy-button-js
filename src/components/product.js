@@ -312,7 +312,7 @@ export default class Product extends Component {
     }
     const img = this.wrapper.getElementsByClassName(this.classes.product.img)[0];
     const productResize = setInterval(() => {
-      if (!this.model.selectedVariantImage || img.clientHeight > 0) {
+      if (!this.model.selectedVariantImage || !img.naturalWidth) {
         return;
       }
       this.resize();
