@@ -306,8 +306,7 @@ export default class Product extends Component {
     return `https://${this.props.client.config.domain}/products/${this.id}${this.onlineStoreQueryString}`;
   }
 
-  render() {
-    super.render();
+  resizeUntilLoaded() {
     if (this.iframe) {
       const img = this.wrapper.getElementsByClassName(this.classes.product.img)[0];
       const productResize = setInterval(() => {
@@ -317,6 +316,11 @@ export default class Product extends Component {
         }
       }, 200);
     }
+  }
+
+  render() {
+    super.render();
+    this.resizeUntilLoaded();
   }
 
   openOnlineStore() {
@@ -367,19 +371,8 @@ export default class Product extends Component {
     if (this.variantExists) {
       this.cachedImage = this.model.selectedVariantImage;
     }
-    this.renderWithNewImg();
-    return updatedOption;
-  }
-
-  renderWithNewImg() {
-    const img = this.wrapper.getElementsByClassName(this.classes.product.img)[0];
-    this.imgStyle = this.imgStyle || `min-height: ${img.clientHeight}px;`;
     this.render();
-    img.addEventListener('load', () => {
-      const height = img.clientHeight;
-      img.parentNode.style.minHeight = height;
-      this.imgStyle = `min-height: ${height}px;`;
-    });
+    return updatedOption;
   }
 
   closeCartOnBgClick() {
