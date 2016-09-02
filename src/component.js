@@ -242,8 +242,8 @@ export default class Component {
       this.wrapper = this.createWrapper();
       this.wrapper.innerHTML = html;
     }
+    this.resize();
     this._userEvent('afterRender');
-    return this.loadImgs();
   }
 
   createWrapper() {
@@ -255,33 +255,6 @@ export default class Component {
       this.node.appendChild(wrapper);
     }
     return wrapper;
-  }
-
-  loadImgs() {
-    const imgs = Array.prototype.slice.call(this.wrapper.querySelectorAll('img'));
-    const promises = imgs.map((img) => {
-      addClassToElement('is-transitioning', img);
-      const src = img.getAttribute('data-src');
-      if (src) {
-        return new Promise((resolve) => {
-          img.addEventListener('load', (evt) => {
-            removeClassFromElement('is-transitioning', img);
-            return resolve(evt);
-          });
-          img.addEventListener('error', (evt) => {
-            return resolve(evt);
-          });
-          img.setAttribute('src', src);
-        });
-      } else {
-        return Promise.resolve();
-      }
-    });
-    if (this.iframe) {
-      return Promise.all(promises).then(() => this.resize());
-    } else {
-      return Promise.resolve();
-    }
   }
 
   _closeComponentsOnEsc() {

@@ -11,6 +11,7 @@ export default class ProductSet extends Component {
     super(config, props);
     this.products = [];
     this.cart = null;
+    this.imagesRendered = false;
   }
 
   get typeKey() {
@@ -81,15 +82,48 @@ export default class ProductSet extends Component {
       }),
     };
 
+    const imgs = [];
+
     const promises = this.model.products.map((productModel) => {
       const product = new Product(productConfig, this.props);
+
       this.products.push(product);
       return product.init(productModel);
     });
 
-    return Promise.all(promises).then(() => {
+    Promise.all(promises).then((product) => {
+      let imgs = [...this.wrapper.getElementsByTagName('img')]
+        .filter((img) => img.src.indexOf('cdn.shopify.com') > -1)
+        .map((img) => {
+          return {
+            img,
+            loaded: img.naturalWidth > 0,
+          }
+        });
+
       this.resize();
-      return this.loadImgs();
+
+      let iterations = imgs.length;
+
+      if (!this.imagesRendered) {
+        this.imagesRendered = true;
+        const collectionResize = setInterval(() => {
+          iterations++;
+          imgs = imgs.map((img) => {
+            return {
+              img: img.img,
+              loaded: img.img.naturalWidth > 0,
+            }
+          });
+          const loadedImgs = imgs.filter((img) => img.loaded);
+          this.resize();
+          if (loadedImgs.length === imgs.length || iterations > imgs.length) {
+            clearInterval(collectionResize);
+          }
+        }, 200);
+      };
+
     });
+
   }
 }
