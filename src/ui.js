@@ -100,6 +100,7 @@ export default class UI {
       closeModal: this.closeModal.bind(this),
       tracker: this.tracker,
       browserFeatures,
+      fontScript: './tmp/google-fonts.js',
     };
   }
 

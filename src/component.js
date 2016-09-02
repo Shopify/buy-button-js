@@ -176,6 +176,7 @@ export default class Component {
         customStyles: this.styles,
         stylesheet: styles[this.typeKey],
         browserFeatures: this.props.browserFeatures,
+        googleFonts: this.options.googleFonts,
       });
       this.node.className += ` shopify-buy-frame shopify-buy-frame--${this.typeKey}`;
       this.iframe.addClass(this.iframeClass);

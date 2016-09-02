@@ -2,6 +2,13 @@ import hogan from 'hogan.js';
 import stylesTemplate from './templates/styles';
 import conditionalStyles from './styles/embeds/conditional';
 
+const googleFonts = [
+  'Oswald',
+  'Raleway',
+  'Roboto',
+  'Lato',
+];
+
 const iframeStyles = {
   width: '100%',
   overflow: 'hidden',
@@ -64,6 +71,7 @@ export default class iframe {
     this.customStylesHash = config.customStyles || {};
     this.classes = config.classes;
     this.browserFeatures = config.browserFeatures;
+    this.googleFonts = config.googleFonts || [];
     Object.keys(iframeStyles).forEach((key) => {
       this.el.style[key] = iframeStyles[key];
     });
@@ -74,10 +82,29 @@ export default class iframe {
   load() {
     return new Promise((resolve) => {
       this.el.onload = () => {
-        this.appendStyleTag();
-        resolve();
+        return this.loadFonts().then(() => {
+          this.appendStyleTag();
+          resolve();
+        });
       };
       this.parent.appendChild(this.el);
+    });
+  }
+
+  loadFonts() {
+    if (!this.googleFonts.length) {
+      return Promise.resolve();
+    }
+    this.el.contentWindow.ShopifyBuyConfig = {
+      googleFonts: this.googleFonts,
+    }
+    const fontScript = this.document.createElement('script');
+    return new Promise((resolve) => {
+      fontScript.onload = () => {
+        resolve();
+      };
+      fontScript.src = 'tmp/google-fonts.js';
+      this.document.head.appendChild(fontScript);
     });
   }
 
