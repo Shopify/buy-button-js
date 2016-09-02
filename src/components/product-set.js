@@ -157,13 +157,16 @@ export default class ProductSet extends Component {
       }),
     };
 
+    const imgs = [];
+
     const promises = this.model.products.map((productModel) => {
       const product = new Product(productConfig, this.props);
+
       this.products.push(product);
       return product.init(productModel);
     });
 
-    return Promise.all(promises).then(() => {
+    Promise.all(promises).then((product) => {
       this.resizeUntilFits();
       this.showPagination();
       return this;
