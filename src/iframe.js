@@ -90,15 +90,16 @@ export default class iframe {
 
   loadFonts() {
     if (!this.googleFonts.length) {
-     return Promise.resolve();
+      return Promise.resolve();
     }
     return this.loadFontScript().then(() => {
       window.WebFont.load({
         google: {
           families: this.googleFonts,
         },
-        context: frames[this.name]
+        context: frames[this.name],
       });
+      return true;
     });
   }
 

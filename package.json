@@ -36,7 +36,6 @@
   "author": "Shopify Inc.",
   "license": "MIT",
   "devDependencies": {
-    "aws-sdk": "2.5.4",
     "babel": "6.5.2",
     "babel-cli": "6.11.4",
     "babel-core": "6.10.4",
