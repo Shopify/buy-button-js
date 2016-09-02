@@ -119,7 +119,7 @@ export default class ProductSet extends Component {
   }
 
   resizeUntilFits() {
-    if (!this.initialResize) {
+    if (this.iframe && !this.initialResize) {
       const maxResizes = this.products.length;
       let resizes = 0;
 
