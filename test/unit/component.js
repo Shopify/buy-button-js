@@ -166,7 +166,7 @@ describe('Component class', () => {
     it('sets innerHTML of wrapper on initial call', () => {
       const testHTML = '<h1>THIS IS ONLY A TEST</h1>';
 
-      const tmplRender = sinon.stub(component.template, 'render').returns(testHTML);
+      const tmplRender = sinon.stub(component.template, 'render').returns(`<div>${testHTML}</div>`);
       component.render();
       assert.equal(component.wrapper.innerHTML, testHTML);
     });

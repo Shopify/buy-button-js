@@ -53,8 +53,10 @@ export default class Modal extends Component {
 
   close() {
     removeClassFromElement('is-active', this.wrapper);
-    this.iframe.removeClass('is-active');
-    removeClassFromElement('is-active', this.document.body);
+    if (this.iframe) {
+      this.iframe.removeClass('is-active');
+      removeClassFromElement('is-active', this.document.body);
+    }
     if (this.props.browserFeatures.transition) {
       this.iframe.parent.addEventListener('transitionend', () => {
         this.iframe.removeClass('is-block');
