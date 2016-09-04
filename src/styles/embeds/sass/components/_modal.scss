@@ -74,12 +74,23 @@ $modal-footer-height: 90px;
 }
 
 @media (max-width: 800px) {
+  body.is-active {
+    overflow: hidden;
+    position: fixed;
+    height: 100vh;
+  }
+
   .modal {
     min-height: 100vh;
+    position: fixed;
+    overflow-y: auto;
   }
 
   .product {
     padding: $gutter;
+    position: absolute;
+    top: 0;
+    left: 0;
   }
 
   .product__variant-image {
