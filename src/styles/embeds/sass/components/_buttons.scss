@@ -1,7 +1,7 @@
 .btn {
   color: #fff;
   font-size: 15px;
-  background: $color-primary;
+  background-color: $color-primary;
   padding: 12px 40px;
   letter-spacing: .3px;
   display: block;
@@ -18,7 +18,7 @@
 
   &:hover,
   &:focus {
-    background: $color-primary-hover;
+    background-color: $color-primary-hover;
   }
 }
 
@@ -89,7 +89,7 @@
   font-size: 35px;
   color: $color-title;
   border: none;
-  background: transparent;
+  background-color: transparent;
   transition: transform 100ms ease;
   cursor: pointer;
   padding-right: 9px;

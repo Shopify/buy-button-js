@@ -74,12 +74,23 @@ $modal-footer-height: 90px;
 }
 
 @media (max-width: 800px) {
+  body.is-active {
+    overflow: hidden;
+    position: fixed;
+    height: 100vh;
+  }
+
   .modal {
     min-height: 100vh;
+    position: fixed;
+    overflow-y: auto;
   }
 
   .product {
     padding: $gutter;
+    position: absolute;
+    top: 0;
+    left: 0;
   }
 
   .product__variant-image {
@@ -100,11 +111,13 @@ $modal-footer-height: 90px;
   from {
     opacity: 0;
     transform: translateY(-200px);
+    -webkit-transform: translateY(-200px);
   }
 
   to {
     opacity: 1;
     transform: translateY(0);
+    -webkit-transform: translateY(0);
   }
 }
 
@@ -125,7 +138,6 @@ $modal-footer-height: 90px;
       animation-fill-mode: forwards;
     }
   }
-
 
   .product {
     padding: $gutter * 3;
