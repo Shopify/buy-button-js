@@ -14,8 +14,6 @@ export default class ProductSet extends Component {
     super(config, props);
     this.products = [];
     this.cart = null;
-    this.height = 0;
-    this.initialResize = false;
     this.page = 1;
     this.nextModel = {products: []};
     this.height = 0;
