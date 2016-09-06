@@ -4,6 +4,8 @@ import Template from '../template';
 import Checkout from './checkout';
 import windowUtils from '../utils/window-utils';
 
+const pollInterval = 200;
+
 function isPseudoSelector(key) {
   return key.charAt(0) === ':';
 }
@@ -307,17 +309,17 @@ export default class Product extends Component {
   }
 
   resizeUntilLoaded() {
-    if (!this.iframe) {
+    if (!this.iframe || !this.model.selectedVariantImage) {
       return;
     }
     const img = this.wrapper.getElementsByClassName(this.classes.product.img)[0];
     const productResize = setInterval(() => {
-      if (!this.model.selectedVariantImage || !img.naturalWidth) {
+      if (!img.naturalWidth) {
         return;
       }
       this.resize();
       clearInterval(productResize);
-    }, 200);
+    }, pollInterval);
   }
 
   render() {

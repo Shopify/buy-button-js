@@ -3,6 +3,8 @@ import Component from '../component';
 import Product from './product';
 import Template from '../template';
 
+const pollInterval = 200;
+
 function isArray(arg) {
   return Object.prototype.toString.call(arg) === '[object Array]';
 }
@@ -15,7 +17,7 @@ export default class ProductSet extends Component {
     this.page = 1;
     this.nextModel = {products: []};
     this.height = 0;
-    this.initialResize = false;
+    this.resizeCompleted = false;
   }
 
   get typeKey() {
@@ -119,7 +121,7 @@ export default class ProductSet extends Component {
   }
 
   resizeUntilFits() {
-    if (!this.iframe || this.initialResize) {
+    if (!this.iframe || this.resizeCompleted) {
       return;
     }
     const maxResizes = this.products.length;
@@ -133,10 +135,10 @@ export default class ProductSet extends Component {
         this.resize();
       }
       if (resizes > maxResizes) {
-        this.initialResize = true;
+        this.resizeCompleted = true;
         clearInterval(productSetResize);
       }
-    }, 200);
+    }, pollInterval);
   }
 
   renderProducts() {
