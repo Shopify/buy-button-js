@@ -1,6 +1,6 @@
 @import "./select.scss";
 
-.product-wrapper {
+.product {
   overflow: hidden;
   width: 100%;
 }
@@ -109,7 +109,7 @@
     .product__variant-title,
     .product__price,
     .quantity-container,
-    .btn,
+    .btn:not(.beside-quantity),
     .product__variant-selectors {
       overflow: hidden;
       padding-left: $gutter;
