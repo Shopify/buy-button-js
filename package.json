@@ -11,6 +11,7 @@
     "lint": "eslint src/*",
     "serve": "http-server",
     "clean": "rm -rf build && mkdir build",
+    "deploy": "NODE_PATH=./node_modules node ./script/deploy.js build/shopify*.js",
     "styles": "npm run styles:embeds && npm run styles:host",
     "styles:embeds": "NODE_PATH=./node_modules node ./script/embed-styles",
     "styles:host": "NODE_PATH=./node_modules node ./script/host-styles",
@@ -36,6 +37,7 @@
   "author": "Shopify Inc.",
   "license": "MIT",
   "devDependencies": {
+    "aws-sdk": "2.5.5",
     "babel": "6.5.2",
     "babel-cli": "6.11.4",
     "babel-core": "6.10.4",
