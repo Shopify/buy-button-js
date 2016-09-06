@@ -17,6 +17,7 @@ const defaults = {
       'variantTitle',
       'price',
       'options',
+      'description',
       'quantity',
       'button',
     ],
