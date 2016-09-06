@@ -4,6 +4,8 @@ import Template from '../template';
 import Checkout from './checkout';
 import windowUtils from '../utils/window-utils';
 
+const pollInterval = 200;
+
 function isPseudoSelector(key) {
   return key.charAt(0) === ':';
 }
@@ -306,6 +308,25 @@ export default class Product extends Component {
     return `https://${this.props.client.config.domain}/products/${this.id}${this.onlineStoreQueryString}`;
   }
 
+  resizeUntilLoaded() {
+    if (!this.iframe || !this.model.selectedVariantImage) {
+      return;
+    }
+    const img = this.wrapper.getElementsByClassName(this.classes.product.img)[0];
+    const productResize = setInterval(() => {
+      if (!img.naturalWidth) {
+        return;
+      }
+      this.resize();
+      clearInterval(productResize);
+    }, pollInterval);
+  }
+
+  render() {
+    super.render();
+    this.resizeUntilLoaded();
+  }
+
   openOnlineStore() {
     window.open(this.onlineStoreURL);
   }
@@ -354,19 +375,8 @@ export default class Product extends Component {
     if (this.variantExists) {
       this.cachedImage = this.model.selectedVariantImage;
     }
-    this.renderWithNewImg();
-    return updatedOption;
-  }
-
-  renderWithNewImg() {
-    const img = this.wrapper.getElementsByClassName(this.classes.product.img)[0];
-    this.imgStyle = this.imgStyle || `min-height: ${img.clientHeight}px;`;
     this.render();
-    img.addEventListener('load', () => {
-      const height = img.clientHeight;
-      img.parentNode.style.minHeight = height;
-      this.imgStyle = `min-height: ${height}px;`;
-    });
+    return updatedOption;
   }
 
   closeCartOnBgClick() {

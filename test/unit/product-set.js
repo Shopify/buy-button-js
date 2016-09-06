@@ -141,7 +141,7 @@ describe('ProductSet class', () => {
       initSpy.restore();
     });
 
-    it('initializes an array of products', (done) => {
+    it('initializes an array of products', () => {
       set.model.products = [fakeProduct];
 
       set.renderProducts().then((data) => {

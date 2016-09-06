@@ -3,6 +3,8 @@ import Component from '../component';
 import Product from './product';
 import Template from '../template';
 
+const pollInterval = 200;
+
 function isArray(arg) {
   return Object.prototype.toString.call(arg) === '[object Array]';
 }
@@ -14,6 +16,8 @@ export default class ProductSet extends Component {
     this.cart = null;
     this.page = 1;
     this.nextModel = {products: []};
+    this.height = 0;
+    this.resizeCompleted = false;
   }
 
   get typeKey() {
@@ -116,6 +120,27 @@ export default class ProductSet extends Component {
     this.cart.updateConfig(config);
   }
 
+  resizeUntilFits() {
+    if (!this.iframe || this.resizeCompleted) {
+      return;
+    }
+    const maxResizes = this.products.length;
+    let resizes = 0;
+
+    this.height = this.wrapper.clientHeight;
+    this.resize();
+    const productSetResize = setInterval(() => {
+      if (this.wrapper.clientHeight > this.height) {
+        resizes++;
+        this.resize();
+      }
+      if (resizes > maxResizes) {
+        this.resizeCompleted = true;
+        clearInterval(productSetResize);
+      }
+    }, pollInterval);
+  }
+
   renderProducts() {
     if (!this.model.products.length) {
       return Promise.resolve();
@@ -139,12 +164,9 @@ export default class ProductSet extends Component {
     });
 
     return Promise.all(promises).then(() => {
-      this.resize();
-      if (this.products.length) {
-        this.cart = this.cart || this.products[0].cart;
-      }
-      return this.loadImgs().then(() => this.showPagination());
+      this.showPagination();
+      this.resizeUntilFits();
+      return;
     });
   }
-
 }
