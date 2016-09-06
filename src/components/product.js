@@ -313,13 +313,17 @@ export default class Product extends Component {
       return;
     }
     const img = this.wrapper.getElementsByClassName(this.classes.product.img)[0];
-    const productResize = setInterval(() => {
-      if (!img.naturalWidth) {
-        return;
-      }
-      this.resize();
-      clearInterval(productResize);
-    }, pollInterval);
+    let intervals = 0;
+    if (img) {
+      const productResize = setInterval(() => {
+        if (!img.naturalWidth && intervals < 30) {
+          intervals++;
+          return;
+        }
+        this.resize();
+        clearInterval(productResize);
+      }, pollInterval);
+    }
   }
 
   render() {
