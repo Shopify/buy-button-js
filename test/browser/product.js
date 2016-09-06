@@ -25,11 +25,6 @@ describe('it loads', function () {
     assert.equal(browser.getText('.product__compare-price'), '$10.00');
   });
 
-  it('updates quantity by changing quantity value', function () {
-    browser.setValue('input.quantity', 3);
-    assert.equal(browser.getValue('input.quantity'), 3);
-  });
-
   describe('product modal', function () {
     beforeEach(function () {
       browser.click('.btn');

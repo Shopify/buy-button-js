@@ -20,7 +20,7 @@
   line-height: 1.2;
   color: $color-black;
   margin-bottom: 0;
-  font-weight: 400;
+  font-weight: 700;
 }
 
 .product__variant-title {
@@ -40,13 +40,13 @@
 }
 
 .product__actual-price {
-  font-size: 18px;
+  font-size: 14px;
   color: $color-black;
   display: block;
 }
 
 .product__compare-price {
-  font-size: 18px;
+  font-size: 14px;
   text-decoration: line-through;
   color: $color-faint;
   display: block;
