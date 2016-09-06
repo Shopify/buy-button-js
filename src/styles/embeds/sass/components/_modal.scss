@@ -13,7 +13,7 @@ $modal-footer-height: 90px;
   margin-bottom: $gutter * 2;
 }
 
-.modal-wrapper {
+.modal {
   background: $color-white;
   width: 100%;
   max-width: 1000px;
@@ -109,7 +109,7 @@ $modal-footer-height: 90px;
 }
 
 @media (min-width: 801px) {
-  .modal-wrapper {
+  .modal {
     margin: 100px auto 40px auto;
     opacity: 0;
     border-radius: 2px;

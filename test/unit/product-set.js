@@ -76,7 +76,7 @@ describe('ProductSet class', () => {
 
       it('calls fetchQueryProducts with collection id', () => {
         collection.sdkFetch();
-        assert.calledWith(collection.client.fetchQueryProducts, {collection_id: 1234});
+        assert.calledWith(collection.client.fetchQueryProducts, {collection_id: 1234, page: 1, limit: 30});
       });
     });
 
@@ -99,7 +99,7 @@ describe('ProductSet class', () => {
       it('calls fetchQueryProducts with collection id', (done) => {
         collection.sdkFetch().then(() => {
           assert.calledWith(collection.client.fetchQueryCollections, {handle: 'hats'});
-          assert.calledWith(collection.client.fetchQueryProducts, {collection_id: 2345});
+          assert.calledWith(collection.client.fetchQueryProducts, {collection_id: 2345, page: 1, limit: 30});
           done();
         }).catch((e) => {
           done(e);
@@ -124,16 +124,17 @@ describe('ProductSet class', () => {
 
       it('calls fetchQueryProducts with collection id', () => {
         collection.sdkFetch();
-        assert.calledWith(collection.client.fetchQueryProducts, {product_ids: [1234, 2345]});
+        assert.calledWith(collection.client.fetchQueryProducts, {product_ids: [1234, 2345], page: 1, limit: 30});
       });
     });
   });
 
-  describe('render', () => {
+  describe('renderProducts', () => {
     let initSpy;
 
     beforeEach(() => {
       initSpy = sinon.spy(Product.prototype, 'init');
+      set.render();
     });
 
     afterEach(() => {
@@ -143,7 +144,7 @@ describe('ProductSet class', () => {
     it('initializes an array of products', (done) => {
       set.model.products = [fakeProduct];
 
-      set.render().then((data) => {
+      set.renderProducts().then((data) => {
         assert.calledWith(initSpy, fakeProduct);
         done();
       }).catch((e) => {
@@ -180,6 +181,31 @@ describe('ProductSet class', () => {
       set.updateConfig(newConfig);
       assert.calledWith(set.cart.updateConfig, newConfig);
       assert.calledWith(superSpy, newConfig);
+    });
+  });
+
+  describe('showPagination', () => {
+    let sdkFetchSpy;
+    let renderChildStub;
+    let resizeSpy;
+    const newCollection = [{title: 'vapebelt'}, {title: 'vapeglasses'}];
+
+    beforeEach(() => {
+      set.id = 1234;
+      sdkFetchSpy = sinon.stub(set, 'sdkFetch').returns(Promise.resolve(newCollection));
+      renderChildStub = sinon.stub(set, 'renderChild');
+      resizeSpy = sinon.stub(set, 'resize');
+    });
+
+    it('sets nextModel and rerenders pagintaiton button', (done) => {
+      set.showPagination().then(() => {
+        assert.deepEqual(set.nextModel, {products: newCollection});
+        assert.calledWith(sdkFetchSpy, {page: 2});
+        assert.calledWith(renderChildStub, set.classes.productSet.paginationButton, set.paginationTemplate);
+        done();
+      }).catch((e) => {
+        done(e);
+      });
     });
   });
 });

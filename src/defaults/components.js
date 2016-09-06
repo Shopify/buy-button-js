@@ -124,11 +124,13 @@ const defaults = {
     contents: {
       title: false,
       products: true,
+      pagination: true,
     },
-    order: ['title', 'products'],
+    order: ['title', 'products', 'pagination'],
     templates: {
       title: '<h2 class="{{data.classes.productSet.title}}">{{data.collection.attrs.title}}</h2>',
       products: '<div class="{{data.classes.productSet.products}}"></div>',
+      pagination: '<button class="{{data.classes.productSet.paginationButton}} {{data.nextButtonClass}}">{{data.text.nextPageButton}}</button>',
     },
     classes: {
       wrapper: 'collection-wrapper',
@@ -137,6 +139,7 @@ const defaults = {
       collection: 'collection',
       products: 'collection-products',
       product: 'collection-product',
+      paginationButton: 'collection-pagination-button btn',
     },
     text: {
       nextPageButton: 'Next page',
