@@ -216,7 +216,6 @@ describe('Component class', () => {
       const html = '<h1>SO FRESH</h1>';
       component.updateNode(div, `<div>${html}</div>`);
       assert.equal(div.innerHTML, html);
-      });
     });
   });
 });
