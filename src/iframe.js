@@ -93,12 +93,14 @@ export default class iframe {
       return Promise.resolve(true);
     }
     return this.loadFontScript().then(() => {
-      window.WebFont.load({
-        google: {
-          families: this.googleFonts,
-        },
-        context: frames[this.name],
-      });
+      if (window.WebFont) {
+        window.WebFont.load({
+          google: {
+            families: this.googleFonts,
+          },
+          context: frames[this.name],
+        });
+      }
       return true;
     });
   }
