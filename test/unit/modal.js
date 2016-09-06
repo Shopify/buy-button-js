@@ -99,6 +99,12 @@ describe('Modal class', () => {
         removeClass: sinon.spy(),
         parent: {
           addEventListener: sinon.spy(),
+        },
+        document: {
+          body: {
+            classList: '',
+            className: 'is-active',
+          }
         }
       }
       modal.wrapper = {
@@ -111,6 +117,7 @@ describe('Modal class', () => {
       assert.calledWith(modal.iframe.removeClass, 'is-active');
       assert.calledWith(modal.wrapper.classList.remove, 'is-active');
       assert.calledWith(modal.iframe.parent.addEventListener, 'transitionend', sinon.match.func);
+      assert(modal.iframe.document.body.className.length < 1);
     });
   });
 

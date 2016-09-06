@@ -169,4 +169,5 @@ export default class ProductSet extends Component {
       return;
     });
   }
+
 }

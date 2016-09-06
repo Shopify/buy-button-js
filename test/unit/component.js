@@ -166,7 +166,7 @@ describe('Component class', () => {
     it('sets innerHTML of wrapper on initial call', () => {
       const testHTML = '<h1>THIS IS ONLY A TEST</h1>';
 
-      const tmplRender = sinon.stub(component.template, 'render').returns(testHTML);
+      const tmplRender = sinon.stub(component.template, 'render').returns(`<div>${testHTML}</div>`);
       component.render();
       assert.equal(component.wrapper.innerHTML, testHTML);
     });
@@ -216,6 +216,16 @@ describe('Component class', () => {
       const html = '<h1>SO FRESH</h1>';
       component.updateNode(div, `<div>${html}</div>`);
       assert.equal(div.innerHTML, html);
+    });
+  });
+
+
+  describe('wrapTemplate', () => {
+    describe('when button exists', () => {
+      it('puts strings in a div', () => {
+        const string = component.wrapTemplate('test');
+        assert.equal(string, '<div class="product">test</div>');
+      });
     });
   });
 });

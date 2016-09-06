@@ -16,20 +16,20 @@ export default class Modal extends Component {
   }
 
   get DOMEvents() {
-    return Object.assign({}, this.options.DOMEvents, this.product.DOMEvents, {
+    let events = Object.assign({}, this.options.DOMEvents, {
       [`click .${this.classes.modal.close}`]: this.close.bind(this),
     });
+    if (this.product) {
+      events = Object.assign({}, events, this.product.DOMEvents);
+    }
+    return events;
   }
 
   get productConfig() {
     return {
-      node: this.document.querySelector(`.${this.classes.modal.modal}`),
+      node: this.wrapper,
       options: merge({}, this.config),
     };
-  }
-
-  wrapTemplate(html) {
-    return html;
   }
 
   delegateEvents() {
@@ -46,13 +46,17 @@ export default class Modal extends Component {
   init(data) {
     this.isVisible = true;
     return super.init(data).then(() => {
+      this.product = new Product(this.productConfig, this.props);
       return this.product.init(this.model).then(() => this.resize());
     });
   }
 
   close() {
     removeClassFromElement('is-active', this.wrapper);
-    this.iframe.removeClass('is-active');
+    if (this.iframe) {
+      this.iframe.removeClass('is-active');
+      removeClassFromElement('is-active', this.document.body);
+    }
     if (this.props.browserFeatures.transition) {
       this.iframe.parent.addEventListener('transitionend', () => {
         this.iframe.removeClass('is-block');
@@ -69,7 +73,7 @@ export default class Modal extends Component {
     super.render();
     this.iframe.addClass('is-active');
     this.iframe.addClass('is-block');
+    addClassToElement('is-active', this.document.body);
     addClassToElement('is-active', this.wrapper);
-    this.product = new Product(this.productConfig, this.props);
   }
 }

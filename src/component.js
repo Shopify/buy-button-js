@@ -238,12 +238,10 @@ export default class Component {
     const html = this.template.render({data: this.viewData}, (data) => {
       return this.wrapTemplate(data);
     });
-    if (this.wrapper && this.wrapper.innerHTML.length) {
-      this.updateNode(this.wrapper, html);
-    } else {
+    if (!this.wrapper) {
       this.wrapper = this.createWrapper();
-      this.wrapper.innerHTML = html;
     }
+    this.updateNode(this.wrapper, html);
     this.resize();
     this._userEvent('afterRender');
   }

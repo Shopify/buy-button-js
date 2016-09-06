@@ -47,10 +47,6 @@ export default class CartToggle extends Component {
     });
   }
 
-  wrapTemplate(html) {
-    return html;
-  }
-
   render() {
     super.render();
     if (this.options.sticky) {
