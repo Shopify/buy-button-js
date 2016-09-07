@@ -65,7 +65,7 @@ export default class ProductSet extends Component {
         if (model) {
           return this.renderProducts(this.model.products);
         }
-        return model;
+        return this;
       })
     ));
   }
@@ -164,9 +164,9 @@ export default class ProductSet extends Component {
     });
 
     return Promise.all(promises).then(() => {
-      this.showPagination();
       this.resizeUntilFits();
-      return;
+      this.showPagination();
+      return this;
     });
   }
 
