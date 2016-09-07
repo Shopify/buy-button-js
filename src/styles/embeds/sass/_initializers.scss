@@ -7,6 +7,11 @@ html, body, h1, h2, h3, h4, h5, p {
   box-sizing: border-box;
 }
 
+html,
+body {
+  height: auto;
+}
+
 html {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 14px;

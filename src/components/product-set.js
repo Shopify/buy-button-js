@@ -127,12 +127,14 @@ export default class ProductSet extends Component {
     const maxResizes = this.products.length;
     let resizes = 0;
 
-    this.height = this.wrapper.clientHeight;
+    this.height = this.outerHeight;
     this.resize();
     const productSetResize = setInterval(() => {
-      if (this.wrapper.clientHeight > this.height) {
+      const currentHeight = this.outerHeight;
+      if (parseInt(currentHeight, 10) > parseInt(this.height, 10)) {
         resizes++;
-        this.resize();
+        this.height = currentHeight;
+        this.resize(currentHeight);
       }
       if (resizes > maxResizes) {
         this.resizeCompleted = true;
