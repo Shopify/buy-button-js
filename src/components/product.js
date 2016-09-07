@@ -226,13 +226,16 @@ export default class Product extends Component {
     } else if (this.handle) {
       return this.props.client.fetchQueryProducts({handle: this.handle}).then((products) => products[0]);
     }
-    return Promise.resolve();
+    return Promise.reject();
   }
 
   fetchData() {
     return this.sdkFetch().then((model) => {
-      model.selectedQuantity = 0;
-      return model;
+      if (model) {
+        model.selectedQuantity = 0;
+        return model;
+      }
+      throw new Error('Not Found');
     });
   }
 
