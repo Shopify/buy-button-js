@@ -56,27 +56,6 @@ export default class Product extends Component {
     this.selectedQuantity = 1;
   }
 
-  init(data) {
-    return super.init.call(this, data).then((model) => (
-      this.createCart().then((cart) => {
-        this.cart = cart;
-        if (model) {
-          this.render();
-        }
-        return model;
-      })
-    ));
-  }
-
-  createCart() {
-    if (this.shouldCreateCart) {
-      return this.props.createCart({
-        options: this.config,
-      });
-    } else {
-      return Promise.resolve(null);
-    }
-  }
 
   get shouldCreateCart() {
     return this.options.buttonDestination === 'cart' || (this.options.buttonDestination === 'modal' && this.config.modalProduct.buttonDestination === 'cart');
@@ -101,19 +80,25 @@ export default class Product extends Component {
   get viewData() {
     return merge(this.model, {
       optionsHtml: this.optionsHtml,
-      contents: this.contents,
+      contents: this.options.contents,
       currentImage: this.currentImage,
       buttonClass: this.buttonClass,
       hasVariants: this.hasVariants,
       buttonDisabled: !this.buttonEnabled,
-      priceClass: this.model.selectedVariant && this.model.selectedVariant.compareAtPrice ? 'price--lowered' : '',
       classes: this.classes,
-      hasQuantity: this.options.contents.quantityInput,
       selectedQuantity: this.selectedQuantity,
       buttonText: this.buttonText,
       imgStyle: this.imgStyle,
       quantityClass: this.quantityClass,
     });
+  }
+
+  get hasQuantity() {
+    return this.options.contents.quantityInput;
+  }
+
+  get priceClass() {
+    return this.model.selectedVariant && this.model.selectedVariant.compareAtPrice ? 'price--lowered' : '';
   }
 
   get wrapperClass() {
@@ -144,12 +129,12 @@ export default class Product extends Component {
 
   get buttonText() {
     if (!this.variantExists) {
-      return this.text.unavailable;
+      return this.options.text.unavailable;
     }
     if (!this.variantInStock) {
-      return this.text.outOfStock;
+      return this.options.text.outOfStock;
     }
-    return this.text.button;
+    return this.options.text.button;
   }
 
   get buttonEnabled() {
@@ -173,7 +158,7 @@ export default class Product extends Component {
   }
 
   get optionsHtml() {
-    if (!this.contents.options) {
+    if (!this.options.contents.options) {
       return '';
     }
     return this.decoratedOptions.reduce((acc, option) => {
@@ -206,6 +191,80 @@ export default class Product extends Component {
     return true;
   }
 
+  get selectedVariantTrackingInfo() {
+    const variant = this.model.selectedVariant;
+    return {
+      id: variant.id,
+      name: variant.productTitle,
+      quantity: this.model.selectedQuantity,
+      sku: null,
+      price: variant.price,
+    };
+  }
+
+  get modalProductConfig() {
+    let modalProductStyles;
+    if (this.config.product.styles) {
+      modalProductStyles = merge({}, Object.keys(this.config.product.styles).reduce((productStyles, selectorKey) => {
+        productStyles[selectorKey] = whitelistedProperties(this.config.product.styles[selectorKey]);
+        return productStyles;
+      }, {}), this.config.modalProduct.styles);
+    } else {
+      modalProductStyles = {};
+    }
+
+    return Object.assign({}, this.config.modalProduct, {
+      styles: modalProductStyles,
+    });
+  }
+
+  get onlineStoreParams() {
+    return {
+      channel: 'buy_button',
+      referrer: encodeURIComponent(windowUtils.location()),
+      variant: this.model.selectedVariant.id,
+    };
+  }
+
+  get onlineStoreQueryString() {
+    return Object.keys(this.onlineStoreParams).reduce((string, key) => {
+      return `${string}${key}=${this.onlineStoreParams[key]}&`;
+    }, '?');
+  }
+
+  get onlineStoreURL() {
+    return `https://${this.props.client.config.domain}/products/${this.id}${this.onlineStoreQueryString}`;
+  }
+
+  init(data) {
+    return super.init.call(this, data).then((model) => (
+      this.createCart().then((cart) => {
+        this.cart = cart;
+        if (model) {
+          this.render();
+        }
+        return model;
+      })
+    ));
+  }
+
+  render() {
+    super.render();
+    if (this.iframe) {
+      this.resizeUntilLoaded();
+    }
+  }
+
+  createCart() {
+    if (this.shouldCreateCart) {
+      return this.props.createCart({
+        options: this.config,
+      });
+    } else {
+      return Promise.resolve(null);
+    }
+  }
+
   setupModel(data) {
     return super.setupModel(data).then((model) => {
       return this.setDefaultVariant(model);
@@ -213,7 +272,7 @@ export default class Product extends Component {
   }
 
   wrapTemplate(html) {
-    if (this.contents.button) {
+    if (this.options.contents.button) {
       return `<div class="${this.wrapperClass} ${this.classes.product.product}">${html}</div>`;
     } else {
       return `<div class="${this.wrapperClass} ${this.classes.product.product}"><button class="${this.classes.product.blockButton}">${html}</button></div>`;
@@ -263,51 +322,6 @@ export default class Product extends Component {
     }
   }
 
-  get selectedVariantTrackingInfo() {
-    const variant = this.model.selectedVariant;
-    return {
-      id: variant.id,
-      name: variant.productTitle,
-      quantity: this.model.selectedQuantity,
-      sku: null,
-      price: variant.price,
-    };
-  }
-
-  get modalProductConfig() {
-    let modalProductStyles;
-    if (this.config.product.styles) {
-      modalProductStyles = merge({}, Object.keys(this.config.product.styles).reduce((productStyles, selectorKey) => {
-        productStyles[selectorKey] = whitelistedProperties(this.config.product.styles[selectorKey]);
-        return productStyles;
-      }, {}), this.config.modalProduct.styles);
-    } else {
-      modalProductStyles = {};
-    }
-
-    return Object.assign({}, this.config.modalProduct, {
-      styles: modalProductStyles,
-    });
-  }
-
-  get onlineStoreParams() {
-    return {
-      channel: 'buy_button',
-      referrer: encodeURIComponent(windowUtils.location()),
-      variant: this.model.selectedVariant.id,
-    };
-  }
-
-  get onlineStoreQueryString() {
-    return Object.keys(this.onlineStoreParams).reduce((string, key) => {
-      return `${string}${key}=${this.onlineStoreParams[key]}&`;
-    }, '?');
-  }
-
-  get onlineStoreURL() {
-    return `https://${this.props.client.config.domain}/products/${this.id}${this.onlineStoreQueryString}`;
-  }
-
   resizeUntilLoaded() {
     if (!this.iframe || !this.model.selectedVariantImage) {
       return;
@@ -323,13 +337,6 @@ export default class Product extends Component {
         this.resize();
         clearInterval(productResize);
       }, pollInterval);
-    }
-  }
-
-  render() {
-    super.render();
-    if (this.iframe) {
-      this.resizeUntilLoaded();
     }
   }
 

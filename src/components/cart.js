@@ -42,12 +42,18 @@ export default class Cart extends Component {
 
   get viewData() {
     return merge(this.model, {
-      wrapperClass: this.isVisible ? 'is-active' : '',
-      text: this.text,
+      text: this.options.text,
       classes: this.classes,
       lineItemsHtml: this.lineItemsHtml,
-      isEmpty: this.model.lineItems.length < 1,
     });
+  }
+
+  get isEmpty() {
+    return this.model.lineItems.length < 1;
+  }
+
+  get wrapperClass() {
+    return this.isVisible ? 'is-active' : '';
   }
 
   fetchData() {
@@ -64,6 +70,10 @@ export default class Cart extends Component {
         return cart;
       });
     }
+  }
+
+  wrapTemplate(html) {
+    return `<div class="${this.classes.cart.cart}">${html}</div>`;
   }
 
   init(data) {

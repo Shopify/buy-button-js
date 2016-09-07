@@ -20,7 +20,7 @@ export default class Component {
     this.config = merge({}, componentDefaults, config.options || {});
     this.props = props;
     this.model = {};
-    this.template = new Template(this.templates, this.contents, this.order);
+    this.template = new Template(this.options.templates, this.options.contents, this.options.order);
     this.children = null;
   }
 
@@ -28,54 +28,44 @@ export default class Component {
     return this.props.client;
   }
 
+  get name() {
+    let uniqueHandle = '';
+    if (this.id) {
+      uniqueHandle = `-${this.id}`;
+    } else if (this.handle) {
+      uniqueHandle = `-${this.handle}`;
+    }
+    return `frame-${this.typeKey}${uniqueHandle}`;
+  }
+
   get options() {
     return merge({}, this.config[this.typeKey]);
   }
 
-  get manifest() {
-    return this.options.manifest.slice(0);
-  }
-
-  get order() {
-    return this.options.order.slice(0);
-  }
-
-  get templates() {
-    return merge({}, this.options.templates);
-  }
-
-  get contents() {
-    return merge({}, this.options.contents);
-  }
-
-  get text() {
-    return merge({}, this.options.text);
+  get DOMEvents() {
+    return this.options.DOMEvents || {};
   }
 
   get events() {
-    return merge({}, this.options.events);
-  }
-
-  get DOMEvents() {
-    return merge({}, this.options.DOMEvents);
+    return this.options.events || {};
   }
 
   get styles() {
-    return this.manifest.filter((component) => this.config[component].styles).reduce((hash, component) => {
+    return this.options.manifest.filter((component) => this.config[component].styles).reduce((hash, component) => {
       hash[component] = this.config[component].styles;
       return hash;
     }, {});
   }
 
   get classes() {
-    return this.manifest.filter((component) => this.config[component].classes).reduce((hash, component) => {
+    return this.options.manifest.filter((component) => this.config[component].classes).reduce((hash, component) => {
       hash[component] = this.config[component].classes;
       return hash;
     }, {});
   }
 
   get googleFonts() {
-    return this.manifest
+    return this.options.manifest
       .filter((component) => this.config[component].googleFonts)
       .reduce((fonts, component) => fonts.concat(this.config[component].googleFonts), []);
   }
@@ -87,7 +77,7 @@ export default class Component {
   get viewData() {
     return merge(this.model, {
       classes: this.classes,
-      text: this.text,
+      text: this.options.text,
     });
   }
 
@@ -108,25 +98,6 @@ export default class Component {
     return '';
   }
 
-  delegateEvents() {
-    this._userEvent('beforeDelegateEvents');
-    this._closeComponentsOnEsc();
-    Object.keys(this.DOMEvents).forEach((key) => {
-      const [, eventName, selectorString] = key.match(delegateEventSplitter);
-      const selector = selectorString.split(' ').join('.');
-      if (selector) {
-        this._on(eventName, selector, (evt, target) => {
-          this.DOMEvents[key].call(this, evt, target);
-        });
-      } else {
-        this.wrapper.addEventListener('click', (evt) => {
-          this.DOMEvents[key].call(this, evt);
-        });
-      }
-    });
-    this._userEvent('afterDelegateEvents');
-  }
-
   get shouldResizeX() {
     return false;
   }
@@ -135,34 +106,22 @@ export default class Component {
     return false;
   }
 
-  resize() {
-    if (!this.iframe) {
-      return;
-    }
-    if (this.shouldResizeX) {
-      this.resizeX();
-    }
-    if (this.shouldResizeY) {
-      this.resizeY();
-    }
-  }
-
-  resizeY() {
-    this.iframe.el.style.height = `${this.wrapper.clientHeight}px`;
-  }
-
-  resizeX() {
-    this.iframe.el.style.width = `${this.wrapper.clientWidth}px`;
-  }
-
-  get name() {
-    let uniqueHandle = '';
-    if (this.id) {
-      uniqueHandle = `-${this.id}`;
-    } else if (this.handle) {
-      uniqueHandle = `-${this.handle}`;
-    }
-    return `frame-${this.typeKey}${uniqueHandle}`;
+  init(data) {
+    this._userEvent('beforeInit');
+    return this.setupView().then(() => this.setupModel(data)).then((model) => {
+      this.model = model;
+      this.render();
+      this.delegateEvents();
+      this._userEvent('afterInit');
+      return this;
+    })
+    .catch((err) => {
+      if (err.message.indexOf('Not Found') > -1) {
+        logNotFound(this);
+      } else {
+        throw err;
+      }
+    });
   }
 
   setupView() {
@@ -195,32 +154,54 @@ export default class Component {
     }
   }
 
-  init(data) {
-    this._userEvent('beforeInit');
-    return this.setupView().then(() => this.setupModel(data)).then((model) => {
-      this.model = model;
-      this.render();
-      this.delegateEvents();
-      this._userEvent('afterInit');
-      return this;
-    })
-    .catch((err) => {
-      if (err.message.indexOf('Not Found') > -1) {
-        logNotFound(this);
-      } else {
-        throw err;
-      }
+  render() {
+    this._userEvent('beforeRender');
+    const html = this.template.render({data: this.viewData}, (data) => {
+      return this._wrapTemplate(data);
     });
+    if (!this.wrapper) {
+      this.wrapper = this._createWrapper();
+    }
+    this.updateNode(this.wrapper, html);
+    this.resize();
+    this._userEvent('afterRender');
   }
 
-  destroy() {
-    this.node.parentNode.removeChild(this.node);
+  delegateEvents() {
+    this._userEvent('beforeDelegateEvents');
+    this._closeComponentsOnEsc();
+    Object.keys(this.DOMEvents).forEach((key) => {
+      const [, eventName, selectorString] = key.match(delegateEventSplitter);
+      const selector = selectorString.split(' ').join('.');
+      if (selector) {
+        this._on(eventName, selector, (evt, target) => {
+          this.DOMEvents[key].call(this, evt, target);
+        });
+      } else {
+        this.wrapper.addEventListener('click', (evt) => {
+          this.DOMEvents[key].call(this, evt);
+        });
+      }
+    });
+    this._userEvent('afterDelegateEvents');
+  }
+
+  resize() {
+    if (!this.iframe) {
+      return;
+    }
+    if (this.shouldResizeX) {
+      this._resizeX();
+    }
+    if (this.shouldResizeY) {
+      this._resizeY();
+    }
   }
 
   updateConfig(config) {
     this._userEvent('beforeUpdateConfig');
     this.config = merge(this.config, config.options);
-    this.template = new Template(this.templates, this.contents, this.order);
+    this.template = new Template(this.options.templates, this.options.contents, this.options.order);
     if (this.iframe) {
       this.iframe.updateStyles(this.styles);
     }
@@ -229,21 +210,8 @@ export default class Component {
     this._userEvent('afterUpdateConfig');
   }
 
-  wrapTemplate(html) {
-    return `<div class="${this.classes[this.typeKey][this.typeKey]}">${html}</div>`;
-  }
-
-  render() {
-    this._userEvent('beforeRender');
-    const html = this.template.render({data: this.viewData}, (data) => {
-      return this.wrapTemplate(data);
-    });
-    if (!this.wrapper) {
-      this.wrapper = this.createWrapper();
-    }
-    this.updateNode(this.wrapper, html);
-    this.resize();
-    this._userEvent('afterRender');
+  destroy() {
+    this.node.parentNode.removeChild(this.node);
   }
 
   renderChild(className, template) {
@@ -259,7 +227,19 @@ export default class Component {
     morphdom(node, div.firstElementChild);
   }
 
-  createWrapper() {
+  _resizeY() {
+    this.iframe.el.style.height = `${this.wrapper.clientHeight}px`;
+  }
+
+  _resizeX() {
+    this.iframe.el.style.width = `${this.wrapper.clientWidth}px`;
+  }
+
+  _wrapTemplate(html) {
+    return `<div class="${this.classes[this.typeKey][this.typeKey]}">${html}</div>`;
+  }
+
+  _createWrapper() {
     const wrapper = document.createElement('div');
     wrapper.className = this.classes[this.typeKey][this.typeKey];
     if (this.iframe) {

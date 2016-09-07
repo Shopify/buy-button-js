@@ -199,7 +199,7 @@ describe('Product class', () => {
     });
     describe('if variant is in stock', () => {
       it('returns "buy now"', () => {
-        assert.equal(product.buttonText, product.text.button);
+        assert.equal(product.buttonText, product.options.text.button);
       });
     });
     describe('if variant is not in stock', () => {
@@ -207,7 +207,7 @@ describe('Product class', () => {
         product.model.selectedVariant = {
           available: false,
         }
-        assert.equal(product.buttonText, product.text.outOfStock);
+        assert.equal(product.buttonText, product.options.text.outOfStock);
       });
     });
   });
@@ -438,7 +438,7 @@ describe('Product class', () => {
     describe('when variant does not exist', () => {
       it('returns unavailable text', () => {
         product.model.selectedVariant = null;
-        assert.equal(product.buttonText, product.text.unavailable);
+        assert.equal(product.buttonText, product.options.text.unavailable);
       });
     });
     describe('when variant is out of stock', () => {
@@ -446,7 +446,7 @@ describe('Product class', () => {
         product.model.selectedVariant = {
           available: false,
         };
-        assert.equal(product.buttonText, product.text.outOfStock);
+        assert.equal(product.buttonText, product.options.text.outOfStock);
       });
     });
     describe('when variant is available', () => {
@@ -454,7 +454,7 @@ describe('Product class', () => {
         product.model.selectedVariant = {
           available: true,
         };
-        assert.equal(product.buttonText, product.text.button);
+        assert.equal(product.buttonText, product.options.text.button);
       });
     });
   });

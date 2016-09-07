@@ -55,8 +55,6 @@ describe('Component class', () => {
     it('proxies commonly accessed attributes to config options for type', () => {
       assert.isOk(component.client);
       assert.equal(component.options.iframe, config.options.product.iframe);
-      assert.deepEqual(component.templates.button, config.options.product.templates.button);
-      assert.deepEqual(component.contents.button, config.options.product.contents.button);
     });
 
     it('instantiates a template', () => {
@@ -175,7 +173,7 @@ describe('Component class', () => {
       const testBeforeHTML = '<h1>THIS IS ONLY A TEST</h1>';
       const testHTML = '<h1>THIS IS NOT A TEST</h1>'
       const tmplRender = sinon.stub(component.template, 'render').returns(`<div>${testHTML}</div>`);
-      component.wrapper = component.createWrapper();
+      component.wrapper = component._createWrapper();
       component.wrapper.innerHTML = testBeforeHTML;
       component.render();
       assert.equal(component.wrapper.innerHTML, testHTML);
@@ -199,7 +197,7 @@ describe('Component class', () => {
       childNode = document.createElement('div');
       childNode.className = 'foo';
       component.model.name = 'lol';
-      component.wrapper = component.createWrapper();
+      component.wrapper = component._createWrapper();
       component.wrapper.appendChild(childNode);
       component.renderChild('foo', template);
     });
@@ -220,10 +218,10 @@ describe('Component class', () => {
   });
 
 
-  describe('wrapTemplate', () => {
+  describe('_wrapTemplate', () => {
     describe('when button exists', () => {
       it('puts strings in a div', () => {
-        const string = component.wrapTemplate('test');
+        const string = component._wrapTemplate('test');
         assert.equal(string, '<div class="product">test</div>');
       });
     });
