@@ -216,7 +216,7 @@ export default class Product extends Component {
     if (this.contents.button) {
       return `<div class="${this.wrapperClass} ${this.classes.product.product}">${html}</div>`;
     } else {
-      return `<button class="${this.classes.product.blockButton} ${this.wrapperClass} ${this.classes.product.product}">${html}</button>`;
+      return `<div class="${this.wrapperClass} ${this.classes.product.product}"><button class="${this.classes.product.blockButton}">${html}</button></div>`;
     }
   }
 
