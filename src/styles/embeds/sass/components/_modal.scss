@@ -39,23 +39,6 @@ $modal-footer-height: 90px;
   line-height: 1.4;
 }
 
-.product-description {
-  line-height: 1.65;
-  color: $color-black;
-
-  p + p {
-    margin-top: $gutter * .666;
-  }
-
-  a {
-    color: inherit;
-  }
-
-  img {
-    max-width: 100%;
-  }
-}
-
 .product__compare-price {
   display: inline-block;
   margin-right: 5px;
