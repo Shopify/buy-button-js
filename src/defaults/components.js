@@ -139,7 +139,6 @@ const defaults = {
       title: 'collection__title',
       collection: 'collection',
       products: 'collection-products',
-      product: 'collection-product',
       paginationButton: 'collection-pagination-button btn',
     },
     text: {
