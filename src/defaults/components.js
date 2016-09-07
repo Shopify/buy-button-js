@@ -46,6 +46,7 @@ const defaults = {
       prices: 'product__price',
       price: 'product__actual-price',
       compareAt: 'product__compare-price',
+      loweredPrice: 'price--lowered',
       variantTitle: 'product__variant-title',
       description: 'product-description',
       options: 'product__variant-selectors',
