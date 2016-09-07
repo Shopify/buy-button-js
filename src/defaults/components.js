@@ -27,7 +27,7 @@ const defaults = {
       variantTitle: false,
       price: true,
       options: true,
-      quantity: true,
+      quantity: false,
       quantityIncrement: false,
       quantityDecrement: false,
       quantityInput: true,
