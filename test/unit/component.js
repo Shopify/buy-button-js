@@ -218,10 +218,10 @@ describe('Component class', () => {
   });
 
 
-  describe('_wrapTemplate', () => {
+  describe('wrapTemplate', () => {
     describe('when button exists', () => {
       it('puts strings in a div', () => {
-        const string = component._wrapTemplate('test');
+        const string = component.wrapTemplate('test');
         assert.equal(string, '<div class="product">test</div>');
       });
     });

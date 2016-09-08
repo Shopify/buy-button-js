@@ -157,7 +157,7 @@ export default class Component {
   render() {
     this._userEvent('beforeRender');
     const html = this.template.render({data: this.viewData}, (data) => {
-      return this._wrapTemplate(data);
+      return this.wrapTemplate(data);
     });
     if (!this.wrapper) {
       this.wrapper = this._createWrapper();
@@ -227,16 +227,16 @@ export default class Component {
     morphdom(node, div.firstElementChild);
   }
 
+  wrapTemplate(html) {
+    return `<div class="${this.classes[this.typeKey][this.typeKey]}">${html}</div>`;
+  }
+
   _resizeY() {
     this.iframe.el.style.height = `${this.wrapper.clientHeight}px`;
   }
 
   _resizeX() {
     this.iframe.el.style.width = `${this.wrapper.clientWidth}px`;
-  }
-
-  _wrapTemplate(html) {
-    return `<div class="${this.classes[this.typeKey][this.typeKey]}">${html}</div>`;
   }
 
   _createWrapper() {
