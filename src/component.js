@@ -186,6 +186,10 @@ export default class Component {
     this._userEvent('afterDelegateEvents');
   }
 
+  get outerHeight() {
+    return this.document.defaultView.getComputedStyle(this.wrapper, '').getPropertyValue('height');
+  }
+
   resize() {
     if (!this.iframe) {
       return;
@@ -231,12 +235,13 @@ export default class Component {
     return `<div class="${this.classes[this.typeKey][this.typeKey]}">${html}</div>`;
   }
 
-  _resizeY() {
-    this.iframe.el.style.height = `${this.wrapper.clientHeight}px`;
+  _resizeX() {
+    this.iframe.el.style.width = `${this.document.body.clientWidth}px`;
   }
 
-  _resizeX() {
-    this.iframe.el.style.width = `${this.wrapper.clientWidth}px`;
+  _resizeY(value) {
+    const newHeight = value || this.outerHeight;
+    this.iframe.el.style.height = newHeight;
   }
 
   _createWrapper() {
