@@ -58,6 +58,14 @@ export default class UI {
     }
   }
 
+  toggleCart() {
+    if (this.components.cart.length) {
+      this.components.cart.forEach((cart) => {
+        cart.toggleVisibility();
+      });
+    }
+  }
+
   createModal(config) {
     if (this.components.modal.length) {
       return this.components.modal[0];
@@ -96,6 +104,7 @@ export default class UI {
       client: this.client,
       createCart: this.createCart.bind(this),
       closeCart: this.closeCart.bind(this),
+      toggleCart: this.toggleCart.bind(this),
       createModal: this.createModal.bind(this),
       closeModal: this.closeModal.bind(this),
       tracker: this.tracker,
