@@ -352,9 +352,9 @@ export default class Product extends Component {
       this.modal = this.props.createModal({
         options: Object.assign({}, this.config, {
           product: this.modalProductConfig,
-          modal: {
+          modal: Object.assign({}, this.config.modal, {
             googleFonts: this.options.googleFonts,
-          },
+          }),
         }),
       }, this.props);
     }
