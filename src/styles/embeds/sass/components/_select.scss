@@ -33,6 +33,10 @@
   font-size: 14px;
   margin-top: 15px;
   margin-bottom: 5px;
+
+  .btn--parent & {
+    cursor: pointer;
+  }
 }
 
 .option-select__select {
@@ -44,4 +48,8 @@
   background: transparent;
   -webkit-appearance: none;
   -moz-appearance: none;
+
+  .btn--parent & {
+    cursor: pointer;
+  }
 }
