@@ -87,15 +87,16 @@
   right: 9px;
   top: 8px;
   font-size: 35px;
-  color: $color-title;
+  color: $color-cart-title;
   border: none;
   background-color: transparent;
   transition: transform 100ms ease;
   cursor: pointer;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   padding-right: 9px;
 
   &:hover {
     transform: scale(1.2);
-    color: darken($color-title, 5%);
+    color: darken($color-cart-title, 5%);
   }
 }

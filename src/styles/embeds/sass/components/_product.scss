@@ -3,6 +3,7 @@
 .product {
   overflow: hidden;
   width: 100%;
+  text-align: center;
 }
 
 .product__variant-img {
@@ -81,7 +82,8 @@
 }
 
 .quantity {
-  border-left: 1px solid $color-border;
+  border-left: 1px solid;
+  border-color: $color-border;
   border-top-left-radius: 3px;
   border-bottom-left-radius: 3px;
 }

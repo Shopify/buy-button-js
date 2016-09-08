@@ -31,14 +31,15 @@ $cart-item-height: 65px;
 }
 
 .cart__header {
-  padding: $gutter;
+  padding: $gutter-cart;
   position: relative;
   z-index: $max-z-index;
 }
 
 .cart__title {
   font-size: 18px;
-  color: $color-title;
+  color: $color-cart-title;
+  font-weight: normal;
 }
 
 .cart-scroll {
@@ -54,7 +55,7 @@ $cart-item-height: 65px;
   overflow-y: auto;
   height: 100%;
   position: relative;
-  padding: 0 $gutter $gutter;
+  padding: 0 $gutter-cart $gutter-cart;
   -webkit-overflow-scrolling: touch;
   perspective: 400px;
   perspective-origin: 50% 0px;
