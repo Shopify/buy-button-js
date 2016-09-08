@@ -13,7 +13,7 @@ export default function logNotFound(component) {
       errInfo = `for id ${component.id}.`;
     }
   } else if (component.handle) {
-    errInfo = `for handle "${component.handle}.`;
+    errInfo = `for handle "${component.handle}".`;
   }
   const message = `Not Found: ${component.typeKey} not found ${errInfo}`;
   logger.warn(message);
