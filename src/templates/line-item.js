@@ -1,5 +1,5 @@
 const lineItemTemplates = {
-  image: '<img class="{{data.classes.lineItem.image}}" src="{{data.image.src}}" />',
+  image: '<div class="{{data.classes.lineItem.image}}" style="background-image: url({{data.image.src}})"></div>',
   variantTitle: '<div class="{{data.classes.lineItem.variantTitle}}">{{data.variant_title}}</div>',
 
   title: '<span class="{{data.classes.lineItem.itemTitle}}">{{data.title}}</span>',
