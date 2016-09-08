@@ -30,12 +30,10 @@
   cursor: pointer;
   -moz-appearance: none;
   -webkit-appearance: none;
-  text-align: left;
 
   &:hover,
   &:focus {
-    .product__variant-image {
-      transition: all .3s ease;
+    .product__variant-img {
       opacity: .7;
     }
   }

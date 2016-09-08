@@ -3,7 +3,6 @@
 .product {
   overflow: hidden;
   width: 100%;
-  text-align: center;
 }
 
 .product__variant-img {
@@ -74,6 +73,7 @@
 .product__variant-selectors {
   margin-top: $gutter;
   text-align: left;
+  font-size: 14px;
 }
 
 .quantity-container {
@@ -130,10 +130,9 @@
     .product__price,
     .quantity-container,
     .product-description,
-    .btn:not(.beside-quantity),
     .product__variant-selectors {
       overflow: hidden;
-      padding-left: $gutter;
+      margin-left: $gutter;
     }
   }
 }
