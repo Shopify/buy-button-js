@@ -19,7 +19,7 @@ describe('ui class', () => {
   let script;
 
   beforeEach(() => {
-    ui = new UI(client);
+    ui = new UI(client, {});
     script = document.createElement('script');
     script.setAttribute('data-shopify-buy-ui', true);
     document.body.appendChild(script);
