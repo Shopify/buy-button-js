@@ -33,7 +33,19 @@ export default class Tracker {
     }
   }
 
+  trackPageview() {
+    if (this.lib) {
+      this.lib.page({
+        title: document.title,
+        url: document.location.href,
+        path: `${document.location.pathname}${document.location.search}`,
+        referrer: document.reffer,
+      });
+    }
+  }
+
   track(eventName, properties) {
+    properties.pageurl = document.referrer;
     if (this.lib) {
       this.lib.track(eventName, properties);
     }

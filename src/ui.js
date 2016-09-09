@@ -32,6 +32,7 @@ export default class UI {
       toggle: CartToggle,
     };
     this.tracker = new Tracker(trackingLib);
+    this.tracker.trackPageview();
     this._appendStyleTag();
     this._bindResize();
     this._bindHostClick();
