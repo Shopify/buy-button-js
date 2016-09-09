@@ -11,7 +11,7 @@ export default class Cart extends Component {
     this.storage = storage || window.localStorage;
     this.addVariantToCart = this.addVariantToCart.bind(this);
     this.childTemplate = new Template(this.config.lineItem.templates, this.config.lineItem.contents, this.config.lineItem.order);
-    this.node = document.body.appendChild(document.createElement('div'));
+    this.node = config.node || document.body.appendChild(document.createElement('div'));
     this.node.className = 'shopify-buy-cart-wrapper';
     this.isVisible = this.options.startOpen;
     this.toggle = new CartToggle(config, Object.assign({}, this.props, {cart: this}));
