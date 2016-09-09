@@ -37,8 +37,9 @@ if(!filePaths.length) {
 }
 
 filePaths.map(function(filePath) {
-  const latestName = S3_DIR + '/latest/' + path.basename(filePath);
-  const majorName = S3_DIR + '/' + currentVersion + '/' + path.basename(filePath);
+  const basename = path.basename(filePath);
+  const latestName = S3_DIR + '/latest/' + basename;
+  const majorName = S3_DIR + '/' + currentVersion + '/' + basename;
 
   uploadFile(filePath, latestName);
 
