@@ -6,7 +6,7 @@ import {addClassToElement, removeClassFromElement} from '../utils/element-class'
 export default class Modal extends Component {
   constructor(config, props) {
     super(config, props);
-    this.node = document.body.appendChild(document.createElement('div'));
+    this.node = config.node || document.body.appendChild(document.createElement('div'));
     this.node.className = 'shopify-buy-modal-wrapper';
     this.product = null;
   }
