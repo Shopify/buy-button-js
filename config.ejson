@@ -1,0 +1,8 @@
+{
+   "aws": {
+         "accessKeyId": "EJ[1:0D7xuWkrJDNx9Lmw1I/DxumQYX46klf1MKyoH8AEqFI=:a7EuQ1Q/XzCgbIRziwJN/DT7a8F8AeZ+:RUmbfZPY7fi+62InUezavfwiH2VIwdtiW+lmMkcy/X+tDmeC]",
+         "secretAccessKey": "EJ[1:0D7xuWkrJDNx9Lmw1I/DxumQYX46klf1MKyoH8AEqFI=:w2xb1b7PUnCGpvAQk8/lYkU9ehmnkF32:6mmY4ylhs57VM+w/zWpBRlICDioV0kMnO20fE3X0PeIMrtbsOmQRWzcBLjwzn7teUcOEeViWEKA=]",
+         "region": "us-east-1",
+         "bucket": "EJ[1:0D7xuWkrJDNx9Lmw1I/DxumQYX46klf1MKyoH8AEqFI=:/BpMJDVu1quXo/Md+CJjmQ4fLscTgfUM:KYoMOK7ePOY3A03gQM0uJnWBdtJ2cUcfqyjcuMbBLUIt2HM=]",
+   }
+}

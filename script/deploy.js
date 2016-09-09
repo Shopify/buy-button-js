@@ -2,8 +2,8 @@
 
 const path = require('path');
 const fs = require('fs');
-const majorVersionName = require('../package.json').version.split('.')[0];
-const latestVersionName = 'latest';
+const currentVersion = require('../package.json').version.split('.')[0];
+const S3_DIR = 'shopify-buy-ui';
 const filePaths = process.argv.slice(2, process.argv.length);
 const awsConfig = require('../config.json').aws;
 const awsSDK = require('aws-sdk');
@@ -13,7 +13,7 @@ const awsS3 = new awsSDK.S3({
   secretAccessKey: awsConfig.secretAccessKey,
   region: awsConfig.region,
   params: {
-    Bucket: awsConfig.deployBucket,
+    Bucket: awsConfig.bucket,
     ACL: 'public-read'
   }
 });
@@ -37,8 +37,8 @@ if(!filePaths.length) {
 }
 
 filePaths.map(function(filePath) {
-  const latestName = latestVersionName + '/' + path.basename(filePath);
-  const majorName = majorVersionName + '/' + path.basename(filePath);
+  const latestName = S3_DIR + '/latest/' + path.basename(filePath);
+  const majorName = S3_DIR + '/' + currentVersion + '/' + path.basename(filePath);
 
   uploadFile(filePath, latestName);
 
