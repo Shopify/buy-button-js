@@ -99,7 +99,7 @@ describe('Tracker', () => {
 
     it('calls tricorder with page info', () => {
       tracker.trackPageview();
-      assert.calledOnce(tracker.lib.page);
+      assert.calledWith(tracker.lib.page, sinon.match.object);
     });
   });
 });

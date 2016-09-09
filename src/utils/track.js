@@ -39,7 +39,7 @@ export default class Tracker {
         title: document.title,
         url: document.location.href,
         path: `${document.location.pathname}${document.location.search}`,
-        referrer: document.reffer,
+        referrer: document.refferer,
       });
     }
   }
