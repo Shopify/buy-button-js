@@ -89,5 +89,18 @@ describe('Tracker', () => {
       });
     });
   });
+
+  describe('trackPageview', () => {
+    beforeEach(() => {
+      tracker.lib = {
+        page: sinon.spy(),
+      }
+    });
+
+    it('calls tricorder with page info', () => {
+      tracker.trackPageview();
+      assert.calledOnce(tracker.lib.page);
+    });
+  });
 });
 
