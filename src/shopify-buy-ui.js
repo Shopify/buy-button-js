@@ -5,9 +5,9 @@ import productTemplates from './templates/product';
 ShopifyBuy.UI = {
   ui: null,
 
-  init(client) {
+  init(client, trackingLib = null) {
     if (!this.ui) {
-      this.ui = new UI(client);
+      this.ui = new UI(client, trackingLib);
     }
     return this.ui;
   },
