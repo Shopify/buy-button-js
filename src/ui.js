@@ -13,7 +13,7 @@ const DATA_ATTRIBUTE = 'data-shopify-buy-ui';
 const ESC_KEY = 27;
 
 export default class UI {
-  constructor(client, trackingLib) {
+  constructor(client, integrations = {}) {
     this.client = client;
     this.iframeComponents = [];
     this.components = {
@@ -31,7 +31,8 @@ export default class UI {
       productSet: ProductSet,
       toggle: CartToggle,
     };
-    this.tracker = new Tracker(trackingLib);
+    this.errorReporter = integrations.errorReporter;
+    this.tracker = new Tracker(integrations.tracker);
     this.tracker.trackPageview();
     this._appendStyleTag();
     this._bindResize();
@@ -109,6 +110,7 @@ export default class UI {
       createModal: this.createModal.bind(this),
       closeModal: this.closeModal.bind(this),
       tracker: this.tracker,
+      errorReporter: this.errorReporter,
       browserFeatures,
     };
   }
