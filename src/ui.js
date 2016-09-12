@@ -59,10 +59,18 @@ export default class UI {
     }
   }
 
-  toggleCart() {
+  openCart() {
     if (this.components.cart.length) {
       this.components.cart.forEach((cart) => {
-        cart.toggleVisibility();
+        cart.open();
+      });
+    }
+  }
+
+  toggleCart(visibility) {
+    if (this.components.cart.length) {
+      this.components.cart.forEach((cart) => {
+        cart.toggleVisibility(visibility);
       });
     }
   }

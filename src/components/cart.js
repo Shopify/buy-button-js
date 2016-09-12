@@ -99,8 +99,13 @@ export default class Cart extends Component {
     this.render();
   }
 
-  toggleVisibility() {
-    this.isVisible = !this.isVisible;
+  open() {
+    this.isVisible = true;
+    this.render();
+  }
+
+  toggleVisibility(visible) {
+    this.isVisible = visible || !this.isVisible;
     this.render();
   }
 
