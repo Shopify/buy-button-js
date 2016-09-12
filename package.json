@@ -30,7 +30,7 @@
     "testem-ci": "testem ci -R xunit > \"${test_output_file}\"",
     "selenium-ci": "NODE_PATH=./node_modules node script/selenium-test.js",
     "test:dev": "npm run watch:test | testem",
-    "test:selenium": "npm run build && NODE_PATH=./node_modules node script/selenium-test.js",
+    "test:selenium": "NODE_PATH=./node_modules node script/selenium-test.js",
     "postinstall": "npm run build"
   },
   "author": "Shopify Inc.",

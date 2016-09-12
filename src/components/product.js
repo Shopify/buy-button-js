@@ -71,10 +71,17 @@ export default class Product extends Component {
 
   get currentImage() {
     if (!this.cachedImage) {
-      this.cachedImage = this.model.selectedVariantImage;
+      this.cachedImage = this.image;
     }
 
     return this.cachedImage;
+  }
+
+  get image() {
+    if (!this.model.selectedVariant.imageVariants) {
+      return null;
+    }
+    return this.model.selectedVariant.imageVariants.find((imageVariant) => imageVariant.name === this.imageSize);
   }
 
   get viewData() {
@@ -214,6 +221,7 @@ export default class Product extends Component {
     }
 
     return Object.assign({}, this.config.modalProduct, {
+      layout: 'horizontal',
       styles: modalProductStyles,
     });
   }
@@ -234,6 +242,10 @@ export default class Product extends Component {
 
   get onlineStoreURL() {
     return `https://${this.props.client.config.domain}/products/${this.id}${this.onlineStoreQueryString}`;
+  }
+
+  get imageSize() {
+    return this.options.imageSize || this.options.layout === 'vertical' ? 'medium' : 'large';
   }
 
   init(data) {

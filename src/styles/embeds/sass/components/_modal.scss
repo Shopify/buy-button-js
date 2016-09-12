@@ -127,10 +127,8 @@ $modal-footer-height: 90px;
   }
 
   .product-img-wrapper {
-    width: 60%;
-    float: left;
     height: 100%;
-    padding-right: $gutter * 3;
+    padding-right: $gutter * 2;
     max-height: $modal-height;
   }
 
@@ -150,15 +148,5 @@ $modal-footer-height: 90px;
     &:hover {
       color: $color-white;
     }
-  }
-
-  .product__title,
-  .product__variant-title,
-  .product__price,
-  .product__variant-selectors,
-  .quantity-container,
-  .btn,
-  .product-description {
-    overflow: hidden;
   }
 }

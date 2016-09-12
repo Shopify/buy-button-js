@@ -242,7 +242,7 @@ describe('Product class', () => {
     describe('if variant exists', () => {
       it('returns selected image', (done) => {
         product.init(testProductCopy).then(() => {
-          assert.equal(product.currentImage.img, 'http://test.com/test.jpg');
+          assert.equal(product.currentImage.src, 'https://cdn.shopify.com/image-two_medium.jpg');
           done();
         }).catch((e) => {
           done(e);
@@ -255,7 +255,7 @@ describe('Product class', () => {
         product.init(testProductCopy).then(() => {
           product.model.selectedVariant = null;
           product.model.selectedVariantImage = null;
-          assert.equal(product.currentImage.img, 'http://test.com/test.jpg');
+          assert.equal(product.currentImage.src, 'https://cdn.shopify.com/image-two_medium.jpg');
           done();
         }).catch((e) => {
           done(e);
@@ -315,7 +315,7 @@ describe('Product class', () => {
         const viewData = product.viewData;
         assert.equal(viewData.buttonText, 'SHOP NOW');
         assert.ok(viewData.optionsHtml);
-        assert.equal(viewData.currentImage.img, 'http://test.com/test.jpg');
+        assert.equal(viewData.currentImage.src, 'https://cdn.shopify.com/image-two_medium.jpg');
         assert.ok(viewData.hasVariants);
         done();
       }).catch((e) => {
@@ -459,10 +459,18 @@ describe('Product class', () => {
     });
   });
   describe('wrapTemplate', () => {
+    beforeEach((done) => {
+      product.init(testProductCopy).then(() => {
+        done();
+      }).catch((e) => {
+        done(e);
+      });
+    });
+
     describe('when button exists', () => {
       it('calls super', () => {
         const string = product.wrapTemplate('test');
-        assert.equal(string, '<div class="no-image layout-vertical product">test</div>');
+        assert.equal(string, '<div class="has-image layout-vertical product">test</div>');
       });
     });
 
@@ -470,7 +478,7 @@ describe('Product class', () => {
       it('wraps html in a button', () => {
         product.config.product.contents.button = false;
         const string = product.wrapTemplate('test');
-        assert.equal(string, '<div class="no-image layout-vertical product"><button class="btn--parent">test</button></div>');
+        assert.equal(string, '<div class="has-image layout-vertical product"><button class="btn--parent">test</button></div>');
       });
     });
   });
@@ -531,6 +539,7 @@ describe('Product class', () => {
       });
 
       assert.deepEqual(product.modalProductConfig, Object.assign({}, product.config.modalProduct, {
+        layout: 'horizontal',
         styles: expectedStyles,
       }));
     });
@@ -568,6 +577,21 @@ describe('Product class', () => {
           assert.equal(product.onlineStoreURL, `https://test.myshopify.com/products/123${expectedQs}`);
         });
       });
+    });
+  });
+
+  describe('get image', () => {
+    beforeEach((done) => {
+      product.config.product.layout = 'horizontal';
+      product.init(testProductCopy).then(() => {
+        done();
+      }).catch((e) => {
+        done(e);
+      });
+    });
+
+    it('returns the correctly sized image', () => {
+      assert.equal(product.image.name, 'large');
     });
   });
 });
