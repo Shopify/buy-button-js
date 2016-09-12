@@ -15,7 +15,24 @@ const testProduct = {
         name: 'Size',
         value: 'small'
       }
-    ]
+    ],
+    imageVariants: [
+      {
+        name: 'small',
+        dimension: '100x100',
+        src: 'https://cdn.shopify.com/image-two_small.jpg'
+      },
+      {
+        name: 'medium',
+        dimension: '240x240',
+        src: 'https://cdn.shopify.com/image-two_medium.jpg'
+      },
+      {
+        name: 'large',
+        dimension: '480x480',
+        src: 'https://cdn.shopify.com/image-two_large.jpg'
+      },
+    ],
   },
   selectedVariantImage: {
     img: 'http://test.com/test.jpg'
@@ -46,6 +63,23 @@ const testProduct = {
       productId: 123,
       title: 'sloth / small',
       available: true,
+      imageVariants: [
+        {
+          name: 'small',
+          dimension: '100x100',
+          src: 'https://cdn.shopify.com/image-two_small.jpg'
+        },
+        {
+          name: 'medium',
+          dimension: '240x240',
+          src: 'https://cdn.shopify.com/image-two_medium.jpg'
+        },
+        {
+          name: 'large',
+          dimension: '480x480',
+          src: 'https://cdn.shopify.com/image-two_large.jpg'
+        },
+      ],
       optionValues: [
         {
           name: 'Print',
@@ -62,6 +96,23 @@ const testProduct = {
       productId: 123,
       title: 'shark / small',
       available: true,
+      imageVariants: [
+        {
+          name: 'small',
+          dimension: '100x100',
+          src: 'https://cdn.shopify.com/image-two_small.jpg'
+        },
+        {
+          name: 'medium',
+          dimension: '240x240',
+          src: 'https://cdn.shopify.com/image-two_medium.jpg'
+        },
+        {
+          name: 'large',
+          dimension: '480x480',
+          src: 'https://cdn.shopify.com/image-two_large.jpg'
+        },
+      ],
       optionValues: [
         {
           name: 'Print',
@@ -78,6 +129,23 @@ const testProduct = {
       productId: 123,
       title: 'shark / large',
       available: true,
+      imageVariants: [
+        {
+          name: 'small',
+          dimension: '100x100',
+          src: 'https://cdn.shopify.com/image-two_small.jpg'
+        },
+        {
+          name: 'medium',
+          dimension: '240x240',
+          src: 'https://cdn.shopify.com/image-two_medium.jpg'
+        },
+        {
+          name: 'large',
+          dimension: '480x480',
+          src: 'https://cdn.shopify.com/image-two_large.jpg'
+        },
+      ],
       optionValues: [
         {
           name: 'Print',

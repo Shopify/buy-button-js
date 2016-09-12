@@ -19,7 +19,7 @@
   font-size: 18px;
   line-height: 1.2;
   color: $color-black;
-  margin-bottom: 0;
+  margin-bottom: $gutter;
   font-weight: 700;
 }
 
@@ -27,16 +27,16 @@
   font-size: 18px;
   color: #666;
   font-weight: 400;
-  margin-top: $gutter;
   text-align: center;
+  margin-bottom: $gutter;
 }
 
 .product__price {
-  margin-top: $gutter;
+  margin-bottom: $gutter;
 }
 
 .product-description {
-  margin-top: $gutter;
+  margin-bottom: $gutter;
   line-height: 1.65;
   color: $color-black;
 
@@ -71,14 +71,14 @@
 }
 
 .product__variant-selectors {
-  margin-top: $gutter;
+  margin-bottom: $gutter;
   text-align: left;
   font-size: 14px;
 }
 
 .quantity-container {
   display: inline-block;
-  margin-top: $gutter + 5;
+  margin-bottom: $gutter + 5;
 }
 
 .quantity {
