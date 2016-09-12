@@ -7,6 +7,15 @@ mkdir -p $CIRCLE_TEST_REPORTS/xunit
 export test_output_file="${CIRCLE_TEST_REPORTS}/xunit/test-output.xml"
 export lint_output_file="${CIRCLE_TEST_REPORTS}/xunit/lint-output.xml"
 
-npm run lint-ci && npm run testem-ci && npm run selenium-ci
+(npm run lint-ci)
+test_status=$?
+
+(npm run testem-ci)
+lint_status=$?
+
+(npm run selenium-ci)
+e2e_status=$?
 
 mv selenium-xunit/*.xml ${CIRCLE_TEST_REPORTS}/xunit/
+
+exit $((test_status + lint_status + e2e_status))
