@@ -52,6 +52,7 @@ export default class Modal extends Component {
   }
 
   close() {
+    this.isVisible = false;
     removeClassFromElement('is-active', this.wrapper);
     if (this.iframe) {
       this.iframe.removeClass('is-active');
