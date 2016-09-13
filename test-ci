@@ -7,4 +7,4 @@ mkdir -p $CIRCLE_TEST_REPORTS/xunit
 export test_output_file="${CIRCLE_TEST_REPORTS}/xunit/test-output.xml"
 export lint_output_file="${CIRCLE_TEST_REPORTS}/xunit/lint-output.xml"
 
-npm run test-mocha:build && npm run lint-ci && npm run testem-ci
+npm run lint-ci && npm run testem-ci

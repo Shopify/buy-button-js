@@ -5,6 +5,3 @@ dependencies:
   pre:
     - npm set progress=false
     - ./ci/deps
-test:
-  override:
-    - ./test-ci
