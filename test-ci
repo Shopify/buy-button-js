@@ -13,7 +13,7 @@ test_status=$?
 (npm run testem-ci)
 lint_status=$?
 
-(npm run selenium-ci)
+exit $((test_status + lint_status))
 e2e_status=$?
 
 export selenium_output_path="${CIRCLE_TEST_REPORTS}/xunit/"

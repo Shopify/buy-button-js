@@ -6,37 +6,32 @@
     <title>test</title>
   </head>
   <body>
-    <script data-shopify-buy-ui>
-      var scriptURL = "../../build/shopify-buy-ui.globals.polyfilled.js";
-      if (window.ShopifyBuy && window.ShopifyBuy.UI) {
-        ShopifyBuyInit();
-      } else {
-        var script = document.createElement('script');
-        script.async = true;
-        script.src = scriptURL;
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(script);
-        script.onload = ShopifyBuyInit;
-      }
-      function ShopifyBuyInit() {
-        var client = ShopifyBuy.buildClient({
-           apiKey: 'bf081e860bc9dc1ce0654fdfbc20892d',
-           domain: 'embeds.myshopify.com',
-           appId: '6'
-         });
-        var ui = ShopifyBuy.UI.init(client);
-        ui.createComponent('product', {
-          id: 6640244678,
-            options: {
-              product: {
-                buttonDestination: 'modal'
-              },
-            }
-          });
+    <script src="./setup-build.js"></script>
 
-        ui.createComponent('product', {
-          id: 3614411907,
+    <script>
+    </script>
+
+
+    <script src="../../build/shopify-buy-ui.globals.polyfilled.js"></script>
+    <script data-shopify-buy-ui>
+      var client = ShopifyBuy.buildClient({
+         apiKey: 'bf081e860bc9dc1ce0654fdfbc20892d',
+         domain: 'embeds.myshopify.com',
+         appId: '6'
+       });
+      var ui = ShopifyBuy.UI.init(client);
+      ui.createComponent('product', {
+        id: 6640244678,
+          options: {
+            product: {
+              buttonDestination: 'modal'
+            },
+          }
         });
-      }
+
+      ui.createComponent('product', {
+        id: 3614411907,
+      });
     </script>
   </body>
 </html
