@@ -56,7 +56,6 @@ export default class Product extends Component {
     this.selectedQuantity = 1;
   }
 
-
   get shouldCreateCart() {
     return this.options.buttonDestination === 'cart' || (this.options.buttonDestination === 'modal' && this.config.modalProduct.buttonDestination === 'cart');
   }
@@ -70,7 +69,7 @@ export default class Product extends Component {
   }
 
   get currentImage() {
-    if (!this.cachedImage) {
+    if (!this.cachedImage || this.cachedImage.name !== this.imageSize) {
       this.cachedImage = this.image;
     }
 
@@ -221,7 +220,6 @@ export default class Product extends Component {
     }
 
     return Object.assign({}, this.config.modalProduct, {
-      layout: 'horizontal',
       styles: modalProductStyles,
     });
   }
@@ -311,10 +309,14 @@ export default class Product extends Component {
   }
 
   updateConfig(config) {
+    let layout = this.options.layout;
+    if (config.options.product && config.options.product.layout) {
+      layout = config.options.product.layout;
+    }
     if (this.iframe) {
       this.iframe.removeClass('layout-vertical');
       this.iframe.removeClass('layout-horizontal');
-      this.iframe.addClass(`layout-${config.options.product.layout || this.options.layout}`);
+      this.iframe.addClass(`layout-${layout}`);
     }
     super.updateConfig(config);
     this.cart.updateConfig(config);
