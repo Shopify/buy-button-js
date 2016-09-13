@@ -66,6 +66,7 @@ const defaults = {
   },
   modalProduct: {
     iframe: false,
+    layout: 'horizontal',
     contents: {
       img: true,
       title: true,
