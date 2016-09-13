@@ -17,7 +17,7 @@ exports.config = {
     }
   },
   coloredLogs: true,
-  screenshotPath: './errorShots/',
+  screenshotPath: './selenium-errorshots/',
   baseUrl: 'http://localhost',
   waitforTimeout: 30000,
   connectionRetryTimeout: 90000,

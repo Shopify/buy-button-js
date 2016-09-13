@@ -3,6 +3,7 @@
 set +x
 
 mkdir -p $CIRCLE_TEST_REPORTS/xunit
+mkdir -p $CIRCLE_TEST_REPORTS/screenshots
 
 export test_output_file="${CIRCLE_TEST_REPORTS}/xunit/test-output.xml"
 export lint_output_file="${CIRCLE_TEST_REPORTS}/xunit/lint-output.xml"
@@ -17,5 +18,6 @@ lint_status=$?
 e2e_status=$?
 
 mv selenium-xunit/*.xml ${CIRCLE_TEST_REPORTS}/xunit/
+mv selenium-errorshots/* ${CIRCLE_TEST_REPORTS}/screenshots/
 
 exit $((test_status + lint_status + e2e_status))
