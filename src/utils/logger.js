@@ -1,10 +1,10 @@
 function wrapConsole(logCommand) {
   const logMethod = function () {
+    const hostConsole = window.console;
+    const args = Array.prototype.slice.apply(arguments).join(' ');
     /* eslint-disable no-console */
-    if (console[logCommand]) {
-      console[logCommand](...arguments);
-    } else {
-      console.log(...arguments);
+    if (hostConsole) {
+      hostConsole[logCommand](args);
     }
     /* eslint-enable no-console */
   };
@@ -22,6 +22,7 @@ const logger = {
   info: wrapConsole('info'),
   warn: wrapConsole('warn'),
   error: wrapConsole('error'),
+  log: wrapConsole('log'),
 };
 
 export default logger;

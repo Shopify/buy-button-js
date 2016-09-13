@@ -270,7 +270,7 @@ export default class Component {
 
   _userEvent(methodName) {
     if (this.debug) {
-      logger.log(`EVENT: ${methodName} (${this.typeKey})`);
+      logger.info(`EVENT: ${methodName} (${this.typeKey})`);
     }
     if (isFunction(this.events[methodName])) {
       this.events[methodName].call(this, this);
@@ -292,6 +292,6 @@ export default class Component {
         }
         return el;
       });
-    });
+    }, eventName === 'blur');
   }
 }

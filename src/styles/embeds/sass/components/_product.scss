@@ -117,7 +117,7 @@
 }
 
 .layout-vertical {
-  .btn {
+  .btn:not(.beside-quantity) {
     margin: ($gutter + 5) auto 0;
   }
 }
