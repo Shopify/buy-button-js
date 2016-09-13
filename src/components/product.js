@@ -69,7 +69,7 @@ export default class Product extends Component {
   }
 
   get currentImage() {
-    if (!this.cachedImage || this.cachedImage.name !== this.imageSize) {
+    if (!this.cachedImage || this.cachedImage.name !== this.imageSize || (this.image.src && this.image.src !== this.cachedImage.src)) {
       this.cachedImage = this.image;
     }
 
@@ -309,8 +309,15 @@ export default class Product extends Component {
   }
 
   updateConfig(config) {
+    if (config.id || config.variantId) {
+      this.id = config.id || this.id;
+      this.defaultVariantId = config.variantId || this.defaultVariantId;
+      this.init();
+      return;
+    }
+
     let layout = this.options.layout;
-    if (config.options.product && config.options.product.layout) {
+    if (config.options && config.options.product && config.options.product.layout) {
       layout = config.options.product.layout;
     }
     if (this.iframe) {
