@@ -163,7 +163,7 @@ const defaults = {
     iframe: true,
     templates: cartTemplates,
     startOpen: false,
-    manifest: ['cart', 'lineItem'],
+    manifest: ['cart', 'lineItem', 'toggle'],
     contents: {
       title: true,
       lineItems: true,
