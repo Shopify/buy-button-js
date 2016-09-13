@@ -28,7 +28,7 @@ export default class Cart extends Component {
       [`click .${this.classes.lineItem.quantityButton}.quantity-increment`]: this.onQuantityIncrement.bind(this, 1),
       [`click .${this.classes.lineItem.quantityButton}.quantity-decrement`]: this.onQuantityIncrement.bind(this, -1),
       [`click .${this.classes.cart.button}`]: this.onCheckout.bind(this),
-      [`focusout .${this.classes.lineItem.quantityInput}`]: this.onQuantityBlur.bind(this),
+      [`blur .${this.classes.lineItem.quantityInput}`]: this.onQuantityBlur.bind(this),
     });
   }
 

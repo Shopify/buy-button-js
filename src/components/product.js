@@ -80,7 +80,7 @@ export default class Product extends Component {
     if (!this.model.selectedVariant.imageVariants) {
       return null;
     }
-    return this.model.selectedVariant.imageVariants.find((imageVariant) => imageVariant.name === this.imageSize);
+    return this.model.selectedVariant.imageVariants.filter((imageVariant) => imageVariant.name === this.imageSize)[0];
   }
 
   get viewData() {
@@ -119,7 +119,7 @@ export default class Product extends Component {
       [`click .${this.classes.product.blockButton}`]: this.onButtonClick.bind(this),
       [`click .${this.classes.product.quantityButton}.quantity-increment`]: this.onQuantityIncrement.bind(this, 1),
       [`click .${this.classes.product.quantityButton}.quantity-decrement`]: this.onQuantityIncrement.bind(this, -1),
-      [`focusout .${this.classes.product.quantityInput}`]: this.onQuantityBlur.bind(this),
+      [`blur .${this.classes.product.quantityInput}`]: this.onQuantityBlur.bind(this),
     });
   }
 
