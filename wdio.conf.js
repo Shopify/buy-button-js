@@ -7,7 +7,7 @@ exports.config = {
   maxInstances: 10,
   capabilities: [{
     maxInstances: 5,
-    browserName: 'Chrome'
+    browserName: 'chrome'
   }],
   sync: true,
   logLevel: 'error',
