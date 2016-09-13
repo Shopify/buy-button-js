@@ -319,7 +319,9 @@ export default class Product extends Component {
       this.iframe.addClass(`layout-${layout}`);
     }
     super.updateConfig(config);
-    this.cart.updateConfig(config);
+    if (this.cart) {
+      this.cart.updateConfig(config);
+    }
     if (this.modal) {
       this.modal.updateConfig(config);
     }
@@ -410,7 +412,7 @@ export default class Product extends Component {
   }
 
   closeCartOnBgClick() {
-    if (this.cart.isVisible) {
+    if (this.cart && this.cart.isVisible) {
       this.cart.close();
     }
   }
