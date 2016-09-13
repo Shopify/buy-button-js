@@ -66,6 +66,7 @@ const defaults = {
   },
   modalProduct: {
     iframe: false,
+    layout: 'horizontal',
     contents: {
       img: true,
       title: true,
@@ -223,6 +224,8 @@ const defaults = {
       quantity: 'quantity-container',
       quantityInput: 'quantity cart-item__quantity-input',
       quantityButton: 'btn--seamless',
+      quantityIncrement: 'quantity-increment',
+      quantityDecrement: 'quantity-decrement',
     },
   },
   toggle: {
