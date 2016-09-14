@@ -51,6 +51,12 @@ export default class Modal extends Component {
     });
   }
 
+  updateConfig(config) {
+    super.updateConfig(config);
+    this.product = new Product(this.productConfig, this.props);
+    return this.product.init(this.model).then(() => this.resize());
+  }
+
   close() {
     this.isVisible = false;
     removeClassFromElement('is-active', this.wrapper);

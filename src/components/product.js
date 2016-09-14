@@ -339,7 +339,11 @@ export default class Product extends Component {
       this.cart.updateConfig(config);
     }
     if (this.modal) {
-      this.modal.updateConfig(config);
+      this.modal.updateConfig(Object.assign({}, config, {
+        options: Object.assign({}, this.config, {
+          product: this.modalProductConfig,
+        }),
+      }));
     }
   }
 

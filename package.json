@@ -31,7 +31,8 @@
     "selenium-ci": "NODE_PATH=./node_modules node script/selenium-test.js",
     "test:dev": "npm run watch:test | testem",
     "test:selenium": "NODE_PATH=./node_modules node script/selenium-test.js",
-    "postinstall": "npm run build"
+    "postinstall": "npm run build",
+    "standalone": "npm run build && browserify build/shopify-buy-ui.js --standalone ShopifyBuy --outfile build/shopify-buy-ui.standalone.js"
   },
   "author": "Shopify Inc.",
   "license": "MIT",

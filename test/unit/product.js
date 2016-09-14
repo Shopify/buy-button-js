@@ -1,6 +1,7 @@
 import componentDefaults from '../../src/defaults/components';
 import Product from '../../src/components/product';
 import Cart from '../../src/components/cart';
+import Modal from '../../src/components/modal';
 import Template from '../../src/template';
 import Component from '../../src/component';
 import testProduct from '../fixtures/product-fixture';
@@ -26,8 +27,15 @@ const props = {
       domain: 'test.myshopify.com'
     }
   },
-  createCart: function () {return Promise.resolve(new Cart(config))}
+  browserFeatures: {
+    transition: true,
+    animation: true,
+    transform: true,
+  },
+  createCart: function () {return Promise.resolve(new Cart(config))},
 }
+
+props.createModal = function () {return new Modal(config, props)}
 
 let product;
 let testProductCopy;
@@ -380,10 +388,8 @@ describe('Product class', () => {
   describe('updateConfig', () => {
     const newConfig = {
       options: {
-        styles: {
-          button: {
-            'color': 'red',
-          },
+        modalProduct: {
+          layout: 'vertical'
         },
       },
     }
@@ -407,13 +413,28 @@ describe('Product class', () => {
       assert.calledWith(superSpy, newConfig);
     });
 
-    it('calls updateConfig on modal if modal exists', () => {
-      product.modal = {
-        updateConfig: sinon.spy()
-      }
-      product.updateConfig(newConfig);
-      assert.calledWith(product.cart.updateConfig, newConfig);
-      assert.calledWith(superSpy, newConfig);
+    it('calls updateConfig on modal if modal exists', (done) => {
+      const modalProduct = new Product({
+        node: configCopy.node,
+        options: Object.assign({}, configCopy.options, {
+          product: Object.assign({}, configCopy.options.product, {
+            buttonDestination: 'modal'
+          })
+        }),
+      }, props);
+      modalProduct.init(testProductCopy).then(() => {
+        modalProduct.openModal().then(() => {;
+          modalProduct.cart = {
+            updateConfig: sinon.spy()
+          }
+          modalProduct.modal.updateConfig = sinon.spy();
+          modalProduct.updateConfig(newConfig);
+          assert.calledWith(modalProduct.modal.updateConfig, sinon.match.object);
+          assert.equal(modalProduct.modal.config.product.layout, 'vertical');
+          assert.calledWith(superSpy, newConfig);
+          done();
+        });
+      });
     });
   });
 
