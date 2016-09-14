@@ -68,8 +68,14 @@ export default class Product extends Component {
     return 'product';
   }
 
+  get imageShouldUpdate() {
+    return !this.cachedImage
+      || this.cachedImage.name !== this.imageSize
+      || (this.image && this.image.src && this.image.src !== this.cachedImage.src)
+  }
+
   get currentImage() {
-    if (!this.cachedImage || this.cachedImage.name !== this.imageSize || (this.image.src && this.image.src !== this.cachedImage.src)) {
+    if (this.imageShouldUpdate) {
       this.cachedImage = this.image;
     }
 
@@ -77,7 +83,7 @@ export default class Product extends Component {
   }
 
   get image() {
-    if (!this.model.selectedVariant.imageVariants) {
+    if (!this.model.selectedVariant || !this.model.selectedVariant.imageVariants) {
       return null;
     }
     return this.model.selectedVariant.imageVariants.filter((imageVariant) => imageVariant.name === this.imageSize)[0];
