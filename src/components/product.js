@@ -326,9 +326,17 @@ export default class Product extends Component {
     }
 
     let layout = this.options.layout;
-    if (config.options && config.options.product && config.options.product.layout) {
-      layout = config.options.product.layout;
+
+    if (config.options && config.options.product) {
+      if (config.options.product.layout) {
+        layout = config.options.product.layout;
+      }
+
+      if (config.options.product.width) {
+        this.iframe.setWidth(config.options.product.width);
+      }
     }
+
     if (this.iframe) {
       this.iframe.removeClass('layout-vertical');
       this.iframe.removeClass('layout-horizontal');

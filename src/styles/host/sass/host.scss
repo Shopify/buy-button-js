@@ -35,11 +35,8 @@ $max-z-index: 2147483647;
 }
 
 .shopify-buy-frame--product {
-  &.layout-vertical {
-    iframe {
-      max-width: 250px;
-    }
-  }
+  display: block;
+
   &.layout-horizontal {
     display: block;
     iframe {

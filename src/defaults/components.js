@@ -11,6 +11,7 @@ const defaults = {
     buttonDestination: 'cart',
     layout: 'vertical',
     manifest: ['product', 'option'],
+    width: '250px',
     order: [
       'img',
       'title',
