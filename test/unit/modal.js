@@ -132,4 +132,18 @@ describe('Modal class', () => {
       assert.match(modal.iframe.parent.className, 'is-active');
     });
   });
+
+  describe('updateConfig', () => {
+    it('updates product', () => {
+      modal.updateConfig({
+        options: {
+          product: {
+            buttonDestination: 'checkout',
+          }
+        }
+      }).then(() => {
+        assert.equal(modal.product.config.options.product.buttonDestination, 'checkout');
+      });
+    });
+  });
 });
