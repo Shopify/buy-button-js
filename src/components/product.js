@@ -68,14 +68,14 @@ export default class Product extends Component {
     return 'product';
   }
 
-  get imageShouldUpdate() {
-    return !this.cachedImage
-      || this.cachedImage.name !== this.imageSize
-      || (this.image && this.image.src && this.image.src !== this.cachedImage.src)
+  get shouldUpdateImage() {
+    return !this.cachedImage ||
+       this.cachedImage.name !== this.imageSize ||
+       (this.image && this.image.src && this.image.src !== this.cachedImage.src);
   }
 
   get currentImage() {
-    if (this.imageShouldUpdate) {
+    if (this.shouldUpdateImage) {
       this.cachedImage = this.image;
     }
 
