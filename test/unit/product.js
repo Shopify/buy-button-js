@@ -417,6 +417,26 @@ describe('Product class', () => {
     });
   });
 
+  describe('when updating ID or variant ID', () => {
+    let initSpy;
+
+    beforeEach(() => {
+      initSpy = sinon.spy(product, 'init');
+    });
+
+    it('calls init if ID updated', () => {
+      product.updateConfig({id: 7777});
+      assert.calledOnce(initSpy);
+      assert.equal(product.id, 7777);
+    });
+
+    it('calls init if variant ID updated', () => {
+      product.updateConfig({variantId: 7777});
+      assert.calledOnce(initSpy);
+      assert.equal(product.defaultVariantId, 7777);
+    });
+  });
+
   describe('setDefaultVariant', () => {
     it('sets selectedVariant to product.defalutVariantId', () => {
       product.defaultVariantId = 12347;
