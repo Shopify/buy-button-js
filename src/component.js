@@ -16,7 +16,7 @@ export default class Component {
     this.id = config.id;
     this.handle = config.handle;
     this.node = config.node;
-    this.debug = true;
+    this.debug = config.debug;
     this.config = merge({}, componentDefaults, config.options || {});
     this.props = props;
     this.model = {};
