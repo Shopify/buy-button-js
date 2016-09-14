@@ -13,6 +13,8 @@ export default class ProductSet extends Component {
   constructor(config, props) {
     super(config, props);
     this.products = [];
+    this.cartNode = config.cartNode;
+    this.modalNode = config.modalNode;
     this.cart = null;
     this.page = 1;
     this.nextModel = {products: []};
@@ -153,6 +155,8 @@ export default class ProductSet extends Component {
     }
     const productConfig = {
       node: this.document.querySelector(`.${this.classes.productSet.products}`),
+      modalNode: this.modalNode,
+      cartNode: this.cartNode,
       options: merge({}, this.config, {
         product: {
           iframe: false,
