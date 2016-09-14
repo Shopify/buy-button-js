@@ -47,6 +47,8 @@ function whitelistedProperties(selectorStyles) {
 export default class Product extends Component {
   constructor(config, props) {
     super(config, props);
+    this.cartNode = config.cartNode;
+    this.modalNode = config.modalNode;
     this.defaultVariantId = config.variantId;
     this.cachedImage = null;
     this.childTemplate = new Template(this.config.option.templates, this.config.option.contents, this.config.option.order);
@@ -268,6 +270,7 @@ export default class Product extends Component {
   createCart() {
     if (this.shouldCreateCart) {
       return this.props.createCart({
+        node: this.cartNode,
         options: this.config,
       });
     } else {
@@ -366,6 +369,7 @@ export default class Product extends Component {
   openModal() {
     if (!this.modal) {
       this.modal = this.props.createModal({
+        node: this.modalNode,
         options: Object.assign({}, this.config, {
           product: this.modalProductConfig,
           modal: Object.assign({}, this.config.modal, {
