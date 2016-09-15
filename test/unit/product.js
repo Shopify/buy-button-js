@@ -242,7 +242,7 @@ describe('Product class', () => {
     describe('if variant exists', () => {
       it('returns selected image', (done) => {
         product.init(testProductCopy).then(() => {
-          assert.equal(product.currentImage.src, 'https://cdn.shopify.com/image-two_medium.jpg');
+          assert.equal(product.currentImage.src, 'https://cdn.shopify.com/image-two_large.jpg');
           done();
         }).catch((e) => {
           done(e);
@@ -255,7 +255,7 @@ describe('Product class', () => {
         product.init(testProductCopy).then(() => {
           product.model.selectedVariant = null;
           product.model.selectedVariantImage = null;
-          assert.equal(product.currentImage.src, 'https://cdn.shopify.com/image-two_medium.jpg');
+          assert.equal(product.currentImage.src, 'https://cdn.shopify.com/image-two_large.jpg');
           done();
         }).catch((e) => {
           done(e);
@@ -315,7 +315,7 @@ describe('Product class', () => {
         const viewData = product.viewData;
         assert.equal(viewData.buttonText, 'SHOP NOW');
         assert.ok(viewData.optionsHtml);
-        assert.equal(viewData.currentImage.src, 'https://cdn.shopify.com/image-two_medium.jpg');
+        assert.equal(viewData.currentImage.src, 'https://cdn.shopify.com/image-two_large.jpg');
         assert.ok(viewData.hasVariants);
         done();
       }).catch((e) => {
@@ -601,17 +601,53 @@ describe('Product class', () => {
   });
 
   describe('get image', () => {
-    beforeEach((done) => {
-      product.config.product.layout = 'horizontal';
-      product.init(testProductCopy).then(() => {
-        done();
-      }).catch((e) => {
-        done(e);
+    describe('default', () => {
+      beforeEach((done) => {
+        product.init(testProductCopy).then(() => {
+          done();
+        });
+      });
+
+      it('returns large image', () => {
+        assert.equal(product.image.name, 'large');
       });
     });
 
-    it('returns the correctly sized image', () => {
-      assert.equal(product.image.name, 'large');
+    describe('if imageSize explicitly set', () => {
+      beforeEach((done) => {
+        product.config.product.imageSize = 'pico';
+        product.init(testProductCopy).then(() => {
+          done();
+        });
+      });
+
+      it('returns image size specified', () => {
+        assert.equal(product.image.name, 'pico');
+      });
+    });
+
+    describe('if width explicitly set and layout vertical', () => {
+      beforeEach((done) => {
+        product.config.product.width = '500px';
+        product.init(testProductCopy).then(() => {
+          done();
+        });
+      });
+      it('returns smallest image larger than explicit width', () => {
+        assert.equal(product.image.name, 'grande');
+      });
+    });
+
+    describe('with horizontal layout and no explicit image size', () => {
+      beforeEach((done) => {
+        product.config.product.layout = 'horizontal';
+        product.init(testProductCopy).then(() => {
+          done();
+        });
+      });
+      it('returns large image', () => {
+        assert.equal(product.image.name, 'large');
+      });
     });
   });
 });

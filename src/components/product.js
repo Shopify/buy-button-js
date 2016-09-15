@@ -71,9 +71,7 @@ export default class Product extends Component {
   }
 
   get shouldUpdateImage() {
-    return !this.cachedImage ||
-       this.cachedImage.name !== this.imageSize ||
-       (this.image && this.image.src && this.image.src !== this.cachedImage.src);
+    return !this.cachedImage || (this.image && this.image.src && this.image.src !== this.cachedImage.src);
   }
 
   get currentImage() {
@@ -88,7 +86,18 @@ export default class Product extends Component {
     if (!this.model.selectedVariant || !this.model.selectedVariant.imageVariants) {
       return null;
     }
-    return this.model.selectedVariant.imageVariants.filter((imageVariant) => imageVariant.name === this.imageSize)[0];
+
+    if (this.options.imageSize) {
+      return this.model.selectedVariant.imageVariants.filter((imageVariant) => imageVariant.name === this.options.imageSize)[0];
+    }
+
+    if (this.options.width && this.options.layout === 'vertical') {
+      return this.model.selectedVariant.imageVariants.filter((image) => {
+        return parseInt(image.dimension, 10) >= parseInt(this.options.width, 10);
+      })[0];
+    }
+
+    return this.model.selectedVariant.imageVariants.filter((imageVariant) => imageVariant.name === 'large')[0];
   }
 
   get viewData() {
@@ -248,10 +257,6 @@ export default class Product extends Component {
 
   get onlineStoreURL() {
     return `https://${this.props.client.config.domain}/products/${this.id}${this.onlineStoreQueryString}`;
-  }
-
-  get imageSize() {
-    return this.options.imageSize || this.options.layout === 'vertical' ? 'medium' : 'large';
   }
 
   init(data) {
