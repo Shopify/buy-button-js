@@ -23,6 +23,7 @@
 
 .collection-pagination-button  {
   display: none;
+  margin: $gutter auto;
 
   &.is-active {
     display: block;

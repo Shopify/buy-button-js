@@ -83,7 +83,8 @@ export default class ProductSet extends Component {
     } else if (this.handle) {
       method = this.props.client.fetchQueryCollections({handle: this.handle}).then((collections) => {
         const collection = collections[0];
-        return this.props.client.fetchQueryProducts(Object.assign({}, queryOptions, {collection_id: collection.attrs.collection_id}));
+        this.id = collection.attrs.collection_id;
+        return this.sdkFetch(options);
       });
     }
     return method;

@@ -15,6 +15,12 @@
   }
 }
 
+.no-image {
+  .product__variant-img {
+    display: none;
+  }
+}
+
 .product__title {
   font-size: 18px;
   line-height: 1.2;
@@ -139,7 +145,7 @@
 }
 
 @media (min-width: 801px) {
-  .layout-horizontal {
+  .layout-horizontal:not(.no-image) {
 
     .product-img-wrapper {
       float: left;
