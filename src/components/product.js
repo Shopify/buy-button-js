@@ -128,6 +128,7 @@ export default class Product extends Component {
       [`click .${this.classes.product.quantityButton}.quantity-increment`]: this.onQuantityIncrement.bind(this, 1),
       [`click .${this.classes.product.quantityButton}.quantity-decrement`]: this.onQuantityIncrement.bind(this, -1),
       [`blur .${this.classes.product.quantityInput}`]: this.onQuantityBlur.bind(this),
+      [`click .${this.classes.product.quantityInput}`]: this.onQuantityClick.bind(this),
     });
   }
 
@@ -347,8 +348,25 @@ export default class Product extends Component {
     }
   }
 
+  shouldDelegateClick(evt) {
+    if (this.options.contents.button) {
+      return true;
+    }
+    return [this.classes.option.select, this.classes.product.quantityButton, this.classes.product.quantityInput].reduce((delegate, className) => {
+      if (evt.target.className.indexOf(className) > -1) {
+        delegate = false;
+      }
+      return delegate;
+    }, true);
+  }
+
   onButtonClick(evt) {
     evt.stopPropagation();
+
+    if (!this.shouldDelegateClick(evt)) {
+      return;
+    }
+
     if (this.options.buttonDestination === 'cart') {
       this.props.closeModal();
       this.props.tracker.trackMethod(this.cart.addVariantToCart.bind(this), 'CART_ADD', this.selectedVariantTrackingInfo)(this.model.selectedVariant, this.model.selectedQuantity);
@@ -405,7 +423,12 @@ export default class Product extends Component {
     this.updateVariant(name, value);
   }
 
+  onQuantityClick(evt, target) {
+    evt.stopPropagation();
+  }
+
   onQuantityBlur(evt, target) {
+    evt.stopPropagation();
     this.updateQuantity(() => target.value);
   }
 
