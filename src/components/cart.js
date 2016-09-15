@@ -24,11 +24,11 @@ export default class Cart extends Component {
 
   get DOMEvents() {
     return merge({}, this.options.DOMEvents, {
-      [`click .${this.classes.cart.close}`]: this.close.bind(this),
-      [`click .${this.classes.lineItem.quantityButton}.quantity-increment`]: this.onQuantityIncrement.bind(this, 1),
-      [`click .${this.classes.lineItem.quantityButton}.quantity-decrement`]: this.onQuantityIncrement.bind(this, -1),
-      [`click .${this.classes.cart.button}`]: this.onCheckout.bind(this),
-      [`blur .${this.classes.lineItem.quantityInput}`]: this.onQuantityBlur.bind(this),
+      [`click .${this.classes.cart.close.split(' ').join('.')}`]: this.close.bind(this),
+      [`click .${this.classes.lineItem.quantityButton.split(' ').join('.')}.quantity-increment`]: this.onQuantityIncrement.bind(this, 1),
+      [`click .${this.classes.lineItem.quantityButton.split(' ').join('.')}.quantity-decrement`]: this.onQuantityIncrement.bind(this, -1),
+      [`click .${this.classes.cart.button.split(' ').join('.')}`]: this.onCheckout.bind(this),
+      [`blur .${this.classes.lineItem.quantityInput.split(' ').join('.')}`]: this.onQuantityBlur.bind(this),
     });
   }
 
