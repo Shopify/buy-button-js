@@ -127,7 +127,7 @@ export default class iframe {
   }
 
   setWidth(width) {
-    this.parent.style.width = width;
+    this.parent.style['max-width'] = width;
   }
 
   addClass(className) {
