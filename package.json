@@ -87,6 +87,6 @@
     "rollup": "0.34.1",
     "rollup-plugin-commonjs": "3.3.1",
     "rollup-plugin-node-resolve": "1.7.1",
-    "shopify-buy": "0.2.2"
+    "shopify-buy": "git+ssh://git@github.com:Shopify/js-buy-sdk.git#8798e75ede7aa84339a108f5644ba89cf744662e"
   }
 }
