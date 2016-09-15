@@ -173,9 +173,8 @@ export default class Component {
     this._closeComponentsOnEsc();
     Object.keys(this.DOMEvents).forEach((key) => {
       const [, eventName, selectorString] = key.match(delegateEventSplitter);
-      const selector = selectorString.split(' ').join('.');
-      if (selector) {
-        this._on(eventName, selector, (evt, target) => {
+      if (selectorString) {
+        this._on(eventName, selectorString, (evt, target) => {
           this.DOMEvents[key].call(this, evt, target);
         });
       } else {

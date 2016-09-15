@@ -105,6 +105,11 @@ $modal-footer-height: 90px;
 }
 
 @media (min-width: 801px) {
+  html,
+  body.is-active {
+    height: 100%;
+  }
+
   .modal {
     margin: 100px auto 40px auto;
     opacity: 0;
