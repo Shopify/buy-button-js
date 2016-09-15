@@ -303,7 +303,7 @@ export default class Product extends Component {
     if (this.options.contents.button) {
       return `<div class="${this.wrapperClass} ${this.classes.product.product}">${html}</div>`;
     } else {
-      return `<div class="${this.wrapperClass} ${this.classes.product.product}"><button class="${this.classes.product.blockButton}">${html}</button></div>`;
+      return `<div class="${this.wrapperClass} ${this.classes.product.product}"><a href='#' class="${this.classes.product.blockButton}">${html}</button></a>`;
     }
   }
 
@@ -369,8 +369,6 @@ export default class Product extends Component {
   }
 
   onButtonClick(evt) {
-    evt.stopPropagation();
-
     if (this.options.buttonDestination === 'cart') {
       this.props.closeModal();
       this.props.tracker.trackMethod(this.cart.addVariantToCart.bind(this), 'CART_ADD', this.selectedVariantTrackingInfo)(this.model.selectedVariant, this.model.selectedQuantity);
