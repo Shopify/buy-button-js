@@ -132,12 +132,15 @@ export default class Product extends Component {
   get DOMEvents() {
     return merge({}, this.options.DOMEvents, {
       click: this.closeCartOnBgClick.bind(this),
-      [`change .${this.classes.option.select}`]: this.onOptionSelect.bind(this),
-      [`click .${this.classes.product.button}`]: this.onButtonClick.bind(this),
-      [`click .${this.classes.product.blockButton}`]: this.onButtonClick.bind(this),
-      [`click .${this.classes.product.quantityButton}.quantity-increment`]: this.onQuantityIncrement.bind(this, 1),
-      [`click .${this.classes.product.quantityButton}.quantity-decrement`]: this.onQuantityIncrement.bind(this, -1),
-      [`blur .${this.classes.product.quantityInput}`]: this.onQuantityBlur.bind(this),
+      [`change .${this.classes.option.select.split(' ').join('.')}`]: this.onOptionSelect.bind(this),
+      [`click .${this.classes.product.button.split(' ').join('.')}`]: this.onButtonClick.bind(this),
+      [`click .${this.classes.product.blockButton} .${this.classes.product.imgWrapper}`]: this.onButtonClick.bind(this),
+      [`click .${this.classes.product.blockButton} .${this.classes.product.title}`]: this.onButtonClick.bind(this),
+      [`click .${this.classes.product.blockButton} .${this.classes.product.prices}`]: this.onButtonClick.bind(this),
+      [`click .${this.classes.product.blockButton} .${this.classes.product.description}`]: this.onButtonClick.bind(this),
+      [`click .${this.classes.product.quantityButton.split(' ').join('.')}.quantity-increment`]: this.onQuantityIncrement.bind(this, 1),
+      [`click .${this.classes.product.quantityButton.split(' ').join('.')}.quantity-decrement`]: this.onQuantityIncrement.bind(this, -1),
+      [`blur .${this.classes.product.quantityInput.split(' ').join('.')}`]: this.onQuantityBlur.bind(this),
     });
   }
 
@@ -363,6 +366,7 @@ export default class Product extends Component {
 
   onButtonClick(evt) {
     evt.stopPropagation();
+
     if (this.options.buttonDestination === 'cart') {
       this.props.closeModal();
       this.props.tracker.trackMethod(this.cart.addVariantToCart.bind(this), 'CART_ADD', this.selectedVariantTrackingInfo)(this.model.selectedVariant, this.model.selectedQuantity);
