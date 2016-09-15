@@ -113,6 +113,7 @@ export default class Product extends Component {
       buttonText: this.buttonText,
       imgStyle: this.imgStyle,
       quantityClass: this.quantityClass,
+      priceClass: this.priceClass,
     });
   }
 
