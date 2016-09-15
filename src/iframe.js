@@ -68,6 +68,10 @@ export default class iframe {
     this.browserFeatures = config.browserFeatures;
     this.googleFonts = config.googleFonts || [];
     this.name = config.name;
+    this.width = config.width;
+    if (this.width) {
+      this.setWidth(this.width);
+    }
     Object.keys(iframeStyles).forEach((key) => {
       this.el.style[key] = iframeStyles[key];
     });
@@ -120,6 +124,10 @@ export default class iframe {
         resolve();
       }, 500);
     });
+  }
+
+  setWidth(width) {
+    this.parent.style['max-width'] = width;
   }
 
   addClass(className) {

@@ -51,6 +51,18 @@
   img {
     max-width: 100%;
   }
+
+  h1 {
+    font-size: 24px;
+  }
+
+  h2 {
+    font-size: 20px;
+  }
+
+  h3 {
+    font-size: 18px;
+  }
 }
 
 .layout-vertical {
@@ -120,6 +132,10 @@
   .btn:not(.beside-quantity) {
     margin: ($gutter + 5) auto 0;
   }
+
+  .product__variant-img {
+    width: 100%;
+  }
 }
 
 @media (min-width: 801px) {
@@ -141,7 +157,7 @@
     .product-description,
     .btn:not(.beside-quantity),
     .product__variant-selectors {
-      margin-left: calc(50% + #{$gutter});
+      margin-left: calc(50% + #{$gutter-modal});
     }
   }
 }

@@ -18,6 +18,11 @@ const testProduct = {
     ],
     imageVariants: [
       {
+        name: 'pico',
+        dimension: '16x16',
+        src: 'https://cdn.shopify.com/image-two_pico.jpg'
+      },
+      {
         name: 'small',
         dimension: '100x100',
         src: 'https://cdn.shopify.com/image-two_small.jpg'
@@ -31,6 +36,16 @@ const testProduct = {
         name: 'large',
         dimension: '480x480',
         src: 'https://cdn.shopify.com/image-two_large.jpg'
+      },
+      {
+        name: 'grande',
+        dimension: '600x600',
+        src: 'https://cdn.shopify.com/image-two_grande.jpg'
+      },
+      {
+        name: '1024x1025',
+        dimension: '1024x1024',
+        src: 'https://cdn.shopify.com/image-two_1024x1024.jpg'
       },
     ],
   },

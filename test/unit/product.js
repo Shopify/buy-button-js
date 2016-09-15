@@ -621,18 +621,95 @@ describe('Product class', () => {
     });
   });
 
-  describe('get image', () => {
-    beforeEach((done) => {
-      product.config.product.layout = 'horizontal';
-      product.init(testProductCopy).then(() => {
-        done();
-      }).catch((e) => {
-        done(e);
+  describe('get shouldUpdateImage', () => {
+    describe('if no cached image', () => {
+      it('returns true', () => {
+        product.cachedImage = null;
+        assert.ok(product.shouldUpdateImage);
       });
     });
 
-    it('returns the correctly sized image', () => {
-      assert.equal(product.image.name, 'large');
+    describe('if image and cached image are different', () => {
+      beforeEach((done) => {
+        product.imageSize = 'pico';
+        product.init(testProductCopy).then(() => {
+          done();
+        });
+      });
+
+      it('returns true', () => {
+        product.cachedImage = {
+          src: 'bar.jpg'
+        }
+        assert.ok(product.shouldUpdateImage);
+      });
+    });
+
+    describe('if image and cached image are same', () => {
+      beforeEach((done) => {
+        product.config.product.imageSize = 'pico';
+        product.init(testProductCopy).then(() => {
+          done();
+        });
+      });
+
+      it('returns true', () => {
+        product.cachedImage = {
+          src: 'https://cdn.shopify.com/image-two_pico.jpg'
+        }
+        assert.notOk(product.shouldUpdateImage);
+      });
+    });
+  });
+
+  describe('get image', () => {
+    describe('default', () => {
+      beforeEach((done) => {
+        product.init(testProductCopy).then(() => {
+          done();
+        });
+      });
+
+      it('returns medium image', () => {
+        assert.equal(product.image.name, 'medium');
+      });
+    });
+
+    describe('if imageSize explicitly set', () => {
+      beforeEach((done) => {
+        product.config.product.imageSize = 'pico';
+        product.init(testProductCopy).then(() => {
+          done();
+        });
+      });
+
+      it('returns image size specified', () => {
+        assert.equal(product.image.name, 'pico');
+      });
+    });
+
+    describe('if width explicitly set and layout vertical', () => {
+      beforeEach((done) => {
+        product.config.product.width = '500px';
+        product.init(testProductCopy).then(() => {
+          done();
+        });
+      });
+      it('returns smallest image larger than explicit width', () => {
+        assert.equal(product.image.name, 'grande');
+      });
+    });
+
+    describe('with horizontal layout and no explicit image size', () => {
+      beforeEach((done) => {
+        product.config.product.layout = 'horizontal';
+        product.init(testProductCopy).then(() => {
+          done();
+        });
+      });
+      it('returns large image', () => {
+        assert.equal(product.image.name, 'large');
+      });
     });
   });
 });
