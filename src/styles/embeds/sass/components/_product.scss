@@ -51,6 +51,18 @@
   img {
     max-width: 100%;
   }
+
+  h1 {
+    font-size: 24px;
+  }
+
+  h2 {
+    font-size: 20px;
+  }
+
+  h3 {
+    font-size: 18px;
+  }
 }
 
 .layout-vertical {
@@ -141,7 +153,7 @@
     .product-description,
     .btn:not(.beside-quantity),
     .product__variant-selectors {
-      margin-left: calc(50% + #{$gutter});
+      margin-left: calc(50% + #{$gutter-modal});
     }
   }
 }
