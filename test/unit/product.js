@@ -600,6 +600,47 @@ describe('Product class', () => {
     });
   });
 
+  describe('get shouldUpdateImage', () => {
+    describe('if no cached image', () => {
+      it('returns true', () => {
+        product.cachedImage = null;
+        assert.ok(product.shouldUpdateImage);
+      });
+    });
+
+    describe('if image and cached image are different', () => {
+      beforeEach((done) => {
+        product.imageSize = 'pico';
+        product.init(testProductCopy).then(() => {
+          done();
+        });
+      });
+
+      it('returns true', () => {
+        product.cachedImage = {
+          src: 'bar.jpg'
+        }
+        assert.ok(product.shouldUpdateImage);
+      });
+    });
+
+    describe('if image and cached image are same', () => {
+      beforeEach((done) => {
+        product.config.product.imageSize = 'pico';
+        product.init(testProductCopy).then(() => {
+          done();
+        });
+      });
+
+      it('returns true', () => {
+        product.cachedImage = {
+          src: 'https://cdn.shopify.com/image-two_pico.jpg'
+        }
+        assert.notOk(product.shouldUpdateImage);
+      });
+    });
+  });
+
   describe('get image', () => {
     describe('default', () => {
       beforeEach((done) => {
