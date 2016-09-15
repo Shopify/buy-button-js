@@ -350,18 +350,6 @@ export default class Product extends Component {
     }
   }
 
-  shouldDelegateClick(evt) {
-    if (this.options.contents.button) {
-      return true;
-    }
-    return [this.classes.option.select, this.classes.product.quantityButton, this.classes.product.quantityInput].reduce((delegate, className) => {
-      if (evt.target.className.indexOf(className) > -1) {
-        delegate = false;
-      }
-      return delegate;
-    }, true);
-  }
-
   onButtonClick(evt) {
     evt.stopPropagation();
 
@@ -421,12 +409,7 @@ export default class Product extends Component {
     this.updateVariant(name, value);
   }
 
-  onQuantityClick(evt, target) {
-    evt.stopPropagation();
-  }
-
   onQuantityBlur(evt, target) {
-    evt.stopPropagation();
     this.updateQuantity(() => target.value);
   }
 
