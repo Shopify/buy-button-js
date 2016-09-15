@@ -132,6 +132,10 @@
   .btn:not(.beside-quantity) {
     margin: ($gutter + 5) auto 0;
   }
+
+  .product__variant-img {
+    width: 100%;
+  }
 }
 
 @media (min-width: 801px) {
