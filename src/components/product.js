@@ -344,6 +344,10 @@ export default class Product extends Component {
       if (config.options.product.width) {
         this.iframe.setWidth(config.options.product.width);
       }
+
+      if (layout === 'horizontal' && this.iframe.width && this.iframe.width !== 'none') {
+        this.iframe.setWidth('none');
+      }
     }
 
     if (this.iframe) {
