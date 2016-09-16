@@ -310,14 +310,14 @@ export default class Product extends Component {
   wrapTemplate(html) {
     let ariaLabel;
     switch (this.options.buttonDestination) {
-      case 'modal':
-        ariaLabel = `View details`;
-        break;
-      case 'cart':
-        ariaLabel = 'Add to cart';
-        break;
-      default:
-        ariaLabel = 'Buy Now';
+    case 'modal':
+      ariaLabel = 'View details';
+      break;
+    case 'cart':
+      ariaLabel = 'Add to cart';
+      break;
+    default:
+      ariaLabel = 'Buy Now';
     }
 
     if (this.options.contents.button) {
