@@ -308,10 +308,24 @@ export default class Product extends Component {
   }
 
   wrapTemplate(html) {
+    let ariaLabel;
+    switch (this.options.buttonDestination) {
+      case 'modal':
+        ariaLabel = `View details`;
+        break;
+      case 'cart':
+        ariaLabel = 'Add to cart';
+        break;
+      default:
+        ariaLabel = 'Buy Now';
+    }
+
     if (this.options.contents.button) {
       return `<div class="${this.wrapperClass} ${this.classes.product.product}">${html}</div>`;
     } else {
-      return `<div class="${this.wrapperClass} ${this.classes.product.product}"><div class="${this.classes.product.blockButton}">${html}</div></div>`;
+      return `<div class="${this.wrapperClass} ${this.classes.product.product}">
+        <div tabindex="0" role="button" aria-label="${ariaLabel}" class="${this.classes.product.blockButton}">${html}</div>
+      </div>`;
     }
   }
 
