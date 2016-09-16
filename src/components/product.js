@@ -323,9 +323,7 @@ export default class Product extends Component {
     if (this.options.contents.button) {
       return `<div class="${this.wrapperClass} ${this.classes.product.product}">${html}</div>`;
     } else {
-      return `<div class="${this.wrapperClass} ${this.classes.product.product}">
-        <div tabindex="0" role="button" aria-label="${ariaLabel}" class="${this.classes.product.blockButton}">${html}</div>
-      </div>`;
+      return `<div class="${this.wrapperClass} ${this.classes.product.product}"><div tabindex="0" role="button" aria-label="${ariaLabel}" class="${this.classes.product.blockButton}">${html}</div></div>`;
     }
   }
 

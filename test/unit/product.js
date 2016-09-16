@@ -519,7 +519,7 @@ describe('Product class', () => {
       it('wraps html in a button', () => {
         product.config.product.contents.button = false;
         const string = product.wrapTemplate('test');
-        assert.equal(string, '<div class="has-image layout-vertical product"><div class="btn--parent">test</div></div>');
+        assert.equal(string, '<div class="has-image layout-vertical product"><div tabindex="0" role="button" aria-label="Add to cart" class="btn--parent">test</div></div>');
       });
     });
   });
