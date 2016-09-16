@@ -132,16 +132,24 @@ export default class Product extends Component {
   get DOMEvents() {
     return merge({}, this.options.DOMEvents, {
       click: this.closeCartOnBgClick.bind(this),
+      [`click .${this.classes.option.select.split(' ').join('.')}`]: this.stopPropagation.bind(this),
+      [`focus .${this.classes.option.select.split(' ').join('.')}`]: this.stopPropagation.bind(this),
+      [`click .${this.classes.option.wrapper.split(' ').join('.')}`]: this.stopPropagation.bind(this),
+      [`click .${this.classes.product.quantityInput.split(' ').join('.')}`]: this.stopPropagation.bind(this),
+      [`click .${this.classes.product.quantityButton.split(' ').join('.')}`]: this.stopPropagation.bind(this),
       [`change .${this.classes.option.select.split(' ').join('.')}`]: this.onOptionSelect.bind(this),
       [`click .${this.classes.product.button.split(' ').join('.')}`]: this.onButtonClick.bind(this),
-      [`click .${this.classes.product.blockButton} .${this.classes.product.imgWrapper}`]: this.onButtonClick.bind(this),
-      [`click .${this.classes.product.blockButton} .${this.classes.product.title}`]: this.onButtonClick.bind(this),
-      [`click .${this.classes.product.blockButton} .${this.classes.product.prices}`]: this.onButtonClick.bind(this),
-      [`click .${this.classes.product.blockButton} .${this.classes.product.description}`]: this.onButtonClick.bind(this),
+      [`click .${this.classes.product.blockButton.split(' ').join('.')}`]: this.onButtonClick.bind(this),
       [`click .${this.classes.product.quantityButton.split(' ').join('.')}.quantity-increment`]: this.onQuantityIncrement.bind(this, 1),
       [`click .${this.classes.product.quantityButton.split(' ').join('.')}.quantity-decrement`]: this.onQuantityIncrement.bind(this, -1),
       [`blur .${this.classes.product.quantityInput.split(' ').join('.')}`]: this.onQuantityBlur.bind(this),
     });
+  }
+
+  stopPropagation(evt) {
+    if (!this.options.contents.button) {
+      evt.stopImmediatePropagation();
+    }
   }
 
   get buttonClass() {
@@ -303,7 +311,7 @@ export default class Product extends Component {
     if (this.options.contents.button) {
       return `<div class="${this.wrapperClass} ${this.classes.product.product}">${html}</div>`;
     } else {
-      return `<div class="${this.wrapperClass} ${this.classes.product.product}"><button class="${this.classes.product.blockButton}">${html}</button></div>`;
+      return `<div class="${this.wrapperClass} ${this.classes.product.product}"><div class="${this.classes.product.blockButton}">${html}</div></div>`;
     }
   }
 
@@ -370,7 +378,6 @@ export default class Product extends Component {
 
   onButtonClick(evt) {
     evt.stopPropagation();
-
     if (this.options.buttonDestination === 'cart') {
       this.props.closeModal();
       this.props.tracker.trackMethod(this.cart.addVariantToCart.bind(this), 'CART_ADD', this.selectedVariantTrackingInfo)(this.model.selectedVariant, this.model.selectedQuantity);
