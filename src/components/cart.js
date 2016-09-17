@@ -45,6 +45,7 @@ export default class Cart extends Component {
       text: this.options.text,
       classes: this.classes,
       lineItemsHtml: this.lineItemsHtml,
+      isEmpty: this.isEmpty,
     });
   }
 
