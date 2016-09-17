@@ -13,7 +13,7 @@ const iframeAttrs = {
   verticalscrolling: 'no',
   allowTransparency: 'true',
   frameBorder: '0',
-  scrolling: 'false',
+  scrolling: 'no',
 };
 
 const webfontScript = 'https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js';
