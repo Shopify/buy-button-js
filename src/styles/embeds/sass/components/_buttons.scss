@@ -78,6 +78,7 @@
 
 .btn[disabled] {
   background-color: #999;
+  pointer-events: none;
 }
 
 .btn--close {
