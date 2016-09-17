@@ -398,7 +398,7 @@ export default class Product extends Component {
     } else if (this.options.buttonDestination === 'onlineStore') {
       this.openOnlineStore();
     } else {
-      new Checkout(this.config).open(this.model.selectedVariant.checkoutUrl(1));
+      new Checkout(this.config).open(this.model.selectedVariant.checkoutUrl(this.selectedQuantity));
     }
   }
 
