@@ -1,7 +1,8 @@
 /node_modules
 npm-debug.log
-/build
+/dist
 /tmp
+/lib
 /test/build
 index.html
 legacy.html

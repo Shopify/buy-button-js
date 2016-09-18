@@ -10,8 +10,8 @@ const polyfills = fs.readFileSync(resolve.sync('shopify-buy/dist/polyfills.js'))
 
 const srcPath = 'src/shopify-buy-ui.js';
 const buildPaths = {
-  globals: 'build/shopify-buy-ui.js',
-  min: 'build/shopify-buy-ui.min.js',
+  globals: 'dist/shopify-buy-ui.js',
+  min: 'dist/shopify-buy-ui.min.js',
   umd: 'lib/shopify-buy-ui.umd.js',
   es: 'lib/shopify-buy-ui.es.js',
 }

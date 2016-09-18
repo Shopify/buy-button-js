@@ -10,7 +10,7 @@
     "build": "npm run clean && npm run styles && npm run src:build",
     "serve": "http-server",
     "lint": "eslint src/*",
-    "clean": "rm -rf build lib && mkdir build lib",
+    "clean": "rm -rf dist lib && mkdir dist lib",
     "styles": "npm run styles-embeds:build && npm run styles-host:build",
     "postinstall": "npm run build",
     "---------- ci": null,
