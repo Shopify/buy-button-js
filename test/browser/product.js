@@ -9,68 +9,69 @@ function setupBrowser() {
   browser.waitForText('.product__title', 'Ankle socks');
 }
 
-describe('product embed', function () {
-  before(function() {
+describe('product', function () {
+  beforeEach(function() {
     setupBrowser();
   });
 
-  it('renders a product', function () {
-    assert.equal(browser.getText('.product__title'), 'Ankle socks');
-    assert.equal(browser.getText('.product__compare-price'), '$14.99');
-    assert.equal(browser.getValue('select[name=Print]'), 'sloth');
+  describe('single product embed', function () {
+    it('renders a product', function () {
+      assert.equal(browser.getText('.product__title'), 'Ankle socks');
+      assert.equal(browser.getText('.product__compare-price'), '$14.99');
+      assert.equal(browser.getValue('select[name=Print]'), 'sloth');
+    });
+
+    it('updates variant by changing option values', function () {
+      browser.selectByValue('select[name=Print]', 'shark');
+      assert.equal(browser.getText('.btn'), 'Unavailable');
+      browser.selectByValue('select[name=Size]', 'medium');
+      assert.equal(browser.getText('.product__compare-price'), '$10.00');
+    });
   });
 
-  it('updates variant by changing option values', function () {
-    browser.selectByValue('select[name=Print]', 'shark');
-    assert.equal(browser.getText('.btn'), 'Unavailable');
-    browser.selectByValue('select[name=Size]', 'medium');
-    assert.equal(browser.getText('.product__compare-price'), '$10.00');
-  });
-});
+  describe('product modal', function () {
+    beforeEach(function () {
+      browser.click('.btn');
+      browser.frame(null);
+      var modalFrame = browser.element('iframe[name=frame-modal]');
+      modalFrame.waitForExist(1000);
+      browser.frame('frame-modal');
+      browser.waitForText('.product-description', 'Sockness Monster');
+    });
 
-describe('product modal', function () {
-  before(function () {
-    setupBrowser();
-    browser.click('.btn');
-    browser.frame(null);
-    var modalFrame = browser.element('iframe[name=frame-modal]');
-    modalFrame.waitForExist(1000);
-    browser.frame('frame-modal');
-    browser.waitForText('.product-description', 'Sockness Monster');
-  });
+    it('opens', function () {
+      assert.equal(browser.getText('.product__title'), 'Ankle socks');
+      assert.equal(browser.getText('.product__compare-price'), '$14.99');
+      assert.equal(browser.getValue('select[name=Print]'), 'sloth');
+    });
 
-  it('opens', function () {
-    assert.equal(browser.getText('.product__title'), 'Ankle socks');
-    assert.equal(browser.getText('.product__compare-price'), '$14.99');
-    assert.equal(browser.getValue('select[name=Print]'), 'sloth');
-  });
+    it('updates variant by changing option values', function () {
+      browser.selectByValue('select[name=Print]', 'shark');
+      assert.equal(browser.getText('.btn'), 'Unavailable');
+      browser.selectByValue('select[name=Size]', 'medium');
+      assert.equal(browser.getText('.product__compare-price'), '$10.00');
+    });
 
-  it('updates variant by changing option values', function () {
-    browser.selectByValue('select[name=Print]', 'shark');
-    assert.equal(browser.getText('.btn'), 'Unavailable');
-    browser.selectByValue('select[name=Size]', 'medium');
-    assert.equal(browser.getText('.product__compare-price'), '$10.00');
-  });
+    it('updates quantity by changing quantity value', function () {
+      browser.setValue('input.quantity', 3);
+      assert.equal(browser.getValue('input.quantity'), 3);
+    });
 
-  it('updates quantity by changing quantity value', function () {
-    browser.setValue('input.quantity', 3);
-    assert.equal(browser.getValue('input.quantity'), 3);
-  });
-
-  it('adds item to cart on click', function () {
-    browser.selectByValue('select[name=Print]', 'sloth');
-    browser.selectByValue('select[name=Size]', 'large');
-    browser.setValue('input.quantity', 2);
-    browser.click('.btn');
-    browser.frame(null);
-    browser.frame('frame-cart');
-    assert.equal(browser.getText('.cart-item__title'), 'Ankle socks');
-    assert.equal(browser.getText('.cart-item__variant-title'), 'sloth / large');
+    it('adds item to cart on click', function () {
+      browser.selectByValue('select[name=Print]', 'sloth');
+      browser.selectByValue('select[name=Size]', 'large');
+      browser.setValue('input.quantity', 2);
+      browser.click('.btn');
+      browser.frame(null);
+      browser.frame('frame-cart');
+      assert.equal(browser.getText('.cart-item__title'), 'Ankle socks');
+      assert.equal(browser.getText('.cart-item__variant-title'), 'sloth / large');
+    });
   });
 });
 
 describe('cart', function () {
-  before(function () {
+  beforeEach(function () {
     setupBrowser();
     browser.waitForText('.product__title', 'Ankle socks');
     browser.frame(null);
