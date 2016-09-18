@@ -2,7 +2,7 @@
 npm-debug.log
 /build
 /tmp
-/test/build/test.js
+/test/build
 index.html
 legacy.html
 /src/styles/embeds/all.js

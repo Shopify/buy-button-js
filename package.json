@@ -11,7 +11,7 @@
     "clean": "rm -rf build && mkdir build",
     "styles": "npm run styles-embeds:build && npm run styles-host:build",
     "postinstall": "npm run build",
-    "build": "npm run clean && npm run styles && npm run dist:babel && npm run dist:browserify && npm run dist:polyfill && npm run dist:uglify",
+    "build": "npm run clean && npm run styles && npm run dist:rollup && npm run dist:polyfill && npm run dist:uglify",
     "---------- ci": null,
     "test": "./test-ci",
     "lint-ci": "eslint src --max-warnings=0 -f junit > \"${lint_output_file}\"",
@@ -19,6 +19,7 @@
     "---------- dist": null,
     "dist:babel": "NODE_PATH=./node_modules babel ./src --out-dir ./build",
     "dist:browserify": "browserify --ignore buffer build/shopify-buy-ui.js --outfile build/shopify-buy-ui.globals.js",
+    "dist:rollup": "rollup -c rollup.conf.js -o build/shopify-buy-ui.globals.js",
     "dist:polyfill": "NODE_PATH=./node_modules node ./script/polyfill.js shopify-buy-ui ",
     "dist:uglify": "uglifyjs build/shopify-buy-ui.globals.polyfilled.js --output build/shopify-buy-ui.globals.polyfilled.min.js",
     "---------- dev": null,
@@ -57,6 +58,7 @@
     "babel-plugin-transform-es2015-spread": "6.8.0",
     "babel-plugin-transform-es2015-template-literals": "6.8.0",
     "babel-plugin-transform-es2015-typeof-symbol": "6.8.0",
+    "babel-plugin-external-helpers": "^6.8.0",
     "babelify": "7.3.0",
     "chai": "3.5.0",
     "eslint": "2.13.1",
@@ -76,17 +78,19 @@
     "webdriverio": "4.2.8"
   },
   "dependencies": {
-    "uglify-js": "2.7.0",
-    "browserify": "13.1.0",
+    "babel-plugin-external-helpers": "6.8.0",
     "babel-plugin-transform-object-assign": "^6.8.0",
     "babel-plugin-transform-runtime": "6.12.0",
     "babel-runtime": "6.11.6",
+    "browserify": "13.1.0",
     "hogan.js": "3.0.2",
     "morphdom": "1.4.6",
     "node-sass": "3.8.0",
     "rollup": "0.34.1",
+    "rollup-plugin-babel": "2.6.1",
     "rollup-plugin-commonjs": "3.3.1",
     "rollup-plugin-node-resolve": "1.7.1",
-    "shopify-buy": "0.2.3"
+    "shopify-buy": "0.2.3",
+    "uglify-js": "2.7.0"
   }
 }
