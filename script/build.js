@@ -1,3 +1,5 @@
+process.env.BABEL_ENV = 'production';
+
 const fs = require('fs');
 const resolve = require('resolve');
 const rollup = require('rollup').rollup;
@@ -55,5 +57,5 @@ rollup({
   const bundle = UglifyJS.minify(buildPaths.globals);
   fs.writeFileSync(buildPaths.min, bundle.code);
 }).catch(function (err) {
-  process.stderr(err);
+  console.log(err);
 });
