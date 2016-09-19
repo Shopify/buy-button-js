@@ -376,6 +376,9 @@ export default class Product extends Component {
       this.iframe.addClass(`layout-${layout}`);
     }
     super.updateConfig(config);
+    if (layout !== this.options.layout) {
+      this._resizeX();
+    }
     if (this.cart) {
       this.cart.updateConfig(config);
     }
