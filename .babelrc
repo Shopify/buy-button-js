@@ -16,7 +16,14 @@
     "transform-es2015-destructuring",
     "transform-es2015-block-scoping",
     "transform-es2015-typeof-symbol",
-    "transform-object-assign",
-    "external-helpers",
-  ]
+    "transform-object-assign"
+  ],
+  "env": {
+    "production": {
+      "plugins": ["external-helpers"]
+    },
+    "development": {
+      "plugins": ["transform-es2015-modules-commonjs"]
+    }
+  }
 }

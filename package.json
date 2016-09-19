@@ -7,7 +7,7 @@
   "repository": "git@github.com:Shopify/shopify-buy-ui.git",
   "scripts": {
     "start": "rm -rf tmp && mkdir tmp && npm run src:watch & npm run styles:watch & npm run serve",
-    "build": "npm run clean && npm run styles && npm run src:build",
+    "build": "BABEL_ENV=production npm run clean && npm run styles && npm run src:build",
     "serve": "http-server",
     "lint": "eslint src/*",
     "clean": "rm -rf dist lib && mkdir dist lib",
