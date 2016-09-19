@@ -361,12 +361,16 @@ export default class Product extends Component {
         layout = config.options.product.layout;
       }
 
-      if (config.options.product.width) {
-        this.iframe.setWidth(config.options.product.width);
+      if (layout === 'vertical' && this.iframe.width === 'none') {
+        this.iframe.setWidth(this.options.width);
       }
 
       if (layout === 'horizontal' && this.iframe.width && this.iframe.width !== 'none') {
         this.iframe.setWidth('none');
+      }
+
+      if (config.options.product.width) {
+        this.iframe.setWidth(config.options.product.width);
       }
     }
 
@@ -376,9 +380,6 @@ export default class Product extends Component {
       this.iframe.addClass(`layout-${layout}`);
     }
     super.updateConfig(config);
-    if (layout !== this.options.layout) {
-      this._resizeX();
-    }
     if (this.cart) {
       this.cart.updateConfig(config);
     }
