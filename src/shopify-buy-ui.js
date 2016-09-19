@@ -1,4 +1,4 @@
-import ShopifyBuy from 'shopify-buy';
+import ShopifyBuy from 'shopify-buy/dist/shopify-buy.umd.polyfilled.js';
 import UI from './ui';
 import productTemplates from './templates/product';
 

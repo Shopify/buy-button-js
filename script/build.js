@@ -1,14 +1,11 @@
 process.env.BABEL_ENV = 'production';
 
 const fs = require('fs');
-const resolve = require('resolve');
 const rollup = require('rollup').rollup;
 const nodeResolve = require('rollup-plugin-node-resolve');
 const commonjs = require('rollup-plugin-commonjs');
 const babel = require('rollup-plugin-babel');
 const UglifyJS = require('uglify-js');
-
-const polyfills = fs.readFileSync(resolve.sync('shopify-buy/dist/polyfills.js'));
 
 const srcPath = 'src/shopify-buy-ui.js';
 const buildPaths = {
@@ -21,20 +18,18 @@ const buildPaths = {
 rollup({
   entry: srcPath,
   plugins: [
+    babel({
+      exclude: ['node_modules/hogan.js/**'],
+    }),
     nodeResolve({
       extensions: ['.js'],
       preferBuiltins: true
     }),
-    babel({
-      exclude: ['node_modules/hogan.js/**'],
-    }),
-    commonjs({
-    })
+    commonjs()
   ],
 }).then(function (bundle) {
   return Promise.all([
     bundle.write({
-      banner: polyfills,
       dest: buildPaths.globals,
       format: 'iife',
       moduleName: 'ShopifyBuy',
