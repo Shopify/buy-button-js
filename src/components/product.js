@@ -363,6 +363,7 @@ export default class Product extends Component {
 
       if (layout === 'vertical' && this.iframe.width === 'none') {
         this.iframe.setWidth(this.options.width);
+        this.iframe.el.style.width = '100%';
       }
 
       if (layout === 'horizontal' && this.iframe.width && this.iframe.width !== 'none') {
