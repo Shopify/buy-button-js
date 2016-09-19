@@ -15,6 +15,8 @@ const buildPaths = {
   es: 'lib/shopify-buy-ui.es.js',
 }
 
+console.log(process.env.BABEL_ENV);
+
 rollup({
   entry: srcPath,
   plugins: [
