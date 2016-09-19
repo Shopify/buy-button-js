@@ -21,17 +21,14 @@ const buildPaths = {
 rollup({
   entry: srcPath,
   plugins: [
-    babel({
-      exclude: ['node_modules/hogan.js/**'],
-    }),
     nodeResolve({
-      jsnext: true,
-      browser: true,
       extensions: ['.js'],
       preferBuiltins: true
     }),
+    babel({
+      exclude: ['node_modules/hogan.js/**'],
+    }),
     commonjs({
-      exclude: 'node_modules/shopify-buy/**',
     })
   ],
 }).then(function (bundle) {
