@@ -208,5 +208,14 @@ describe('Cart class', () => {
       assert.calledWith(superSpy, newConfig);
     });
   });
+
+  describe('get formattedTotal', () => {
+    it('uses money helper to return formatted value', () => {
+      cart.model = {
+        subtotal: '20.00',
+      }
+      assert.equal(cart.formattedTotal, '$20.00');
+    });
+  });
 });
 
