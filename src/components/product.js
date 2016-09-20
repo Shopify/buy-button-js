@@ -93,11 +93,12 @@ export default class Product extends Component {
 
     if (this.options.width && this.options.layout === 'vertical') {
       return this.model.selectedVariant.imageVariants.filter((image) => {
-        return parseInt(image.dimension, 10) >= parseInt(this.options.width, 10);
+        let containerWidth = parseInt(this.options.width, 10);
+        return parseInt(image.dimension, 10) >= containerWidth * 1.5;
       })[0];
     }
 
-    return this.model.selectedVariant.imageVariants.filter((imageVariant) => imageVariant.name === 'large')[0];
+    return this.model.selectedVariant.imageVariants.filter((imageVariant) => imageVariant.name === 'grande')[0];
   }
 
   get viewData() {
