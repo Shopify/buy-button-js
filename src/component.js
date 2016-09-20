@@ -17,6 +17,7 @@ export default class Component {
     this.handle = config.handle;
     this.node = config.node;
     this.debug = config.debug;
+    this.moneyFormat = config.moneyFormat || '${{amount}}';
     this.config = merge({}, componentDefaults, config.options || {});
     this.props = props;
     this.model = {};
@@ -136,7 +137,7 @@ export default class Component {
         browserFeatures: this.props.browserFeatures,
         googleFonts: this.googleFonts,
         name: this.name,
-        width: this.options.width,
+        width: this.options.layout === 'vertical' ? this.options.width : null,
       });
       this.node.className += ` shopify-buy-frame shopify-buy-frame--${this.typeKey}`;
       this.iframe.addClass(this.iframeClass);

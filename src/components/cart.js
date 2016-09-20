@@ -3,6 +3,7 @@ import Component from '../component';
 import CartToggle from './toggle';
 import Template from '../template';
 import Checkout from './checkout';
+import formatMoney from '../utils/money';
 import {addClassToElement} from '../utils/element-class';
 
 export default class Cart extends Component {
@@ -46,7 +47,12 @@ export default class Cart extends Component {
       classes: this.classes,
       lineItemsHtml: this.lineItemsHtml,
       isEmpty: this.isEmpty,
+      formattedTotal: this.formattedTotal,
     });
+  }
+
+  get formattedTotal() {
+    return formatMoney(this.model.subtotal, this.moneyFormat);
   }
 
   get isEmpty() {
