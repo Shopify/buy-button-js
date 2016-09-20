@@ -17,6 +17,7 @@ export default class Component {
     this.handle = config.handle;
     this.node = config.node;
     this.debug = config.debug;
+    this.moneyFormat = config.moneyFormat || '${{amount}}';
     this.config = merge({}, componentDefaults, config.options || {});
     this.props = props;
     this.model = {};
