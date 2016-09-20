@@ -39,6 +39,8 @@ $max-z-index: 2147483647;
 
   &.layout-horizontal {
     display: block;
+    margin-left: auto;
+    margin-right: auto;
     iframe {
       max-width: 100%;
 

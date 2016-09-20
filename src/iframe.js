@@ -68,9 +68,8 @@ export default class iframe {
     this.browserFeatures = config.browserFeatures;
     this.googleFonts = config.googleFonts || [];
     this.name = config.name;
-    this.width = config.width;
-    if (this.width) {
-      this.setWidth(this.width);
+    if (config.width) {
+      this.setWidth(config.width);
     }
     Object.keys(iframeStyles).forEach((key) => {
       this.el.style[key] = iframeStyles[key];
@@ -128,6 +127,10 @@ export default class iframe {
 
   setWidth(width) {
     this.parent.style['max-width'] = width;
+  }
+
+  get width() {
+    return this.parent.style['max-width'];
   }
 
   addClass(className) {

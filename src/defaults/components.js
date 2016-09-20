@@ -18,9 +18,9 @@ const defaults = {
       'variantTitle',
       'price',
       'options',
-      'description',
       'quantity',
       'button',
+      'description',
     ],
     contents: {
       img: true,
