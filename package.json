@@ -12,7 +12,7 @@
     "lint": "eslint src/*",
     "clean": "rm -rf dist lib && mkdir dist lib",
     "styles": "npm run styles-embeds:build && npm run styles-host:build",
-    "postinstall": "npm run build",
+    "prepublish": "npm run build",
     "---------- ci": null,
     "test": "./test-ci",
     "lint-ci": "eslint src --max-warnings=0 -f junit > \"${lint_output_file}\"",
