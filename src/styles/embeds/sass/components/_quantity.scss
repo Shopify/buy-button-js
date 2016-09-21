@@ -1,5 +1,4 @@
 .quantity-container {
-  border-radius: $border-radius;
   overflow: hidden;
 }
 
@@ -38,7 +37,7 @@
   text-align: center;
   -moz-appearance: textfield;
   -webkit-appearance: none;
-  background: transparent;
+  background: $color-white;
   display: inline-block;
   padding: 0;
   border-radius: 0;
