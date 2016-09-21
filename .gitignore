@@ -1,8 +1,8 @@
 /node_modules
 npm-debug.log
-/build
+/dist
 /tmp
-/test/build/test.js
+/lib
 index.html
 legacy.html
 /src/styles/embeds/all.js
@@ -14,6 +14,8 @@ lint-output.xml
 /errorShots
 
 docs/src
+/selenium-errorshots
 _site
 .sass-cache
 .jekyll-metadata
+/test/build

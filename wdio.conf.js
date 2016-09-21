@@ -7,17 +7,17 @@ exports.config = {
   maxInstances: 10,
   capabilities: [{
     maxInstances: 5,
-    browserName: 'phantomjs'
+    browserName: 'chrome'
   }],
   sync: true,
   logLevel: 'error',
   reporterOptions: {
     junit: {
-      outputDir: '\"${selenium_output_path}\"'
+      outputDir: './selenium-xunit/'
     }
   },
   coloredLogs: true,
-  screenshotPath: './errorShots/',
+  screenshotPath: './selenium-errorshots/',
   baseUrl: 'http://localhost',
   waitforTimeout: 30000,
   connectionRetryTimeout: 90000,
