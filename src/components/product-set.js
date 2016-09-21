@@ -150,6 +150,11 @@ export default class ProductSet extends Component {
     }, pollInterval);
   }
 
+  updateConfig(config) {
+    super.updateConfig(config);
+    this.renderProducts();
+  }
+
   renderProducts() {
     if (!this.model.products.length) {
       return Promise.resolve();
