@@ -250,7 +250,7 @@ describe('Product class', () => {
     describe('if variant exists', () => {
       it('returns selected image', (done) => {
         product.init(testProductCopy).then(() => {
-          assert.equal(product.currentImage.src, 'https://cdn.shopify.com/image-two_medium.jpg');
+          assert.equal(product.currentImage.src, 'https://cdn.shopify.com/image-two_large.jpg');
           done();
         }).catch((e) => {
           done(e);
@@ -263,7 +263,7 @@ describe('Product class', () => {
         product.init(testProductCopy).then(() => {
           product.model.selectedVariant = null;
           product.model.selectedVariantImage = null;
-          assert.equal(product.currentImage.src, 'https://cdn.shopify.com/image-two_medium.jpg');
+          assert.equal(product.currentImage.src, 'https://cdn.shopify.com/image-two_large.jpg');
           done();
         }).catch((e) => {
           done(e);
@@ -323,7 +323,7 @@ describe('Product class', () => {
         const viewData = product.viewData;
         assert.equal(viewData.buttonText, 'SHOP NOW');
         assert.ok(viewData.optionsHtml);
-        assert.equal(viewData.currentImage.src, 'https://cdn.shopify.com/image-two_medium.jpg');
+        assert.equal(viewData.currentImage.src, 'https://cdn.shopify.com/image-two_large.jpg');
         assert.ok(viewData.hasVariants);
         done();
       }).catch((e) => {
@@ -671,7 +671,7 @@ describe('Product class', () => {
       });
 
       it('returns medium image', () => {
-        assert.equal(product.image.name, 'medium');
+        assert.equal(product.image.name, 'large');
       });
     });
 
@@ -696,7 +696,7 @@ describe('Product class', () => {
         });
       });
       it('returns smallest image larger than explicit width', () => {
-        assert.equal(product.image.name, 'grande');
+        assert.equal(product.image.name, '1024x1025');
       });
     });
 
@@ -708,7 +708,7 @@ describe('Product class', () => {
         });
       });
       it('returns large image', () => {
-        assert.equal(product.image.name, 'large');
+        assert.equal(product.image.name, 'grande');
       });
     });
   });
