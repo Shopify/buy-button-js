@@ -1,4 +1,5 @@
 process.env.BABEL_ENV = 'production';
+require('./util/work-from-root')();
 
 const fs = require('fs');
 const rollup = require('rollup').rollup;
