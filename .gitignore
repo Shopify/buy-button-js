@@ -12,3 +12,8 @@ WDIO.*.xml
 test-output.xml
 lint-output.xml
 /errorShots
+
+docs/src
+_site
+.sass-cache
+.jekyll-metadata
