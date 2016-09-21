@@ -1,6 +1,3 @@
-process.env.BABEL_ENV = 'production';
-require('./util/work-from-root')();
-
 const fs = require('fs');
 const rollup = require('rollup').rollup;
 const nodeResolve = require('rollup-plugin-node-resolve');
@@ -15,6 +12,9 @@ const buildPaths = {
   umd: 'lib/shopify-buy-ui.umd.js',
   es: 'lib/shopify-buy-ui.es.js',
 }
+
+require('./util/work-from-root')();
+process.env.BABEL_ENV = 'production';
 
 rollup({
   entry: srcPath,
