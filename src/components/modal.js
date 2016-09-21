@@ -27,25 +27,30 @@ export default class Modal extends Component {
 
   get productConfig() {
     return {
-      node: this.wrapper,
+      node: this.productWrapper,
       options: merge({}, this.config),
     };
   }
 
   delegateEvents() {
     super.delegateEvents();
-    this.document.body.addEventListener('click', this.closeOnBgClick.bind(this));
+    this.wrapper.addEventListener('click', this.closeOnBgClick.bind(this));
   }
 
   closeOnBgClick(evt) {
-    if (!this.wrapper.contains(evt.target)) {
+    if (!this.productWrapper.contains(evt.target)) {
       this.close();
     }
+  }
+
+  wrapTemplate(html) {
+    return `<div class="${this.classes.modal.overlay}"><div class="${this.classes.modal.modal}">${html}</div></div>`;
   }
 
   init(data) {
     this.isVisible = true;
     return super.init(data).then(() => {
+      this.productWrapper = this.wrapper.getElementsByClassName(this.classes.modal.modal)[0];
       this.product = new Product(this.productConfig, this.props);
       return this.product.init(this.model).then(() => this.resize());
     });
