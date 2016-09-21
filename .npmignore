@@ -12,3 +12,4 @@ lint-output.xml
 /errorShots
 /selenium-errorshots
 /test/build
+.babelrc
