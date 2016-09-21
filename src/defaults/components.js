@@ -104,6 +104,7 @@ const defaults = {
     iframe: true,
     manifest: ['modal', 'product', 'option'],
     classes: {
+      overlay: 'modal-overlay',
       modal: 'modal',
       contents: 'modal-contents',
       close: 'btn--close',

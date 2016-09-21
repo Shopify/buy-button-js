@@ -13,7 +13,7 @@ const DATA_ATTRIBUTE = 'data-shopify-buy-ui';
 const ESC_KEY = 27;
 
 export default class UI {
-  constructor(client, integrations = {}) {
+  constructor(client, integrations = {}, styleOverrides = '') {
     this.client = client;
     this.iframeComponents = [];
     this.components = {
@@ -33,6 +33,7 @@ export default class UI {
     };
     this.errorReporter = integrations.errorReporter;
     this.tracker = new Tracker(integrations.tracker);
+    this.styleOverrides = styleOverrides;
     this.tracker.trackPageview();
     this._appendStyleTag();
     this._bindResize();
@@ -125,9 +126,9 @@ export default class UI {
 
   get styleText() {
     if (browserFeatures.transition && browserFeatures.transform && browserFeatures.animation) {
-      return hostStyles;
+      return hostStyles + this.styleOverrides;
     }
-    return hostStyles + conditionalStyles;
+    return hostStyles + conditionalStyles + this.styleOverrides;
   }
 
   _queryEntryNode() {

@@ -16,7 +16,6 @@ $modal-footer-height: 90px;
 .modal {
   background: $color-white;
   width: 100%;
-  max-width: 1000px;
   position: absolute;
   left: 0;
   right: 0;
@@ -110,17 +109,25 @@ $modal-footer-height: 90px;
     height: 100%;
   }
 
+  .modal-overlay {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    overflow-y: scroll;
+  }
+
   .modal {
     margin: 100px auto 40px auto;
     opacity: 0;
     border-radius: 2px;
     border: 1px solid rgba(0, 0, 0, 0.72);
     transform: translateY(-200px);
+    max-width: 1000px;
     animation-name: slideOut;
     animation-duration: 200ms;
     animation-fill-mode: forwards;
 
-    &.is-active {
+    .is-active & {
       animation-name: slideIn;
       animation-duration: 200ms;
       animation-fill-mode: forwards;
