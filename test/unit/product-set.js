@@ -165,9 +165,11 @@ describe('ProductSet class', () => {
     }
 
     let superSpy;
+    let renderProductsSpy;
 
     beforeEach(() => {
       superSpy = sinon.stub(Component.prototype, 'updateConfig');
+      renderProductsSpy = sinon.stub(set, 'renderProducts');
       set.cart = {
         updateConfig: sinon.spy()
       }
