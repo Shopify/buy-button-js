@@ -33,6 +33,7 @@ export default class UI {
     };
     this.errorReporter = integrations.errorReporter;
     this.tracker = new Tracker(integrations.tracker);
+    this.styleOverrides = styleOverrides;
     this.tracker.trackPageview();
     this._appendStyleTag();
     this._bindResize();
@@ -125,9 +126,9 @@ export default class UI {
 
   get styleText() {
     if (browserFeatures.transition && browserFeatures.transform && browserFeatures.animation) {
-      return this.hostStyles;
+      return hostStyles + this.styleOverrides;
     }
-    return this.hostStyles + conditionalStyles;
+    return hostStyles + conditionalStyles + this.styleOverrides;
   }
 
   _queryEntryNode() {
