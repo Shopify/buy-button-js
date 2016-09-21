@@ -122,11 +122,6 @@ export default class ProductSet extends Component {
     this.renderProducts();
   }
 
-  updateConfig(config) {
-    super.updateConfig(config);
-    this.cart.updateConfig(config);
-  }
-
   resizeUntilFits() {
     if (!this.iframe || this.resizeCompleted) {
       return;
@@ -152,6 +147,7 @@ export default class ProductSet extends Component {
 
   updateConfig(config) {
     super.updateConfig(config);
+    this.cart.updateConfig(config);
     this.renderProducts();
   }
 
