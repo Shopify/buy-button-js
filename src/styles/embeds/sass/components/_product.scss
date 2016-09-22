@@ -31,6 +31,10 @@
   color: $color-black;
   margin-bottom: $gutter;
   font-weight: 700;
+
+  .layout-horizontal & {
+    margin-top: $gutter * (2/3);
+  }
 }
 
 .product__variant-title {
@@ -46,12 +50,12 @@
 }
 
 .product-description {
-  margin-top: $gutter;
+  margin-top: $gutter * 2;
   line-height: 1.65;
   color: $color-black;
 
   p + p {
-    margin-top: $gutter * .666;
+    margin-top: $gutter * (2/3);
   }
 
   a {
@@ -100,7 +104,6 @@
 
 .quantity-container {
   display: inline-block;
-  margin-bottom: $gutter + 5;
 }
 
 .quantity {
