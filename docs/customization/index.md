@@ -30,7 +30,7 @@ options = {
   productSet: {}, // configure a collection or set of products
   toggle: {}, // configure the tab that toggles the cart open
   modalProduct: {}, // configure the product within the modal
-  option: {}, // configure the option selector within a product
+  option: {}, // configure the variant option selectors within a product
   lineItem: {}, // configure the individual line items within a cart
 }
 ```
@@ -125,7 +125,7 @@ Main product embed. Creates `options` component. Depending on configuration, may
 
 ### Product Attributes
 
-### `buttonDestination`    
+### `buttonDestination`
 
 * **'cart'** Adds product to cart and opens cart
 * **'modal'** Opens a modal window with further details about the product
