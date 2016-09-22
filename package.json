@@ -14,7 +14,7 @@
     "clean": "rm -rf dist lib && mkdir dist lib",
     "styles": "npm run styles-embeds:build && npm run styles-host:build",
     "prepublish": "npm run build",
-    "postinstall": "npm run temp-build",
+    "postinstall": "BABEL_ENV=production npm run temp-build",
     "---------- ci": null,
     "test": "./test-ci",
     "lint-ci": "eslint src --max-warnings=0 -f junit > \"${lint_output_file}\"",
