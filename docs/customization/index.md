@@ -68,7 +68,7 @@ var order = [
 
 **Type**: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)
 
-**Default value**: dependent on component. [View component defaults](https://github.com/Shopify/buybutton-js/blob/master/src/defaults/components.js)
+**Default value**: dependent on component. [View default values for all components](https://github.com/Shopify/buybutton-js/blob/master/src/defaults/components.js)
 
 ### `contents`
 
