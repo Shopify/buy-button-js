@@ -44,7 +44,18 @@ function whitelistedProperties(selectorStyles) {
   }, {});
 }
 
+/**
+ * Renders and fetches data for product embed.
+ * @extends Component.
+ */
+
 export default class Product extends Component {
+
+  /**
+   * create Product.
+   * @param {Object} config - configuration object.
+   * @param {Object} props - data and utilities passed down from UI instance.
+   */
   constructor(config, props) {
     super(config, props);
     this.cartNode = config.cartNode;
@@ -58,22 +69,42 @@ export default class Product extends Component {
     this.selectedQuantity = 1;
   }
 
-  get shouldCreateCart() {
-    return this.options.buttonDestination === 'cart' || (this.options.buttonDestination === 'modal' && this.config.modalProduct.buttonDestination === 'cart');
-  }
-
-  get iframeClass() {
-    return `layout-${this.options.layout}`;
-  }
-
+  /**
+   * get key for configuration object.
+   * @return {String}
+   */
   get typeKey() {
     return 'product';
   }
 
+  /**
+   * get class name for iframe element.
+   * @return {String} iframe class.
+   */
+  get iframeClass() {
+    return `layout-${this.options.layout}`;
+  }
+
+  /**
+   * determines if product requries a cart component based on buttonDestination.
+   * @return {Boolean}
+   */
+  get shouldCreateCart() {
+    return this.options.buttonDestination === 'cart' || (this.options.buttonDestination === 'modal' && this.config.modalProduct.buttonDestination === 'cart');
+  }
+
+  /**
+   * determines when image src should be updated
+   * @return {Boolean}
+   */
   get shouldUpdateImage() {
     return !this.cachedImage || (this.image && this.image.src && this.image.src !== this.cachedImage.src);
   }
 
+  /**
+   * get image for product and cache it. Return caches image if shouldUpdateImage is false.
+   * @return {Object} image objcet.
+   */
   get currentImage() {
     if (this.shouldUpdateImage) {
       this.cachedImage = this.image;
@@ -82,6 +113,10 @@ export default class Product extends Component {
     return this.cachedImage;
   }
 
+  /**
+   * get image for selected variant and size based on options or layout.
+   * @return {Object} image object.
+   */
   get image() {
     if (!this.model.selectedVariant || !this.model.selectedVariant.imageVariants) {
       return null;
@@ -101,6 +136,18 @@ export default class Product extends Component {
     return this.model.selectedVariant.imageVariants.filter((imageVariant) => imageVariant.name === 'grande')[0];
   }
 
+  get shouldResizeX() {
+    return this.options.layout === 'horizontal';
+  }
+
+  get shouldResizeY() {
+    return true;
+  }
+
+  /**
+   * get data to be passed to view.
+   * @return {Object} viewData object.
+   */
   get viewData() {
     return merge(this.model, {
       optionsHtml: this.optionsHtml,
@@ -116,41 +163,6 @@ export default class Product extends Component {
       quantityClass: this.quantityClass,
       priceClass: this.priceClass,
     });
-  }
-
-  get hasQuantity() {
-    return this.options.contents.quantityInput;
-  }
-
-  get priceClass() {
-    return this.model.selectedVariant && this.model.selectedVariant.compareAtPrice ? 'price--lowered' : '';
-  }
-
-  get wrapperClass() {
-    return `${this.currentImage ? 'has-image' : 'no-image'} layout-${this.options.layout}`;
-  }
-
-  get DOMEvents() {
-    return merge({}, {
-      click: this.closeCartOnBgClick.bind(this),
-      [`click .${this.classes.option.select.split(' ').join('.')}`]: this.stopPropagation.bind(this),
-      [`focus .${this.classes.option.select.split(' ').join('.')}`]: this.stopPropagation.bind(this),
-      [`click .${this.classes.option.wrapper.split(' ').join('.')}`]: this.stopPropagation.bind(this),
-      [`click .${this.classes.product.quantityInput.split(' ').join('.')}`]: this.stopPropagation.bind(this),
-      [`click .${this.classes.product.quantityButton.split(' ').join('.')}`]: this.stopPropagation.bind(this),
-      [`change .${this.classes.option.select.split(' ').join('.')}`]: this.onOptionSelect.bind(this),
-      [`click .${this.classes.product.button.split(' ').join('.')}`]: this.onButtonClick.bind(this),
-      [`click .${this.classes.product.blockButton.split(' ').join('.')}`]: this.onButtonClick.bind(this),
-      [`click .${this.classes.product.quantityButton.split(' ').join('.')}.quantity-increment`]: this.onQuantityIncrement.bind(this, 1),
-      [`click .${this.classes.product.quantityButton.split(' ').join('.')}.quantity-decrement`]: this.onQuantityIncrement.bind(this, -1),
-      [`blur .${this.classes.product.quantityInput.split(' ').join('.')}`]: this.onQuantityBlur.bind(this),
-    }, this.options.DOMEvents);
-  }
-
-  stopPropagation(evt) {
-    if (!this.options.contents.button) {
-      evt.stopImmediatePropagation();
-    }
   }
 
   get buttonClass() {
@@ -185,6 +197,10 @@ export default class Product extends Component {
     return this.variantExists && this.model.selectedVariant.available;
   }
 
+  get hasVariants() {
+    return this.model.variants.length > 1;
+  }
+
   get requiresCart() {
     return this.options.buttonDestination === 'cart';
   }
@@ -193,6 +209,43 @@ export default class Product extends Component {
     return !this.requiresCart || Boolean(this.cart);
   }
 
+  get hasQuantity() {
+    return this.options.contents.quantityInput;
+  }
+
+  get priceClass() {
+    return this.model.selectedVariant && this.model.selectedVariant.compareAtPrice ? 'price--lowered' : '';
+  }
+
+  get wrapperClass() {
+    return `${this.currentImage ? 'has-image' : 'no-image'} layout-${this.options.layout}`;
+  }
+
+  /**
+   * get events to be bound to DOM.
+   * @return {Object}
+   */
+  get DOMEvents() {
+    return merge({}, {
+      click: this.closeCartOnBgClick.bind(this),
+      [`click .${this.classes.option.select.split(' ').join('.')}`]: this.stopPropagation.bind(this),
+      [`focus .${this.classes.option.select.split(' ').join('.')}`]: this.stopPropagation.bind(this),
+      [`click .${this.classes.option.wrapper.split(' ').join('.')}`]: this.stopPropagation.bind(this),
+      [`click .${this.classes.product.quantityInput.split(' ').join('.')}`]: this.stopPropagation.bind(this),
+      [`click .${this.classes.product.quantityButton.split(' ').join('.')}`]: this.stopPropagation.bind(this),
+      [`change .${this.classes.option.select.split(' ').join('.')}`]: this.onOptionSelect.bind(this),
+      [`click .${this.classes.product.button.split(' ').join('.')}`]: this.onButtonClick.bind(this),
+      [`click .${this.classes.product.blockButton.split(' ').join('.')}`]: this.onButtonClick.bind(this),
+      [`click .${this.classes.product.quantityButton.split(' ').join('.')}.quantity-increment`]: this.onQuantityIncrement.bind(this, 1),
+      [`click .${this.classes.product.quantityButton.split(' ').join('.')}.quantity-decrement`]: this.onQuantityIncrement.bind(this, -1),
+      [`blur .${this.classes.product.quantityInput.split(' ').join('.')}`]: this.onQuantityBlur.bind(this),
+    }, this.options.DOMEvents);
+  }
+
+  /**
+   * get HTML for product options selector.
+   * @return {String} HTML
+   */
   get optionsHtml() {
     if (!this.options.contents.options) {
       return '';
@@ -205,10 +258,10 @@ export default class Product extends Component {
     }, '');
   }
 
-  get hasVariants() {
-    return this.model.variants.length > 1;
-  }
-
+  /**
+   * get options for product with selected value.
+   * @return {Array}
+   */
   get decoratedOptions() {
     return this.model.options.map((option) => ({
       name: option.name,
@@ -219,14 +272,10 @@ export default class Product extends Component {
     }));
   }
 
-  get shouldResizeX() {
-    return this.options.layout === 'horizontal';
-  }
-
-  get shouldResizeY() {
-    return true;
-  }
-
+  /**
+   * get info about variant to be sent to tracker
+   * @return {Object}
+   */
   get selectedVariantTrackingInfo() {
     const variant = this.model.selectedVariant;
     return {
@@ -238,6 +287,10 @@ export default class Product extends Component {
     };
   }
 
+  /**
+   * get configuration object for product details modal based on product config and modalProduct config.
+   * @return {Object} configuration object.
+   */
   get modalProductConfig() {
     let modalProductStyles;
     if (this.config.product.styles) {
@@ -254,6 +307,10 @@ export default class Product extends Component {
     });
   }
 
+  /**
+   * get params for online store URL.
+   * @return {Object}
+   */
   get onlineStoreParams() {
     return {
       channel: 'buy_button',
@@ -262,16 +319,37 @@ export default class Product extends Component {
     };
   }
 
+  /**
+   * get query string for online store URL from params
+   * @return {String}
+   */
   get onlineStoreQueryString() {
     return Object.keys(this.onlineStoreParams).reduce((string, key) => {
       return `${string}${key}=${this.onlineStoreParams[key]}&`;
     }, '?');
   }
 
+  /**
+   * get URL to open online store page for product.
+   * @return {String}
+   */
   get onlineStoreURL() {
     return `https://${this.props.client.config.domain}/products/${this.id}${this.onlineStoreQueryString}`;
   }
 
+  /**
+   * open online store in new tab.
+   */
+  openOnlineStore() {
+    window.open(this.onlineStoreURL);
+  }
+
+  /**
+   * initializes component by creating model and rendering view.
+   * Creates and initalizes cart if necessary.
+   * @param {Object} [data] - data to initialize model with.
+   * @return {Promise} promise resolving to instance.
+   */
   init(data) {
     return super.init.call(this, data).then((model) => (
       this.createCart().then((cart) => {
@@ -284,6 +362,10 @@ export default class Product extends Component {
     ));
   }
 
+  /**
+   * renders string template using viewData to wrapper element.
+   * Resizes iframe to match image size.
+   */
   render() {
     super.render();
     if (this.iframe) {
@@ -291,6 +373,10 @@ export default class Product extends Component {
     }
   }
 
+  /**
+   * creates cart if necessary.
+   * @return {Promise}
+   */
   createCart() {
     if (this.shouldCreateCart) {
       return this.props.createCart({
@@ -302,6 +388,11 @@ export default class Product extends Component {
     }
   }
 
+  /**
+   * fetches data if necessary.
+   * Sets default variant for product.
+   * @param {Object} [data] - data to initialize model with.
+   */
   setupModel(data) {
     return super.setupModel(data).then((model) => {
       return this.setDefaultVariant(model);
@@ -328,6 +419,10 @@ export default class Product extends Component {
     }
   }
 
+  /**
+   * fetch product data from API.
+   * @return {Promise} promise resolving to model data.
+   */
   sdkFetch() {
     if (this.id) {
       return this.props.client.fetchProduct(this.id);
@@ -337,6 +432,11 @@ export default class Product extends Component {
     return Promise.reject();
   }
 
+  /**
+   * call sdkFetch and set selected quantity to 0.
+   * @throw 'Not Found' if model not returned.
+   * @return {Promise} promise resolving to model data.
+   */
   fetchData() {
     return this.sdkFetch().then((model) => {
       if (model) {
@@ -347,6 +447,12 @@ export default class Product extends Component {
     });
   }
 
+  /**
+   * re-assign configuration and re-render component.
+   * Resize iframe based on change in dimensions of product.
+   * Update Cart or Modal components if necessary.
+   * @param {Object} config - new configuration object.
+   */
   updateConfig(config) {
     if (config.id || config.variantId) {
       this.id = config.id || this.id;
@@ -399,20 +505,9 @@ export default class Product extends Component {
     }
   }
 
-  onButtonClick(evt) {
-    evt.stopPropagation();
-    if (this.options.buttonDestination === 'cart') {
-      this.props.closeModal();
-      this.props.tracker.trackMethod(this.cart.addVariantToCart.bind(this), 'CART_ADD', this.selectedVariantTrackingInfo)(this.model.selectedVariant, this.model.selectedQuantity);
-    } else if (this.options.buttonDestination === 'modal') {
-      this.openModal();
-    } else if (this.options.buttonDestination === 'onlineStore') {
-      this.openOnlineStore();
-    } else {
-      new Checkout(this.config).open(this.model.selectedVariant.checkoutUrl(this.selectedQuantity));
-    }
-  }
-
+  /**
+   * check size of image until it is resolved, then set height of iframe.
+   */
   resizeUntilLoaded() {
     if (!this.iframe || !this.model.selectedVariantImage) {
       return;
@@ -431,23 +526,27 @@ export default class Product extends Component {
     }
   }
 
-  openOnlineStore() {
-    window.open(this.onlineStoreURL);
+  /**
+   * prevent events from bubbling if entire product is being treated as button.
+   */
+  stopPropagation(evt) {
+    if (!this.options.contents.button) {
+      evt.stopImmediatePropagation();
+    }
   }
 
-  openModal() {
-    if (!this.modal) {
-      this.modal = this.props.createModal({
-        node: this.modalNode,
-        options: Object.assign({}, this.config, {
-          product: this.modalProductConfig,
-          modal: Object.assign({}, this.config.modal, {
-            googleFonts: this.options.googleFonts,
-          }),
-        }),
-      }, this.props);
+  onButtonClick(evt) {
+    evt.stopPropagation();
+    if (this.options.buttonDestination === 'cart') {
+      this.props.closeModal();
+      this.props.tracker.trackMethod(this.cart.addVariantToCart.bind(this), 'CART_ADD', this.selectedVariantTrackingInfo)(this.model.selectedVariant, this.model.selectedQuantity);
+    } else if (this.options.buttonDestination === 'modal') {
+      this.openModal();
+    } else if (this.options.buttonDestination === 'onlineStore') {
+      this.openOnlineStore();
+    } else {
+      new Checkout(this.config).open(this.model.selectedVariant.checkoutUrl(this.selectedQuantity));
     }
-    return this.modal.init(this.model);
   }
 
   onOptionSelect(evt) {
@@ -465,6 +564,35 @@ export default class Product extends Component {
     this.updateQuantity((prevQty) => prevQty + qty);
   }
 
+  closeCartOnBgClick() {
+    if (this.cart && this.cart.isVisible) {
+      this.cart.close();
+    }
+  }
+
+  /**
+   * create modal instance and initialize.
+   * @return {Promise} promise resolving to modal instance
+   */
+  openModal() {
+    if (!this.modal) {
+      this.modal = this.props.createModal({
+        node: this.modalNode,
+        options: Object.assign({}, this.config, {
+          product: this.modalProductConfig,
+          modal: Object.assign({}, this.config.modal, {
+            googleFonts: this.options.googleFonts,
+          }),
+        }),
+      }, this.props);
+    }
+    return this.modal.init(this.model);
+  }
+
+  /**
+   * update quantity of selected variant and rerender.
+   * @param {Function} fn - function which returns new quantity given current quantity.
+   */
   updateQuantity(fn) {
     let quantity = fn(this.selectedQuantity);
     if (quantity < 0) {
@@ -474,6 +602,12 @@ export default class Product extends Component {
     this.render();
   }
 
+  /**
+   * Update variant based on option value.
+   * @param {String} optionName - name of option being modified.
+   * @param {String} value - value of selected option.
+   * @return {Object} updated option object.
+   */
   updateVariant(optionName, value) {
     const updatedOption = this.model.options.filter((option) => option.name === optionName)[0];
     updatedOption.selected = value;
@@ -484,12 +618,10 @@ export default class Product extends Component {
     return updatedOption;
   }
 
-  closeCartOnBgClick() {
-    if (this.cart && this.cart.isVisible) {
-      this.cart.close();
-    }
-  }
-
+  /**
+   * set default variant to be selected on initialization.
+   * @param {Object} model - model to be modified.
+   */
   setDefaultVariant(model) {
     if (!this.defaultVariantId) {
       return model;
