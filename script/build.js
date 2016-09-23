@@ -19,7 +19,8 @@ rollup({
   entry: srcPath,
   plugins: [
     babel({
-      exclude: ['node_modules/hogan.js/**', 'node_modules/morphdom/**'],
+      exclude: ['node_modules/**'],
+      include: ['node_modules/shopify-buy/**', 'src/**'],
     }),
     nodeResolve({
       extensions: ['.js'],
