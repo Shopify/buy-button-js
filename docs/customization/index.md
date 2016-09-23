@@ -68,7 +68,7 @@ var order = [
 
 **Type**: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)
 
-**Default value**: dependent on component. [View component defaults](TODO)
+**Default value**: dependent on component. [View component defaults](https://github.com/Shopify/buybutton-js/blob/master/src/defaults/components.js)
 
 ### `contents`
 
@@ -83,7 +83,7 @@ var contents = {
 ```
 
 **Type**: object
-**Default value**: dependent on component. [View component defaults](TODO)
+**Default value**: dependent on component. [View component defaults](https://github.com/Shopify/buybutton-js/blob/master/src/defaults/components.js)
 
 ### `text`
 
@@ -99,7 +99,7 @@ var text = {
 
 **Type**: object
 
-**Default value**: dependent on component. [View component defaults](TODO)
+**Default value**: dependent on component. [View component defaults](https://github.com/Shopify/buybutton-js/blob/master/src/defaults/components.j)
 
 ### `styles`
 
@@ -118,7 +118,15 @@ var styles = {
 
 **Type**: object
 
-**Default value**: dependent on component. [View component defaults](TODO)
+**Default value**: dependent on component. [View component defaults](https://github.com/Shopify/buybutton-js/blob/master/src/defaults/components.js)
+
+## Attributes for specific components
+Your embed creates several different types of component. The attributes you can configure on each depend on the component.
+
+### Component breakdown:
+
+![components1](/buy-button-js/assets/images/components.png)
+![components2](/buy-button-js/assets/images/components2.png)
 
 ## Product
 Main product embed. Creates `options` component. Depending on configuration, may create a `modal` and `cart` component.
@@ -321,10 +329,11 @@ Only edit the following attributes if you are knowledgeable in HTML/CSS/JavaScri
 
 ### `classes`
 
-  Determines class names added to elements within components. Unlikely you will need to edit these unless you are opting out of the iframe sandboxing.
+Determines class names added to elements within components. Unlikely you will need to edit these unless you are opting out of the iframe sandboxing.
 
-  **Type**: Object
-  **Default values**: dependent on component. [View source](TODO).
+**Type**: Object
+
+**Default values**: dependent on component. [View defaults](https://github.com/Shopify/buybutton-js/blob/master/src/defaults/components.js).
 
 ### `templates`
 Determines the HTML for each element. Templates are specified as strings using the [Hogan](http://twitter.github.io/hogan.js/) templating engine, which implements the [Mustache](https://mustache.github.io/) syntax.
