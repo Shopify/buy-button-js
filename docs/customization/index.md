@@ -37,11 +37,11 @@ options = {
 
 ## Attributes for all components
 
-The following attributes are configurable in any of the above objects.
+The following attributes are configurable on any of the above objects.
 
 ### `iframe`
 
-Whether to render the component inside an iframe. Iframes are beneficial for most users because they isolate the embed in a "sandbox" so that other parts of your website don't interact with it in unwanted ways. If you wish to have _full_ control over the appearance of your embed and know how to use CSS, you may choose to change this value to `false`.
+Whether to render the component inside an iframe. Iframes are beneficial for most users because they isolate the embed in a "sandbox" so that other parts of your website don't interact with it in unwanted ways. If you wish to have _full_ control over the appearance of your embed and know how to use CSS, you may choose to change this value to `false`. If you do so, your components will appear unstyled.
 
 **Type**: Boolean (true or false)
 
@@ -129,7 +129,7 @@ Your embed creates several different types of component. The attributes you can 
 ![components2](/buy-button-js/assets/images/components2.png)
 
 ## Product
-Main product embed. Creates `options` component. Depending on configuration, may create a `modal` and `cart` component.
+Main product embed. Displays information about your product and an "Add to cart" button. Creates `options` component. Depending on configuration, may create a `modal` and `cart` component.
 
 ### Product Attributes
 
@@ -272,7 +272,7 @@ var text = {
 
 ## Modal component
 
-Created when Product's `buttonDestination` property is set to `'modal'`.
+Created when a Product's `buttonDestination` property is set to `'modal'`.
 
 No configurable contents or text.
 
@@ -329,18 +329,18 @@ Only edit the following attributes if you are knowledgeable in HTML/CSS/JavaScri
 
 ### `classes`
 
-Determines class names added to elements within components. Unlikely you will need to edit these unless you are opting out of the iframe sandboxing.
+Determines class names added to elements within components. It is unlikely you will need to edit these unless you are opting out of the iframe sandboxing.
 
 **Type**: Object
 
 **Default values**: dependent on component. [View defaults](https://github.com/Shopify/buybutton-js/blob/master/src/defaults/components.js).
 
 ### `templates`
-Determines the HTML for each element. Templates are specified as strings using the [Hogan](http://twitter.github.io/hogan.js/) templating engine, which implements the [Mustache](https://mustache.github.io/) syntax.
+Determines the HTML for each element in a component. Templates are specified as strings using the [Hogan](http://twitter.github.io/hogan.js/) templating engine, which implements the [Mustache](https://mustache.github.io/) syntax.
 
 Templates have a variety of data available to them, accessible through the `data` namespace. Information on the `data` object is a combination of the model supporting the component provided by the [JS Buy SDK](http://shopify.github.io/js-buy-sdk/api/classes/ShopifyBuy.html) (ProductModel, ProductVariantModel, Option, and CartModel), the `classes` object, the `text` object, and a number of utility strings and booleans.
 
-Make a point of keeping the classes from the original templates, as these are used for data binding.
+Make a point of duplicating the classes from the original templates, as these are used for data binding.
 
 If you wish to add custom styles to any new HTML you add, you can add additional keys to the `classes` object, and then add the same key to the `styles` object. Ensure that you match the key for this class name between the template, the `classes` object, and the `styles` object.
 
@@ -404,6 +404,6 @@ DOM nodes are selected using `querySelectorAll`, so a valid selector must be pro
 
 ```js
 var DOMEVents = {
-  `click .${this.classes.product.button.split(' ').join('.')}`: myCallback
+  [`click .${this.classes.product.button.split(' ').join('.')}`]: myCallback
 }
 ```
