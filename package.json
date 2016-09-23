@@ -67,6 +67,7 @@
     "mocha": "2.5.3",
     "pretender": "1.1.0",
     "sinon": "1.17.5",
+    "testem": "1.9.1",
     "watch": "0.19.1",
     "watchify": "3.7.0",
     "wdio-dot-reporter": "0.0.6",

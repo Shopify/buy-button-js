@@ -20,13 +20,15 @@ rollup({
   plugins: [
     babel({
       exclude: ['node_modules/**'],
-      include: ['node_modules/shopify-buy/**', 'src/**'],
+      include: ['node_modules/shopify-buy/lib/**' 'src/**'],
     }),
     nodeResolve({
       extensions: ['.js'],
       preferBuiltins: true
     }),
-    commonjs()
+    commonjs({
+      exclude: ['node_modules/testem/**'],
+    })
   ],
 }).then(function (bundle) {
   return Promise.all([
