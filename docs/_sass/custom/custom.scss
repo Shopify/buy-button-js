@@ -25,9 +25,10 @@ body,
   max-width: 900px;
 }
 
-h1 {
+h1, .heading--1 {
   font-weight: 700;
   margin-bottom: 33px;
+  font-size: 2em;
 }
 
 .marketing-markdown h2,

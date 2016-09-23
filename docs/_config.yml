@@ -1,5 +1,5 @@
 # Site settings
-title: Shopify Buy Button JS
+title: Shopify BuyButton.js
 email: buybutton@shopify.com
 description: > # this means to ignore newlines until "baseurl:"
 baseurl: "/buy-button-js"
