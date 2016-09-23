@@ -19,16 +19,13 @@ rollup({
   entry: srcPath,
   plugins: [
     babel({
-      exclude: ['node_modules/**'],
-      include: ['node_modules/shopify-buy/lib/**', 'src/**'],
+      exclude: ['node_modules/hogan.js/**', 'node_modules/morphdom/**'],
     }),
     nodeResolve({
       extensions: ['.js'],
       preferBuiltins: true
     }),
-    commonjs({
-      exclude: ['node_modules/testem/**'],
-    })
+    commonjs()
   ],
 }).then(function (bundle) {
   return Promise.all([
