@@ -43,9 +43,9 @@ export default class ProductSet extends Component {
   }
 
   get DOMEvents() {
-    return Object.assign({}, this.options.DOMEvents, {
+    return Object.assign({}, {
       [`click .${this.classes.productSet.paginationButton.split(' ').join('.')}`]: this.nextPage.bind(this),
-    });
+    }, this.options.DOMEvents);
   }
 
   get paginationTemplate() {

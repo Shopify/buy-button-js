@@ -131,7 +131,7 @@ export default class Product extends Component {
   }
 
   get DOMEvents() {
-    return merge({}, this.options.DOMEvents, {
+    return merge({}, {
       click: this.closeCartOnBgClick.bind(this),
       [`click .${this.classes.option.select.split(' ').join('.')}`]: this.stopPropagation.bind(this),
       [`focus .${this.classes.option.select.split(' ').join('.')}`]: this.stopPropagation.bind(this),
@@ -144,7 +144,7 @@ export default class Product extends Component {
       [`click .${this.classes.product.quantityButton.split(' ').join('.')}.quantity-increment`]: this.onQuantityIncrement.bind(this, 1),
       [`click .${this.classes.product.quantityButton.split(' ').join('.')}.quantity-decrement`]: this.onQuantityIncrement.bind(this, -1),
       [`blur .${this.classes.product.quantityInput.split(' ').join('.')}`]: this.onQuantityBlur.bind(this),
-    });
+    }, this.options.DOMEvents);
   }
 
   stopPropagation(evt) {
