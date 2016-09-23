@@ -11,7 +11,17 @@ import logger from './utils/logger';
 const delegateEventSplitter = /^(\S+)\s*(.*)$/;
 const ESC_KEY = 27;
 
+/**
+ * Manages rendering, lifecycle, and data fetching of a cmoponent.
+ */
+
 export default class Component {
+
+  /**
+   * creates a component.
+   * @param {Object} config - configuration object.
+   * @param {Object} props - data and utilities passed down from UI instance.
+   */
   constructor(config, props) {
     this.id = config.id;
     this.handle = config.handle;
@@ -25,10 +35,18 @@ export default class Component {
     this.children = null;
   }
 
+  /**
+   * get reference to client from props.
+   * @return {Object} client instance
+   */
   get client() {
     return this.props.client;
   }
 
+  /**
+   * get unique name for component.
+   * @return {String} component name.
+   */
   get name() {
     let uniqueHandle = '';
     if (this.id) {
@@ -39,18 +57,34 @@ export default class Component {
     return `frame-${this.typeKey}${uniqueHandle}`;
   }
 
+  /**
+   * get configuration options specific to this component.
+   * @return {Object} options object.
+   */
   get options() {
     return merge({}, this.config[this.typeKey]);
   }
 
+  /**
+   * get events to be bound to DOM.
+   * @return {Object} DOMEvents object.
+   */
   get DOMEvents() {
     return this.options.DOMEvents || {};
   }
 
+  /**
+   * get events to be called on lifecycle methods.
+   * @return {Object} events object.
+   */
   get events() {
     return this.options.events || {};
   }
 
+  /**
+   * get styles for component and any components it contains as determined by manifest.
+   * @return {Object} key-value pairs of CSS styles.
+   */
   get styles() {
     return this.options.manifest.filter((component) => this.config[component].styles).reduce((hash, component) => {
       hash[component] = this.config[component].styles;
@@ -58,6 +92,10 @@ export default class Component {
     }, {});
   }
 
+  /**
+   * get classes for component and any components it contains as determined by manifest.
+   * @return {Object} class keys and names.
+   */
   get classes() {
     return this.options.manifest.filter((component) => this.config[component].classes).reduce((hash, component) => {
       hash[component] = this.config[component].classes;
@@ -65,16 +103,28 @@ export default class Component {
     }, {});
   }
 
+  /**
+   * get google fonts for component and any components it contains as determined by manifest.
+   * @return {Array} array of names of fonts to be loaded.
+   */
   get googleFonts() {
     return this.options.manifest
       .filter((component) => this.config[component].googleFonts)
       .reduce((fonts, component) => fonts.concat(this.config[component].googleFonts), []);
   }
 
+  /**
+   * get reference to document object.
+   * @return {Objcet} instance of Document.
+   */
   get document() {
     return this.iframe ? this.iframe.document : window.document;
   }
 
+  /**
+   * get data to be passed to view.
+   * @return {Object} viewData object.
+   */
   get viewData() {
     return merge(this.model, {
       classes: this.classes,
@@ -82,6 +132,10 @@ export default class Component {
     });
   }
 
+  /**
+   * get callbacks for morphdom lifecycle events.
+   * @return {Object} object.
+   */
   get morphCallbacks() {
     return {
       onBeforeElUpdated(fromEl, toEl) {
@@ -95,18 +149,37 @@ export default class Component {
     };
   }
 
+  /**
+   * get class name for iframe element. Defined in subclass.
+   * @return {String}
+   */
   get iframeClass() {
     return '';
   }
 
+  /**
+   * determines if iframe will require horizontal resizing to contain its children.
+   * May be defined in subclass.
+   * @return {Boolean}
+   */
   get shouldResizeX() {
     return false;
   }
 
+  /**
+   * determines if iframe will require vertical resizing to contain its children.
+   * May be defined in subclass.
+   * @return {Boolean}
+   */
   get shouldResizeY() {
     return false;
   }
 
+  /**
+   * initializes component by creating model and rendering view.
+   * @param {Object} [data] - data to initialize model with.
+   * @return {Promise} promise resolving to instance.
+   */
   init(data) {
     this._userEvent('beforeInit');
     return this.setupView().then(() => this.setupModel(data)).then((model) => {
@@ -125,6 +198,10 @@ export default class Component {
     });
   }
 
+  /**
+   * instantiates and configures Iframe if necessary.
+   * @return {Promise} resolves when iframe is loaded.
+   */
   setupView() {
     if (this.iframe) {
       return Promise.resolve();
@@ -148,6 +225,10 @@ export default class Component {
     }
   }
 
+  /**
+   * fetches data if necessary
+   * @param {Object} [data] - data to initialize model with.
+   */
   setupModel(data) {
     if (data) {
       return Promise.resolve(data);
@@ -156,6 +237,9 @@ export default class Component {
     }
   }
 
+  /**
+   * renders string template using viewData to wrapper element.
+   */
   render() {
     this._userEvent('beforeRender');
     const html = this.template.render({data: this.viewData}, (data) => {
@@ -169,6 +253,9 @@ export default class Component {
     this._userEvent('afterRender');
   }
 
+  /**
+   * delegates DOM events to event listeners.
+   */
   delegateEvents() {
     this._userEvent('beforeDelegateEvents');
     this._closeComponentsOnEsc();
@@ -187,10 +274,17 @@ export default class Component {
     this._userEvent('afterDelegateEvents');
   }
 
+  /**
+   * get total height of iframe contents
+   * @return {String} value in pixels.
+   */
   get outerHeight() {
     return this.document.defaultView.getComputedStyle(this.wrapper, '').getPropertyValue('height');
   }
 
+  /**
+   * resize iframe if necessary.
+   */
   resize() {
     if (!this.iframe) {
       return;
@@ -203,6 +297,10 @@ export default class Component {
     }
   }
 
+  /**
+   * re-assign configuration and re-render component.
+   * @param {Object} config - new configuration object.
+   */
   updateConfig(config) {
     this._userEvent('beforeUpdateConfig');
     this.config = merge(this.config, config.options);
@@ -215,10 +313,18 @@ export default class Component {
     this._userEvent('afterUpdateConfig');
   }
 
+  /**
+   * remove node from DOM.
+   */
   destroy() {
     this.node.parentNode.removeChild(this.node);
   }
 
+  /**
+   * update the contents of a DOM node with template
+   * @param {String} className - class name to select node.
+   * @param {Object} template - template to be rendered.
+   */
   renderChild(className, template) {
     const selector = `.${className.split(' ').join('.')}`;
     const node = this.wrapper.querySelector(selector);
@@ -226,12 +332,23 @@ export default class Component {
     this.updateNode(node, html);
   }
 
+  /**
+   * call morpdom on a node with new HTML
+   * @param {Object} node - DOM node to be updated.
+   * @param {String} html - HTML to update DOM node with.
+   */
   updateNode(node, html) {
     const div = document.createElement('div');
     div.innerHTML = html;
     morphdom(node, div.firstElementChild);
   }
 
+  /**
+   * wrap HTML string in containing elements.
+   * May be defined in subclass.
+   * @param {String} html - HTML string.
+   * @return {String} wrapped string.
+   */
   wrapTemplate(html) {
     return `<div class="${this.classes[this.typeKey][this.typeKey]}">${html}</div>`;
   }

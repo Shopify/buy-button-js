@@ -12,7 +12,17 @@ import browserFeatures from './utils/detect-features';
 const DATA_ATTRIBUTE = 'data-shopify-buy-ui';
 const ESC_KEY = 27;
 
+
+
+/** Initializes and coordinates components. */
 export default class UI {
+
+  /**
+   * create a UI instance
+   * @param {Object} client - Instance of ShopifyBuy Client
+   * @param {Object} integrations - optional tracker and logger integrations
+   * @param {String} styleOverrides - additional CSS to be added to _host_ style tag
+   */
   constructor(client, integrations = {}, styleOverrides = '') {
     this.client = client;
     this.iframeComponents = [];
@@ -41,58 +51,12 @@ export default class UI {
     this._bindEsc();
   }
 
-  createCart(config) {
-    if (this.components.cart.length) {
-      return Promise.resolve(this.components.cart[0]);
-    } else {
-      const cart = new Cart(config, this.componentProps);
-      this.components.cart.push(cart);
-      return cart.init();
-    }
-  }
-
-  closeCart() {
-    if (this.components.cart.length) {
-      this.components.cart.forEach((cart) => {
-        if (cart.isVisible) {
-          cart.close();
-        }
-      });
-    }
-  }
-
-  openCart() {
-    if (this.components.cart.length) {
-      this.components.cart.forEach((cart) => {
-        cart.open();
-      });
-    }
-  }
-
-  toggleCart(visibility) {
-    if (this.components.cart.length) {
-      this.components.cart.forEach((cart) => {
-        cart.toggleVisibility(visibility);
-      });
-    }
-  }
-
-  createModal(config) {
-    if (this.components.modal.length) {
-      return this.components.modal[0];
-    } else {
-      const modal = new Modal(config, this.componentProps);
-      this.components.modal.push(modal);
-      return modal;
-    }
-  }
-
-  closeModal() {
-    if (this.components.modal.length) {
-      this.components.modal.forEach((modal) => modal.close());
-    }
-  }
-
+  /**
+   * create a component of a type.
+   * @param {String} type - one of 'product', 'productSet', 'collection', 'cart'.
+   * @param {Object} config - configuration object
+   * @return {Promise} resolves to instance of newly created component.
+   */
   createComponent(type, config) {
     config.node = config.node || this._queryEntryNode();
     const component = new this.componentTypes[type](config, this.componentProps);
@@ -100,6 +64,11 @@ export default class UI {
     return component.init();
   }
 
+  /**
+   * destroy a component
+   * @param {String} type - one of 'product', 'productSet', 'collection', 'cart'.
+   * @param {Number} id - ID of the component's model.
+   */
   destroyComponent(type, id) {
     this.components[type].forEach((component, index) => {
       if (!component.model.id === id) {
@@ -110,6 +79,85 @@ export default class UI {
     });
   }
 
+  /**
+   * create a cart object to be shared between components.
+   * @param {Object} config - configuration object.
+   * @return {Promise} a promise which resolves once the cart has been initialized.
+   */
+  createCart(config) {
+    if (this.components.cart.length) {
+      return Promise.resolve(this.components.cart[0]);
+    } else {
+      const cart = new Cart(config, this.componentProps);
+      this.components.cart.push(cart);
+      return cart.init();
+    }
+  }
+
+  /**
+   * close any cart.
+   */
+  closeCart() {
+    if (this.components.cart.length) {
+      this.components.cart.forEach((cart) => {
+        if (cart.isVisible) {
+          cart.close();
+        }
+      });
+    }
+  }
+
+  /**
+   * open any cart.
+   */
+  openCart() {
+    if (this.components.cart.length) {
+      this.components.cart.forEach((cart) => {
+        cart.open();
+      });
+    }
+  }
+
+  /**
+   * toggle visibility of cart.
+   * @param {Boolean} [visibility] - desired state of cart.
+   */
+  toggleCart(visibility) {
+    if (this.components.cart.length) {
+      this.components.cart.forEach((cart) => {
+        cart.toggleVisibility(visibility);
+      });
+    }
+  }
+
+  /**
+   * create a modal object to be shared between components.
+   * @param {Object} config - configuration object.
+   * @return {Modal} a Modal instance.
+   */
+  createModal(config) {
+    if (this.components.modal.length) {
+      return this.components.modal[0];
+    } else {
+      const modal = new Modal(config, this.componentProps);
+      this.components.modal.push(modal);
+      return modal;
+    }
+  }
+
+  /**
+   * close any modals.
+   */
+  closeModal() {
+    if (this.components.modal.length) {
+      this.components.modal.forEach((modal) => modal.close());
+    }
+  }
+
+  /**
+   * get properties to be passed to any component.
+   * @return {Object} props object.
+   */
   get componentProps() {
     return {
       client: this.client,
@@ -124,6 +172,9 @@ export default class UI {
     };
   }
 
+  /**
+   * get string of CSS to be inserted into host style tag.
+   */
   get styleText() {
     if (browserFeatures.transition && browserFeatures.transform && browserFeatures.animation) {
       return hostStyles + this.styleOverrides;
