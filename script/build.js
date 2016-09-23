@@ -20,7 +20,7 @@ rollup({
   plugins: [
     babel({
       exclude: ['node_modules/**'],
-      include: ['node_modules/shopify-buy/lib/**' 'src/**'],
+      include: ['node_modules/shopify-buy/lib/**', 'src/**'],
     }),
     nodeResolve({
       extensions: ['.js'],
