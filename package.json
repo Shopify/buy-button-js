@@ -2,7 +2,7 @@
   "name": "shopify-buy-ui",
   "version": "0.0.0",
   "description": "The JS Buy UI library allows merchants to build Shopify interfaces into any website",
-  "main": "dist/shopify-buy-ui.js",
+  "main": "lib/shopify-buy-ui.umd.js",
   "jsnext:main": "lib/shopify-buy-ui.es.js",
   "repository": "git@github.com:Shopify/shopify-buy-ui.git",
   "scripts": {
@@ -13,7 +13,6 @@
     "clean": "rm -rf dist lib && mkdir dist lib",
     "styles": "npm run styles-embeds:build && npm run styles-host:build",
     "prepublish": "npm run build",
-    "postinstall": "npm --prefix ./node_modules/shopify-buy-ui/ install && npm --prefix ./node_modules/shopify-buy-ui/ run prepublish",
     "docs": "jekyll serve -s docs",
     "---------- ci": null,
     "test": "./test-ci",
