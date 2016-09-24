@@ -59,8 +59,8 @@ $max-z-index: 2147483647;
     position: fixed;
     right: 0;
     top: 50%;
-    transform: translateX(0);
-    -webkit-transform: translateX(0);
+    transform: translateY(-50%);
+    -webkit-transform: translateY(-50%);
     max-width: 46px;
     z-index: $max-z-index - 2;
   }
