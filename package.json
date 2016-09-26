@@ -1,10 +1,10 @@
 {
-  "name": "shopify-buy-ui",
+  "name": "buybutton-js",
   "version": "0.0.0",
   "description": "The JS Buy UI library allows merchants to build Shopify interfaces into any website",
-  "main": "lib/shopify-buy-ui.umd.js",
-  "jsnext:main": "lib/shopify-buy-ui.es.js",
-  "repository": "git@github.com:Shopify/shopify-buy-ui.git",
+  "main": "lib/buybutton.umd.js",
+  "jsnext:main": "lib/buybutton.es.js",
+  "repository": "git@github.com:Shopify/buybutton-js.git",
   "scripts": {
     "start": "rm -rf tmp && mkdir tmp && npm run src:watch & npm run styles:watch & npm run serve",
     "build": "npm run clean && npm run styles && npm run src:build",
@@ -22,7 +22,7 @@
     "---------- dist": null,
     "src:build": "node ./script/build.js",
     "---------- dev": null,
-    "src:watch": "watchify src/shopify-buy-ui.js -t babelify --outfile tmp/shopify-buy-ui.dev.js -v",
+    "src:watch": "watchify src/buybutton.js -t babelify --outfile tmp/buybutton.dev.js -v",
     "---------- test": null,
     "test-dev": "npm run test-mocha:watch | testem",
     "test-mocha:build": "npm run styles && browserify test/test.js -t babelify --outfile test/build/test.js",

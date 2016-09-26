@@ -7,12 +7,12 @@ const commonjs = require('rollup-plugin-commonjs');
 const babel = require('rollup-plugin-babel');
 const UglifyJS = require('uglify-js');
 
-const srcPath = 'src/shopify-buy-ui.js';
+const srcPath = 'src/buybutton.js';
 const buildPaths = {
-  globals: 'dist/shopify-buy-ui.js',
-  min: 'dist/shopify-buy-ui.min.js',
-  umd: 'lib/shopify-buy-ui.umd.js',
-  es: 'lib/shopify-buy-ui.es.js',
+  globals: 'dist/buybutton.js',
+  min: 'dist/buybutton.min.js',
+  umd: 'lib/buybutton.umd.js',
+  es: 'lib/buybutton.es.js',
 }
 
 rollup({
