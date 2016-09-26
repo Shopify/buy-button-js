@@ -15,6 +15,7 @@ function isArray(arg) {
  */
 
 export default class ProductSet extends Component {
+
   /**
    * create ProductSet
    * @param {Object} config - configuration object.

@@ -12,8 +12,6 @@ import browserFeatures from './utils/detect-features';
 const DATA_ATTRIBUTE = 'data-shopify-buy-ui';
 const ESC_KEY = 27;
 
-
-
 /** Initializes and coordinates components. */
 export default class UI {
 
