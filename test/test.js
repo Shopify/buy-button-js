@@ -8,7 +8,7 @@ window.assert = chai.assert;
 
 sinon.assert.expose(chai.assert, {prefix: ''});
 
-import './unit/shopify-buy-ui';
+import './unit/buybutton';
 import './unit/ui';
 import './unit/template';
 import './unit/iframe';
