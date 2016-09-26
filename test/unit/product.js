@@ -62,19 +62,16 @@ describe('Product class', () => {
   });
 
   describe('init', () => {
-    it('calls createCart', (done) => {
+    it('calls createCart', () => {
       const createCart = sinon.stub(product.props, 'createCart').returns(Promise.resolve('test'));
       const superInit = sinon.stub(Component.prototype, 'init').returns(Promise.resolve());
       const render = sinon.stub(product, 'render');
 
-      product.init('test').then(() => {
+      return product.init('test').then(() => {
         assert.equal(product.cart, 'test');
         assert.calledOnce(createCart);
         assert.calledWith(superInit, 'test');
         superInit.restore();
-        done();
-      }).catch((e) => {
-        done(e);
       });
     });
   });
@@ -87,37 +84,28 @@ describe('Product class', () => {
   });
 
   describe('get optionsHtml', () => {
-    it('it returns an html string', (done) => {
-      product.init(testProductCopy).then(() => {
+    it('it returns an html string', () => {
+      return product.init(testProductCopy).then(() => {
         assert.match(product.optionsHtml, /\<select/);
-        done();
-      }).catch((e) => {
-        done(e);
       });
     });
   });
 
   describe('get variantExists', () => {
-    describe('if variant exists for selected options', (done) => {
-      it('returns true', (done) => {
-        product.init(testProductCopy).then(() => {
+    describe('if variant exists for selected options', () => {
+      it('returns true', () => {
+        return product.init(testProductCopy).then(() => {
           product.model.selectedVariant = {id: 123};
           assert.isOk(product.variantExists);
-          done();
-        }).catch((e) => {
-          done(e);
         });
       });
     });
 
     describe('if variant does not exist for selected options', () => {
-      it('returns false', (done) => {
-        product.init(testProductCopy).then(() => {
+      it('returns false', () => {
+        return product.init(testProductCopy).then(() => {
           product.model.selectedVariant = null;
           assert.isNotOk(product.variantExists);
-          done();
-        }).catch((e) => {
-          done(e);
         });
       });
     });
@@ -147,12 +135,9 @@ describe('Product class', () => {
         });
       });
       describe('if cart is initialized', () => {
-        it('returns true', (done) => {
-          product.init(testProductCopy).then(() => {
+        it('returns true', () => {
+          return product.init(testProductCopy).then(() => {
             assert.ok(product.buttonActionAvailable);
-            done();
-          }).catch((e) => {
-            done(e);
           });
         });
       });
@@ -174,12 +159,8 @@ describe('Product class', () => {
       });
     });
     describe('if buttonActionAvailable is true', () => {
-      beforeEach((done) => {
-        product.init(testProductCopy).then(() => {
-          done();
-        }).catch((e) => {
-          done(e);
-        });
+      beforeEach(() => {
+        return product.init(testProductCopy);
       });
       describe('if variant is in stock', () => {
         it('returns true', () => {
@@ -198,12 +179,8 @@ describe('Product class', () => {
   });
 
   describe('get buttonText', () => {
-    beforeEach((done) => {
-      product.init(testProductCopy).then(() => {
-        done();
-      }).catch((e) => {
-        done(e);
-      });
+    beforeEach(() => {
+      return product.init(testProductCopy);
     });
     describe('if variant is in stock', () => {
       it('returns "buy now"', () => {
@@ -222,25 +199,19 @@ describe('Product class', () => {
 
   describe('get hasVariants', () => {
     describe('if multiple variants', () => {
-      it('returns true', (done) => {
-        product.init(testProductCopy).then(() => {
+      it('returns true', () => {
+        return product.init(testProductCopy).then(() => {
           product.model.variants = [{id: 123}, {id: 234}];
           assert.ok(product.hasVariants);
-          done();
-        }).catch((e) => {
-          done(e);
         });
       });
     });
 
     describe('if single variant', () => {
-      it('returns false on #hasVariants if single variant', (done) => {
-        product.init(testProductCopy).then(() => {
+      it('returns false on #hasVariants if single variant', () => {
+        return product.init(testProductCopy).then(() => {
           product.model.variants = [{id: 123}];
           assert.notOk(product.hasVariants);
-          done();
-        }).catch((e) => {
-          done(e);
         });
       });
     });
@@ -248,25 +219,19 @@ describe('Product class', () => {
 
   describe('get currentImage', () => {
     describe('if variant exists', () => {
-      it('returns selected image', (done) => {
-        product.init(testProductCopy).then(() => {
+      it('returns selected image', () => {
+        return product.init(testProductCopy).then(() => {
           assert.equal(product.currentImage.src, 'https://cdn.shopify.com/image-two_large.jpg');
-          done();
-        }).catch((e) => {
-          done(e);
         });
       });
     });
 
     describe('if variant does not exist', () => {
-      it('returns cached image', (done) => {
-        product.init(testProductCopy).then(() => {
+      it('returns cached image', () => {
+        return product.init(testProductCopy).then(() => {
           product.model.selectedVariant = null;
           product.model.selectedVariantImage = null;
           assert.equal(product.currentImage.src, 'https://cdn.shopify.com/image-two_large.jpg');
-          done();
-        }).catch((e) => {
-          done(e);
         });
       });
     });
@@ -306,40 +271,31 @@ describe('Product class', () => {
         ]
       }
     ];
-    it('it returns options with selected', (done) => {
-      product.init(testProductCopy).then(() => {
+    it('it returns options with selected', () => {
+      return product.init(testProductCopy).then(() => {
         product.updateVariant('Size', 'small');
         assert.deepEqual(product.decoratedOptions, expectedArray);
-        done();
-      }).catch((e) => {
-        done(e);
       });
     });
   });
 
   describe('get viewData', () => {
-    it('returns supplemental view info', (done) => {
-      product.init(testProductCopy).then(() => {
+    it('returns supplemental view info', () => {
+      return product.init(testProductCopy).then(() => {
         const viewData = product.viewData;
         assert.equal(viewData.buttonText, 'SHOP NOW');
         assert.ok(viewData.optionsHtml);
         assert.equal(viewData.currentImage.src, 'https://cdn.shopify.com/image-two_large.jpg');
         assert.ok(viewData.hasVariants);
-        done();
-      }).catch((e) => {
-        done(e);
       });
     });
   });
 
   describe('updateVariant', () => {
-    it('it updates selected variant', (done) => {
-      product.init(testProductCopy).then(() => {
+    it('it updates selected variant', () => {
+      return product.init(testProductCopy).then(() => {
         let updated = product.updateVariant('Size', 'large');
         assert.equal(updated.selected, 'large');
-        done();
-      }).catch((e) => {
-        done(e);
       });
     });
   });
@@ -413,7 +369,7 @@ describe('Product class', () => {
       assert.calledWith(superSpy, newConfig);
     });
 
-    it('calls updateConfig on modal if modal exists', (done) => {
+    it('calls updateConfig on modal if modal exists', () => {
       const modalProduct = new Product({
         node: configCopy.node,
         options: Object.assign({}, configCopy.options, {
@@ -422,7 +378,7 @@ describe('Product class', () => {
           })
         }),
       }, props);
-      modalProduct.init(testProductCopy).then(() => {
+      return modalProduct.init(testProductCopy).then(() => {
         modalProduct.openModal().then(() => {;
           modalProduct.cart = {
             updateConfig: sinon.spy()
@@ -432,7 +388,6 @@ describe('Product class', () => {
           assert.calledWith(modalProduct.modal.updateConfig, sinon.match.object);
           assert.equal(modalProduct.modal.config.product.layout, 'vertical');
           assert.calledWith(superSpy, newConfig);
-          done();
         });
       });
     });
@@ -468,12 +423,8 @@ describe('Product class', () => {
   });
 
   describe('get buttonText', () => {
-    beforeEach((done) => {
-      product.init(testProductCopy).then(() => {
-        done();
-      }).catch((e) => {
-        done(e);
-      });
+    beforeEach(() => {
+      return product.init(testProductCopy);
     });
 
     describe('when variant does not exist', () => {
@@ -500,12 +451,8 @@ describe('Product class', () => {
     });
   });
   describe('wrapTemplate', () => {
-    beforeEach((done) => {
-      product.init(testProductCopy).then(() => {
-        done();
-      }).catch((e) => {
-        done(e);
-      });
+    beforeEach(() => {
+      return product.init(testProductCopy);
     });
 
     describe('when button exists', () => {
@@ -630,11 +577,9 @@ describe('Product class', () => {
     });
 
     describe('if image and cached image are different', () => {
-      beforeEach((done) => {
+      beforeEach(() => {
         product.imageSize = 'pico';
-        product.init(testProductCopy).then(() => {
-          done();
-        });
+        return product.init(testProductCopy);
       });
 
       it('returns true', () => {
@@ -646,11 +591,9 @@ describe('Product class', () => {
     });
 
     describe('if image and cached image are same', () => {
-      beforeEach((done) => {
+      beforeEach(() => {
         product.config.product.imageSize = 'pico';
-        product.init(testProductCopy).then(() => {
-          done();
-        });
+        return product.init(testProductCopy);
       });
 
       it('returns true', () => {
@@ -664,10 +607,8 @@ describe('Product class', () => {
 
   describe('get image', () => {
     describe('default', () => {
-      beforeEach((done) => {
-        product.init(testProductCopy).then(() => {
-          done();
-        });
+      beforeEach(() => {
+        return product.init(testProductCopy);
       });
 
       it('returns medium image', () => {
@@ -676,11 +617,9 @@ describe('Product class', () => {
     });
 
     describe('if imageSize explicitly set', () => {
-      beforeEach((done) => {
+      beforeEach(() => {
         product.config.product.imageSize = 'pico';
-        product.init(testProductCopy).then(() => {
-          done();
-        });
+        return product.init(testProductCopy);
       });
 
       it('returns image size specified', () => {
@@ -689,11 +628,9 @@ describe('Product class', () => {
     });
 
     describe('if width explicitly set and layout vertical', () => {
-      beforeEach((done) => {
+      beforeEach(() => {
         product.config.product.width = '500px';
-        product.init(testProductCopy).then(() => {
-          done();
-        });
+        return product.init(testProductCopy);
       });
       it('returns smallest image larger than explicit width', () => {
         assert.equal(product.image.name, '1024x1025');
@@ -701,11 +638,9 @@ describe('Product class', () => {
     });
 
     describe('with horizontal layout and no explicit image size', () => {
-      beforeEach((done) => {
+      beforeEach(() => {
         product.config.product.layout = 'horizontal';
-        product.init(testProductCopy).then(() => {
-          done();
-        });
+        return product.init(testProductCopy);
       });
       it('returns large image', () => {
         assert.equal(product.image.name, 'grande');

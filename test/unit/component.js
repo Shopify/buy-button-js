@@ -63,63 +63,55 @@ describe('Component class', () => {
   });
 
   describe('init', () => {
-    it('fetches and renders data', (done) => {
+    it('fetches and renders data', () => {
       const setupView = sinon.stub(component, 'setupView').returns(Promise.resolve());
       const setupModel = sinon.stub(component, 'setupModel').returns(Promise.resolve({ title: 'test' }));
       const render = sinon.stub(component, 'render');
       const delegateEvents = sinon.stub(component, 'delegateEvents');
 
-      component.init().then(() => {
+      return component.init().then(() => {
         assert.deepEqual(component.model, {title: 'test'});
         assert.calledOnce(setupView);
         assert.calledOnce(setupModel);
         assert.calledOnce(render);
         assert.calledOnce(delegateEvents);
-        done();
-      }).catch((e) => {
-        done(e);
       });
     });
 
     describe('with data passed as arg', () => {
-      it('sets model to data', (done) => {
-        component.init({title: 'test'}).then(() => {
+      it('sets model to data', () => {
+        return component.init({title: 'test'}).then(() => {
           assert.equal('test', component.model.title);
-          done();
         });
       });
     });
 
     describe('with no data passed as arg', () => {
-      it('fetches data and sets model', (done) => {
+      it('fetches data and sets model', () => {
         component.fetchData = sinon.stub().returns(Promise.resolve({title: 'rectangle'}));;
-        component.init().then(() => {
+        return component.init().then(() => {
           assert.equal('rectangle', component.model.title);
-          done();
         });
       });
     });
 
-    it('adds event listeners to nodes', (done) => {
+    it('adds event listeners to nodes', () => {
       const clickSpy = sinon.spy();
       const testConfig = Object.assign({}, config);
       testConfig.options.product.DOMEvents = {
         'click .button': clickSpy
       }
       const testComponent = new Component(testConfig, {client: {}, imageCache: {}});
-      testComponent.init({}).then(() => {
+      return testComponent.init({}).then(() => {
         testComponent.render();
         testComponent.delegateEvents();
         testComponent.document.getElementById('button').click();
         assert.calledWith(clickSpy, sinon.match.instanceOf(Event), sinon.match.instanceOf(window.Node));
-        done();
-      }).catch((e) => {
-        console.log(e);
       });
     });
 
     describe('if iframe is true', () => {
-      it('creates an iframe', (done) => {
+      it('creates an iframe', () => {
         const iframeComponent = new Component({
           node: document.getElementById('fixture'),
           id: 123,
@@ -132,10 +124,9 @@ describe('Component class', () => {
           },
           'product');
         const setupModel = sinon.stub(iframeComponent, 'setupModel').returns(Promise.resolve({ title: 'test' }));
-        iframeComponent.init().then(() => {
+        return iframeComponent.init().then(() => {
           assert.isOk(iframeComponent.iframe);
           setupModel.restore();
-          done();
         });
       });
     });

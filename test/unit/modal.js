@@ -60,29 +60,23 @@ describe('Modal class', () => {
       initSpy.restore();
     });
 
-    it('initializes a Product', (done) => {
-      modal.init(fakeProduct).then((what) => {
+    it('initializes a Product', () => {
+      return modal.init(fakeProduct).then((what) => {
         assert.calledWith(initSpy, fakeProduct);
         assert.deepEqual(modal.product.model, fakeProduct);
-        done();
-      }).catch((e) => {
-        done(e);
       });
     });
 
-    it('sets isVisible to true', (done) => {
-      modal.init(fakeProduct).then((what) => {
+    it('sets isVisible to true', () => {
+      return modal.init(fakeProduct).then((what) => {
         assert(modal.isVisible);
-        done();
-      }).catch((e) => {
-        done(e);
       });
     });
   });
 
   describe('getters', () => {
-    beforeEach((done) => {
-      modal.init(fakeProduct).then(() => done());
+    beforeEach(() => {
+      return modal.init(fakeProduct);
     });
 
     describe('get productConfig', () => {
@@ -122,10 +116,10 @@ describe('Modal class', () => {
   });
 
   describe('render', () => {
-    beforeEach((done) => {
+    beforeEach(() => {
       modal.model = fakeProduct;
       modal.isVisible = true;
-      modal.setupView().then(() => modal.render()).then(() => done());
+      return modal.setupView().then(() => modal.render());
     });
 
     it('makes modal visible', () => {

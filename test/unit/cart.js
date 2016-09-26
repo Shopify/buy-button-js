@@ -39,38 +39,32 @@ describe('Cart class', () => {
 
   describe('fetchData', () => {
     describe('if lastCart is set in localStorage', () => {
-      it('calls fetchCart on client', (done) => {
+      it('calls fetchCart on client', () => {
         let getItem = sinon.stub(fakeLocalStorage, 'getItem').returns('1234');
         let fetchCart = sinon.stub(cart.props.client, 'fetchCart').returns(Promise.resolve({id: 1234}));
 
-        cart.fetchData().then((data) => {
+        return cart.fetchData().then((data) => {
           assert.deepEqual(data, {id: 1234});
           assert.calledWith(getItem, 'lastCartId');
           assert.calledWith(fetchCart, '1234');
           getItem.restore();
           fetchCart.restore();
-          done();
-        }).catch((e) => {
-          done(e);
         });
       });
     });
 
     describe('if lastCart is not set in localStorage', () => {
-      it('sets cart in localStorage', (done) => {
+      it('sets cart in localStorage', () => {
         let createCart = sinon.stub(cart.props.client, 'createCart').returns(Promise.resolve({id: 1234}));
         let getItem = sinon.stub(fakeLocalStorage, 'getItem').returns(null);
         let setItem = sinon.stub(fakeLocalStorage, 'setItem');
 
-        cart.fetchData().then((data) => {
+        return cart.fetchData().then((data) => {
           assert.deepEqual(data, {id: 1234});
           assert.calledWith(setItem, 'lastCartId', 1234);
           getItem.restore();
           setItem.restore();
           createCart.restore();
-          done();
-        }).catch((e) => {
-          done(e);
         });
       });
     });
@@ -109,15 +103,12 @@ describe('Cart class', () => {
       cart.toggle.render = sinon.spy();
     });
 
-    it('calls updateLineItem', (done) => {
-      cart.updateItem(123, 3).then(() => {
+    it('calls updateLineItem', () => {
+      return cart.updateItem(123, 3).then(() => {
         assert.calledWith(updateLineItemStub, 123, 3);
         assert.calledOnce(cart.render);
         assert.calledOnce(cart.toggle.render);
         assert.deepEqual(cart.model, {test: 'lol'});
-        done();
-      }).catch((e) => {
-        done(e);
       });
     });
   });
@@ -165,17 +156,14 @@ describe('Cart class', () => {
   });
 
   describe('addVariantToCart', () => {
-    it('calls model addVariants', (done) => {
+    it('calls model addVariants', () => {
       cart.model.addVariants = sinon.stub().returns(Promise.resolve());
       let render = sinon.stub(cart, 'render');
       let toggleRender = sinon.stub(cart.toggle, 'render');
 
-      cart.addVariantToCart({id: 123}).then(() => {
+      return cart.addVariantToCart({id: 123}).then(() => {
         assert.calledWith(cart.model.addVariants, {variant: {id: 123 }, quantity: 1});
         assert.calledOnce(toggleRender);
-        done();
-      }).catch((e) => {
-        done(e);
       });
     });
   });
