@@ -48,12 +48,11 @@ describe('ProductSet class', () => {
   });
 
   describe('fetchData', () => {
-    it('returns product data', (done) => {
-      set.fetchData().then((data) => {
+    it('returns product data', () => {
+      return set.fetchData().then((data) => {
         assert.deepEqual(data, {
           products: [{title: 'vapehat'}, {title: 'vapeshoe'}]
         });
-        done();
       });
     });
   });
@@ -96,13 +95,10 @@ describe('ProductSet class', () => {
         });
       });
 
-      it('calls fetchQueryProducts with collection id', (done) => {
-        collection.sdkFetch().then(() => {
+      it('calls fetchQueryProducts with collection id', () => {
+        return collection.sdkFetch().then(() => {
           assert.calledWith(collection.client.fetchQueryCollections, {handle: 'hats'});
           assert.calledWith(collection.client.fetchQueryProducts, {collection_id: 2345, page: 1, limit: 30});
-          done();
-        }).catch((e) => {
-          done(e);
         });
       });
     });
@@ -144,11 +140,8 @@ describe('ProductSet class', () => {
     it('initializes an array of products', () => {
       set.model.products = [fakeProduct];
 
-      set.renderProducts().then((data) => {
+      return set.renderProducts().then((data) => {
         assert.calledWith(initSpy, fakeProduct);
-        done();
-      }).catch((e) => {
-        done(e);
       });
     });
   });
@@ -199,14 +192,11 @@ describe('ProductSet class', () => {
       resizeSpy = sinon.stub(set, 'resize');
     });
 
-    it('sets nextModel and rerenders pagintaiton button', (done) => {
-      set.showPagination().then(() => {
+    it('sets nextModel and rerenders pagintaiton button', () => {
+      return set.showPagination().then(() => {
         assert.deepEqual(set.nextModel, {products: newCollection});
         assert.calledWith(sdkFetchSpy, {page: 2});
         assert.calledWith(renderChildStub, set.classes.productSet.paginationButton, set.paginationTemplate);
-        done();
-      }).catch((e) => {
-        done(e);
       });
     });
   });

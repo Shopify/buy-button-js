@@ -43,12 +43,8 @@ describe('Iframe class', () => {
   });
 
   describe('load', () => {
-    beforeEach((done) => {
-      iframe.load().then(() => {
-        done();
-      }).catch((e) => {
-        done(e)
-      });
+    beforeEach(() => {
+      return iframe.load();
     });
 
     it('appends an iframe', () => {
@@ -63,12 +59,10 @@ describe('Iframe class', () => {
 
   describe('loadFontScript', () => {
     let scriptTags;
-    beforeEach((done) => {
+    beforeEach(() => {
       scriptTags = document.head.getElementsByTagName('script').length;
       iframe.googleFonts = ['Lato'];
-      iframe.load().then(() => {
-        done();
-      });
+      return iframe.load();
     });
 
     it('appends a script tag', () => {
@@ -78,13 +72,10 @@ describe('Iframe class', () => {
   });
 
   describe('get css', () => {
-    it('returns properly formatted CSS', (done) => {
-      iframe.load().then(() => {
+    it('returns properly formatted CSS', () => {
+      return iframe.load().then(() => {
         assert.include(iframe.css, defaultCSS, 'css is formatted correctly');
         assert.include(iframe.css, customCSS, 'appends custom css');
-        done();
-      }).catch((e) => {
-        done(e);
       });
     });
   });

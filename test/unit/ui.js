@@ -45,25 +45,19 @@ describe('ui class', () => {
     });
 
     describe('when no cart exists', () => {
-      it('creates a new cart', (done) => {
-        ui.createCart({options: {}}).then(() => {
+      it('creates a new cart', () => {
+        return ui.createCart({options: {}}).then(() => {
           assert.equal(1, ui.components.cart.length, 'cart array has 1 item');
           ui.destroyComponent('cart', ui.components.cart[0].model.id);
-          done();
-        }).catch((e) => {
-          done(e);
         });
       })
     });
 
     describe('when a cart exists', () => {
-      it('does not create a second cart', (done) => {
-        ui.createCart({options: {}}).then(() => ui.createCart({options: {}})).then(() => {
+      it('does not create a second cart', () => {
+        return ui.createCart({options: {}}).then(() => ui.createCart({options: {}})).then(() => {
           assert.equal(1, ui.components.cart.length, 'cart array has 1 item');
           ui.destroyComponent('cart', ui.components.cart[0].model.id);
-          done();
-        }).catch((e) => {
-          done(e);
         });
       });
     });
@@ -82,28 +76,22 @@ describe('ui class', () => {
       initStub.restore();
     });
 
-    it('creates new component of type', (done) => {
-      ui.createComponent('product', productConfig).then(() => {
+    it('creates new component of type', () => {
+      return ui.createComponent('product', productConfig).then(() => {
         assert.equal(1, ui.components.product.length);
         ui.destroyComponent('product', ui.components.product[0].model.id);
-        done()
-      }).catch((e) => {
-        done(e);
       });
     });
 
-    it('passes config to constructor', (done) => {
+    it('passes config to constructor', () => {
       productConfig.node = null;
       const testConfig = {
         id: 123,
         options: {},
       }
-      ui.createComponent('product', productConfig).then(() => {
+      return ui.createComponent('product', productConfig).then(() => {
         assert.equal(null, ui.components.product[0].config.node);
         ui.destroyComponent('product', ui.components.product[0].model.id);
-        done()
-      }).catch((e) => {
-        done(e)
       });
     });
   });
