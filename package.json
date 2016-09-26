@@ -14,7 +14,6 @@
     "clean": "rm -rf dist lib && mkdir dist lib",
     "styles": "npm run styles-embeds:build && npm run styles-host:build",
     "prepublish": "npm run build",
-    "postinstall": "BABEL_ENV=production npm run temp-build",
     "docs": "jekyll serve -s docs",
     "---------- ci": null,
     "test": "./test-ci",
