@@ -1,17 +1,17 @@
 ---
 layout: default
 ---
-# Shopify Buy Button JS
+# Shopify BuyButton.js
 
-The Shopify Buy Button JS library is a highly customizable UI library for adding ecommerce functionality to any website. The library allows you to create interactive UI components such as product listings and shopping carts with minimal configuration, while allowing you to easily customize the appearance and behaviour of the components. It uses the [JS Buy SDK](http://shopify.github.io/js-buy-sdk/) to connect to your Shopify store, giving you access to your products and collections.
+The Shopify Buy Button JS library is a highly customizable UI library for adding ecommerce functionality to any website. It allows you to easily create interactive UI components such as product listings and shopping carts with minimal configuration, while exposing powerful customization options. It uses the [JS Buy SDK](http://shopify.github.io/js-buy-sdk/) to connect to your Shopify store, giving you access to your products and collections.
 
-Using the Buy Button JS Library, you can add the following components to your website:
+Using BuyButton.js, you can add the following components to your website:
 
 * Product listings and "Buy Now" buttons
 * Collections of products
 * Shopping cart
 
-This tool is intended for use by developers who are familliar with JavaScript and HTML.
+This tool is intended for use by developers who are familiar with JavaScript and HTML.
 
 ## Current Support
 
@@ -40,9 +40,9 @@ var client = ShopifyBuy.buildClient({
 > Note: You will need to publish the product/<a href="https://docs.shopify.com/manual/products/collections/make-collections-findable#change-the-visibility-of-a-collection" target="_blank">collection</a> you wish to interact with to the
 > "Buy Button" channel in Shopify.
 
-## Initializing the UI library
+## Initializing the Library
 
-You can now create a UI instance, which is the main interface you will use to create components. The `ShopifyBuy.UI.init` method takes the client as its argument.
+You can now create a UI instance, which is the main interface you will use to create components. The `ShopifyBuy.UI.init` method takes the client you previously configured as its argument.
 
 ```js
 var ui = ShopifyBuy.UI.init(client);

@@ -6,7 +6,19 @@ import Checkout from './checkout';
 import formatMoney from '../utils/money';
 import {addClassToElement} from '../utils/element-class';
 
+
+/**
+ * Renders and cart embed.
+ * @extends Component.
+ */
 export default class Cart extends Component {
+
+  /**
+   * create Cart.
+   * @param {Object} config - configuration object.
+   * @param {Object} props - data and utilities passed down from UI instance.
+   * @param {Object} [storage] - object implementing the localStorage API for cart persistence.
+   */
   constructor(config, props, storage) {
     super(config, props);
     this.storage = storage || window.localStorage;
@@ -19,10 +31,18 @@ export default class Cart extends Component {
     this.checkout = new Checkout(this.config);
   }
 
+  /**
+   * get key for configuration object.
+   * @return {String}
+   */
   get typeKey() {
     return 'cart';
   }
 
+  /**
+   * get events to be bound to DOM.
+   * @return {Object}
+   */
   get DOMEvents() {
     return merge({}, {
       [`click .${this.classes.cart.close.split(' ').join('.')}`]: this.close.bind(this),
@@ -33,6 +53,10 @@ export default class Cart extends Component {
     }, this.options.DOMEvents);
   }
 
+  /**
+   * get HTML for cart line items.
+   * @return {String} HTML
+   */
   get lineItemsHtml() {
     return this.model.lineItems.reduce((acc, lineItem) => {
       const data = lineItem;
@@ -41,6 +65,10 @@ export default class Cart extends Component {
     }, '');
   }
 
+  /**
+   * get data to be passed to view.
+   * @return {Object} viewData object.
+   */
   get viewData() {
     return merge(this.model, {
       text: this.options.text,
@@ -51,10 +79,18 @@ export default class Cart extends Component {
     });
   }
 
+  /**
+   * get formatted cart subtotal based on moneyFormat
+   * @return {String}
+   */
   get formattedTotal() {
     return formatMoney(this.model.subtotal, this.moneyFormat);
   }
 
+  /**
+   * whether cart is empty
+   * @return {Boolean}
+   */
   get isEmpty() {
     return this.model.lineItems.length < 1;
   }
@@ -63,6 +99,10 @@ export default class Cart extends Component {
     return this.isVisible ? 'is-active' : '';
   }
 
+  /**
+   * get model data either by calling client.createCart or loading from localStorage.
+   * @return {Promise} promise resolving to cart instance.
+   */
   fetchData() {
     if (this.storage.getItem('lastCartId')) {
       return this.props.client.fetchCart(this.storage.getItem('lastCartId'));
@@ -83,10 +123,20 @@ export default class Cart extends Component {
     return `<div class="${this.classes.cart.cart}">${html}</div>`;
   }
 
+  /**
+   * initializes component by creating model and rendering view.
+   * Creates and initalizes toggle component.
+   * @param {Object} [data] - data to initialize model with.
+   * @return {Promise} promise resolving to instance.
+   */
   init(data) {
     return super.init(data).then((cart) => this.toggle.init({lineItems: cart.model.lineItems}).then(() => this));
   }
 
+  /**
+   * renders string template using viewData to wrapper element.
+   * Sets iframe class based on visibility.
+   */
   render() {
     super.render();
     if (this.isVisible) {
@@ -101,16 +151,26 @@ export default class Cart extends Component {
     this.toggle.destroy();
   }
 
+  /**
+   * closes cart
+   */
   close() {
     this.isVisible = false;
     this.render();
   }
 
+  /**
+   * opens cart
+   */
   open() {
     this.isVisible = true;
     this.render();
   }
 
+  /**
+   * toggles cart visibility
+   * @param {Boolean} visible - desired state.
+   */
   toggleVisibility(visible) {
     this.isVisible = visible || !this.isVisible;
     this.render();
@@ -124,6 +184,15 @@ export default class Cart extends Component {
     this.setQuantity(target, (prevQty) => prevQty + qty);
   }
 
+  onCheckout() {
+    this.checkout.open(this.model.checkoutUrl);
+  }
+
+  /**
+   * set quantity for a line item.
+   * @param {Object} target - DOM node of line item
+   * @param {Function} fn - function to return new quantity given currrent quantity.
+   */
   setQuantity(target, fn) {
     const id = target.getAttribute('data-line-item-id');
     const item = this.model.lineItems.filter((lineItem) => lineItem.id === id)[0];
@@ -131,6 +200,11 @@ export default class Cart extends Component {
     return this.props.tracker.trackMethod(this.updateItem.bind(this), 'CART_UPDATE', this.cartItemTrackingInfo(item, newQty))(id, newQty);
   }
 
+  /**
+   * update line item.
+   * @param {Number} id - lineItem id.
+   * @param {Number} qty - quantity for line item.
+   */
   updateItem(id, qty) {
     return this.model.updateLineItem(id, qty).then((cart) => {
       this.model = cart;
@@ -138,13 +212,53 @@ export default class Cart extends Component {
       if (qty > 0) {
         this.render();
       } else {
-        this.animateRemoveItem(id);
+        this._animateRemoveItem(id);
       }
       return cart;
     });
   }
 
-  animateRemoveItem(id) {
+  /**
+   * re-assign configuration and re-render component.
+   * Update toggle component.
+   * @param {Object} config - new configuration object.
+   */
+  updateConfig(config) {
+    super.updateConfig(config);
+    this.toggle.updateConfig(config);
+  }
+
+  /**
+   * add variant to cart.
+   * @param {Object} variant - variant object.
+   * @param {Number} [quantity=1] - quantity to be added.
+   */
+  addVariantToCart(variant, quantity = 1) {
+    this.isVisible = true;
+    this.render();
+    return this.model.addVariants({variant, quantity}).then((cart) => {
+      this.render();
+      this.toggle.render();
+      return cart;
+    });
+  }
+
+  /**
+   * get info about line item to be sent to tracker
+   * @return {Object}
+   */
+  cartItemTrackingInfo(item, quantity) {
+    return {
+      id: item.variant_id,
+      name: item.title,
+      sku: null,
+      price: item.price,
+      prevQuantity: item.quantity,
+      quantity: parseFloat(quantity),
+    };
+  }
+
+  _animateRemoveItem(id) {
     const el = this.document.getElementById(id);
     addClassToElement('is-hidden', el);
     if (this.props.browserFeatures.transition) {
@@ -160,35 +274,5 @@ export default class Cart extends Component {
     } else {
       el.parentNode.removeChild(el);
     }
-  }
-
-  updateConfig(config) {
-    super.updateConfig(config);
-    this.toggle.updateConfig(config);
-  }
-
-  onCheckout() {
-    this.checkout.open(this.model.checkoutUrl);
-  }
-
-  addVariantToCart(variant, quantity = 1) {
-    this.isVisible = true;
-    this.render();
-    return this.model.addVariants({variant, quantity}).then((cart) => {
-      this.render();
-      this.toggle.render();
-      return cart;
-    });
-  }
-
-  cartItemTrackingInfo(item, quantity) {
-    return {
-      id: item.variant_id,
-      name: item.title,
-      sku: null,
-      price: item.price,
-      prevQuantity: item.quantity,
-      quantity: parseFloat(quantity),
-    };
   }
 }

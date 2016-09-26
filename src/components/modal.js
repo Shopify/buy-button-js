@@ -3,7 +3,17 @@ import Component from '../component';
 import Product from './product';
 import {addClassToElement, removeClassFromElement} from '../utils/element-class';
 
+/**
+ * Renders product modal.
+ * @extends Component.
+ */
 export default class Modal extends Component {
+
+  /**
+   * create Modal.
+   * @param {Object} config - configuration object.
+   * @param {Object} props - data and utilities passed down from UI instance.
+   */
   constructor(config, props) {
     super(config, props);
     this.node = config.node || document.body.appendChild(document.createElement('div'));
@@ -11,10 +21,19 @@ export default class Modal extends Component {
     this.product = null;
   }
 
+  /**
+   * get key for configuration object.
+   * @return {String}
+   */
   get typeKey() {
     return 'modal';
   }
 
+  /**
+   * get events to be bound to DOM.
+   * Combines Product events with modal events.
+   * @return {Object}
+   */
   get DOMEvents() {
     let events = Object.assign({}, {
       [`click .${this.classes.modal.close.split(' ').join('.')}`]: this.close.bind(this),
@@ -25,6 +44,10 @@ export default class Modal extends Component {
     return events;
   }
 
+  /**
+   * get configuration object for product within modal. Set product node to modal contents.
+   * @return {Object}
+   */
   get productConfig() {
     return {
       node: this.productWrapper,
@@ -32,6 +55,10 @@ export default class Modal extends Component {
     };
   }
 
+  /**
+   * delegates DOM events to event listeners.
+   * Adds event listener to wrapper to close modal on click.
+   */
   delegateEvents() {
     super.delegateEvents();
     this.wrapper.addEventListener('click', this.closeOnBgClick.bind(this));
@@ -47,6 +74,12 @@ export default class Modal extends Component {
     return `<div class="${this.classes.modal.overlay}"><div class="${this.classes.modal.modal}">${html}</div></div>`;
   }
 
+  /**
+   * initializes component by creating model and rendering view.
+   * Creates and initializes product component.
+   * @param {Object} [data] - data to initialize model with.
+   * @return {Promise} promise resolving to instance.
+  */
   init(data) {
     this.isVisible = true;
     return super.init(data).then(() => {
@@ -56,12 +89,20 @@ export default class Modal extends Component {
     });
   }
 
+  /**
+   * re-assign configuration and re-render component.
+   * Update config on product within modal.
+   * @param {Object} config - new configuration object.
+   */
   updateConfig(config) {
     super.updateConfig(config);
     this.product = new Product(this.productConfig, this.props);
     return this.product.init(this.model).then(() => this.resize());
   }
 
+  /**
+   * close modal.
+   */
   close() {
     this.isVisible = false;
     removeClassFromElement('is-active', this.wrapper);
@@ -78,6 +119,9 @@ export default class Modal extends Component {
     }
   }
 
+  /**
+   * renders string template using viewData to wrapper element.
+   */
   render() {
     if (!this.isVisible) {
       return;

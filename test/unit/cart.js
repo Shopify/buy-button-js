@@ -123,7 +123,7 @@ describe('Cart class', () => {
   });
 
 
-  describe('animateRemoveItem', () => {
+  describe('_animateRemoveItem', () => {
     let node;
 
     beforeEach(() => {
@@ -138,7 +138,7 @@ describe('Cart class', () => {
     });
 
     it('calls updateLineItem', () => {
-      cart.animateRemoveItem(123);
+      cart._animateRemoveItem(123);
       assert.calledWith(node.addEventListener, 'transitionend');
     });
   });
