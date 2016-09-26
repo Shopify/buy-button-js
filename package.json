@@ -2,7 +2,7 @@
   "name": "shopify-buy-ui",
   "version": "0.0.0",
   "description": "The JS Buy UI library allows merchants to build Shopify interfaces into any website",
-  "main": "lib/shopify-buy-ui.umd.js",
+  "main": "dist/shopify-buy-ui.standalone.js",
   "jsnext:main": "lib/shopify-buy-ui.es.js",
   "repository": "git@github.com:Shopify/shopify-buy-ui.git",
   "scripts": {
