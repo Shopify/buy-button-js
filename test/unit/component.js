@@ -1,4 +1,4 @@
-import ShopifyBuy from '../../src/shopify-buy-ui';
+import ShopifyBuy from '../../src/buybutton';
 import Component from '../../src/component';
 import Iframe from '../../src/iframe';
 import Template from '../../src/template';

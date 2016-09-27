@@ -1,4 +1,4 @@
-import ShopifyBuy from '../../src/shopify-buy-ui';
+import ShopifyBuy from '../../src/buybutton';
 import UI from '../../src/ui';
 import Product from '../../src/components/product';
 import Cart from '../../src/components/cart';
