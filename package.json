@@ -1,11 +1,11 @@
 {
-  "name": "buybutton-js",
+  "name": "@shopify/buybutton-js",
   "version": "0.0.0",
   "description": "The JS Buy UI library allows merchants to build Shopify interfaces into any website",
   "main": "lib/buybutton.umd.js",
   "jsnext:main": "lib/buybutton.es.js",
   "repository": "git@github.com:Shopify/buybutton-js.git",
-  "scripts": {
+  " & npm run selenium-ciscripts": {
     "start": "rm -rf tmp && mkdir tmp && npm run src:watch & npm run styles:watch & npm run serve",
     "build": "npm run clean && npm run styles && npm run src:build",
     "temp-build": "npm run clean && npm run styles && babel ./src --out-dir ./dist",
