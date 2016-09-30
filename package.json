@@ -5,7 +5,7 @@
   "main": "lib/buybutton.umd.js",
   "jsnext:main": "lib/buybutton.es.js",
   "repository": "git@github.com:Shopify/buybutton-js.git",
-  " & npm run selenium-ciscripts": {
+  "scripts": {
     "start": "rm -rf tmp && mkdir tmp && npm run src:watch & npm run styles:watch & npm run serve",
     "build": "npm run clean && npm run styles && npm run src:build",
     "temp-build": "npm run clean && npm run styles && babel ./src --out-dir ./dist",
