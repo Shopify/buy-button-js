@@ -11,7 +11,7 @@ $modal-footer-height: 90px;
 
 .modal {
   background: $color-white;
-  width: 100%;
+  width: calc(100% - 20px);
   position: absolute;
   left: 0;
   right: 0;
@@ -59,6 +59,7 @@ $modal-footer-height: 90px;
   }
 
   .modal {
+    width: 100%;
     min-height: 100vh;
     position: fixed;
     overflow-y: auto;
