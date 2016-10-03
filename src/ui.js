@@ -210,6 +210,7 @@ export default class UI {
     window.addEventListener('safeResize', () => {
       this.components.collection.forEach((collection) => collection.resize());
       this.components.productSet.forEach((set) => set.resize());
+      this.components.product.forEach((product) => product._resizeY());
     });
   }
 
