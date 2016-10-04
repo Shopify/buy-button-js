@@ -1,6 +1,6 @@
 {
   "name": "@shopify/buy-button-js",
-  "version": "0.0.1",
+  "version": "0.0.2-alpha",
   "description": "The JS Buy UI library allows merchants to build Shopify interfaces into any website",
   "main": "lib/buybutton.umd.js",
   "jsnext:main": "lib/buybutton.es.js",
@@ -11,7 +11,7 @@
     "temp-build": "npm run clean && npm run styles && babel ./src --out-dir ./dist",
     "serve": "http-server",
     "lint": "eslint src/*",
-    "clean": "rm -rf dist lib && mkdir dist lib",
+    "clean": "rm -rf dist && mkdir dist ",
     "styles": "npm run styles-embeds:build && npm run styles-host:build",
     "prepublish": "npm run build",
     "docs": "jekyll serve -s docs",
