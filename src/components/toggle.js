@@ -47,6 +47,10 @@ export default class CartToggle extends Component {
     }, this.options.DOMEvents);
   }
 
+  wrapTemplate(html) {
+    return `<div class="${this.stickyClass} ${this.classes.toggle.toggle}">${html}</div>`;
+  }
+
   render() {
     super.render();
     if (this.options.sticky) {
