@@ -24,7 +24,7 @@ export default class CartToggle extends Component {
   get viewData() {
     return {
       classes: this.classes,
-      text: this.text,
+      text: this.options.text,
       count: this.count,
     };
   }
