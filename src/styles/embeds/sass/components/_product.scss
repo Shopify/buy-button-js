@@ -97,7 +97,6 @@
 }
 
 .product__variant-selectors {
-  margin-bottom: $gutter;
   text-align: left;
   font-size: 14px;
 }
@@ -141,8 +140,10 @@
   display: inline-block;
 }
 
-.layout-vertical {
-  .btn:not(.beside-quantity) {
+.layout-vertical,
+.layout-horizontal {
+  .btn,
+  .quantity-container {
     margin: ($gutter + 5) auto 0;
   }
 
@@ -161,7 +162,6 @@
 
     .quantity-container {
       margin-left: $gutter-modal;
-      margin-top: 0;
     }
 
     .product__title,
