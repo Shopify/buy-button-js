@@ -263,14 +263,68 @@ export default class Product extends Component {
    * get options for product with selected value.
    * @return {Array}
    */
+  get variantArray() {
+    delete this.variant_Array;
+    return this.variant_Array = this.model.variants.map((variant) => {
+      let betterVariant =  {
+        id: variant.id,
+        available: variant.available,
+        optionValues: {}
+      }
+      variant.optionValues.forEach((optionValue) => {
+        betterVariant.optionValues[optionValue.name] = optionValue.value;
+      });
+
+      return betterVariant;
+    });
+  }
+
+  get selections() {
+    const selections = {};
+
+    this.model.selections.forEach((selection, index) => {
+      const option = this.model.options[index]
+      selections[option.name] = selection;
+    });
+
+    return selections;
+  }
+
+  optionValueCanBeSelected(selections, name, value) {
+    const variants = this.variantArray;
+    selections[name] = value;
+
+    const satisfactoryVariants = variants.filter((variant) => {
+      const matchingOptions = Object.keys(selections).filter((key) => {
+        return variant.optionValues[key] === selections[key];
+      });
+      return matchingOptions.length === Object.keys(selections).length;
+    });
+
+    let variantSelectable = false;
+
+    variantSelectable = satisfactoryVariants.reduce((variantExists, variant) => {
+      variantExists = variant.available;
+      return variantExists;
+    }, false);
+
+    return variantSelectable;
+  }
+
   get decoratedOptions() {
-    return this.model.options.map((option) => ({
-      name: option.name,
-      values: option.values.map((value) => ({
-        name: value,
-        selected: value === option.selected,
-      })),
-    }));
+    const selections = this.selections;
+    return this.model.options.map((option) => {
+      return {
+        name: option.name,
+        values: option.values.map((value) => {
+          return {
+            name: value,
+            selected: value === option.selected,
+            disabled: !this.optionValueCanBeSelected(selections, option.name, value)
+          }
+        })
+      }
+    });
   }
 
   /**
