@@ -43,63 +43,39 @@ function ruleDeclarations(rule) {
 }
 
 function selectorStyleGroup(selector, selectorClass, classes) {
-  console.log(selectorClass);
-  const formattedSelector = selectorClass.split(' ').join('.');
   let styleGroup = [];
-  Object.keys(selector).forEach((decKey) => {
-    if (!isValue(selector[decKey])) {
-      let className = classes[decKey] || decKey;
-        const childSG = selectorStyleGroup(selector[decKey], className, classes).map((group) => {
-          let selector = '';
-          if (isPseudoSelector(decKey)) {
-            selector = `.${formattedSelector}${decKey}`;
-          } else if (isMedia(decKey)) {
-            selector = `.${formattedSelector}`;
-          } else {
-            selector = `.${formattedSelector} ${group.selector}`;
-          }
-          return {
-            selector: selector,
-            declarations: group.declarations,
-            media: isMedia(decKey) ? decKey : null,
-          }
-        });
-        styleGroup = styleGroup.concat(childSG);
-    } else {
-    }
-  });
-      styleGroup.push({
-        selector: `.${formattedSelector}`,
-        declarations: ruleDeclarations(selector),
-      });
-  return styleGroup;
-}
-
-function aselectorStyleGroup(selector, selectorClass, classes) {
-  const styleGroup = [];
-
   if (selector && selectorClass) {
-    Object.keys(selector).forEach((decKey) => {
-      if (selector && selectorClass) {
-        if (isPseudoSelector(decKey)) {
-          styleGroup.push({
-            selector: `.${selectorClass}${decKey}`,
-            declarations: ruleDeclarations(selector[decKey]),
-          });
+    let formattedSelector = selectorClass.split(' ').join('.');
+    if (!isPseudoSelector(formattedSelector)) {
+      formattedSelector = `.${formattedSelector}`;
+    }
+    styleGroup = Object.keys(selector).filter((decKey) => {
+      return !isValue(selector[decKey]);
+    }).reduce((acc, decKey) => {
+      let className = classes[decKey] || decKey;
+      return acc.concat(selectorStyleGroup(selector[decKey], className, classes).map((group) => {
+        let selector = '';
+        if (isPseudoSelector(group.selector)) {
+          selector = `${formattedSelector}${group.selector}`;
         } else if (isMedia(decKey)) {
-          styleGroup.push({
-            media: decKey,
-            selector: `.${selectorClass}`,
-            declarations: ruleDeclarations(selector[decKey]),
-          });
+          selector = formattedSelector;
+        } else {
+          selector = `${formattedSelector} ${group.selector}`;
         }
-      }
-    });
-    const formattedSelector = selectorClass.split(' ').join('.');
-    styleGroup.push({
-      selector: `.${formattedSelector}`,
-      declarations: ruleDeclarations(selector),
-    });
+        return {
+          selector: selector,
+          declarations: group.declarations,
+          media: isMedia(decKey) ? decKey : null,
+        }
+      }));
+    }, []);
+    let declarations = ruleDeclarations(selector);
+    if (declarations.length) {
+      styleGroup.push({
+        selector: `${formattedSelector}`,
+        declarations: declarations,
+      });
+    }
   }
   return styleGroup;
 }
@@ -216,7 +192,6 @@ export default class iframe {
         });
       }
     });
-    console.log(customStyles);
     return customStyles;
   }
 

@@ -1,7 +1,7 @@
 import Iframe from '../../src/iframe';
 
 const defaultCSS = '* { box-sizing: border-box; }';
-const customCSS = '.btn:hover { color: green; } .btn { color: red; }';
+const customCSS = '@media (max-width: 100px) { .product { background: blue; }  } .product:hover .btn { background: orange; } .btn:hover { color: green; } .btn { color: red; }';
 
 let iframe;
 let parent;
@@ -15,10 +15,21 @@ describe('Iframe class', () => {
       classes: {
         product: {
           button: 'btn',
+          product: 'product',
         }
       },
       customStyles: {
         product: {
+          product: {
+            '@media (max-width: 100px)': {
+              'background': 'blue',
+            },
+            ':hover': {
+              button: {
+                'background': 'orange',
+              }
+            }
+          },
           button: {
             'color': 'red',
             ':hover': {
@@ -79,4 +90,5 @@ describe('Iframe class', () => {
       });
     });
   });
+
 });
