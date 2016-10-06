@@ -170,6 +170,7 @@ export default class ProductSet extends Component {
   nextPage() {
     this.model = this.nextModel;
     this.page = this.page + 1;
+    this._userEvent('loadNextPage');
     this.renderProducts();
   }
 

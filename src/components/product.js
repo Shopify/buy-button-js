@@ -341,6 +341,7 @@ export default class Product extends Component {
    * open online store in new tab.
    */
   openOnlineStore() {
+    this._userEvent('openOnlineStore');
     window.open(this.onlineStoreURL);
   }
 
@@ -539,12 +540,14 @@ export default class Product extends Component {
     evt.stopPropagation();
     if (this.options.buttonDestination === 'cart') {
       this.props.closeModal();
+      this._userEvent('addVariantToCart');
       this.props.tracker.trackMethod(this.cart.addVariantToCart.bind(this), 'CART_ADD', this.selectedVariantTrackingInfo)(this.model.selectedVariant, this.model.selectedQuantity);
     } else if (this.options.buttonDestination === 'modal') {
       this.openModal();
     } else if (this.options.buttonDestination === 'onlineStore') {
       this.openOnlineStore();
     } else {
+      this._userEvent('openCheckout');
       new Checkout(this.config).open(this.model.selectedVariant.checkoutUrl(this.selectedQuantity));
     }
   }
@@ -586,6 +589,7 @@ export default class Product extends Component {
         }),
       }, this.props);
     }
+    this._userEvent('openModal');
     return this.modal.init(this.model);
   }
 
@@ -599,6 +603,7 @@ export default class Product extends Component {
       quantity = 0;
     }
     this.selectedQuantity = quantity;
+    this._userEvent('updateQuantity');
     this.render();
   }
 
@@ -615,6 +620,7 @@ export default class Product extends Component {
       this.cachedImage = this.model.selectedVariantImage;
     }
     this.render();
+    this._userEvent('updateVariant');
     return updatedOption;
   }
 
