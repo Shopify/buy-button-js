@@ -30,12 +30,6 @@ function isValue(test) {
   return typeof test === 'string' || typeof test === 'number';
 }
 
-function isDescendent(key, classes) {
-  return Object.keys(classes).filter((className) => {
-    return key === className;
-  })[0];
-}
-
 function ruleDeclarations(rule) {
   return Object.keys(rule).filter((key) => {
     return isValue(rule[key]);
@@ -52,28 +46,28 @@ function selectorStyleGroup(selector, selectorClass, classes) {
     styleGroup = Object.keys(selector).filter((decKey) => {
       return !isValue(selector[decKey]);
     }).reduce((acc, decKey) => {
-      let className = classes[decKey] || decKey;
+      const className = classes[decKey] || decKey;
       return acc.concat(selectorStyleGroup(selector[decKey], className, classes).map((group) => {
-        let selector = '';
+        let groupSelector = '';
         if (isPseudoSelector(group.selector)) {
-          selector = `${formattedSelector}${group.selector}`;
+          groupSelector = `${formattedSelector}${group.selector}`;
         } else if (isMedia(decKey)) {
-          selector = formattedSelector;
+          groupSelector = formattedSelector;
         } else {
-          selector = `${formattedSelector} ${group.selector}`;
+          groupSelector = `${formattedSelector} ${group.selector}`;
         }
         return {
-          selector: selector,
+          selector: groupSelector,
           declarations: group.declarations,
           media: isMedia(decKey) ? decKey : null,
-        }
+        };
       }));
     }, []);
-    let declarations = ruleDeclarations(selector);
+    const declarations = ruleDeclarations(selector);
     if (declarations.length) {
       styleGroup.push({
         selector: `${formattedSelector}`,
-        declarations: declarations,
+        declarations,
       });
     }
   }
