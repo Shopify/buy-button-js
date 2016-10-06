@@ -1,6 +1,7 @@
 import Modal from '../../src/components/modal';
 import Iframe from '../../src/iframe';
 import Product from '../../src/components/product';
+import testProduct from '../fixtures/product-fixture';
 
 const config = {
   options: {
@@ -23,19 +24,7 @@ const props = {
   }
 }
 
-const fakeProduct = {
-  title: 'vapehat',
-  options: [],
-  variants: [],
-  selectedVariant: {
-    compareAtPrice: '1',
-    attrs: {
-      variant: {
-        available: true,
-      }
-    }
-  }
-}
+const fakeProduct = testProduct;
 
 describe('Modal class', () => {
   let modal;

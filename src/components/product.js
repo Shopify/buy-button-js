@@ -260,17 +260,88 @@ export default class Product extends Component {
   }
 
   /**
+   * get product variants with embedded options
+   * @return {Array} array of variants
+   */
+  get variantArray() {
+    delete this.variantArrayMemo;
+    this.variantArrayMemo = this.model.variants.map((variant) => {
+      const betterVariant = {
+        id: variant.id,
+        available: variant.available,
+        optionValues: {},
+      };
+      variant.optionValues.forEach((optionValue) => {
+        betterVariant.optionValues[optionValue.name] = optionValue.value;
+      });
+
+      return betterVariant;
+    });
+    return this.variantArrayMemo;
+  }
+
+  /**
+   * get selected values for options
+   * @return {Object} object with option names as keys
+   */
+  get selections() {
+    const selections = {};
+
+    this.model.selections.forEach((selection, index) => {
+      const option = this.model.options[index];
+      selections[option.name] = selection;
+    });
+
+    return selections;
+  }
+
+  /**
+   * determines whether an option can resolve to an available variant given current selections
+   * @return {Boolean}
+   */
+  optionValueCanBeSelected(selections, name, value) {
+    const variants = this.variantArray;
+    const selectableValues = Object.assign({}, selections, {
+      [name]: value,
+    });
+
+    const satisfactoryVariants = variants.filter((variant) => {
+      const matchingOptions = Object.keys(selectableValues).filter((key) => {
+        return variant.optionValues[key] === selectableValues[key];
+      });
+      return matchingOptions.length === Object.keys(selectableValues).length;
+    });
+
+    let variantSelectable = false;
+
+    variantSelectable = satisfactoryVariants.reduce((variantExists, variant) => {
+      const variantAvailable = variant.available;
+      if (!variantExists) {
+        return variantAvailable;
+      }
+      return variantExists;
+    }, false);
+    return variantSelectable;
+  }
+
+  /**
    * get options for product with selected value.
    * @return {Array}
    */
   get decoratedOptions() {
-    return this.model.options.map((option) => ({
-      name: option.name,
-      values: option.values.map((value) => ({
-        name: value,
-        selected: value === option.selected,
-      })),
-    }));
+    const selections = this.selections;
+    return this.model.options.map((option) => {
+      return {
+        name: option.name,
+        values: option.values.map((value) => {
+          return {
+            name: value,
+            selected: value === option.selected,
+            disabled: !this.optionValueCanBeSelected(selections, option.name, value),
+          };
+        }),
+      };
+    });
   }
 
   /**

@@ -246,14 +246,17 @@ describe('Product class', () => {
           {
             name: 'sloth',
             selected: true,
+            disabled: false,
           },
           {
             name: 'shark',
             selected: false,
+            disabled: false,
           },
           {
             name: 'cat',
             selected: false,
+            disabled: true,
           }
         ]
       },
@@ -263,10 +266,12 @@ describe('Product class', () => {
           {
             name: 'small',
             selected: true,
+            disabled: false,
           },
           {
             name: 'large',
             selected: false,
+            disabled: true,
           }
         ]
       }
