@@ -260,8 +260,8 @@ export default class Product extends Component {
   }
 
   /**
-   * get options for product with selected value.
-   * @return {Array}
+   * get product variants with embedded options
+   * @return {Array} array of variants
    */
   get variantArray() {
     delete this.variant_Array;
@@ -279,6 +279,10 @@ export default class Product extends Component {
     });
   }
 
+  /**
+   * get selected values for options
+   * @return {Object} object with option names as keys
+   */
   get selections() {
     const selections = {};
 
@@ -290,6 +294,10 @@ export default class Product extends Component {
     return selections;
   }
 
+  /**
+   * determines whether an option can resolve to an available variant given current selections
+   * @return {Boolean}
+   */
   optionValueCanBeSelected(selections, name, value) {
     const variants = this.variantArray;
     selections[name] = value;
@@ -311,6 +319,10 @@ export default class Product extends Component {
     return variantSelectable;
   }
 
+  /**
+   * get options for product with selected value.
+   * @return {Array}
+   */
   get decoratedOptions() {
     const selections = this.selections;
     return this.model.options.map((option) => {
