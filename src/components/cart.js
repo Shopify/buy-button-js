@@ -185,6 +185,7 @@ export default class Cart extends Component {
   }
 
   onCheckout() {
+    this._userEvent('openCheckout');
     this.checkout.open(this.model.checkoutUrl);
   }
 
@@ -206,6 +207,7 @@ export default class Cart extends Component {
    * @param {Number} qty - quantity for line item.
    */
   updateItem(id, qty) {
+    this._userEvent('updateItemQuantity');
     return this.model.updateLineItem(id, qty).then((cart) => {
       this.model = cart;
       this.toggle.render();
