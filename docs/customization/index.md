@@ -120,6 +120,29 @@ var styles = {
 
 **Default value**: dependent on component. [View component defaults](https://github.com/Shopify/buybutton-js/blob/master/src/defaults/components.js)
 
+### `events`
+
+A number of component lifecycle hooks are available for running custom functions.
+
+These events can be used for custom functionality such as tracking, or advanced DOM manipulation. The following events are
+exposed on all components, several components additionally support component-specific events.
+
+The value for each event key must be a function, which will be called with one argument, which is the instance of the
+component.
+
+```js
+var events = {
+  'beforeInit': function (component) {}, // before component is initialized
+  'afterInit': function (component) {},
+  'beforeRender': function (component) {}, // before component is rendered, after it has a `model` defined
+  'afterRender': function (component) {},
+  'beforeDelegateEvents': function (component) {}, // before events are bound to the DOM
+  'afterDelegateEvents': function(component) {},
+  'beforeUpdateConfig': function(component) {}, // before configuration is updated (only relevant in uncommon customizations)
+  'afterUpdateConfig': function(component) {},
+}
+```
+
 ## Attributes for specific components
 Your embed creates several different types of component. The attributes you can configure on each depend on the component.
 
@@ -190,6 +213,19 @@ var text = {
 }
 ```
 
+### Product events
+The Product component supports the following events:
+
+```js
+var events = {
+  addVariantToCart: function (product) {},
+  updateQuantity: function (product) {},
+  openModal: function (product) {},
+  openOnlineStore: function (product) {},
+  openCheckout: function (product) {},
+}
+```
+
 ## Option component
 Configures the option selector contained within a product.
 
@@ -231,6 +267,16 @@ var text = {
 },
 ```
 
+### Cart events
+The Cart component supports the following events:
+
+```js
+var events = {
+  openCheckout: function (cart) {},
+  updateItemQuantity: function (cart) {},
+}
+```
+
 ## LineItem component
 Configures line items within cart.
 
@@ -270,11 +316,29 @@ var text = {
 },
 ```
 
+### ProductSet events
+The ProductSet component supports the following events:
+
+```js
+var events = {
+  loadNextPage: function (productSet) {},
+}
+```
+
 ## Modal component
 
 Created when a Product's `buttonDestination` property is set to `'modal'`.
 
 No configurable contents or text.
+
+### Modal events
+The ProductSet component supports the following events:
+
+```js
+var events = {
+  closeModal: function (modal) {},
+}
+```
 
 ## ModalProduct component
 Configures the product contained within the modal. Allows product in modal to have different appearances and behaviours than the embed which launched it.
@@ -366,24 +430,6 @@ var product = {
 }
 ```
 
-### `events`
-
-A number of component lifecycle hooks are available for running custom functions.
-
-These events can be used for custom functionality such as tracking, or advanced DOM manipulation.
-
-```js
-var events = {
-  'beforeInit': function (component) {}, // before component is initialized
-  'afterInit': function (component) {},
-  'beforeRender': function (component) {}, // before component is rendered, after it has a `model` defined
-  'afterRender': function (component) {},
-  'beforeDelegateEvents': function (component) {}, // before events are bound to the DOM
-  'afterDelegateEvents': function(component) {},
-  'beforeUpdateConfig': function(component) {}, // before configuration is updated (only relevant in uncommon customizations)
-  'afterUpdateConfig': function(component) {},
-}
-```
 
 ### `DOMEvents`
 Binds custom events to DOM nodes by selector. Format is `'eventName selector': callback`.
