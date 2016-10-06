@@ -253,6 +253,7 @@ export default class Product extends Component {
     return this.decoratedOptions.reduce((acc, option) => {
       const data = option;
       data.classes = this.classes;
+      data.onlyOption = (this.model.options.length === 1);
 
       return acc + this.childTemplate.render({data});
     }, '');
