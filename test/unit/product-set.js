@@ -1,6 +1,7 @@
 import ProductSet from '../../src/components/product-set';
 import Component from '../../src/component';
 import Product from '../../src/components/product';
+import testProduct from '../fixtures/product-fixture';
 
 const config = {
   id: [123, 234],
@@ -13,19 +14,7 @@ const config = {
   }
 }
 
-const fakeProduct = {
-  title: 'vapehat',
-  options: [],
-  variants: [],
-  selectedVariant: {
-    compareAtPrice: '1',
-    attrs: {
-      variant: {
-        available: true,
-      }
-    }
-  }
-}
+const fakeProduct = testProduct;
 
 describe('ProductSet class', () => {
   let set;
