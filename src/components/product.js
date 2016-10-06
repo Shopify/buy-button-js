@@ -167,7 +167,7 @@ export default class Product extends Component {
 
   get buttonClass() {
     const disabledClass = this.buttonEnabled ? '' : this.classes.disabled;
-    const quantityClass = this.options.contents.quantity ? 'beside-quantity' : '';
+    const quantityClass = this.options.contents.buttonWithQuantity ? 'beside-quantity' : '';
     return `${disabledClass} ${quantityClass}`;
   }
 
@@ -412,7 +412,7 @@ export default class Product extends Component {
       ariaLabel = 'Buy Now';
     }
 
-    if (this.options.contents.button) {
+    if (this.options.contents.button || this.options.contents.buttonWithQuantity) {
       return `<div class="${this.wrapperClass} ${this.classes.product.product}">${html}</div>`;
     } else {
       return `<div class="${this.wrapperClass} ${this.classes.product.product}"><div tabindex="0" role="button" aria-label="${ariaLabel}" class="${this.classes.product.blockButton}">${html}</div></div>`;
@@ -530,7 +530,7 @@ export default class Product extends Component {
    * prevent events from bubbling if entire product is being treated as button.
    */
   stopPropagation(evt) {
-    if (!this.options.contents.button) {
+    if (!this.options.contents.button && !this.options.contents.buttonWithQuantity) {
       evt.stopImmediatePropagation();
     }
   }

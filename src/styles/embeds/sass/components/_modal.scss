@@ -51,7 +51,7 @@ $modal-footer-height: 90px;
   margin: 0;
 }
 
-@media (max-width: 679px) {
+@media (max-width: 499) {
   body.is-active {
     overflow: hidden;
     position: fixed;
@@ -100,7 +100,7 @@ $modal-footer-height: 90px;
   }
 }
 
-@media (min-width: 680px) {
+@media (min-width: 500) {
   html,
   body.is-active {
     height: 100%;
@@ -132,7 +132,7 @@ $modal-footer-height: 90px;
   }
 
   .product {
-    padding: $gutter * 3;
+    padding: $gutter * 2;
   }
 
   .product-img-wrapper {
@@ -157,5 +157,11 @@ $modal-footer-height: 90px;
     &:hover {
       color: $color-white;
     }
+  }
+}
+
+@media (min-width: 680px) {
+  .product {
+    padding: $gutter * 3;
   }
 }
