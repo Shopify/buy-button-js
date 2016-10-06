@@ -26,12 +26,58 @@ function isMedia(key) {
   return key.charAt(0) === '@';
 }
 
-function ruleDeclarations(rule) {
-  return Object.keys(rule).filter((key) => !isPseudoSelector(key) && !isMedia(key)).map((key) => ({property: key, value: rule[key]}));
+function isValue(test) {
+  return typeof test === 'string' || typeof test === 'number';
 }
 
-function selectorStyleGroup(selector, selectorClass) {
+function isDescendent(key, classes) {
+  return Object.keys(classes).filter((className) => {
+    return key === className;
+  })[0];
+}
+
+function ruleDeclarations(rule) {
+  return Object.keys(rule).filter((key) => {
+    return isValue(rule[key]);
+  }).map((key) => ({property: key, value: rule[key]}));
+}
+
+function selectorStyleGroup(selector, selectorClass, classes) {
+  console.log(selectorClass);
+  const formattedSelector = selectorClass.split(' ').join('.');
+  let styleGroup = [];
+  Object.keys(selector).forEach((decKey) => {
+    if (!isValue(selector[decKey])) {
+      let className = classes[decKey] || decKey;
+        const childSG = selectorStyleGroup(selector[decKey], className, classes).map((group) => {
+          let selector = '';
+          if (isPseudoSelector(decKey)) {
+            selector = `.${formattedSelector}${decKey}`;
+          } else if (isMedia(decKey)) {
+            selector = `.${formattedSelector}`;
+          } else {
+            selector = `.${formattedSelector} ${group.selector}`;
+          }
+          return {
+            selector: selector,
+            declarations: group.declarations,
+            media: isMedia(decKey) ? decKey : null,
+          }
+        });
+        styleGroup = styleGroup.concat(childSG);
+    } else {
+    }
+  });
+      styleGroup.push({
+        selector: `.${formattedSelector}`,
+        declarations: ruleDeclarations(selector),
+      });
+  return styleGroup;
+}
+
+function aselectorStyleGroup(selector, selectorClass, classes) {
   const styleGroup = [];
+
   if (selector && selectorClass) {
     Object.keys(selector).forEach((decKey) => {
       if (selector && selectorClass) {
@@ -165,11 +211,12 @@ export default class iframe {
     Object.keys(this.customStylesHash).forEach((typeKey) => {
       if (this.customStylesHash[typeKey]) {
         Object.keys(this.customStylesHash[typeKey]).forEach((key) => {
-          const styleGroup = selectorStyleGroup(this.customStylesHash[typeKey][key], this.classes[typeKey][key]);
+          const styleGroup = selectorStyleGroup(this.customStylesHash[typeKey][key], this.classes[typeKey][key], this.classes[typeKey]);
           customStyles = customStyles.concat(styleGroup);
         });
       }
     });
+    console.log(customStyles);
     return customStyles;
   }
 
