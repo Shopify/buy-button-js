@@ -1,3 +1,16 @@
+const quantityTemplate = `<div class="{{data.classes.product.quantity}} {{data.quantityClass}}">
+            {{#data.contents.quantityDecrement}}
+              <button class="{{data.classes.product.quantityButton}} {{data.classes.product.quantityDecrement}}" type="button"><span>-</span><span class="visuallyhidden">Decrement</span></button>
+            {{/data.contents.quantityDecrement}}
+            {{#data.contents.quantityInput}}
+              <input class="{{data.classes.product.quantityInput}}" type="number" min="0" aria-label="Quantity" value="{{data.selectedQuantity}}">
+            {{/data.contents.quantityInput}}
+            {{#data.contents.quantityIncrement}}
+              <button class="{{data.classes.product.quantityButton}} {{data.classes.product.quantityIncrement}}" type="button"><span>+</span><span class="visuallyhidden">Increment</span></button>
+            {{/data.contents.quantityIncrement}}
+           </div>`;
+const buttonTemplate = '<button {{#data.buttonDisabled}}disabled{{/data.buttonDisabled}} class="{{data.classes.product.button}} {{data.buttonClass}}">{{data.buttonText}}</button>';
+
 const productTemplate = {
   img: '<div class="{{data.classes.product.imgWrapper}}"><img class="{{data.classes.product.img}}" src="{{data.currentImage.src}}" /></div>',
   title: '<h1 class="{{data.classes.product.title}}">{{data.title}}</h1>',
@@ -10,18 +23,9 @@ const productTemplate = {
             {{/data.selectedVariant}}
           </div>`,
   description: '<div class="{{data.classes.product.description}}">{{{data.description}}}</div>',
-  button: '<button {{#data.buttonDisabled}}disabled{{/data.buttonDisabled}} class="{{data.classes.product.button}} {{data.buttonClass}}">{{data.buttonText}}</button>',
-  quantity: `<div class="{{data.classes.product.quantity}} {{data.quantityClass}}">
-              {{#data.contents.quantityDecrement}}
-                <button class="{{data.classes.product.quantityButton}} {{data.classes.product.quantityDecrement}}" type="button"><span>-</span><span class="visuallyhidden">Decrement</span></button>
-              {{/data.contents.quantityDecrement}}
-              {{#data.contents.quantityInput}}
-                <input class="{{data.classes.product.quantityInput}}" type="number" min="0" aria-label="Quantity" value="{{data.selectedQuantity}}">
-              {{/data.contents.quantityInput}}
-              {{#data.contents.quantityIncrement}}
-                <button class="{{data.classes.product.quantityButton}} {{data.classes.product.quantityIncrement}}" type="button"><span>+</span><span class="visuallyhidden">Increment</span></button>
-              {{/data.contents.quantityIncrement}}
-             </div>`,
+  button: buttonTemplate,
+  quantity: quantityTemplate,
+  buttonWithQuantity: `<div class="{{data.classes.product.buttonWithQuantity}}">${quantityTemplate}${buttonTemplate}</div>`,
 };
 
 export default productTemplate;

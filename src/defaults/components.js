@@ -20,6 +20,7 @@ const defaults = {
       'options',
       'quantity',
       'button',
+      'buttonWithQuantity',
       'description',
     ],
     contents: {
@@ -33,6 +34,7 @@ const defaults = {
       quantityDecrement: false,
       quantityInput: true,
       button: true,
+      buttonWithQuantity: false,
       description: false,
     },
     templates: productTemplates,
@@ -58,6 +60,7 @@ const defaults = {
       quantityButton: 'btn--seamless',
       quantityIncrement: 'quantity-increment',
       quantityDecrement: 'quantity-decrement',
+      buttonWithQuantity: 'btn-and-quantity',
     },
     text: {
       button: 'SHOP NOW',
@@ -74,11 +77,11 @@ const defaults = {
       variantTitle: false,
       price: true,
       options: true,
-      button: true,
-      quantity: true,
+      button: false,
+      buttonWithQuantity: true,
+      quantity: false,
       quantityIncrement: false,
       quantityDecrement: false,
-      quantityInput: true,
       description: true,
     },
     order: [
@@ -87,8 +90,7 @@ const defaults = {
       'variantTitle',
       'price',
       'options',
-      'quantity',
-      'button',
+      'buttonWithQuantity',
       'description',
     ],
     classes: {
