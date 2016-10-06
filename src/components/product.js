@@ -264,19 +264,20 @@ export default class Product extends Component {
    * @return {Array} array of variants
    */
   get variantArray() {
-    delete this.variant_Array;
-    return this.variant_Array = this.model.variants.map((variant) => {
-      let betterVariant =  {
+    delete this.variantArrayMemo;
+    this.variantArrayMemo = this.model.variants.map((variant) => {
+      const betterVariant = {
         id: variant.id,
         available: variant.available,
-        optionValues: {}
-      }
+        optionValues: {},
+      };
       variant.optionValues.forEach((optionValue) => {
         betterVariant.optionValues[optionValue.name] = optionValue.value;
       });
 
       return betterVariant;
     });
+    return this.variantArrayMemo;
   }
 
   /**
@@ -287,7 +288,7 @@ export default class Product extends Component {
     const selections = {};
 
     this.model.selections.forEach((selection, index) => {
-      const option = this.model.options[index]
+      const option = this.model.options[index];
       selections[option.name] = selection;
     });
 
@@ -300,22 +301,26 @@ export default class Product extends Component {
    */
   optionValueCanBeSelected(selections, name, value) {
     const variants = this.variantArray;
-    selections[name] = value;
+    const selectableValues = Object.assign({}, selections, {
+      [name]: value,
+    });
 
     const satisfactoryVariants = variants.filter((variant) => {
-      const matchingOptions = Object.keys(selections).filter((key) => {
-        return variant.optionValues[key] === selections[key];
+      const matchingOptions = Object.keys(selectableValues).filter((key) => {
+        return variant.optionValues[key] === selectableValues[key];
       });
-      return matchingOptions.length === Object.keys(selections).length;
+      return matchingOptions.length === Object.keys(selectableValues).length;
     });
 
     let variantSelectable = false;
 
     variantSelectable = satisfactoryVariants.reduce((variantExists, variant) => {
-      variantExists = variant.available;
+      const variantAvailable = variant.available;
+      if (!variantExists) {
+        return variantAvailable;
+      }
       return variantExists;
     }, false);
-
     return variantSelectable;
   }
 
@@ -332,10 +337,10 @@ export default class Product extends Component {
           return {
             name: value,
             selected: value === option.selected,
-            disabled: !this.optionValueCanBeSelected(selections, option.name, value)
-          }
-        })
-      }
+            disabled: !this.optionValueCanBeSelected(selections, option.name, value),
+          };
+        }),
+      };
     });
   }
 

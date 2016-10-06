@@ -160,6 +160,8 @@ const defaults = {
       wrapper: 'option-select-wrapper',
       select: 'option-select__select',
       label: 'option-select__label',
+      optionDisabled: 'option--disabled',
+      optionSelected: 'option--selected',
     },
   },
   cart: {
