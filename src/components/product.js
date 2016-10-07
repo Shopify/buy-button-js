@@ -151,6 +151,7 @@ export default class Product extends Component {
   get viewData() {
     return merge(this.model, {
       optionsHtml: this.optionsHtml,
+      decoratedOptions: this.decoratedOptions,
       contents: this.options.contents,
       currentImage: this.currentImage,
       buttonClass: this.buttonClass,
