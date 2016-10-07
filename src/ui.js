@@ -61,7 +61,7 @@ export default class UI {
     config.node = config.node || this._queryEntryNode();
     const component = new this.componentTypes[type](config, this.componentProps);
     if (component.iframe) {
-      this._bindEsc(component.iframe.el.contentWindow || iframe.el);
+      this._bindEsc(component.iframe.el.contentWindow || component.iframe.el);
     }
     this.components[type].push(component);
     return component.init();
@@ -101,14 +101,16 @@ export default class UI {
    * close any cart.
    */
   closeCart() {
-    if (this.components.cart.length) {
-      this.components.cart.forEach((cart) => {
-        if (cart.isVisible) {
-          cart.close();
-          this.restoreFocus();
-        }
-      });
+    if (!this.components.cart.length) {
+      return;
     }
+    this.components.cart.forEach((cart) => {
+      if (!cart.isVisible) {
+        return;
+      }
+      cart.close();
+      this.restoreFocus();
+    });
   }
 
   /**
@@ -160,10 +162,11 @@ export default class UI {
    * close any modals.
    */
   closeModal() {
-    if (this.components.modal.length) {
-      this.components.modal.forEach((modal) => modal.close());
-      this.restoreFocus();
+    if (!this.components.modal.length) {
+      return;
     }
+    this.components.modal.forEach((modal) => modal.close());
+    this.restoreFocus();
   }
 
   get modalOpen() {

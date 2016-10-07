@@ -88,7 +88,7 @@ export default class Modal extends Component {
       this.product = new Product(this.productConfig, this.props);
       return this.product.init(this.model).then(() => {
         this.setFocus();
-        this.resize()
+        return this.resize();
       });
     });
   }

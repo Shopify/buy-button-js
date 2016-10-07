@@ -241,7 +241,6 @@ export default class Cart extends Component {
    * @param {Number} [quantity=1] - quantity to be added.
    */
   addVariantToCart(variant, quantity = 1) {
-    this._userEvent('addVariantToCart');
     this.open();
     return this.model.addVariants({variant, quantity}).then((cart) => {
       this.render();

@@ -33,7 +33,6 @@ export default class Component {
     this.model = {};
     this.template = new Template(this.options.templates, this.options.contents, this.options.order);
     this.children = null;
-    this.activeEl = null;
   }
 
   /**
