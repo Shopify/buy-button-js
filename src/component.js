@@ -33,6 +33,7 @@ export default class Component {
     this.model = {};
     this.template = new Template(this.options.templates, this.options.contents, this.options.order);
     this.children = null;
+    this.activeEl = null;
   }
 
   /**
@@ -351,6 +352,16 @@ export default class Component {
    */
   wrapTemplate(html) {
     return `<div class="${this.classes[this.typeKey][this.typeKey]}">${html}</div>`;
+  }
+
+  /**
+   * Focus first focusable element in wrapper.
+   */
+  setFocus() {
+    const focusable = this.wrapper.querySelectorAll('a, button, input, select')[0];
+    if (focusable) {
+      focusable.focus();
+    }
   }
 
   _resizeX() {

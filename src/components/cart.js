@@ -167,6 +167,7 @@ export default class Cart extends Component {
   open() {
     this.isVisible = true;
     this.render();
+    this.setFocus();
   }
 
   /**
@@ -176,6 +177,9 @@ export default class Cart extends Component {
   toggleVisibility(visible) {
     this.isVisible = visible || !this.isVisible;
     this.render();
+    if (this.isVisible) {
+      this.setFocus();
+    }
   }
 
   onQuantityBlur(evt, target) {
@@ -187,7 +191,6 @@ export default class Cart extends Component {
   }
 
   onCheckout() {
-    this._userEvent('openCheckout');
     this.checkout.open(this.model.checkoutUrl);
   }
 
@@ -238,11 +241,12 @@ export default class Cart extends Component {
    * @param {Number} [quantity=1] - quantity to be added.
    */
   addVariantToCart(variant, quantity = 1) {
-    this.isVisible = true;
-    this.render();
+    this._userEvent('addVariantToCart');
+    this.open();
     return this.model.addVariants({variant, quantity}).then((cart) => {
       this.render();
       this.toggle.render();
+      this.setFocus();
       return cart;
     });
   }

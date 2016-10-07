@@ -43,10 +43,11 @@ export default class UI {
     this.tracker = new Tracker(integrations.tracker);
     this.styleOverrides = styleOverrides;
     this.tracker.trackPageview();
+    this.activeEl = null;
     this._appendStyleTag();
     this._bindResize();
     this._bindHostClick();
-    this._bindEsc();
+    this._bindEsc(window);
     this._bindPostMessage();
   }
 
@@ -59,6 +60,9 @@ export default class UI {
   createComponent(type, config) {
     config.node = config.node || this._queryEntryNode();
     const component = new this.componentTypes[type](config, this.componentProps);
+    if (component.iframe) {
+      this._bindEsc(component.iframe.el.contentWindow || iframe.el);
+    }
     this.components[type].push(component);
     return component.init();
   }
@@ -101,6 +105,7 @@ export default class UI {
       this.components.cart.forEach((cart) => {
         if (cart.isVisible) {
           cart.close();
+          this.restoreFocus();
         }
       });
     }
@@ -127,6 +132,9 @@ export default class UI {
         cart.toggleVisibility(visibility);
       });
     }
+    if (!visibility) {
+      this.restoreFocus();
+    }
   }
 
   /**
@@ -144,12 +152,35 @@ export default class UI {
     }
   }
 
+  setActiveEl(el) {
+    this.activeEl = el;
+  }
+
   /**
    * close any modals.
    */
   closeModal() {
     if (this.components.modal.length) {
       this.components.modal.forEach((modal) => modal.close());
+      this.restoreFocus();
+    }
+  }
+
+  get modalOpen() {
+    return this.components.modal.reduce((isOpen, modal) => {
+      return isOpen || modal.isVisible;
+    }, false);
+  }
+
+  get cartOpen() {
+    return this.components.cart.reduce((isOpen, cart) => {
+      return isOpen || cart.isVisible;
+    }, false);
+  }
+
+  restoreFocus() {
+    if (this.activeEl && !this.modalOpen && !this.cartOpen) {
+      this.activeEl.focus();
     }
   }
 
@@ -165,6 +196,7 @@ export default class UI {
       toggleCart: this.toggleCart.bind(this),
       createModal: this.createModal.bind(this),
       closeModal: this.closeModal.bind(this),
+      setActiveEl: this.setActiveEl.bind(this),
       tracker: this.tracker,
       errorReporter: this.errorReporter,
       browserFeatures,
@@ -215,8 +247,8 @@ export default class UI {
     });
   }
 
-  _bindEsc() {
-    window.addEventListener('keydown', (evt) => {
+  _bindEsc(context) {
+    context.addEventListener('keydown', (evt) => {
       if (evt.keyCode !== ESC_KEY) {
         return;
       }

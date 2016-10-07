@@ -86,7 +86,10 @@ export default class Modal extends Component {
     return super.init(data).then(() => {
       this.productWrapper = this.wrapper.getElementsByClassName(this.classes.modal.modal)[0];
       this.product = new Product(this.productConfig, this.props);
-      return this.product.init(this.model).then(() => this.resize());
+      return this.product.init(this.model).then(() => {
+        this.setFocus();
+        this.resize()
+      });
     });
   }
 
