@@ -51,7 +51,7 @@ $modal-footer-height: 90px;
   margin: 0;
 }
 
-@media (max-width: 499) {
+@media (max-width: 499px) {
   body.is-active {
     overflow: hidden;
     position: fixed;
@@ -100,7 +100,7 @@ $modal-footer-height: 90px;
   }
 }
 
-@media (min-width: 500) {
+@media (min-width: 500px) {
   html,
   body.is-active {
     height: 100%;
