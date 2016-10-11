@@ -230,7 +230,7 @@ export default class UI {
       let data;
       try {
         data = JSON.parse(msg.data);
-      } catch (e) {
+      } catch (err) {
         data = {};
       }
       if (data.syncCart || (data.current_checkout_page && data.current_checkout_page === '/checkout/thank_you')) {
