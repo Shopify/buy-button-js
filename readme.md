@@ -9,6 +9,8 @@ To get started, take a look at [the documentation](http://shopify.github.io/buyb
 
 ```
 npm install
+cp index.example.html index.html
+# add your API key and shop domain to index.html
 npm run start
 
 ```
