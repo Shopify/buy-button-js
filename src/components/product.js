@@ -3,6 +3,7 @@ import Component from '../component';
 import Template from '../template';
 import Checkout from './checkout';
 import windowUtils from '../utils/window-utils';
+import formatMoney from '../utils/money';
 
 const pollInterval = 200;
 
@@ -145,6 +146,22 @@ export default class Product extends Component {
   }
 
   /**
+   * get formatted cart subtotal based on moneyFormat
+   * @return {String}
+   */
+  get formattedPrice() {
+    return formatMoney(this.model.selectedVariant.price, this.moneyFormat);
+  }
+
+  /**
+   * get formatted cart subtotal based on moneyFormat
+   * @return {String}
+   */
+  get formattedCompareAtPrice() {
+    return formatMoney(this.model.selectedVariant.compareAtPrice, this.moneyFormat);
+  }
+
+  /**
    * get data to be passed to view.
    * @return {Object} viewData object.
    */
@@ -163,7 +180,9 @@ export default class Product extends Component {
       imgStyle: this.imgStyle,
       quantityClass: this.quantityClass,
       priceClass: this.priceClass,
-    });
+      formattedPrice: this.formattedPrice,
+      formattedCompareAtPrice: this.formattedCompareAtPrice,
+    })
   }
 
   get buttonClass() {
