@@ -245,6 +245,13 @@ export default class Cart extends Component {
     });
   }
 
+  clear() {
+    return this.model.clearLineItems().then(() => {
+      this.render();
+      return;
+    });
+  }
+
   /**
    * get info about line item to be sent to tracker
    * @return {Object}

@@ -47,6 +47,7 @@ export default class UI {
     this._bindResize();
     this._bindHostClick();
     this._bindEsc();
+    this._bindPostMessage();
   }
 
   /**
@@ -221,6 +222,22 @@ export default class UI {
       }
       this.closeModal();
       this.closeCart();
+    });
+  }
+
+  _bindPostMessage() {
+    window.addEventListener('message', (msg) => {
+      let data;
+      try {
+        data = JSON.parse(msg.data);
+      } catch (err) {
+        data = {};
+      }
+      if (data.syncCart || (data.current_checkout_page && data.current_checkout_page === '/checkout/thank_you')) {
+        this.components.cart.forEach((cart) => {
+          cart.clear();
+        });
+      }
     });
   }
 }
