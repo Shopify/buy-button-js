@@ -246,8 +246,9 @@ export default class Cart extends Component {
   }
 
   clear() {
-    this.model.clearLineItems().then(() => {
+    return this.model.clearLineItems().then(() => {
       this.render();
+      return;
     });
   }
 

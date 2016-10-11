@@ -227,7 +227,12 @@ export default class UI {
 
   _bindPostMessage() {
     window.addEventListener('message', (msg) => {
-      const data = JSON.parse(msg.data);
+      let data;
+      try {
+        data = JSON.parse(msg.data);
+      } catch (e) {
+        data = {};
+      }
       if (data.syncCart || (data.current_checkout_page && data.current_checkout_page === '/checkout/thank_you')) {
         this.components.cart.forEach((cart) => {
           cart.clear();
