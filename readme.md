@@ -10,7 +10,8 @@ To get started, take a look at [the documentation](http://shopify.github.io/buyb
 ```
 npm install
 cp index.example.html index.html
-# add your API key and shop domain to index.html, and set product or collection ID
+# Add your API key and shop domain to index.html
+# Set a product ID
 npm run start
 
 ```
