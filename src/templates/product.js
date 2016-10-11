@@ -18,8 +18,8 @@ const productTemplate = {
   options: '{{#data.hasVariants}}<div class="{{data.classes.product.options}}">{{{data.optionsHtml}}}</div>{{/data.hasVariants}}',
   price: `<div class="{{data.classes.product.prices}}">
             {{#data.selectedVariant}}
-            {{#data.selectedVariant.compareAtPrice}}<span class="{{data.classes.product.compareAt}}">\${{data.selectedVariant.compareAtPrice}}</span>{{/data.selectedVariant.compareAtPrice}}
-            <span class="{{data.classes.product.price}} {{data.priceClass}}">\${{data.selectedVariant.price}}</span>
+            {{#data.selectedVariant.compareAtPrice}}<span class="{{data.classes.product.compareAt}}">{{data.formattedCompareAtPrice}}</span>{{/data.selectedVariant.compareAtPrice}}
+            <span class="{{data.classes.product.price}} {{data.priceClass}}">{{data.formattedPrice}}</span>
             {{/data.selectedVariant}}
           </div>`,
   description: '<div class="{{data.classes.product.description}}">{{{data.description}}}</div>',

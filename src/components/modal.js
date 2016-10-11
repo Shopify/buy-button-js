@@ -50,6 +50,7 @@ export default class Modal extends Component {
    */
   get productConfig() {
     return {
+      moneyFormat: this.moneyFormat,
       node: this.productWrapper,
       options: merge({}, this.config),
     };
