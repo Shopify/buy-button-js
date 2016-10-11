@@ -182,7 +182,7 @@ export default class Product extends Component {
       priceClass: this.priceClass,
       formattedPrice: this.formattedPrice,
       formattedCompareAtPrice: this.formattedCompareAtPrice,
-    })
+    });
   }
 
   get buttonClass() {
@@ -473,6 +473,7 @@ export default class Product extends Component {
   createCart() {
     if (this.shouldCreateCart) {
       return this.props.createCart({
+        moneyFormat: this.moneyFormat,
         node: this.cartNode,
         options: this.config,
       });
@@ -673,6 +674,7 @@ export default class Product extends Component {
     if (!this.modal) {
       this.modal = this.props.createModal({
         node: this.modalNode,
+        moneyFormat: this.moneyFormat,
         options: Object.assign({}, this.config, {
           product: this.modalProductConfig,
           modal: Object.assign({}, this.config.modal, {
