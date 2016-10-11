@@ -19,23 +19,24 @@ a value of `true` must then have a matching key in the `templates` object, and m
 if you were adding a `footer` to your component, you would make the following changes:
 
 ```js
-
-product: {
-  contents: {
-    footer: true,
-  },
-  templates: {
-    footer: '<footer>This is a footer</footer>'
-  },
-  order: [
-    'img',
-    'title',
-    'price',
-    'options',
-    'quantity',
-    'button',
-    'footer',
-  ],
+var options = {
+  product: {
+    contents: {
+      footer: true,
+    },
+    templates: {
+      footer: '<footer>This is a footer</footer>'
+    },
+    order: [
+      'img',
+      'title',
+      'price',
+      'options',
+      'quantity',
+      'button',
+      'footer',
+    ],
+  }
 }
 
 ```
@@ -51,42 +52,50 @@ object. Each component has a number of classes already defined, which you can us
 
 Using an existing class to style the `price` element:
 
+{% raw %}
 ```js
 
-product: {
-  templates: {
-    price: '<p class="{{data.classes.product.price}}">NEW LOW PRICE: {{data.selectedVariant.price}}</p>'
-  },
-  styles: {
-    price: {
-      'color': 'red',
+var options = {
+  product: {
+    templates: {
+      price: '<p class="{{data.classes.product.price}}">NEW LOW PRICE: {{data.selectedVariant.price}}</p>'
+    },
+    styles: {
+      price: {
+        'color': 'red',
+      }
     }
   }
 }
 
 ```
+{% endraw %}
 
 If you are adding a new element or want to use a class not already defined, you will have to add it. It will be added to the
 `data.classes.<component_name>` namespace.
 
+{% raw %}
 ```js
-product: {
-  contents: {
-    footer: true,
-  },
-  templates: {
-    footer: '<footer class="{{data.classes.product.footer}}">This is a footer</footer>'
-  },
-  classes: {
-    footer: 'product-footer',
-  },
-  styles: {
-    footer: {
-      'background-color': 'black'
+var options = {
+  product: {
+    contents: {
+      footer: true,
+    },
+    templates: {
+      footer: '<footer class="{{data.classes.product.footer}}">This is a footer</footer>'
+    },
+    classes: {
+      footer: 'product-footer',
+    },
+    styles: {
+      footer: {
+        'background-color': 'black'
+      }
     }
   }
 }
 ```
+{% endraw %}
 
 ## Customizing the DOM
 
@@ -96,30 +105,33 @@ in the contents object, and adding a new component as above.
 For example, if you wanted to wrap the `price` and `description` elements in a `details` container, you would add a `details`
 key and set `price` and `description` to `false` in `contents`.
 
+{% raw %}
 ```js
-
-product: {
-  contents: {
-    details: true,
-    price: false,
-    description: false,
-  },
-  templates: {
-    details: '<div class="{{data.classes.product.details}}">' +
-      '<span class="{{data.classes.product.price}}">{{data.selectedVariant.price}}</span>' +
-      '<div class="{{data.classes.product.description}}">{{data.description}}</div>' +
-    '</div>'
-  },
-  classes: {
-    details: 'product-details',
-  },
-  styles: {
-    details: {
-      'background-color': 'grey'
+var options = {
+  product: {
+    contents: {
+      details: true,
+      price: false,
+      description: false,
+    },
+    templates: {
+      details: '<div class="{{data.classes.product.details}}">' +
+        '<span class="{{data.classes.product.price}}">{{data.selectedVariant.price}}</span>' +
+        '<div class="{{data.classes.product.description}}">{{data.description}}</div>' +
+      '</div>'
+    },
+    classes: {
+      details: 'product-details',
+    },
+    styles: {
+      details: {
+        'background-color': 'grey'
+      }
     }
   }
 }
 ```
+{% endraw %}
 
 ## Custom events
 
@@ -127,12 +139,18 @@ You can bind or re-bind events to the DOM by adding key-value pairs to the `DOME
 and the value is a callback furnction. The key will be a string of the format `"eventType selector"` ex "click .btn".
 
 ```js
-'click .option-select': function (evt, target) {
-  var data = target.dataset;
-  var product = ui.components.product.filter(function (product) {
-    return product.id === 8728441478;
-  })[0];
-  product.updateVariant(data.option, data.value);
+var options = {
+  product: {
+    DOMEvents: {
+      'click .option-select': function (evt, target) {
+        var data = target.dataset;
+        var product = ui.components.product.filter(function (product) {
+          return product.id === 8728441478;
+        })[0];
+        product.updateVariant(data.option, data.value);
+      }
+    }
+  }
 }
 ```
 
