@@ -6,6 +6,7 @@ import Checkout from './checkout';
 import formatMoney from '../utils/money';
 import {addClassToElement} from '../utils/element-class';
 
+const NO_IMG_URL = 'https://widgets.shopifyapps.com/assets/embedded-cart-no-image.jpg';
 
 /**
  * Renders and cart embed.
@@ -61,6 +62,7 @@ export default class Cart extends Component {
     return this.model.lineItems.reduce((acc, lineItem) => {
       const data = lineItem;
       data.classes = this.classes;
+      data.lineItemImage = data.image || { src: NO_IMG_URL };
       return acc + this.childTemplate.render({data}, (output) => `<div id="${lineItem.id}" class=${this.classes.lineItem.lineItem}>${output}</div>`);
     }, '');
   }
