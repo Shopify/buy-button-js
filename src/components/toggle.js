@@ -1,6 +1,8 @@
 import merge from '../utils/merge';
 import Component from '../component';
 
+const ENTER_KEY = 13;
+
 export default class CartToggle extends Component {
   constructor(config, props) {
     super(config, props);
@@ -47,12 +49,23 @@ export default class CartToggle extends Component {
     }, this.options.DOMEvents);
   }
 
+  delegateEvents() {
+    super.delegateEvents();
+    this.iframe.parent.addEventListener('keydown', (evt) => {
+      if (evt.keyCode !== ENTER_KEY) {
+        return;
+      }
+      this.props.cart.toggleVisibility(this.props.cart);
+    });
+  }
+
   wrapTemplate(html) {
     return `<div class="${this.stickyClass} ${this.classes.toggle.toggle}">${html}</div>`;
   }
 
   render() {
     super.render();
+    this.iframe.parent.setAttribute('tabindex', 0);
     if (this.options.sticky) {
       this.iframe.addClass('is-sticky');
     }

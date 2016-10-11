@@ -227,7 +227,7 @@ const defaults = {
       variantTitle: 'cart-item__variant-title',
       itemTitle: 'cart-item__title',
       price: 'cart-item__price',
-      quantity: 'quantity-container',
+      quantity: 'quantity-container clearfix',
       quantityInput: 'quantity cart-item__quantity-input',
       quantityButton: 'btn--seamless',
       quantityIncrement: 'quantity-increment',

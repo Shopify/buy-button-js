@@ -46,7 +46,7 @@ export default class Cart extends Component {
    */
   get DOMEvents() {
     return merge({}, {
-      [`click .${this.classes.cart.close.split(' ').join('.')}`]: this.close.bind(this),
+      [`click .${this.classes.cart.close.split(' ').join('.')}`]: this.props.closeCart.bind(this),
       [`click .${this.classes.lineItem.quantityButton.split(' ').join('.')}.quantity-increment`]: this.onQuantityIncrement.bind(this, 1),
       [`click .${this.classes.lineItem.quantityButton.split(' ').join('.')}.quantity-decrement`]: this.onQuantityIncrement.bind(this, -1),
       [`click .${this.classes.cart.button.split(' ').join('.')}`]: this.onCheckout.bind(this),
