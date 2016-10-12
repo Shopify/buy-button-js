@@ -19,7 +19,7 @@ rollup({
   entry: srcPath,
   plugins: [
     babel({
-      exclude: ['node_modules/hogan.js/**', 'node_modules/morphdom/**'],
+      exclude: ['node_modules/**'],
     }),
     nodeResolve({
       extensions: ['.js'],
