@@ -17,6 +17,7 @@ const config = {
 const props = {
   client: {},
   createCart: function () {return Promise.resolve()},
+  closeModal: function () {return Promise.resolve()},
   browserFeatures: {
     transition: true,
     animation: true,

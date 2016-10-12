@@ -36,7 +36,7 @@ export default class Modal extends Component {
    */
   get DOMEvents() {
     let events = Object.assign({}, {
-      [`click .${this.classes.modal.close.split(' ').join('.')}`]: this.close.bind(this),
+      [`click .${this.classes.modal.close.split(' ').join('.')}`]: this.props.closeModal.bind(this),
     }, this.options.DOMEvents);
     if (this.product) {
       events = Object.assign({}, events, this.product.DOMEvents);
@@ -67,7 +67,7 @@ export default class Modal extends Component {
 
   closeOnBgClick(evt) {
     if (!this.productWrapper.contains(evt.target)) {
-      this.close();
+      this.props.closeModal();
     }
   }
 
@@ -86,7 +86,10 @@ export default class Modal extends Component {
     return super.init(data).then(() => {
       this.productWrapper = this.wrapper.getElementsByClassName(this.classes.modal.modal)[0];
       this.product = new Product(this.productConfig, this.props);
-      return this.product.init(this.model).then(() => this.resize());
+      return this.product.init(this.model).then(() => {
+        this.setFocus();
+        return this.resize();
+      });
     });
   }
 

@@ -46,7 +46,7 @@ export default class Cart extends Component {
    */
   get DOMEvents() {
     return merge({}, {
-      [`click .${this.classes.cart.close.split(' ').join('.')}`]: this.close.bind(this),
+      [`click .${this.classes.cart.close.split(' ').join('.')}`]: this.props.closeCart.bind(this),
       [`click .${this.classes.lineItem.quantityButton.split(' ').join('.')}.quantity-increment`]: this.onQuantityIncrement.bind(this, 1),
       [`click .${this.classes.lineItem.quantityButton.split(' ').join('.')}.quantity-decrement`]: this.onQuantityIncrement.bind(this, -1),
       [`click .${this.classes.cart.button.split(' ').join('.')}`]: this.onCheckout.bind(this),
@@ -168,6 +168,7 @@ export default class Cart extends Component {
   open() {
     this.isVisible = true;
     this.render();
+    this.setFocus();
   }
 
   /**
@@ -177,6 +178,9 @@ export default class Cart extends Component {
   toggleVisibility(visible) {
     this.isVisible = visible || !this.isVisible;
     this.render();
+    if (this.isVisible) {
+      this.setFocus();
+    }
   }
 
   onQuantityBlur(evt, target) {
@@ -188,7 +192,6 @@ export default class Cart extends Component {
   }
 
   onCheckout() {
-    this._userEvent('openCheckout');
     this.checkout.open(this.model.checkoutUrl);
   }
 
@@ -239,11 +242,11 @@ export default class Cart extends Component {
    * @param {Number} [quantity=1] - quantity to be added.
    */
   addVariantToCart(variant, quantity = 1) {
-    this.isVisible = true;
-    this.render();
+    this.open();
     return this.model.addVariants({variant, quantity}).then((cart) => {
       this.render();
       this.toggle.render();
+      this.setFocus();
       return cart;
     });
   }

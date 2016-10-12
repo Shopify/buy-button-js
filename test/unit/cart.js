@@ -157,6 +157,7 @@ describe('Cart class', () => {
 
   describe('addVariantToCart', () => {
     it('calls model addVariants', () => {
+      cart.setFocus = sinon.spy();
       cart.model.addVariants = sinon.stub().returns(Promise.resolve());
       let render = sinon.stub(cart, 'render');
       let toggleRender = sinon.stub(cart.toggle, 'render');
@@ -164,6 +165,7 @@ describe('Cart class', () => {
       return cart.addVariantToCart({id: 123}).then(() => {
         assert.calledWith(cart.model.addVariants, {variant: {id: 123 }, quantity: 1});
         assert.calledOnce(toggleRender);
+        assert.called(cart.setFocus);
       });
     });
   });

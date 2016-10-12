@@ -629,13 +629,17 @@ export default class Product extends Component {
     }
   }
 
-  onButtonClick(evt) {
+  onButtonClick(evt, target) {
     evt.stopPropagation();
     if (this.options.buttonDestination === 'cart') {
       this.props.closeModal();
       this._userEvent('addVariantToCart');
       this.props.tracker.trackMethod(this.cart.addVariantToCart.bind(this), 'CART_ADD', this.selectedVariantTrackingInfo)(this.model.selectedVariant, this.model.selectedQuantity);
+      if (this.iframe) {
+        this.props.setActiveEl(target);
+      }
     } else if (this.options.buttonDestination === 'modal') {
+      this.props.setActiveEl(target);
       this.openModal();
     } else if (this.options.buttonDestination === 'onlineStore') {
       this.openOnlineStore();

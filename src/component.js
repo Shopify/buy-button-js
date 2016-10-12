@@ -353,6 +353,16 @@ export default class Component {
     return `<div class="${this.classes[this.typeKey][this.typeKey]}">${html}</div>`;
   }
 
+  /**
+   * Focus first focusable element in wrapper.
+   */
+  setFocus() {
+    const focusable = this.wrapper.querySelectorAll('a, button, input, select')[0];
+    if (focusable) {
+      focusable.focus();
+    }
+  }
+
   _resizeX() {
     this.iframe.el.style.width = `${this.document.body.clientWidth}px`;
   }
