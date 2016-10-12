@@ -26,34 +26,50 @@ function isMedia(key) {
   return key.charAt(0) === '@';
 }
 
-function ruleDeclarations(rule) {
-  return Object.keys(rule).filter((key) => !isPseudoSelector(key) && !isMedia(key)).map((key) => ({property: key, value: rule[key]}));
+function isValue(test) {
+  return typeof test === 'string' || typeof test === 'number';
 }
 
-function selectorStyleGroup(selector, selectorClass) {
-  const styleGroup = [];
+function ruleDeclarations(rule) {
+  return Object.keys(rule).filter((key) => {
+    return isValue(rule[key]);
+  }).map((key) => ({property: key, value: rule[key]}));
+}
+
+function selectorStyleGroup(selector, selectorClass, classes) {
+  let styleGroup = [];
   if (selector && selectorClass) {
-    Object.keys(selector).forEach((decKey) => {
-      if (selector && selectorClass) {
-        if (isPseudoSelector(decKey)) {
-          styleGroup.push({
-            selector: `.${selectorClass}${decKey}`,
-            declarations: ruleDeclarations(selector[decKey]),
-          });
+    let formattedSelector = selectorClass.split(' ').join('.');
+    if (!isPseudoSelector(formattedSelector)) {
+      formattedSelector = `.${formattedSelector}`;
+    }
+    styleGroup = Object.keys(selector).filter((decKey) => {
+      return !isValue(selector[decKey]);
+    }).reduce((acc, decKey) => {
+      const className = classes[decKey] || decKey;
+      return acc.concat(selectorStyleGroup(selector[decKey], className, classes).map((group) => {
+        let groupSelector = '';
+        if (isPseudoSelector(group.selector)) {
+          groupSelector = `${formattedSelector}${group.selector}`;
         } else if (isMedia(decKey)) {
-          styleGroup.push({
-            media: decKey,
-            selector: `.${selectorClass}`,
-            declarations: ruleDeclarations(selector[decKey]),
-          });
+          groupSelector = formattedSelector;
+        } else {
+          groupSelector = `${formattedSelector} ${group.selector}`;
         }
-      }
-    });
-    const formattedSelector = selectorClass.split(' ').join('.');
-    styleGroup.push({
-      selector: `.${formattedSelector}`,
-      declarations: ruleDeclarations(selector),
-    });
+        return {
+          selector: groupSelector,
+          declarations: group.declarations,
+          media: isMedia(decKey) ? decKey : null,
+        };
+      }));
+    }, []);
+    const declarations = ruleDeclarations(selector);
+    if (declarations.length) {
+      styleGroup.push({
+        selector: `${formattedSelector}`,
+        declarations,
+      });
+    }
   }
   return styleGroup;
 }
@@ -165,7 +181,7 @@ export default class iframe {
     Object.keys(this.customStylesHash).forEach((typeKey) => {
       if (this.customStylesHash[typeKey]) {
         Object.keys(this.customStylesHash[typeKey]).forEach((key) => {
-          const styleGroup = selectorStyleGroup(this.customStylesHash[typeKey][key], this.classes[typeKey][key]);
+          const styleGroup = selectorStyleGroup(this.customStylesHash[typeKey][key], this.classes[typeKey][key], this.classes[typeKey]);
           customStyles = customStyles.concat(styleGroup);
         });
       }
