@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>BuyButton.js</title>
+  </head>
+  <body>
+    <script src="tmp/buybutton.dev.js"></script>
+    <script data-shopify-buy-ui>
+      var client = ShopifyBuy.buildClient({
+        apiKey: '',
+        domain: '', // ex 'storename.myshopify.com'
+        appId: '6'
+      });
+
+      var ui = ShopifyBuy.UI.init(client);
+      ui.createComponent('product', {
+        id: 1,
+        options: {}
+      });
+
+    </script>
+  </body>
+</html>
