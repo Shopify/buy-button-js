@@ -63,6 +63,7 @@ export default class Cart extends Component {
       const data = lineItem;
       data.classes = this.classes;
       data.lineItemImage = data.image || {src: NO_IMG_URL};
+      data.variantTitle = data.variant_title === 'Default Title' ? '' : data.variant_title;
       return acc + this.childTemplate.render({data}, (output) => `<div id="${lineItem.id}" class=${this.classes.lineItem.lineItem}>${output}</div>`);
     }, '');
   }
