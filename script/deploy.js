@@ -3,6 +3,7 @@
 const path = require('path');
 const fs = require('fs');
 const mime = require('mime-types');
+const currentVersion = require('../package.json').version;
 const s3Dir = 'buy-button';
 const awsConfig = require('../config.json').aws;
 const awsSDK = require('aws-sdk');
@@ -40,7 +41,9 @@ const getContentType = function(filePath) {
 
 filePaths.map(function(filePath) {
   const basename = path.basename(filePath);
-  const s3Name = s3Dir + '/' + basename;
+  const latestName = s3Dir + '/latest/' + basename;
+  const versionedName = s3Dir + '/' + currentVersion + '/' + basename;
 
-  uploadFile(filePath, s3Name);
+  uploadFile(filePath, latestName);
+  uploadFile(filePath, versionedName);
 });
