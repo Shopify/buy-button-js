@@ -16,6 +16,7 @@
     "prepublish": "npm run build",
     "docs": "jekyll serve -s docs",
     "testem": "testem $([ -n \"${CI}\" ] && echo -f testem-ci.json) ci",
+    "deploy": "node ./script/deploy.js",
     "---------- dist": null,
     "src:build": "node ./script/build.js",
     "---------- dev": null,
