@@ -22,7 +22,7 @@ This tool is intended for use by developers who are familiar with JavaScript and
 ## Including the library
 
 ```html
-<script src="http://sdks.shopifycdn.com/buy-button-js.min.js"></script>
+<script src="http://sdks.shopifycdn.com/buy-button/v0.0.2/buybutton.min.js"></script>
 ```
 
 ## Creating a Shop Client
@@ -37,7 +37,7 @@ var client = ShopifyBuy.buildClient({
 });
 ```
 
-> Note: You will need to publish the product/<a href="https://docs.shopify.com/manual/products/collections/make-collections-findable#change-the-visibility-of-a-collection" target="_blank">collection</a> you wish to interact with to the
+> Note: You will need to publish <a href="https://docs.shopify.com/manual/products/collections/make-collections-findable#change-the-visibility-of-a-collection" target="_blank">product/collection</a> you wish to interact with to the
 > "Buy Button" channel in Shopify.
 
 ## Initializing the Library
