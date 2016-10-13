@@ -101,7 +101,6 @@ export default class UI {
    * close any cart.
    */
   closeCart() {
-    console.log(this);
     if (!this.components.cart.length) {
       return;
     }
