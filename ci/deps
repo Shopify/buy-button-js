@@ -1,6 +1,0 @@
-#!/bin/bash
-
-set -e
-
-# Grab selenium standalone
-curl -k -L -o selenium-standalone.jar http://goo.gl/IHP6Qw
