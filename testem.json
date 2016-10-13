@@ -7,6 +7,5 @@
     "Firefox"
   ],
   "framework": "mocha",
-  "src_files": "test/build/test.js",
-  "report_file": "CIRCLE_TEST_REPORTS/xunit/test-output.xml"
+  "src_files": "test/build/test.js"
 }
