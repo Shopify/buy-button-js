@@ -4,4 +4,4 @@ machine:
 dependencies:
   pre:
     - npm set progress=false
-    - ./ci/deps
+    - mkdir -p $CIRCLE_TEST_REPORTS/xunit
