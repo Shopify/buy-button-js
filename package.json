@@ -15,7 +15,7 @@
     "styles": "npm run styles-embeds:build && npm run styles-host:build",
     "prepublish": "npm run build",
     "docs": "jekyll serve -s docs",
-    "testem": "testem $([ -n \"${CI}\" ] && echo -R xunit > $CIRCLE_TEST_REPORTS/xunit/test-output.xml) ci",
+    "testem": "testem ci $([ -n \"${CI}\" ] && echo -R xunit > $CIRCLE_TEST_REPORTS/xunit/test-output.xml)",
     "---------- dist": null,
     "src:build": "node ./script/build.js",
     "---------- dev": null,
