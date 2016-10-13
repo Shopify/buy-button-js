@@ -9,7 +9,6 @@
     "start": "rm -rf tmp && mkdir tmp && npm run src:watch & npm run styles:watch & npm run serve",
     "build": "npm run clean && npm run styles && npm run src:build",
     "test": "npm run lint && npm run testem",
-    "temp-build": "npm run clean && npm run styles && babel ./src --out-dir ./dist",
     "serve": "http-server",
     "lint": "eslint --max-warnings=0 $([ -n \"${CI}\" ] && echo -f junit > ${CIRCLE_TEST_REPORTS}/xunit/lint-output.xml) src/*",
     "clean": "rm -rf dist && mkdir dist ",
