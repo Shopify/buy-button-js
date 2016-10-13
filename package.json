@@ -15,7 +15,7 @@
     "styles": "npm run styles-embeds:build && npm run styles-host:build",
     "prepublish": "npm run build",
     "docs": "jekyll serve -s docs",
-    "testem": "testem ci $([ -n \"${CI}\" ] && echo -f testem-ci.json)",
+    "testem": "testem $([ -n \"${CI}\" ] && echo -f testem-ci.json) ci",
     "---------- dist": null,
     "src:build": "node ./script/build.js",
     "---------- dev": null,
