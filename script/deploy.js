@@ -23,9 +23,9 @@ const awsS3 = new awsSDK.S3({
 
 const uploadFile = function(filePath, s3Key) {
   awsS3.putObject({
-    Body: fs.readFileSync(filePath),
+    Body: fs.readFileSync(distDir + '/' + filePath),
     Key: s3Key,
-    ContentType: getContentType(filePath),
+    ContentType: getContentType(distDir + '/' + filePath),
   }, function(error) {
     if(error) {
       return console.error('Error uploading ' + filePath, error);
