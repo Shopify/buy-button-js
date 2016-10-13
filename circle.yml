@@ -4,4 +4,10 @@ machine:
 dependencies:
   pre:
     - npm set progress=false
+test:
+  pre:
+    - mkdir -p xunit_temp
     - mkdir -p $CIRCLE_TEST_REPORTS/xunit
+  post:
+    - mv xunit_temp/*.xml $CIRCLE_TEST_REPORTS/xunit
+    - rm -rf xunit_temp

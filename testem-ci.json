@@ -9,5 +9,6 @@
   "framework": "mocha",
   "src_files": "test/build/test.js",
   "reporter": "xunit",
-  "report_file": "$CIRCLE_TEST_REPORTS/xunit/test-output.xml"
+  "report_file": "xunit_temp/test-output.xml",
+  "xunit_intermediate_output": true
 }
