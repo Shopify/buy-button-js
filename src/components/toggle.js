@@ -75,4 +75,8 @@ export default class CartToggle extends Component {
       this.iframe.removeClass('is-active');
     }
   }
+
+  _resizeX() {
+    this.iframe.el.style.width = `${this.wrapper.clientWidth}px`;
+  }
 }
