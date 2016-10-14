@@ -51,6 +51,9 @@ export default class CartToggle extends Component {
 
   delegateEvents() {
     super.delegateEvents();
+    if (!this.iframe) {
+      return;
+    }
     this.iframe.parent.addEventListener('keydown', (evt) => {
       if (evt.keyCode !== ENTER_KEY) {
         return;
@@ -65,6 +68,9 @@ export default class CartToggle extends Component {
 
   render() {
     super.render();
+    if (!this.iframe) {
+      return;
+    }
     this.iframe.parent.setAttribute('tabindex', 0);
     if (this.options.sticky) {
       this.iframe.addClass('is-sticky');

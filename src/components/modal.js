@@ -111,10 +111,11 @@ export default class Modal extends Component {
     this._userEvent('closeModal');
     this.isVisible = false;
     removeClassFromElement('is-active', this.wrapper);
-    if (this.iframe) {
-      this.iframe.removeClass('is-active');
-      removeClassFromElement('is-active', this.document.body);
+    if (!this.iframe) {
+      return;
     }
+    this.iframe.removeClass('is-active');
+    removeClassFromElement('is-active', this.document.body);
     if (this.props.browserFeatures.transition) {
       this.iframe.parent.addEventListener('transitionend', () => {
         this.iframe.removeClass('is-block');
@@ -132,9 +133,12 @@ export default class Modal extends Component {
       return;
     }
     super.render();
-    this.iframe.addClass('is-active');
-    this.iframe.addClass('is-block');
     addClassToElement('is-active', this.document.body);
     addClassToElement('is-active', this.wrapper);
+    if (!this.iframe) {
+      return;
+    }
+    this.iframe.addClass('is-active');
+    this.iframe.addClass('is-block');
   }
 }
