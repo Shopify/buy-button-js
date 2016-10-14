@@ -142,6 +142,9 @@ export default class Cart extends Component {
    */
   render() {
     super.render();
+    if (!this.iframe) {
+      return;
+    }
     if (this.isVisible) {
       this.iframe.addClass('is-active');
     } else {
@@ -217,6 +220,10 @@ export default class Cart extends Component {
     return this.model.updateLineItem(id, qty).then((cart) => {
       this.model = cart;
       this.toggle.render();
+      if (!this.iframe) {
+        this.render();
+        return cart;
+      }
       if (qty > 0) {
         this.render();
       } else {
