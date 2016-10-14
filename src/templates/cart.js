@@ -2,7 +2,7 @@ const cartTemplates = {
   title: `<div class="{{data.classes.cart.header}}">
             <h2 class="{{data.classes.cart.title}}">{{data.text.title}}</h2>
             <button class="{{data.classes.cart.close}}">
-              <span aria-role="hidden">×</span>
+              <span aria-role="hidden">&times;</span>
               <span class="visuallyhidden">Close</span>
              </button>
           </div>`,
