@@ -6,7 +6,7 @@ import Checkout from './checkout';
 import formatMoney from '../utils/money';
 import {addClassToElement} from '../utils/element-class';
 
-const NO_IMG_URL = './images/no-image.jpg';
+const NO_IMG_URL = '//sdks.shopifycdn.com/buy-button/latest/no-image.jpg';
 
 /**
  * Renders and cart embed.
