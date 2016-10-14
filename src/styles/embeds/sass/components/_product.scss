@@ -7,7 +7,7 @@
 
 .product__variant-img {
   margin: 0 auto $gutter auto;
-  transition: all 0.3s ease;
+  transition: opacity 0.3s ease;
   opacity: 1;
 
   &.is-transitioning {

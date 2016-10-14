@@ -4,9 +4,9 @@ $modal-footer-height: 90px;
 .btn--close {
   right: 0px;
   font-size: 45px;
-  padding-right: 3px;
   font-weight: 100;
   z-index: $max-z-index;
+  padding: 0 10px;
 }
 
 .modal {
@@ -56,6 +56,7 @@ $modal-footer-height: 90px;
     overflow: hidden;
     position: fixed;
     height: 100vh;
+    transition: all 0s;
   }
 
   .modal {
@@ -82,7 +83,7 @@ $modal-footer-height: 90px;
   .btn--close {
     position: fixed;
     top: 0;
-    right: 10px;
+    right: 0;
   }
 }
 
