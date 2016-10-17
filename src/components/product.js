@@ -248,17 +248,17 @@ export default class Product extends Component {
   get DOMEvents() {
     return merge({}, {
       click: this.closeCartOnBgClick.bind(this),
-      [`click .${this.classes.option.select.split(' ').join('.')}`]: this.stopPropagation.bind(this),
-      [`focus .${this.classes.option.select.split(' ').join('.')}`]: this.stopPropagation.bind(this),
-      [`click .${this.classes.option.wrapper.split(' ').join('.')}`]: this.stopPropagation.bind(this),
-      [`click .${this.classes.product.quantityInput.split(' ').join('.')}`]: this.stopPropagation.bind(this),
-      [`click .${this.classes.product.quantityButton.split(' ').join('.')}`]: this.stopPropagation.bind(this),
-      [`change .${this.classes.option.select.split(' ').join('.')}`]: this.onOptionSelect.bind(this),
-      [`click .${this.classes.product.button.split(' ').join('.')}`]: this.onButtonClick.bind(this),
-      [`click .${this.classes.product.blockButton.split(' ').join('.')}`]: this.onButtonClick.bind(this),
-      [`click .${this.classes.product.quantityButton.split(' ').join('.')}.quantity-increment`]: this.onQuantityIncrement.bind(this, 1),
-      [`click .${this.classes.product.quantityButton.split(' ').join('.')}.quantity-decrement`]: this.onQuantityIncrement.bind(this, -1),
-      [`blur .${this.classes.product.quantityInput.split(' ').join('.')}`]: this.onQuantityBlur.bind(this),
+      [`click ${this.selectors.option.select}`]: this.stopPropagation.bind(this),
+      [`focus ${this.selectors.option.select}`]: this.stopPropagation.bind(this),
+      [`click ${this.selectors.option.wrapper}`]: this.stopPropagation.bind(this),
+      [`click ${this.selectors.product.quantityInput}`]: this.stopPropagation.bind(this),
+      [`click ${this.selectors.product.quantityButton}`]: this.stopPropagation.bind(this),
+      [`change ${this.selectors.option.select}`]: this.onOptionSelect.bind(this),
+      [`click ${this.selectors.product.button}`]: this.onButtonClick.bind(this),
+      [`click ${this.selectors.product.blockButton}`]: this.onButtonClick.bind(this),
+      [`click ${this.selectors.product.quantityIncrement}`]: this.onQuantityIncrement.bind(this, 1),
+      [`click ${this.selectors.product.quantityDecrement}`]: this.onQuantityIncrement.bind(this, -1),
+      [`blur ${this.selectors.product.quantityInput}`]: this.onQuantityBlur.bind(this),
     }, this.options.DOMEvents);
   }
 
