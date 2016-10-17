@@ -1,8 +1,8 @@
-.collection {
+.shopify-buy__collection {
   overflow: hidden;
 }
 
-.collection-products {
+.shopify-buy__collection-products {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
@@ -13,7 +13,7 @@
   }
 }
 
-.product {
+.shopify-buy__product {
   margin-left: $gutter;
   margin-bottom: $gutter;
   flex: 0 0 auto;
@@ -21,7 +21,7 @@
   max-width: 250px;
 }
 
-.btn.collection-pagination-button  {
+.shopify-buy__btn.shopify-buy__collection-pagination-button  {
   display: none;
   margin: $gutter auto;
 

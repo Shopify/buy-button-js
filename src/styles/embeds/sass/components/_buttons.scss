@@ -1,4 +1,4 @@
-.btn {
+.shopify-buy__btn {
   color: #fff;
   font-size: 15px;
   background-color: $color-primary;
@@ -22,7 +22,7 @@
   }
 }
 
-.btn--parent {
+.shopify-buy__btn--parent {
   background-color: transparent;
   border: 0;
   line-height: 1;
@@ -39,14 +39,7 @@
   }
 }
 
-.btn--test {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%);
-}
-
-.btn--cart-tab {
+.shopify-buy__btn--cart-tab {
   padding: 5px 11px;
   border-radius: 3px 0 0 3px;
   position: fixed;
@@ -65,23 +58,23 @@
   }
 }
 
-.btn__counter {
+.shopify-buy__btn__counter {
   display: block;
   margin: 0 auto 10px auto;
   font-size: 18px;
 }
 
-.icon-cart--side {
+.shopify-buy__icon-cart--side {
   height: 20px;
   width: 20px;
 }
 
-.btn[disabled] {
+.shopify-buy__btn[disabled] {
   background-color: #999;
   pointer-events: none;
 }
 
-.btn--close {
+.shopify-buy__btn--close {
   position: absolute;
   right: 9px;
   top: 8px;
