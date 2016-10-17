@@ -73,7 +73,7 @@ export default class Cart extends Component {
    * @return {Object} viewData object.
    */
   get viewData() {
-    return merge(this.model, {
+    return merge(this.model, this.options.viewData, {
       text: this.options.text,
       classes: this.classes,
       lineItemsHtml: this.lineItemsHtml,

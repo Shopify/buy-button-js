@@ -24,11 +24,11 @@ export default class CartToggle extends Component {
   }
 
   get viewData() {
-    return {
+    return Object.assign({}, this.options.viewData, {
       classes: this.classes,
       text: this.options.text,
       count: this.count,
-    };
+    });
   }
 
   get shouldResizeY() {

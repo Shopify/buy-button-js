@@ -16,6 +16,9 @@ const config = {
       iframe: false,
       templates: {
         button: '<button id="button" class="button">Fake button</button>'
+      },
+      viewData: {
+        test: 'test string',
       }
     }
   }
@@ -292,6 +295,7 @@ describe('Product class', () => {
         assert.ok(viewData.optionsHtml);
         assert.equal(viewData.currentImage.src, 'https://cdn.shopify.com/image-two_large.jpg');
         assert.ok(viewData.hasVariants);
+        assert.equal(viewData.test, 'test string');
       });
     });
   });
