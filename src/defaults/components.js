@@ -91,6 +91,7 @@ const defaults = {
       'price',
       'options',
       'buttonWithQuantity',
+      'button',
       'description',
     ],
     classes: {
