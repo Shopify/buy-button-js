@@ -54,11 +54,11 @@ export default class ProductSet extends Component {
    * @return {Object} viewData object.
    */
   get viewData() {
-    return {
+    return Object.assign({}, this.options.viewData, {
       classes: this.classes,
       text: this.options.text,
       nextButtonClass: this.nextButtonClass,
-    };
+    });
   }
 
   /**
