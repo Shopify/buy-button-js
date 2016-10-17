@@ -15,6 +15,8 @@ function isMedia(key) {
   return key.charAt(0) === '@';
 }
 
+const MAX_WIDTH = '950px';
+
 const propertiesWhitelist = [
   'background',
   'background-color',
@@ -83,7 +85,7 @@ export default class Product extends Component {
    * @return {String} iframe class.
    */
   get iframeClass() {
-    return `layout-${this.options.layout}`;
+    return this.classes.product[this.options.layout];
   }
 
   /**
@@ -138,7 +140,7 @@ export default class Product extends Component {
   }
 
   get shouldResizeX() {
-    return this.options.layout === 'horizontal';
+    return false;
   }
 
   get shouldResizeY() {
@@ -569,15 +571,15 @@ export default class Product extends Component {
         layout = config.options.product.layout;
       }
 
-      if (layout === 'vertical' && this.iframe.width === 'none') {
+      if (layout === 'vertical' && this.iframe.width === MAX_WIDTH) {
         this.iframe.setWidth(this.options.width);
       }
 
-      if (layout === 'horizontal' && this.iframe.width && this.iframe.width !== 'none') {
-        this.iframe.setWidth('none');
+      if (layout === 'horizontal' && this.iframe.width && this.iframe.width !== MAX_WIDTH) {
+        this.iframe.setWidth(MAX_WIDTH);
       }
 
-      if (config.options.product.width) {
+      if (config.options.product.width && layout === 'vertical') {
         this.iframe.setWidth(config.options.product.width);
       }
 
