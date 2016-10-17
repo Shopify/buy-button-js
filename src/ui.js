@@ -270,7 +270,7 @@ export default class UI {
       }
       if (data.syncCart || (data.current_checkout_page && data.current_checkout_page === '/checkout/thank_you')) {
         this.components.cart.forEach((cart) => {
-          cart.clear();
+          cart.empty();
         });
       }
     });

@@ -249,6 +249,9 @@ export default class Cart extends Component {
    * @param {Number} [quantity=1] - quantity to be added.
    */
   addVariantToCart(variant, quantity = 1) {
+    if (quantity <= 0) {
+      return null;
+    }
     this.open();
     return this.model.addVariants({variant, quantity}).then((cart) => {
       this.render();
@@ -258,9 +261,13 @@ export default class Cart extends Component {
     });
   }
 
-  clear() {
+  /**
+   * Remove all lineItems in the cart
+   */
+  empty() {
     return this.model.clearLineItems().then(() => {
       this.render();
+      this.toggle.render();
       return;
     });
   }

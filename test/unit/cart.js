@@ -207,5 +207,21 @@ describe('Cart class', () => {
       assert.equal(cart.formattedTotal, '$20.00');
     });
   });
+
+  describe('empty', () => {
+    it('empties and rerenders the cart', () => {
+      cart.model = {
+        clearLineItems: sinon.stub().returns(Promise.resolve())
+      }
+      cart.render = sinon.spy();
+      cart.toggle.render = sinon.spy();
+
+      return cart.empty().then(() => {
+        assert.calledOnce(cart.model.clearLineItems);
+        assert.calledOnce(cart.render);
+        assert.calledOnce(cart.toggle.render);
+      });
+    });
+  });
 });
 
