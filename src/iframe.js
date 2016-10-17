@@ -39,7 +39,7 @@ function ruleDeclarations(rule) {
 function selectorStyleGroup(selector, selectorClass, classes) {
   let styleGroup = [];
   if (selector && selectorClass) {
-    let formattedSelector = selectorClass.split(' ').join('.');
+    let formattedSelector = selectorClass.split(' ').join('.shopify-buy__');
     if (!isPseudoSelector(formattedSelector)) {
       formattedSelector = `.${formattedSelector}`;
     }

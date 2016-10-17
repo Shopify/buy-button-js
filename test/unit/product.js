@@ -78,8 +78,8 @@ describe('Product class', () => {
 
   describe('get DOMEvents', () => {
     it('returns functions for bindings', () => {
-      assert.isFunction(product.DOMEvents['change .option-select__select']);
-      assert.isFunction(product.DOMEvents['click .btn']);
+      assert.isFunction(product.DOMEvents['change .shopify-buy__option-select__select']);
+      assert.isFunction(product.DOMEvents['click .shopify-buy__btn']);
     });
   });
 
@@ -463,7 +463,7 @@ describe('Product class', () => {
     describe('when button exists', () => {
       it('calls super', () => {
         const string = product.wrapTemplate('test');
-        assert.equal(string, '<div class="has-image layout-vertical product">test</div>');
+        assert.equal(string, '<div class="has-image shopify-buy__layout-vertical shopify-buy__product">test</div>');
       });
     });
 
@@ -471,7 +471,7 @@ describe('Product class', () => {
       it('wraps html in a button', () => {
         product.config.product.contents.button = false;
         const string = product.wrapTemplate('test');
-        assert.equal(string, '<div class="has-image layout-vertical product"><div tabindex="0" role="button" aria-label="Add to cart" class="btn--parent">test</div></div>');
+        assert.equal(string, '<div class="has-image shopify-buy__layout-vertical shopify-buy__product"><div tabindex="0" role="button" aria-label="Add to cart" class="shopify-buy__btn--parent">test</div></div>');
       });
     });
   });

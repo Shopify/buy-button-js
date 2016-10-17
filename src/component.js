@@ -104,6 +104,20 @@ export default class Component {
   }
 
   /**
+   * get classes formatted as CSS selectors.
+   * @return {Object} class keys and selectors.
+   */
+  get selectors() {
+    return this.options.manifest.filter((component) => this.config[component].classes).reduce((hash, component) => {
+      hash[component] = Object.keys(this.config[component].classes).reduce((classes, classKey) => {
+        classes[classKey] = `.${this.classes[component][classKey].split(' ').join('.')}`;
+        return classes;
+      }, {});
+      return hash;
+    }, {});
+  }
+
+  /**
    * get google fonts for component and any components it contains as determined by manifest.
    * @return {Array} array of names of fonts to be loaded.
    */

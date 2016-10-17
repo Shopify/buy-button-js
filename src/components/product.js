@@ -187,12 +187,12 @@ export default class Product extends Component {
 
   get buttonClass() {
     const disabledClass = this.buttonEnabled ? '' : this.classes.disabled;
-    const quantityClass = this.options.contents.buttonWithQuantity ? 'beside-quantity' : '';
+    const quantityClass = this.options.contents.buttonWithQuantity ? this.classes.product.buttonBesideQty : '';
     return `${disabledClass} ${quantityClass}`;
   }
 
   get quantityClass() {
-    return this.options.contents.quantityIncrement || this.options.contents.quantityDecrement ? 'with-buttons' : '';
+    return this.options.contents.quantityIncrement || this.options.contents.quantityDecrement ? this.classes.product.quantityWithButtons : '';
   }
 
   get buttonText() {
@@ -234,11 +234,11 @@ export default class Product extends Component {
   }
 
   get priceClass() {
-    return this.model.selectedVariant && this.model.selectedVariant.compareAtPrice ? 'price--lowered' : '';
+    return this.model.selectedVariant && this.model.selectedVariant.compareAtPrice ? this.classes.product.loweredPrice : '';
   }
 
   get wrapperClass() {
-    return `${this.currentImage ? 'has-image' : 'no-image'} layout-${this.options.layout}`;
+    return `${this.currentImage ? 'has-image' : 'no-image'} ${this.classes.product[this.options.layout]}`;
   }
 
   /**
@@ -580,9 +580,9 @@ export default class Product extends Component {
     }
 
     if (this.iframe) {
-      this.iframe.removeClass('layout-vertical');
-      this.iframe.removeClass('layout-horizontal');
-      this.iframe.addClass(`layout-${layout}`);
+      this.iframe.removeClass(this.classes.product.vertical);
+      this.iframe.removeClass(this.classes.product.horizontal);
+      this.iframe.addClass(this.classes.product[layout]);
       this._resizeX();
       this._resizeY();
     }
