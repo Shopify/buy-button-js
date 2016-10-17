@@ -148,7 +148,8 @@ const defaults = {
       title: 'shopify-buy__collection__title',
       collection: 'shopify-buy__collection',
       products: 'shopify-buy__collection-products',
-      paginationButton: 'shopify-buy__collection-pagination-button btn',
+      product: 'shopify-buy__collection-product',
+      paginationButton: 'shopify-buy__collection-pagination-button shopify-buy__btn',
     },
     text: {
       nextPageButton: 'Next page',
@@ -167,7 +168,7 @@ const defaults = {
       label: 'shopify-buy__option-select__label',
       optionDisabled: 'shopify-buy__option--disabled',
       optionSelected: 'shopify-buy__option--selected',
-      selectIcon: 'shopify-buy__select-icon'
+      selectIcon: 'shopify-buy__select-icon',
     },
   },
   cart: {

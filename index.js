@@ -217,7 +217,7 @@ var ui = ShopifyBuy.UI.init(client);
 // simple product
 
 ui.createComponent('product', {
-  id: 6640244678,
+  id: 6640321030,
   options: {
     product: {
       buttonDestination: 'modal',
