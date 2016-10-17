@@ -1,4 +1,5 @@
-.quantity-decrement, .quantity-increment {
+.shopify-buy__quantity-decrement,
+.shopify-buy__quantity-increment {
   color: $color-title;
   display: block;
   height: 26px;
@@ -16,15 +17,15 @@
   border: 1px solid $color-quantity-border;
 }
 
-.quantity-decrement {
+.shopify-buy__quantity-decrement {
   border-radius: $border-radius 0 0 $border-radius;
 }
 
-.quantity-increment {
+.shopify-buy__quantity-increment {
   border-radius: 0 $border-radius $border-radius 0;
 }
 
-.quantity {
+.shopify-buy__quantity {
   color: black;
   width: 45px;
   height: 26px;
@@ -46,10 +47,10 @@ input[type=number]::-webkit-outer-spin-button {
   margin: 0;
 }
 
-.quantity-container.with-buttons {
+.shopify-buy__quantity-container.shopify-buy__quantity-with-btns {
   overflow: hidden;
 
-  .quantity {
+  .shopify-buy__quantity {
     border-left: 0;
     border-right: 0;
     float: left;

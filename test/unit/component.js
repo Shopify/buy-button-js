@@ -11,6 +11,11 @@ const config = {
   options: {
     product: {
       iframe: false,
+      styles: {
+        product: {
+          'background': 'red',
+        }
+      },
       templates: {
         button: '<button id="button" class="button">Fake button</button>'
       },
@@ -18,6 +23,13 @@ const config = {
         title: true,
         button: true,
       }
+    },
+    option: {
+      styles: {
+        option: {
+          'background': 'blue',
+        }
+      },
     }
   }
 }
@@ -59,6 +71,27 @@ describe('Component class', () => {
 
     it('instantiates a template', () => {
       assert.isOk(component.template instanceof Template);
+    });
+  });
+
+  describe('get classes', () => {
+    it('returns classes based on manifest', () => {
+      assert.equal(component.classes.product.product, componentDefaults.product.classes.product);
+      assert.equal(component.classes.option.option, componentDefaults.option.classes.option);
+    });
+  });
+
+  describe('get classes', () => {
+    it('returns classes formatted as selectors based on manifest', () => {
+      assert.equal(component.selectors.product.product, '.shopify-buy__product');
+      assert.equal(component.selectors.option.option, '.shopify-buy__option-select');
+    });
+  });
+
+  describe('get styles', () => {
+    it('returns classes based on manifest', () => {
+      assert.deepEqual(component.styles.product.product, config.options.product.styles.product);
+      assert.deepEqual(component.styles.option.option, config.options.option.styles.option);
     });
   });
 
@@ -213,7 +246,7 @@ describe('Component class', () => {
     describe('when button exists', () => {
       it('puts strings in a div', () => {
         const string = component.wrapTemplate('test');
-        assert.equal(string, '<div class="product">test</div>');
+        assert.equal(string, '<div class="shopify-buy__product">test</div>');
       });
     });
   });
