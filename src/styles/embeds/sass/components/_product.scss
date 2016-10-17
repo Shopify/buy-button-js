@@ -54,8 +54,12 @@
   line-height: 1.65;
   color: $color-black;
 
-  p + p {
-    margin-top: $gutter * (2/3);
+  p, ul, ol, img {
+    margin-bottom: $gutter * (2/3);
+
+    &:last-child {
+      margin-bottom: 0;
+    }
   }
 
   a {
@@ -76,6 +80,14 @@
 
   h3 {
     font-size: 18px;
+  }
+
+  ul, ol {
+    margin-left: 2em;
+  }
+
+  ul {
+    list-style-type: disc;
   }
 }
 
