@@ -35,13 +35,9 @@ export default class Modal extends Component {
    * @return {Object}
    */
   get DOMEvents() {
-    let events = Object.assign({}, {
+    return Object.assign({}, {
       [`click ${this.selectors.modal.close}`]: this.props.closeModal.bind(this),
     }, this.options.DOMEvents);
-    if (this.product) {
-      events = Object.assign({}, events, this.product.DOMEvents);
-    }
-    return events;
   }
 
   /**
