@@ -590,8 +590,7 @@ export default class Product extends Component {
       this.iframe.removeClass(this.classes.product.vertical);
       this.iframe.removeClass(this.classes.product.horizontal);
       this.iframe.addClass(this.classes.product[layout]);
-      this._resizeX();
-      this._resizeY();
+      this.resizeUntilLoaded();
     }
     super.updateConfig(config);
     if (this.cart) {
