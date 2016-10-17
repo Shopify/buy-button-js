@@ -150,6 +150,9 @@ export default class Product extends Component {
    * @return {String}
    */
   get formattedPrice() {
+    if (!this.model.selectedVariant) {
+      return;
+    }
     return formatMoney(this.model.selectedVariant.price, this.moneyFormat);
   }
 
@@ -158,6 +161,9 @@ export default class Product extends Component {
    * @return {String}
    */
   get formattedCompareAtPrice() {
+    if (!this.model.selectedVariant) {
+      return;
+    }
     return formatMoney(this.model.selectedVariant.compareAtPrice, this.moneyFormat);
   }
 
