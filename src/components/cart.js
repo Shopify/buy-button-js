@@ -60,7 +60,7 @@ export default class Cart extends Component {
    */
   get lineItemsHtml() {
     return this.model.lineItems.reduce((acc, lineItem) => {
-      const data = lineItem;
+      const data = Object.assign({}, lineItem, this.options.viewData);
       data.classes = this.classes;
       data.lineItemImage = data.image || {src: NO_IMG_URL};
       data.variantTitle = data.variant_title === 'Default Title' ? '' : data.variant_title;
