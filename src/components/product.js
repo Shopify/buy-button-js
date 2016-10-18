@@ -280,7 +280,7 @@ export default class Product extends Component {
       return '';
     }
     return this.decoratedOptions.reduce((acc, option) => {
-      const data = option;
+      const data = Object.assign({}, option, this.options.viewData);
       data.classes = this.classes;
       data.onlyOption = (this.model.options.length === 1);
 
