@@ -1,6 +1,6 @@
 {
   "name": "@shopify/buy-button-js",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "The JS Buy UI library allows merchants to build Shopify interfaces into any website",
   "main": "lib/buybutton.umd.js",
   "jsnext:main": "lib/buybutton.es.js",
