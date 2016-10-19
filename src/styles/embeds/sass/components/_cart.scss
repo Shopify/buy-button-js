@@ -106,6 +106,7 @@ $cart-item-height: 65px;
   float: right;
   font-size: 14px;
   font-weight: bold;
+  line-height: 26px;
 }
 
 .shopify-buy__cart-item__variant-title {
@@ -164,6 +165,8 @@ $cart-item-height: 65px;
 
 .shopify-buy__quantity-container {
   margin-left: 80px;
+  height: 26px;
+  line-height: 26px;
 }
 
 .shopify-buy__cart-item__quantity-input {
