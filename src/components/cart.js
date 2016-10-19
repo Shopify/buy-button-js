@@ -297,11 +297,15 @@ export default class Cart extends Component {
         if (!el.parentNode) {
           return;
         }
-        el.parentNode.removeChild(el);
-        this.render();
+        this._removeItem(el);
       });
     } else {
-      el.parentNode.removeChild(el);
+      this._removeItem(el);
     }
+  }
+
+  _removeItem(el) {
+    el.parentNode.removeChild(el);
+    this.render();
   }
 }
