@@ -5,7 +5,7 @@ describe('Checkout class', () => {
     it('puts together a big param string', () => {
       const checkout = new Checkout({window: { height: 100, width: 100}});
       const windowParams = 'height=100,width=100,';
-      assert.deepEqual(checkout.params, windowParams);
+      assert.include(checkout.params, windowParams);
     });
   });
 });

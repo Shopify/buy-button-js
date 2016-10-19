@@ -4,7 +4,12 @@ export default class Checkout {
   }
 
   get params() {
-    return Object.keys(this.config.window).reduce((acc, key) => `${acc}${key}=${this.config.window[key]},`, '');
+    const config = Object.assign({}, this.config.window, {
+      left: (window.outerWidth / 2) - 200,
+      top: (window.outerHeight / 2) - 300,
+    });
+
+    return Object.keys(config).reduce((acc, key) => `${acc}${key}=${config[key]},`, '');
   }
 
   open(url) {
