@@ -269,18 +269,17 @@ const defaults = {
   },
   window: {
     height: 600,
-    width: 600,
+    width: 400,
     toolbar: 0,
     scrollbars: 0,
     status: 0,
     resizable: 1,
-    left: 0,
-    top: 0,
     center: 0,
     createnew: 1,
     location: 0,
     menubar: 0,
     onUnload: null,
+    titlebar: 'yes',
   },
 };
 
