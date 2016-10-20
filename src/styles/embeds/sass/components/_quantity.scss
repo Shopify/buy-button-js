@@ -2,7 +2,7 @@
 .shopify-buy__quantity-increment {
   color: $color-title;
   display: block;
-  height: 26px;
+  height: 30px;
   float: left;
   line-height: 16px;
   font-family: monospace;
@@ -16,6 +16,18 @@
   text-align: center;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   border: 1px solid $color-quantity-border;
+  position: relative;
+
+  svg {
+    width: 14px;
+    height: 14px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -6px;
+    margin-left: -7px;
+    fill: currentColor;
+  }
 }
 
 .shopify-buy__quantity-decrement {
@@ -29,8 +41,8 @@
 .shopify-buy__quantity {
   color: black;
   width: 45px;
-  height: 26px;
-  font-size: 12px;
+  height: 30px;
+  font-size: 16px;
   border: none;
   text-align: center;
   -moz-appearance: textfield;
