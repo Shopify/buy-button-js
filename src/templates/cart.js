@@ -10,14 +10,14 @@ const cartTemplates = {
                 {{#data.isEmpty}}<p class="{{data.classes.cart.emptyCart}}">{{data.text.empty}}</p>{{/data.isEmpty}}
                 <div class="{{data.classes.cart.lineItems}}">{{{data.lineItemsHtml}}}</div>
               </div>`,
-  footer: `<div class="{{data.classes.cart.footer}}">
-            {{^data.isEmpty}}
+  footer: `{{^data.isEmpty}}
+            <div class="{{data.classes.cart.footer}}">
               <p class="{{data.classes.cart.subtotalText}}">{{data.text.total}}</p>
               <p class="{{data.classes.cart.subtotal}}"><span class="{{data.classes.currency}}"></span>{{data.formattedTotal}}</p>
               <p class="{{data.classes.cart.notice}}">{{data.text.notice}}</p>
               <button class="{{data.classes.cart.button}}" type="button">{{data.text.button}}</button>
-            {{/data.isEmpty}}
-          </div>`,
+            </div>
+           {{/data.isEmpty}}`,
 };
 
 export default cartTemplates;
