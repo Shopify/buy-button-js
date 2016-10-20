@@ -67,6 +67,7 @@ export default class ProductSet extends Component {
    */
   get DOMEvents() {
     return Object.assign({}, {
+      click: this.props.closeCart.bind(this),
       [`click ${this.selectors.productSet.paginationButton}`]: this.nextPage.bind(this),
     }, this.options.DOMEvents);
   }
