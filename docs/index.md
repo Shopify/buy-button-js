@@ -83,4 +83,4 @@ ui.createComponent('product', {
 });
 ```
 
-For a full list of customization options, view the [customization documentation](/customization).
+For a full list of customization options, view the [customization documentation](/buy-button-js/customization).
