@@ -1,4 +1,7 @@
 export function addClassToElement(className, element) {
+  if (!className) {
+    return;
+  }
   if (element.classList) {
     element.classList.add(className);
   } else {
@@ -7,6 +10,9 @@ export function addClassToElement(className, element) {
 }
 
 export function removeClassFromElement(className, element) {
+  if (!className) {
+    return;
+  }
   if (element.classList) {
     element.classList.remove(className);
   } else {

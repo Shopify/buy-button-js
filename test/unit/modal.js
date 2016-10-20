@@ -81,26 +81,15 @@ describe('Modal class', () => {
     it('sets isVisible to false', () => {
       modal.iframe = {
         removeClass: sinon.spy(),
-        parent: {
-          addEventListener: sinon.spy(),
-        },
+        parent: document.createElement('div'),
         document: {
-          body: {
-            classList: '',
-            className: 'is-active',
-          }
+          body: document.createElement('body'),
         }
       }
-      modal.wrapper = {
-        classList: {
-          remove: sinon.spy()
-        }
-      }
+      modal.wrapper = document.createElement('div');
       modal.close();
       assert.notOk(modal.isVisible);
       assert.calledWith(modal.iframe.removeClass, 'is-active');
-      assert.calledWith(modal.wrapper.classList.remove, 'is-active');
-      assert.calledWith(modal.iframe.parent.addEventListener, 'transitionend', sinon.match.func);
       assert(modal.iframe.document.body.className.length < 1);
     });
   });

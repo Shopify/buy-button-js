@@ -1,6 +1,7 @@
 import hogan from 'hogan.js';
 import stylesTemplate from './templates/styles';
 import conditionalStyles from './styles/embeds/conditional';
+import {addClassToElement, removeClassFromElement} from './utils/element-class';
 
 const iframeStyles = {
   width: '100%',
@@ -150,18 +151,15 @@ export default class iframe {
   }
 
   addClass(className) {
-    if (this.parent.className.indexOf(className) < 0) {
-      this.parent.className += ` ${className}`;
-    }
+    addClassToElement(className, this.parent);
+  }
+
+  removeClass(className) {
+    removeClassFromElement(className, this.parent);
   }
 
   setName(name) {
     this.el.setAttribute('name', name);
-  }
-
-  removeClass(className) {
-    const newClass = this.parent.className.replace(className, '');
-    this.parent.className = newClass;
   }
 
   get document() {
