@@ -101,6 +101,5 @@ describe('cart', function () {
     browser.click('.shopify-buy__cart');
     browser.waitForExist('.shopify-buy__cart-item', 800, true);
     assert.notOk(browser.element('.shopify-buy__cart-item').value);
-    assert.include(browser.getText('.shopify-buy__cart__subtotal__price'), '$0.00');
   });
 });
