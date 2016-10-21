@@ -464,16 +464,16 @@ describe('Product class', () => {
       return product.init(testProductCopy);
     });
 
-    describe('when button exists', () => {
+    describe('when isButton is false', () => {
       it('calls super', () => {
         const string = product.wrapTemplate('test');
         assert.equal(string, '<div class="has-image shopify-buy__layout-vertical shopify-buy__product">test</div>');
       });
     });
 
-    describe('when button does not exist', () => {
+    describe('when isButton is true', () => {
       it('wraps html in a button', () => {
-        product.config.product.contents.button = false;
+        product.config.product.isButton = true;
         const string = product.wrapTemplate('test');
         assert.equal(string, '<div class="has-image shopify-buy__layout-vertical shopify-buy__product"><div tabindex="0" role="button" aria-label="Add to cart" class="shopify-buy__btn--parent">test</div></div>');
       });

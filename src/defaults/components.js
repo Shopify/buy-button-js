@@ -9,6 +9,7 @@ const defaults = {
   product: {
     iframe: true,
     buttonDestination: 'cart',
+    isButton: false,
     layout: 'vertical',
     manifest: ['product', 'option'],
     width: '240px',
