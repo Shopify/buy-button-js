@@ -32,7 +32,7 @@ export default class CartToggle extends Component {
   }
 
   get shouldResizeY() {
-    return this.options.sticky;
+    return true;
   }
 
   get shouldResizeX() {
