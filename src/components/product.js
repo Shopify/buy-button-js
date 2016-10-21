@@ -518,10 +518,10 @@ export default class Product extends Component {
       ariaLabel = 'Buy Now';
     }
 
-    if (this.options.contents.button || this.options.contents.buttonWithQuantity) {
-      return `<div class="${this.wrapperClass} ${this.classes.product.product}">${html}</div>`;
-    } else {
+    if (this.options.isButton) {
       return `<div class="${this.wrapperClass} ${this.classes.product.product}"><div tabindex="0" role="button" aria-label="${ariaLabel}" class="${this.classes.product.blockButton}">${html}</div></div>`;
+    } else {
+      return `<div class="${this.wrapperClass} ${this.classes.product.product}">${html}</div>`;
     }
   }
 
@@ -635,7 +635,7 @@ export default class Product extends Component {
    * prevent events from bubbling if entire product is being treated as button.
    */
   stopPropagation(evt) {
-    if (!this.options.contents.button && !this.options.contents.buttonWithQuantity) {
+    if (this.options.isButton) {
       evt.stopImmediatePropagation();
     }
   }
