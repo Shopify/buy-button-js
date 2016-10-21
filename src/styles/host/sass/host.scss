@@ -54,6 +54,14 @@ $max-z-index: 2147483647;
 }
 
 .shopify-buy-frame--toggle {
+  display: inline-block;
+
+  &:not(.is-sticky) {
+    height: 40px;
+    max-width: 120px;
+    overflow: hidden;
+  }
+
   &.is-sticky {
     display: none;
     position: fixed;
@@ -64,13 +72,16 @@ $max-z-index: 2147483647;
     z-index: $max-z-index - 2;
   }
 
-  &.is-active {
+  &.is-active.is-sticky {
     display: block;
   }
 
   iframe {
     height: auto;
-    min-height: 67px;
+
+    .is-active & {
+      min-height: 67px;
+    }
   }
 }
 
