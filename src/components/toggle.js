@@ -36,7 +36,7 @@ export default class CartToggle extends Component {
   }
 
   get shouldResizeX() {
-    return this.options.sticky;
+    return true;
   }
 
   get stickyClass() {

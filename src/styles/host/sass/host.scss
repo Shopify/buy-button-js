@@ -57,9 +57,8 @@ $max-z-index: 2147483647;
   display: inline-block;
 
   &:not(.is-sticky) {
-    height: 40px;
-    max-width: 150px;
     overflow: hidden;
+    padding: 5px;
   }
 
   &.is-sticky {
