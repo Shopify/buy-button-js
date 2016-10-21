@@ -183,6 +183,14 @@ Sets the maximum width for a product embed with vertical layout. Specified in pi
 
 **Default value**: `240px`
 
+### `isButton`
+
+Whether or not the entire product should be clickable. Useful for if you want to hide the button and instead treat the image as a button.
+
+**Type**: Boolean
+
+**Default value**: `false`
+
 
 ### Product contents defaults
 
