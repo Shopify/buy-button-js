@@ -147,6 +147,7 @@ export default class Cart extends Component {
     }
     if (this.isVisible) {
       this.iframe.addClass('is-active');
+      this.iframe.addClass('is-initialized');
     } else {
       this.iframe.removeClass('is-active');
     }
