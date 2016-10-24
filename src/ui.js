@@ -74,7 +74,7 @@ export default class UI {
    */
   destroyComponent(type, id) {
     this.components[type].forEach((component, index) => {
-      if (!component.model.id === id) {
+      if (id && !component.model.id === id) {
         return;
       }
       this.components[type][index].destroy();
@@ -200,6 +200,7 @@ export default class UI {
       createModal: this.createModal.bind(this),
       closeModal: this.closeModal.bind(this),
       setActiveEl: this.setActiveEl.bind(this),
+      destroyComponent: this.destroyComponent.bind(this),
       tracker: this.tracker,
       errorReporter: this.errorReporter,
       browserFeatures,

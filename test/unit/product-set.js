@@ -25,7 +25,8 @@ describe('ProductSet class', () => {
     document.body.appendChild(config.node);
     set = new ProductSet(config, {
       client: {},
-      createCart: () => Promise.resolve()
+      createCart: () => Promise.resolve(),
+      destroyComponent: () => Promise.resolve()
     });
     set.props.client.fetchQueryProducts = () => Promise.resolve([{title: 'vapehat'}, {title: 'vapeshoe'}]);
   });

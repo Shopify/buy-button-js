@@ -209,6 +209,7 @@ export default class ProductSet extends Component {
    */
   updateConfig(config) {
     super.updateConfig(config);
+    this.props.destroyComponent('modal');
     this.cart.updateConfig(config);
     this.renderProducts();
   }
