@@ -439,7 +439,8 @@ export default class Product extends Component {
    * @return {String}
    */
   get onlineStoreURL() {
-    return `https://${this.props.client.config.domain}/products/${this.id}${this.onlineStoreQueryString}`;
+    const identifier = this.handle ? this.handle : this.id;
+    return `https://${this.props.client.config.domain}/products/${identifier}${this.onlineStoreQueryString}`;
   }
 
   /**
