@@ -28,8 +28,13 @@ export default class Cart extends Component {
     this.node = config.node || document.body.appendChild(document.createElement('div'));
     this.node.className = 'shopify-buy-cart-wrapper';
     this.isVisible = this.options.startOpen;
-    this.toggle = new CartToggle(config, Object.assign({}, this.props, {cart: this}));
     this.checkout = new Checkout(this.config);
+    const toggles = config.toggles || [{
+      node: this.node.parentNode.insertBefore(document.createElement('div'), this.node),
+    }];
+    this.toggles = toggles.map((toggle) => {
+      return new CartToggle(merge(config, toggle), Object.assign({}, this.props, {cart: this}));
+    });
   }
 
   /**
@@ -133,7 +138,12 @@ export default class Cart extends Component {
    * @return {Promise} promise resolving to instance.
    */
   init(data) {
-    return super.init(data).then((cart) => this.toggle.init({lineItems: cart.model.lineItems}).then(() => this));
+    return super.init(data)
+      .then((cart) => {
+        return this.toggles.map((toggle) => {
+          return toggle.init({lineItems: cart.model.lineItems});
+        });
+      }).then(() => this);
   }
 
   /**
@@ -155,7 +165,7 @@ export default class Cart extends Component {
 
   destroy() {
     super.destroy();
-    this.toggle.destroy();
+    this.toggles.forEach((toggle) => toggle.destroy());
   }
 
   /**
@@ -220,7 +230,7 @@ export default class Cart extends Component {
     this._userEvent('updateItemQuantity');
     return this.model.updateLineItem(id, qty).then((cart) => {
       this.model = cart;
-      this.toggle.render();
+      this.toggles.forEach((toggle) => toggle.render());
       if (!this.iframe) {
         this.render();
         return cart;
@@ -241,7 +251,7 @@ export default class Cart extends Component {
    */
   updateConfig(config) {
     super.updateConfig(config);
-    this.toggle.updateConfig(config);
+    this.toggles.forEach((toggle) => toggle.updateConfig(config));
   }
 
   /**
@@ -256,7 +266,7 @@ export default class Cart extends Component {
     this.open();
     return this.model.addVariants({variant, quantity}).then((cart) => {
       this.render();
-      this.toggle.render();
+      this.toggles.forEach((toggle) => toggle.render());
       this.setFocus();
       return cart;
     });
@@ -268,7 +278,7 @@ export default class Cart extends Component {
   empty() {
     return this.model.clearLineItems().then(() => {
       this.render();
-      this.toggle.render();
+      this.toggles.forEach((toggle) => toggle.render());
       return;
     });
   }
