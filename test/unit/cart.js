@@ -100,14 +100,14 @@ describe('Cart class', () => {
       }
       updateLineItemStub = sinon.stub(cart.model, 'updateLineItem').returns(Promise.resolve({test: 'lol'}))
       cart.render = sinon.spy();
-      cart.toggle.render = sinon.spy();
+      cart.toggles[0].render = sinon.spy();
     });
 
     it('calls updateLineItem', () => {
       return cart.updateItem(123, 3).then(() => {
         assert.calledWith(updateLineItemStub, 123, 3);
         assert.calledOnce(cart.render);
-        assert.calledOnce(cart.toggle.render);
+        assert.calledOnce(cart.toggles[0].render);
         assert.deepEqual(cart.model, {test: 'lol'});
       });
     });
@@ -160,7 +160,7 @@ describe('Cart class', () => {
       cart.setFocus = sinon.spy();
       cart.model.addVariants = sinon.stub().returns(Promise.resolve());
       let render = sinon.stub(cart, 'render');
-      let toggleRender = sinon.stub(cart.toggle, 'render');
+      let toggleRender = sinon.stub(cart.toggles[0], 'render');
 
       return cart.addVariantToCart({id: 123}).then(() => {
         assert.calledWith(cart.model.addVariants, {variant: {id: 123 }, quantity: 1});
@@ -185,7 +185,7 @@ describe('Cart class', () => {
 
     beforeEach(() => {
       superSpy = sinon.stub(Component.prototype, 'updateConfig');
-      cart.toggle.updateConfig = sinon.spy();
+      cart.toggles[0].updateConfig = sinon.spy();
     });
 
     afterEach(() => {
@@ -194,7 +194,7 @@ describe('Cart class', () => {
 
     it('calls updateConfig on toggle', () => {
       cart.updateConfig(newConfig);
-      assert.calledWith(cart.toggle.updateConfig, newConfig);
+      assert.calledWith(cart.toggles[0].updateConfig, newConfig);
       assert.calledWith(superSpy, newConfig);
     });
   });
@@ -214,12 +214,12 @@ describe('Cart class', () => {
         clearLineItems: sinon.stub().returns(Promise.resolve())
       }
       cart.render = sinon.spy();
-      cart.toggle.render = sinon.spy();
+      cart.toggles[0].render = sinon.spy();
 
       return cart.empty().then(() => {
         assert.calledOnce(cart.model.clearLineItems);
         assert.calledOnce(cart.render);
-        assert.calledOnce(cart.toggle.render);
+        assert.calledOnce(cart.toggles[0].render);
       });
     });
   });

@@ -64,6 +64,7 @@ export default class Product extends Component {
   constructor(config, props) {
     super(config, props);
     this.cartNode = config.cartNode;
+    this.toggles = config.toggles;
     this.modalNode = config.modalNode;
     this.defaultVariantId = config.variantId;
     this.cachedImage = null;
@@ -488,6 +489,7 @@ export default class Product extends Component {
         moneyFormat: this.moneyFormat,
         node: this.cartNode,
         options: this.config,
+        toggles: this.toggles,
       });
     } else {
       return Promise.resolve(null);

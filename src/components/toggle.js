@@ -6,7 +6,7 @@ const ENTER_KEY = 13;
 export default class CartToggle extends Component {
   constructor(config, props) {
     super(config, props);
-    this.node = this.props.cart.node.parentNode.insertBefore(document.createElement('div'), this.props.cart.node);
+    this.node = config.node || this.props.cart.node.parentNode.insertBefore(document.createElement('div'), this.props.cart.node);
   }
 
   get isVisible() {
