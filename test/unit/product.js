@@ -6,7 +6,6 @@ import Template from '../../src/template';
 import Component from '../../src/component';
 import testProduct from '../fixtures/product-fixture';
 import windowUtils from '../../src/utils/window-utils';
-import hogan from 'hogan.js';
 
 const config = {
   id: 123,

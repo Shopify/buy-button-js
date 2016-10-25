@@ -1,4 +1,4 @@
-import hogan from 'hogan.js';
+import Mustache from 'mustache';
 import stylesTemplate from './templates/styles';
 import conditionalStyles from './styles/embeds/conditional';
 import {addClassToElement, removeClassFromElement} from './utils/element-class';
@@ -195,8 +195,8 @@ export default class iframe {
   }
 
   get css() {
-    const compiled = hogan.compile(stylesTemplate);
-    return `${this.stylesheet} \n ${compiled.render({selectors: this.customStyles})} \n ${this.conditionalCSS}`;
+    const compiled = Mustache.render(stylesTemplate, {selectors: this.customStyles});
+    return `${this.stylesheet} \n ${compiled} \n ${this.conditionalCSS}`;
   }
 
   updateStyles(customStyles) {
