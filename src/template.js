@@ -1,11 +1,10 @@
-import hogan from 'hogan.js';
+import Mustache from 'mustache';
 
 export default class Template {
   constructor(templates, contents, order) {
     this.templates = templates;
     this.contents = contents;
     this.order = order;
-    this.templateFn = hogan.compile(this.masterTemplate);
   }
 
   get masterTemplate() {
@@ -19,7 +18,7 @@ export default class Template {
   }
 
   render(data, cb) {
-    const output = `${this.templateFn.render(data)}`;
+    const output = Mustache.render(this.masterTemplate, data);
     if (!cb) {
       return output;
     }

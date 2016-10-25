@@ -408,7 +408,7 @@ Determines class names added to elements within components. It is unlikely you w
 **Default values**: dependent on component. [View defaults](https://github.com/Shopify/buy-button-js/blob/master/src/defaults/components.js).
 
 ### `templates`
-Determines the HTML for each element in a component. Templates are specified as strings using the [Hogan](http://twitter.github.io/hogan.js/) templating engine, which implements the [Mustache](https://mustache.github.io/) syntax.
+Determines the HTML for each element in a component. Templates are specified as strings using the [Mustache](https://github.com/janl/mustache.js/) templating engine, which implements the [Mustache](https://mustache.github.io/) syntax.
 
 Templates have a variety of data available to them, accessible through the `data` namespace. Information on the `data` object is a combination of the model supporting the component provided by the [JS Buy SDK](http://shopify.github.io/js-buy-sdk/api/classes/ShopifyBuy.html) (ProductModel, ProductVariantModel, Option, and CartModel), the `classes` object, the `text` object, and a number of utility strings and booleans.
 
