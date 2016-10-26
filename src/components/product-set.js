@@ -226,6 +226,7 @@ export default class ProductSet extends Component {
       node: this.document.querySelector(`.${this.classes.productSet.products}`),
       modalNode: this.modalNode,
       cartNode: this.cartNode,
+      moneyFormat: this.moneyFormat,
       options: merge({}, this.config, {
         product: {
           iframe: false,
