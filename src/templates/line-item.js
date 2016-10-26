@@ -3,7 +3,7 @@ const lineItemTemplates = {
   variantTitle: '<div class="{{data.classes.lineItem.variantTitle}}">{{data.variantTitle}}</div>',
 
   title: '<span class="{{data.classes.lineItem.itemTitle}}">{{data.title}}</span>',
-  price: '<span class="{{data.classes.lineItem.price}}">${{data.line_price}}</span>',
+  price: '<span class="{{data.classes.lineItem.price}}">{{data.formattedPrice}}</span>',
   quantity: `<div class="{{data.classes.lineItem.quantity}}">
               <button class="{{data.classes.lineItem.quantityButton}} {{data.classes.lineItem.quantityDecrement}}" type="button" data-line-item-id="{{data.id}}"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M4 7h8v2H4z"/></svg><span class="visuallyhidden">Decrement</span></button>
               <input class="{{data.classes.lineItem.quantityInput}}" type="number" min="0" aria-label="Quantity" data-line-item-id="{{data.id}}" value="{{data.quantity}}">
