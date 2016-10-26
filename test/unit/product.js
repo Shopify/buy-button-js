@@ -362,6 +362,7 @@ describe('Product class', () => {
 
     beforeEach(() => {
       superSpy = sinon.stub(Component.prototype, 'updateConfig');
+      product.wrapper = document.createElement('div');
       product.cart = {
         updateConfig: sinon.spy()
       }
