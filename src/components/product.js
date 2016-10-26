@@ -600,7 +600,7 @@ export default class Product extends Component {
       this.iframe.addClass(this.classes.product[layout]);
       this.resizeUntilLoaded();
     }
-    this.wrapper.querySelectorAll('img').forEach((img) => {
+    [...this.wrapper.querySelectorAll('img')].forEach((img) => {
       img.addEventListener('load', () => {
         this.resizeUntilLoaded();
       });
