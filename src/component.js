@@ -31,7 +31,7 @@ export default class Component {
       moneyFormat: config.moneyFormat || '${{amount}}',
       cartNode: config.cartNode,
       modalNode: config.modalNode,
-      toggleNodes: config.toggleNodes,
+      toggles: config.toggles,
       storage: config.storage || window.localStorage,
     };
     this.config = merge({}, componentDefaults, config.options || {});

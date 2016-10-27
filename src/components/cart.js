@@ -29,7 +29,7 @@ export default class Cart extends Component {
     this.node.className = 'shopify-buy-cart-wrapper';
     this.isVisible = this.options.startOpen;
     this.checkout = new Checkout(this.config);
-    const toggles = this.globalConfig.toggleNodes || [{
+    const toggles = this.globalConfig.toggles || [{
       node: this.node.parentNode.insertBefore(document.createElement('div'), this.node),
     }];
     this.toggles = toggles.map((toggle) => {
