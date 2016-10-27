@@ -200,10 +200,11 @@ export default class iframe {
   }
 
   updateStyles(customStyles, googleFonts) {
-    this.customStylesHash = customStyles;
-    this.styleTag.innerHTML = this.css;
     this.googleFonts = googleFonts;
-    this.loadFonts();
+    this.loadFonts().then(() => {
+      this.customStylesHash = customStyles;
+      this.styleTag.innerHTML = this.css;
+    });
   }
 
   appendStyleTag() {
