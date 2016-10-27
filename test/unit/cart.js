@@ -15,7 +15,9 @@ let fakeClient = {
 
 describe('Cart class', () => {
   beforeEach(() => {
-    cart = new Cart({}, {
+    cart = new Cart({
+      storage: fakeLocalStorage
+    }, {
       client: fakeClient,
       browserFeatures: {
         transition: true,
@@ -29,8 +31,7 @@ describe('Cart class', () => {
           }
         }
       }
-    },
-    fakeLocalStorage);
+    });
   });
   afterEach(() => {
     cart.destroy();

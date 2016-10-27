@@ -24,8 +24,6 @@ export default class ProductSet extends Component {
   constructor(config, props) {
     super(config, props);
     this.products = [];
-    this.cartNode = config.cartNode;
-    this.modalNode = config.modalNode;
     this.cart = null;
     this.page = 1;
     this.nextModel = {products: []};
@@ -96,11 +94,12 @@ export default class ProductSet extends Component {
    * @return {Promise} promise resolving to instance.
    */
   init(data) {
+    const cartConfig = Object.assign({}, this.globalConfig, {
+      options: this.config,
+    });
+
     return super.init.call(this, data).then((model) => (
-      this.props.createCart({
-        moneyFormat: this.moneyFormat,
-        options: this.config,
-      }).then((cart) => {
+      this.props.createCart(cartConfig).then((cart) => {
         this.cart = cart;
         if (model) {
           return this.renderProducts(this.model.products);
@@ -225,11 +224,8 @@ export default class ProductSet extends Component {
     if (!this.model.products.length) {
       return Promise.resolve();
     }
-    const productConfig = {
+    const productConfig = Object.assign({}, this.globalConfig, {
       node: this.document.querySelector(`.${this.classes.productSet.products}`),
-      modalNode: this.modalNode,
-      cartNode: this.cartNode,
-      moneyFormat: this.moneyFormat,
       options: merge({}, this.config, {
         product: {
           iframe: false,
@@ -238,7 +234,7 @@ export default class ProductSet extends Component {
           },
         },
       }),
-    };
+    });
 
     const promises = this.model.products.map((productModel) => {
       const product = new Product(productConfig, this.props);

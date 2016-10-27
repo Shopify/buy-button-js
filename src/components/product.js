@@ -63,9 +63,6 @@ export default class Product extends Component {
    */
   constructor(config, props) {
     super(config, props);
-    this.cartNode = config.cartNode;
-    this.toggles = config.toggles;
-    this.modalNode = config.modalNode;
     this.defaultVariantId = config.variantId;
     this.cachedImage = null;
     this.childTemplate = new Template(this.config.option.templates, this.config.option.contents, this.config.option.order);
@@ -158,7 +155,7 @@ export default class Product extends Component {
     if (!this.model.selectedVariant) {
       return '';
     }
-    return formatMoney(this.model.selectedVariant.price, this.moneyFormat);
+    return formatMoney(this.model.selectedVariant.price, this.globalConfig.moneyFormat);
   }
 
   /**
@@ -169,7 +166,7 @@ export default class Product extends Component {
     if (!this.model.selectedVariant) {
       return '';
     }
-    return formatMoney(this.model.selectedVariant.compareAtPrice, this.moneyFormat);
+    return formatMoney(this.model.selectedVariant.compareAtPrice, this.globalConfig.moneyFormat);
   }
 
   /**
@@ -485,13 +482,13 @@ export default class Product extends Component {
    * @return {Promise}
    */
   createCart() {
+    const cartConfig = Object.assign({}, this.globalConfig, {
+      node: this.globalConfig.cartNode,
+      options: this.config,
+    });
+
     if (this.shouldCreateCart) {
-      return this.props.createCart({
-        moneyFormat: this.moneyFormat,
-        node: this.cartNode,
-        options: this.config,
-        toggles: this.toggles,
-      });
+      return this.props.createCart(cartConfig);
     } else {
       return Promise.resolve(null);
     }
@@ -701,16 +698,16 @@ export default class Product extends Component {
    */
   openModal() {
     if (!this.modal) {
-      this.modal = this.props.createModal({
-        node: this.modalNode,
-        moneyFormat: this.moneyFormat,
+      const modalConfig = Object.assign({}, this.globalConfig, {
+        node: this.globalConfig.modalNode,
         options: Object.assign({}, this.config, {
           product: this.modalProductConfig,
           modal: Object.assign({}, this.config.modal, {
             googleFonts: this.options.googleFonts,
           }),
         }),
-      }, this.props);
+      });
+      this.modal = this.props.createModal(modalConfig, this.props);
     }
     this._userEvent('openModal');
     return this.modal.init(this.model);

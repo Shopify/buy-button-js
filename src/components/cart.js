@@ -20,16 +20,16 @@ export default class Cart extends Component {
    * @param {Object} props - data and utilities passed down from UI instance.
    * @param {Object} [storage] - object implementing the localStorage API for cart persistence.
    */
-  constructor(config, props, storage) {
+  constructor(config, props) {
     super(config, props);
-    this.storage = storage || window.localStorage;
+    this.storage = this.globalConfig.storage || window.localStorage;
     this.addVariantToCart = this.addVariantToCart.bind(this);
     this.childTemplate = new Template(this.config.lineItem.templates, this.config.lineItem.contents, this.config.lineItem.order);
     this.node = config.node || document.body.appendChild(document.createElement('div'));
     this.node.className = 'shopify-buy-cart-wrapper';
     this.isVisible = this.options.startOpen;
     this.checkout = new Checkout(this.config);
-    const toggles = config.toggles || [{
+    const toggles = this.globalConfig.toggleNodes || [{
       node: this.node.parentNode.insertBefore(document.createElement('div'), this.node),
     }];
     this.toggles = toggles.map((toggle) => {
@@ -69,7 +69,7 @@ export default class Cart extends Component {
       data.classes = this.classes;
       data.lineItemImage = data.image || {src: NO_IMG_URL};
       data.variantTitle = data.variant_title === 'Default Title' ? '' : data.variant_title;
-      data.formattedPrice = formatMoney(data.line_price, this.moneyFormat);
+      data.formattedPrice = formatMoney(data.line_price, this.globalConfig.moneyFormat);
       return acc + this.childTemplate.render({data}, (output) => `<div id="${lineItem.id}" class=${this.classes.lineItem.lineItem}>${output}</div>`);
     }, '');
   }
@@ -93,7 +93,7 @@ export default class Cart extends Component {
    * @return {String}
    */
   get formattedTotal() {
-    return formatMoney(this.model.subtotal, this.moneyFormat);
+    return formatMoney(this.model.subtotal, this.globalConfig.moneyFormat);
   }
 
   /**
