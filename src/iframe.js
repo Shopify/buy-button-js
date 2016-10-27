@@ -118,7 +118,7 @@ export default class iframe {
           google: {
             families: this.googleFonts,
           },
-          context: frames[this.name],
+          context: this.el.contentWindow || frames[this.name],
         });
       }
       return true;
