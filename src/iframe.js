@@ -199,9 +199,11 @@ export default class iframe {
     return `${this.stylesheet} \n ${compiled} \n ${this.conditionalCSS}`;
   }
 
-  updateStyles(customStyles) {
+  updateStyles(customStyles, googleFonts) {
     this.customStylesHash = customStyles;
     this.styleTag.innerHTML = this.css;
+    this.googleFonts = googleFonts;
+    this.loadFonts();
   }
 
   appendStyleTag() {
