@@ -171,6 +171,7 @@ const defaults = {
       optionDisabled: 'shopify-buy__option--disabled',
       optionSelected: 'shopify-buy__option--selected',
       selectIcon: 'shopify-buy__select-icon',
+      hiddenLabel: 'visuallyhidden',
     },
   },
   cart: {
