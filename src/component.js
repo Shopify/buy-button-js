@@ -320,7 +320,7 @@ export default class Component {
     this.config = merge(this.config, config.options);
     this.template = new Template(this.options.templates, this.options.contents, this.options.order);
     if (this.iframe) {
-      this.iframe.updateStyles(this.styles, this.options.googleFonts);
+      this.iframe.updateStyles(this.styles, this.googleFonts);
     }
     this.render();
     this.resize();

@@ -109,7 +109,7 @@ export default class iframe {
   }
 
   loadFonts() {
-    if (!this.googleFonts.length) {
+    if (!this.googleFonts || !this.googleFonts.length) {
       return Promise.resolve(true);
     }
     return this.loadFontScript().then(() => {
