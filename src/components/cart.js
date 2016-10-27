@@ -33,7 +33,7 @@ export default class Cart extends Component {
       node: this.node.parentNode.insertBefore(document.createElement('div'), this.node),
     }];
     this.toggles = toggles.map((toggle) => {
-      return new CartToggle(merge(config, toggle), Object.assign({}, this.props, {cart: this}));
+      return new CartToggle(merge({}, config, toggle), Object.assign({}, this.props, {cart: this}));
     });
   }
 
