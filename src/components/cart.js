@@ -265,7 +265,7 @@ export default class Cart extends Component {
       return null;
     }
     this.open();
-    return this.model.addVariants({variant, quantity}).then((cart) => {
+    return this.model.createLineItemsFromVariants({variant, quantity}).then((cart) => {
       this.render();
       this.toggles.forEach((toggle) => toggle.render());
       this.setFocus();
