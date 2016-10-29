@@ -7,20 +7,16 @@ const commonjs = require('rollup-plugin-commonjs');
 const babel = require('rollup-plugin-babel');
 const UglifyJS = require('uglify-js');
 
-const srcPath = 'src/buybutton.js';
+const srcPath = 'lib/buybutton.js';
 const buildPaths = {
   globals: 'dist/buybutton.js',
   min: 'dist/buybutton.min.js',
-  umd: 'lib/buybutton.umd.js',
-  es: 'lib/buybutton.es.js',
+  umd: 'dist/buybutton.umd.js',
 }
 
 rollup({
   entry: srcPath,
   plugins: [
-    babel({
-      exclude: ['node_modules/**'],
-    }),
     nodeResolve({
       extensions: ['.js'],
       preferBuiltins: true
@@ -37,11 +33,6 @@ rollup({
     bundle.write({
       dest: buildPaths.umd,
       format: 'umd',
-      moduleName: 'ShopifyBuy',
-    }),
-    bundle.write({
-      dest: buildPaths.es,
-      format: 'es',
       moduleName: 'ShopifyBuy',
     }),
   ]);
