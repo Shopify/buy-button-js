@@ -297,7 +297,12 @@ export default class Component {
     if (!style) {
       return `${this.wrapper.clientHeight}px`;
     }
-    return style.getPropertyValue('height');
+    let height = style.getPropertyValue('height');
+    if (!height || height === '0px' || height === 'auto') {
+      const clientHeight = this.wrapper.clientHeight;
+      height = style.getPropertyValue('height') || clientHeight;
+    }
+    return height;
   }
 
   /**
