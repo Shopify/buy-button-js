@@ -300,7 +300,7 @@ export default class Component {
     let height = style.getPropertyValue('height');
     if (!height || height === '0px' || height === 'auto') {
       const clientHeight = this.wrapper.clientHeight;
-      height = style.getPropertyValue('height') || `${this.wrapper.clientHeight}px`;
+      height = style.getPropertyValue('height') || `${clientHeight}px`;
     }
     return height;
   }
