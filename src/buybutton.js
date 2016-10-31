@@ -2,7 +2,9 @@ import ShopifyBuy from 'shopify-buy/dist/shopify-buy.umd.polyfilled';
 import UI from './ui';
 import productTemplates from './templates/product';
 
-ShopifyBuy.UI = {
+window.ShopifyBuy = window.ShopifyBuy || ShopifyBuy;
+
+ShopifyBuy.UI = window.ShopifyBuy.UI || {
   ui: null,
 
   init(client, integrations = {}, styleOverrides) {
@@ -21,5 +23,4 @@ ShopifyBuy.UI = {
   UIConstructor: UI,
 };
 
-window.ShopifyBuy = window.ShopifyBuy || ShopifyBuy;
 export default ShopifyBuy;
