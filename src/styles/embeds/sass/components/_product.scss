@@ -115,6 +115,12 @@
 .shopify-buy__product__variant-selectors {
   text-align: left;
   font-size: 14px;
+
+  .shopify-buy__layout-vertical & {
+    max-width: 280px;
+    margin-left: auto;
+    margin-right: auto;
+  }
 }
 
 .shopify-buy__quantity {
