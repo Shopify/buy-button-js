@@ -21,5 +21,5 @@ ShopifyBuy.UI = {
   UIConstructor: UI,
 };
 
-window.ShopifyBuy = ShopifyBuy;
+window.ShopifyBuy = window.ShopifyBuy || ShopifyBuy;
 export default ShopifyBuy;
