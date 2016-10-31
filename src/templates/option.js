@@ -1,6 +1,6 @@
 const optionTemplates = {
   option: `<div class={{data.classes.option.option}}>
-    <label class="{{data.classes.option.label}} {{#data.onlyOption}}visuallyhidden{{/data.onlyOption}}">{{data.name}}</label>
+    <label class="{{data.classes.option.label}} {{#data.onlyOption}}{{data.classes.option.hiddenLabel}}{{/data.onlyOption}}">{{data.name}}</label>
       <div class="{{data.classes.option.wrapper}}">
       <select class="{{data.classes.option.select}}" name="{{data.name}}">
         {{#data.values}}
