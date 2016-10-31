@@ -293,7 +293,11 @@ export default class Component {
    * @return {String} value in pixels.
    */
   get outerHeight() {
-    return window.getComputedStyle(this.wrapper, '').getPropertyValue('height');
+    const style = window.getComputedStyle(this.wrapper, '');
+    if (!style) {
+      return `${this.wrapper.clientHeight}px`;
+    }
+    return style.getPropertyValue('height');
   }
 
   /**
