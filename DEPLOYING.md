@@ -1,10 +1,17 @@
 ## Deploying and publishing BuyButton.js
 
+Pull from master and install all dependencies
+```
+git pull origin master
+npm install
+```
+Then run
+
 ```
 npm version [patch|minor|major]
 ```
 
-will do 3 things:
+Which will do 3 things:
 
 - update the version number in package.json
 - create a commit
