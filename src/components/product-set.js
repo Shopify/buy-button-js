@@ -85,6 +85,7 @@ export default class ProductSet extends Component {
     return {
       limit: 30,
       page: 1,
+      sort_by: 'collection-default',
     };
   }
 
