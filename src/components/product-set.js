@@ -82,11 +82,15 @@ export default class ProductSet extends Component {
   }
 
   get fetchQuery() {
+
+    /* eslint-disable camelcase */
     return {
       limit: 30,
       page: 1,
       sort_by: 'collection-default',
     };
+
+    /* eslint-enable camelcase */
   }
 
   /**
