@@ -26,13 +26,18 @@ export default class Component {
     this.id = config.id;
     this.handle = config.handle;
     this.node = config.node;
-    this.debug = config.debug;
-    this.moneyFormat = config.moneyFormat || '${{amount}}';
+    this.globalConfig = {
+      debug: config.debug,
+      moneyFormat: config.moneyFormat || '${{amount}}',
+      cartNode: config.cartNode,
+      modalNode: config.modalNode,
+      toggles: config.toggles,
+      storage: config.storage || window.localStorage,
+    };
     this.config = merge({}, componentDefaults, config.options || {});
     this.props = props;
     this.model = {};
     this.template = new Template(this.options.templates, this.options.contents, this.options.order);
-    this.children = null;
   }
 
   /**
@@ -420,7 +425,7 @@ export default class Component {
   }
 
   _userEvent(methodName) {
-    if (this.debug) {
+    if (this.globalConfig.debug) {
       logger.info(`EVENT: ${methodName} (${this.typeKey})`);
     }
     if (isFunction(this.events[methodName])) {

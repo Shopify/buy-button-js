@@ -45,11 +45,10 @@ export default class Modal extends Component {
    * @return {Object}
    */
   get productConfig() {
-    return {
-      moneyFormat: this.moneyFormat,
+    return Object.assign({}, this.globalConfig, {
       node: this.productWrapper,
       options: merge({}, this.config),
-    };
+    });
   }
 
   /**
