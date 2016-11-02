@@ -218,7 +218,7 @@ export default class UI {
   }
 
   _queryEntryNode() {
-    this.entry = window.document.querySelectorAll(`script[${DATA_ATTRIBUTE}]`)[0];
+    this.entry = this.entry || window.document.querySelectorAll(`script[${DATA_ATTRIBUTE}]`)[0];
 
     const div = document.createElement('div');
 
@@ -229,7 +229,7 @@ export default class UI {
       if (parentNode.tagName === 'HEAD' || parentNode.tagName === 'HTML') {
         this._appendToBody(div);
       } else {
-        entry.removeAttribute(DATA_ATTRIBUTE);
+        this.entry.removeAttribute(DATA_ATTRIBUTE);
         parentNode.insertBefore(div, this.entry);
       }
     }
