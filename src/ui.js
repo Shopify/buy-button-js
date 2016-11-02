@@ -222,9 +222,7 @@ export default class UI {
 
     const div = document.createElement('div');
 
-    if (!this.entry) {
-      this._appendToBody(div);
-    } else {
+    if (this.entry) {
       const parentNode = this.entry.parentNode;
       if (parentNode.tagName === 'HEAD' || parentNode.tagName === 'HTML') {
         this._appendToBody(div);
@@ -232,6 +230,8 @@ export default class UI {
         this.entry.removeAttribute(DATA_ATTRIBUTE);
         parentNode.insertBefore(div, this.entry);
       }
+    } else {
+      this._appendToBody(div);
     }
     return div;
   }
