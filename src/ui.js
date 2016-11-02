@@ -218,12 +218,29 @@ export default class UI {
   }
 
   _queryEntryNode() {
-    this.entry = this.entry || window.document.querySelectorAll(`script[${DATA_ATTRIBUTE}]`)[0];
-    this.entry.removeAttribute(DATA_ATTRIBUTE);
+    this.entry = window.document.querySelectorAll(`script[${DATA_ATTRIBUTE}]`)[0];
 
     const div = document.createElement('div');
-    this.entry.parentNode.insertBefore(div, this.entry);
+
+    if (!this.entry) {
+      this._appendToBody(div);
+    } else {
+      const parentNode = this.entry.parentNode;
+      if (parentNode.tagName === 'HEAD' || parentNode.tagName === 'HTML') {
+        this._appendToBody(div);
+      } else {
+        entry.removeAttribute(DATA_ATTRIBUTE);
+        parentNode.insertBefore(div, this.entry);
+      }
+    }
     return div;
+  }
+
+  _appendToBody(el) {
+    if (!document.body) {
+      document.body = document.createElement('body');
+    }
+    document.body.appendChild(el);
   }
 
   _appendStyleTag() {
