@@ -48,7 +48,7 @@ describe('ProductSet class', () => {
   });
 
   describe('sdkFetch', () => {
-    describe('when passed a colleciton ID', () => {
+    describe('when passed a collection ID', () => {
       let collection;
 
       beforeEach(() => {
@@ -57,14 +57,15 @@ describe('ProductSet class', () => {
           options: config.options,
         }, {
           client: {
-            fetchQueryProducts: sinon.spy()
+            fetchQueryProducts: sinon.stub().returns(Promise.resolve([]))
           },
           createCart: () => Promise.resolve()
         });
       });
 
       it('calls fetchQueryProducts with collection id', () => {
-        collection.sdkFetch();
+        const result = collection.sdkFetch();
+        assert.ok(result.then);
         assert.calledWith(collection.client.fetchQueryProducts, {collection_id: 1234, page: 1, limit: 30, sort_by: 'collection-default'});
       });
     });
@@ -102,14 +103,15 @@ describe('ProductSet class', () => {
           options: config.options,
         }, {
           client: {
-            fetchQueryProducts: sinon.spy()
+            fetchQueryProducts: sinon.stub().returns(Promise.resolve([]))
           },
           createCart: () => Promise.resolve()
         });
       });
 
       it('calls fetchQueryProducts with collection id', () => {
-        collection.sdkFetch();
+        const result = collection.sdkFetch();
+        assert.ok(result.then);
         assert.calledWith(collection.client.fetchQueryProducts, {product_ids: [1234, 2345], page: 1, limit: 30, sort_by: 'collection-default'});
       });
     });

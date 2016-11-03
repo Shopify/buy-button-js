@@ -129,9 +129,12 @@ export default class ProductSet extends Component {
       method = this.props.client.fetchQueryProducts(Object.assign({}, queryOptions, {[queryKey]: this.id}));
     } else if (this.handle) {
       method = this.props.client.fetchQueryCollections({handle: this.handle}).then((collections) => {
-        const collection = collections[0];
-        this.id = collection.attrs.collection_id;
-        return this.sdkFetch(options);
+        if (collections.length) {
+          const collection = collections[0];
+          this.id = collection.attrs.collection_id;
+          return this.sdkFetch(options);
+        }
+        return Promise.resolve([]);
       });
     }
     return method;
