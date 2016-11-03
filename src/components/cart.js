@@ -1,4 +1,3 @@
-import Store from 'shopify-buy/lib/store';
 import merge from '../utils/merge';
 import Component from '../component';
 import CartToggle from './toggle';
@@ -23,7 +22,6 @@ export default class Cart extends Component {
   constructor(config, props) {
     super(config, props);
     this.addVariantToCart = this.addVariantToCart.bind(this);
-    this.store = new Store();
     this.childTemplate = new Template(this.config.lineItem.templates, this.config.lineItem.contents, this.config.lineItem.order);
     this.node = config.node || document.body.appendChild(document.createElement('div'));
     this.node.className = 'shopify-buy-cart-wrapper';
@@ -113,14 +111,7 @@ export default class Cart extends Component {
    * @return {Promise} promise resolving to cart instance.
    */
   fetchData() {
-    if (this.store.getItem('lastCartId')) {
-      return this.props.client.fetchCart(this.store.getItem('lastCartId'));
-    } else {
-      return this.props.client.createCart().then((cart) => {
-        this.store.setItem('lastCartId', cart.id);
-        return cart;
-      });
-    }
+    return this.props.client.fetchRecentCart();
   }
 
   wrapTemplate(html) {
