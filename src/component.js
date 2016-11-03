@@ -313,7 +313,7 @@ export default class Component {
    * resize iframe if necessary.
    */
   resize() {
-    if (!this.iframe) {
+    if (!this.iframe || !this.wrapper) {
       return;
     }
     if (this.shouldResizeX) {
