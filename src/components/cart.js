@@ -18,11 +18,9 @@ export default class Cart extends Component {
    * create Cart.
    * @param {Object} config - configuration object.
    * @param {Object} props - data and utilities passed down from UI instance.
-   * @param {Object} [storage] - object implementing the localStorage API for cart persistence.
    */
   constructor(config, props) {
     super(config, props);
-    this.storage = this.globalConfig.storage || window.localStorage;
     this.addVariantToCart = this.addVariantToCart.bind(this);
     this.childTemplate = new Template(this.config.lineItem.templates, this.config.lineItem.contents, this.config.lineItem.order);
     this.node = config.node || document.body.appendChild(document.createElement('div'));
@@ -113,19 +111,7 @@ export default class Cart extends Component {
    * @return {Promise} promise resolving to cart instance.
    */
   fetchData() {
-    if (this.storage.getItem('lastCartId')) {
-      return this.props.client.fetchCart(this.storage.getItem('lastCartId'));
-    } else {
-      return this.props.client.createCart().then((cart) => {
-        try {
-          this.storage.setItem('lastCartId', cart.id);
-        } catch (err) {
-          // eslint-disable-next-line
-          console.warn('localStorage unsupported');
-        }
-        return cart;
-      });
-    }
+    return this.props.client.fetchRecentCart();
   }
 
   wrapTemplate(html) {

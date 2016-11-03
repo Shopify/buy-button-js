@@ -3,21 +3,13 @@ import Component from '../../src/component';
 import defaults from '../../src/defaults/components';
 
 let cart;
-let fakeLocalStorage = {
-  getItem: () => {},
-  setItem: () => {},
-};
-
 let fakeClient = {
-  fetchCart: () => {},
-  createCart: () => {},
+  fetchRecentCart: () => {},
 }
 
 describe('Cart class', () => {
   beforeEach(() => {
-    cart = new Cart({
-      storage: fakeLocalStorage
-    }, {
+    cart = new Cart({}, {
       client: fakeClient,
       browserFeatures: {
         transition: true,
@@ -39,34 +31,13 @@ describe('Cart class', () => {
   });
 
   describe('fetchData', () => {
-    describe('if lastCart is set in localStorage', () => {
-      it('calls fetchCart on client', () => {
-        let getItem = sinon.stub(fakeLocalStorage, 'getItem').returns('1234');
-        let fetchCart = sinon.stub(cart.props.client, 'fetchCart').returns(Promise.resolve({id: 1234}));
+    it('calls fetchRecentCart on client', () => {
+      let fetchCart = sinon.stub(cart.props.client, 'fetchRecentCart').returns(Promise.resolve({id: 1234}));
 
-        return cart.fetchData().then((data) => {
-          assert.deepEqual(data, {id: 1234});
-          assert.calledWith(getItem, 'lastCartId');
-          assert.calledWith(fetchCart, '1234');
-          getItem.restore();
-          fetchCart.restore();
-        });
-      });
-    });
-
-    describe('if lastCart is not set in localStorage', () => {
-      it('sets cart in localStorage', () => {
-        let createCart = sinon.stub(cart.props.client, 'createCart').returns(Promise.resolve({id: 1234}));
-        let getItem = sinon.stub(fakeLocalStorage, 'getItem').returns(null);
-        let setItem = sinon.stub(fakeLocalStorage, 'setItem');
-
-        return cart.fetchData().then((data) => {
-          assert.deepEqual(data, {id: 1234});
-          assert.calledWith(setItem, 'lastCartId', 1234);
-          getItem.restore();
-          setItem.restore();
-          createCart.restore();
-        });
+      return cart.fetchData().then((data) => {
+        assert.deepEqual(data, {id: 1234});
+        assert.calledOnce(fetchCart);
+        fetchCart.restore();
       });
     });
   });

@@ -32,7 +32,6 @@ export default class Component {
       cartNode: config.cartNode,
       modalNode: config.modalNode,
       toggles: config.toggles,
-      storage: config.storage || window.localStorage,
     };
     this.config = merge({}, componentDefaults, config.options || {});
     this.props = props;
