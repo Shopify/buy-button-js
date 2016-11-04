@@ -16,7 +16,7 @@ export default class Modal extends Component {
    */
   constructor(config, props) {
     super(config, props);
-    this.node = config.node.appendChild(document.createElement('div')) || document.body.appendChild(document.createElement('div'));
+    this.node = config.node ? config.node.appendChild(document.createElement('div')) : document.body.appendChild(document.createElement('div'));
     this.node.className = 'shopify-buy-modal-wrapper';
     this.product = null;
   }
