@@ -20,3 +20,4 @@ _site
 .sass-cache
 .jekyll-metadata
 /test/build
+config.json
