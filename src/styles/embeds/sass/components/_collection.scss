@@ -7,10 +7,7 @@
   justify-content: center;
   flex-wrap: wrap;
   margin-left: -$gutter;
-
-  @media (max-width: 600px) {
-    display: block;
-  }
+  text-align: center;
 }
 
 .shopify-buy__product {
@@ -18,6 +15,7 @@
   margin-bottom: $gutter;
   flex: 0 0 auto;
   display: inline-block;
+  vertical-align: top;
   max-width: 250px;
   width: auto;
 }
