@@ -85,7 +85,6 @@ export default class ProductSet extends Component {
     return {
       limit: 30,
       page: 1,
-      sort_by: 'collection-default',
     };
 
     /* eslint-enable camelcase */
@@ -125,7 +124,13 @@ export default class ProductSet extends Component {
     const queryOptions = Object.assign({}, this.fetchQuery, options);
     let method;
     if (this.id) {
-      const queryKey = isArray(this.id) ? 'product_ids' : 'collection_id';
+      let queryKey;
+      if (isArray(this.id)) {
+        queryKey = 'product_ids';
+      } else {
+        queryKey = 'collection_id';
+        queryOptions.sort_by = 'collection-default';
+      }
       method = this.props.client.fetchQueryProducts(Object.assign({}, queryOptions, {[queryKey]: this.id}));
     } else if (this.handle) {
       method = this.props.client.fetchQueryCollections({handle: this.handle}).then((collections) => {

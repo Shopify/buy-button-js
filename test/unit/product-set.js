@@ -112,7 +112,7 @@ describe('ProductSet class', () => {
       it('calls fetchQueryProducts with collection id', () => {
         const result = collection.sdkFetch();
         assert.ok(result.then);
-        assert.calledWith(collection.client.fetchQueryProducts, {product_ids: [1234, 2345], page: 1, limit: 30, sort_by: 'collection-default'});
+        assert.calledWith(collection.client.fetchQueryProducts, {product_ids: [1234, 2345], page: 1, limit: 30});
       });
     });
   });
