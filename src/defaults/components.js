@@ -273,7 +273,7 @@ const defaults = {
     height: 600,
     width: 400,
     toolbar: 0,
-    scrollbars: 0,
+    scrollbars: 1,
     status: 0,
     resizable: 1,
     center: 0,
