@@ -12,7 +12,7 @@ const buildPaths = {
   globals: 'dist/buybutton.js',
   min: 'dist/buybutton.min.js',
   umd: 'lib/buybutton.umd.js',
-  es: 'lib/buybutton.es.js',
+  cjs: 'lib/buybutton.cjs.js',
 }
 
 rollup({
@@ -40,8 +40,8 @@ rollup({
       moduleName: 'ShopifyBuy',
     }),
     bundle.write({
-      dest: buildPaths.es,
-      format: 'es',
+      dest: buildPaths.cjs,
+      format: 'cjs',
       moduleName: 'ShopifyBuy',
     }),
   ]);
