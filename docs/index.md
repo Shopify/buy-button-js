@@ -22,7 +22,7 @@ This tool is intended for use by developers who are familiar with JavaScript and
 ## Including the library
 
 ```html
-<script src="http://sdks.shopifycdn.com/buy-button/v0.0.2/buybutton.min.js"></script>
+<script src="http://sdks.shopifycdn.com/buy-button/0.1.34/buybutton.js"></script>
 ```
 
 ## Creating a Shop Client
