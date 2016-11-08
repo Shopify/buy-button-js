@@ -1,4 +1,4 @@
-@import "./select.scss";
+@import "./select";
 
 .shopify-buy__product {
   overflow: hidden;
