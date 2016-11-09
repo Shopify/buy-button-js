@@ -288,10 +288,8 @@ export default class Cart extends Component {
   _animateRemoveItem(id) {
     const el = this.document.getElementById(id);
     addClassToElement('is-hidden', el);
-    if (this.props.browserFeatures.transition) {
-      el.addEventListener('transitionend', () => {
-        // eslint-disable-next-line
-        // TODO: why is transitionend sometimes called twice?
+    if (this.props.browserFeatures.animation) {
+      el.addEventListener('animationend', () => {
         if (!el.parentNode) {
           return;
         }
