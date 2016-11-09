@@ -102,7 +102,7 @@ describe('Cart class', () => {
 
     it('calls updateLineItem', () => {
       cart._animateRemoveItem(123);
-      assert.calledWith(node.addEventListener, 'transitionend');
+      assert.calledWith(node.addEventListener, 'animationend');
     });
   });
 
@@ -196,4 +196,3 @@ describe('Cart class', () => {
     });
   });
 });
-
