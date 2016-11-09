@@ -289,9 +289,7 @@ export default class Cart extends Component {
     const el = this.document.getElementById(id);
     addClassToElement('is-hidden', el);
     if (this.props.browserFeatures.transition) {
-      el.addEventListener('transitionend', () => {
-        // eslint-disable-next-line
-        // TODO: why is transitionend sometimes called twice?
+      el.addEventListener('animationend', () => {
         if (!el.parentNode) {
           return;
         }
