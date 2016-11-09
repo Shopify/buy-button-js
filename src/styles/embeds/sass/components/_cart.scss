@@ -82,7 +82,6 @@ $cart-item-height: 65px;
   overflow: hidden;
   position: relative;
   backface-visibility: visible;
-  transform-style: preserve-3d;
   animation: 200ms flipIn forwards;
 }
 
