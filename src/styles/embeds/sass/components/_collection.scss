@@ -3,6 +3,7 @@
 }
 
 .shopify-buy__collection-products {
+  display: -webkit-box;
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
