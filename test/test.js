@@ -21,3 +21,4 @@ import './unit/modal';
 import './unit/toggle';
 import './unit/tracker';
 import './unit/merge';
+import './unit/money';
