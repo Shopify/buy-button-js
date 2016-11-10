@@ -9,7 +9,7 @@ const quantityTemplate = `<div class="{{data.classes.product.quantity}} {{data.q
               <button class="{{data.classes.product.quantityButton}} {{data.classes.product.quantityIncrement}}" type="button"><span>+</span><span class="visuallyhidden">Increment</span></button>
             {{/data.contents.quantityIncrement}}
            </div>`;
-const buttonTemplate = '<button {{#data.buttonDisabled}}disabled{{/data.buttonDisabled}} class="{{data.classes.product.button}} {{data.buttonClass}}">{{data.buttonText}}</button>';
+const buttonTemplate = '<div class="{{data.classes.product.buttonWrapper}}"><button {{#data.buttonDisabled}}disabled{{/data.buttonDisabled}} class="{{data.classes.product.button}} {{data.buttonClass}}">{{data.buttonText}}</button></div>';
 
 const productTemplate = {
   img: '<div class="{{data.classes.product.imgWrapper}}"><img class="{{data.classes.product.img}}" src="{{data.currentImage.src}}" /></div>',

@@ -46,6 +46,7 @@ const defaults = {
       imgWrapper: 'shopify-buy__product-img-wrapper',
       blockButton: 'shopify-buy__btn--parent',
       button: 'shopify-buy__btn',
+      buttonWrapper: 'shopify-buy__btn-wrapper',
       title: 'shopify-buy__product__title',
       prices: 'shopify-buy__product__price',
       price: 'shopify-buy__product__actual-price',
