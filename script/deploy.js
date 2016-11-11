@@ -28,5 +28,6 @@ const uploader = new Uploader({
 uploader.deployStaticFiles().then(() => {;
   return uploader.npmPublish();
 }).catch((err) => {
-  console.log(err);
+  console.error(err);
+  process.exit(1);
 });
