@@ -64,7 +64,17 @@ export default class UI {
       this._bindEsc(component.iframe.el.contentWindow || component.iframe.el);
     }
     this.components[type].push(component);
-    return component.init();
+    return component.init().then(() => this.trackComponent(component));
+  }
+
+  trackComponent(component) {
+    if (component.typeKey === 'productSet') {
+      component.trackingInfo.forEach((product) => {
+        this.tracker.trackComponent('product', product);
+      });
+    } else {
+      this.tracker.trackComponent(component.typeKey, component.trackingInfo);
+    }
   }
 
   /**

@@ -375,6 +375,19 @@ export default class Product extends Component {
   }
 
   /**
+   * get info about product to be sent to tracker
+   * @return {Object}
+   */
+  get trackingInfo() {
+    return {
+      id: this.id,
+      name: this.model.selectedVariant.productTitle,
+      sku: null,
+      price: this.model.selectedVariant.price,
+    };
+  }
+
+  /**
    * get info about variant to be sent to tracker
    * @return {Object}
    */
@@ -650,7 +663,7 @@ export default class Product extends Component {
     if (this.options.buttonDestination === 'cart') {
       this.props.closeModal();
       this._userEvent('addVariantToCart');
-      this.props.tracker.trackMethod(this.cart.addVariantToCart.bind(this), 'CART_ADD', this.selectedVariantTrackingInfo)(this.model.selectedVariant, this.model.selectedQuantity);
+      this.props.tracker.trackMethod(this.cart.addVariantToCart.bind(this), 'Update Cart', this.selectedVariantTrackingInfo)(this.model.selectedVariant, this.model.selectedQuantity);
       if (this.iframe) {
         this.props.setActiveEl(target);
       }

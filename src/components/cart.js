@@ -205,7 +205,7 @@ export default class Cart extends Component {
     const id = target.getAttribute('data-line-item-id');
     const item = this.model.lineItems.filter((lineItem) => lineItem.id === id)[0];
     const newQty = fn(item.quantity);
-    return this.props.tracker.trackMethod(this.updateItem.bind(this), 'CART_UPDATE', this.cartItemTrackingInfo(item, newQty))(id, newQty);
+    return this.props.tracker.trackMethod(this.updateItem.bind(this), 'Update Cart', this.cartItemTrackingInfo(item, newQty))(id, newQty);
   }
 
   /**

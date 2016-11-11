@@ -20,14 +20,14 @@ export default class Tracker {
 
   callLib(eventName, properties) {
     switch(eventName) {
-      case 'CART_UPDATE':
+      case 'Update Cart':
         if (properties.quantity < 1) {
-          return this.track('CART_REMOVE', properties);
+          return this.track('Removed Product', properties);
         }
-        if (properties.quantity < properties.prevQuantity) {
-          return this.track('CART_DECREMENT', properties);
+        if (properties.prevQuantity && (properties.quantity < properties.prevQuantity)) {
+          return;
         }
-        return this.track('CART_INCREMENT', properties);
+        this.track('Added Product', properties);
       default:
         return this.track(eventName, properties);
     }
@@ -36,6 +36,15 @@ export default class Tracker {
   trackPageview() {
     if (this.lib && this.lib.page) {
       this.lib.page();
+    }
+  }
+
+  trackComponent(type, properties) {
+    switch(type) {
+      case 'product':
+        return this.track('Viewed Product', properties);
+      case 'collection':
+        return this.track('Viewed Collection', propreties);
     }
   }
 
