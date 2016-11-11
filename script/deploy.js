@@ -25,5 +25,6 @@ const uploader = new Uploader({
   version: currentVersion,
 });
 
-uploader.deployStaticFiles();
-uploader.npmPublish();
+uploader.deployStaticFiles().then(() => {;
+  uploader.npmPublish();
+});
