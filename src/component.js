@@ -29,7 +29,7 @@ export default class Component {
     this.node = config.node;
     this.globalConfig = {
       debug: config.debug,
-      moneyFormat: config.moneyFormat || defaultMoneyFormat,
+      moneyFormat: decodeURIComponent(config.moneyFormat) || defaultMoneyFormat,
       cartNode: config.cartNode,
       modalNode: config.modalNode,
       toggles: config.toggles,
