@@ -208,11 +208,12 @@ export default class Component {
       this._userEvent('afterInit');
       return this;
     })
-    .catch((error) => {
-      if (error.message.indexOf('Not Found') > -1) {
+    .catch((err) => {
+      if (err.message.indexOf('Not Found') > -1) {
         logNotFound(this);
+      } else {
+        throw err;
       }
-      throw error;
     });
   }
 
