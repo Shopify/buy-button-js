@@ -65,7 +65,8 @@ export default class UI {
     }
     this.components[type].push(component);
     return component.init().then(() => {
-      return this.trackComponent(type, component);
+      this.trackComponent(type, component);
+      return component;
     }).catch((error) => {
       if (this.errorReporter) {
         this.errorReporter.notifyException(error);
