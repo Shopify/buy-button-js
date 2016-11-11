@@ -73,7 +73,7 @@ export default class UI {
         this.tracker.trackComponent('product', product);
       });
     } else {
-      this.tracker.trackComponent(component.typeKey, component.trackingInfo);
+      this.tracker.trackComponent(type, component.trackingInfo);
     }
   }
 
