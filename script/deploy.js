@@ -1,6 +1,6 @@
 "use strict";
 
-const Uploader = require('js-uploader');
+const Uploader = require('@shopify/js-uploader');
 const path = require('path');
 const fs = require('fs');
 const mime = require('mime-types');
