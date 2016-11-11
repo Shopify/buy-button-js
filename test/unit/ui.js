@@ -65,11 +65,13 @@ describe('ui class', () => {
 
   describe('createComponent', () => {
     let initStub;
+    let trackStub;
 
     beforeEach(() => {
       initStub = sinon.stub(Product.prototype, 'init', () => {
         return Promise.resolve();
       });
+      trackStub = sinon.stub(ui, 'trackComponent');
     });
 
     afterEach(() => {

@@ -51,40 +51,40 @@ describe('Tracker', () => {
       assert.calledWith(tracker.track, 'TEST_EVENT', props);
     });
 
-    describe('with eventName CART_UPDATE', () => {
+    describe('with eventName Update Cart', () => {
       describe('if quantity increases', () => {
-        it('calls tricorder with CART_INCREMENT event name', () => {
+        it('calls tricorder with Added Product event name', () => {
           const props = {
             id: 123,
             quantity: 2,
             prevQuantity: 1,
           }
-          tracker.callLib('CART_UPDATE', props);
-          assert.calledWith(tracker.track, 'CART_INCREMENT', props);
+          tracker.callLib('Update Cart', props);
+          assert.calledWith(tracker.track, 'Added Product', props);
         });
       });
 
       describe('if quantity decreases', () => {
-        it('calls tricorder with CART_DECREMENT event name', () => {
-          const props = {
-            id: 123,
-            quantity: 2,
-            prevQuantity: 3,
-          }
-          tracker.callLib('CART_UPDATE', props);
-          assert.calledWith(tracker.track, 'CART_DECREMENT', props);
-        });
-      });
-
-      describe('if quantity is zero', () => {
-        it('calls tricorder with CART_REMOVE event name', () => {
+        it('calls tricorder with Removed Product event name', () => {
           const props = {
             id: 123,
             quantity: 0,
             prevQuantity: 3,
           }
-          tracker.callLib('CART_UPDATE', props);
-          assert.calledWith(tracker.track, 'CART_REMOVE', props);
+          tracker.callLib('Update Cart', props);
+          assert.calledWith(tracker.track, 'Removed Product', props);
+        });
+      });
+
+      describe('if quantity is zero', () => {
+        it('calls tricorder with Removed Product event name', () => {
+          const props = {
+            id: 123,
+            quantity: 0,
+            prevQuantity: 3,
+          }
+          tracker.callLib('Update Cart', props);
+          assert.calledWith(tracker.track, 'Removed Product', props);
         });
       });
     });
