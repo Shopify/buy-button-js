@@ -102,12 +102,12 @@ export default class ProductSet extends Component {
           name: product.selectedVariant.title,
           price: product.selectedVariant.price,
           sku: null,
-        }
+        };
       });
     }
     return {
       id: this.id,
-    }
+    };
   }
 
   /**
