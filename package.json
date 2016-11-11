@@ -77,7 +77,7 @@
     "wdio-junit-reporter": "0.1.0",
     "wdio-mocha-framework": "^0.4.0",
     "webdriverio": "4.2.8",
-    "js-uploader": "git+ssh://git@github.com:Shopify/js-uploader.git"
+    "@shopify/js-uploader": "git+ssh://git@github.com:Shopify/js-uploader.git"
   },
   "dependencies": {
     "babel-plugin-external-helpers": "6.8.0",
