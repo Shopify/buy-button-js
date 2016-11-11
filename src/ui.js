@@ -64,11 +64,11 @@ export default class UI {
       this._bindEsc(component.iframe.el.contentWindow || component.iframe.el);
     }
     this.components[type].push(component);
-    return component.init().then(() => this.trackComponent(component));
+    return component.init().then(() => this.trackComponent(type, component));
   }
 
-  trackComponent(component) {
-    if (component.typeKey === 'productSet') {
+  trackComponent(type, component) {
+    if (type === 'productSet') {
       component.trackingInfo.forEach((product) => {
         this.tracker.trackComponent('product', product);
       });
