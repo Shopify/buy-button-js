@@ -64,7 +64,13 @@ export default class UI {
       this._bindEsc(component.iframe.el.contentWindow || component.iframe.el);
     }
     this.components[type].push(component);
-    return component.init().then(() => this.trackComponent(type, component));
+    return component.init().then(() => {
+      return this.trackComponent(type, component);
+    }).catch((error) => {
+      if (this.errorReporter) {
+        this.errorReporter.notifyException(error);
+      }
+    });
   }
 
   trackComponent(type, component) {
