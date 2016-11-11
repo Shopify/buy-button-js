@@ -91,6 +91,26 @@ export default class ProductSet extends Component {
   }
 
   /**
+   * get info about collection or set to be sent to tracker
+   * @return {Object|Array}
+   */
+  get trackingInfo() {
+    if (isArray(this.id)) {
+      return this.model.products.map((product) => {
+        return {
+          id: product.id,
+          name: product.selectedVariant.title,
+          price: product.selectedVariant.price,
+          sku: null,
+        }
+      });
+    }
+    return {
+      id: this.id,
+    }
+  }
+
+  /**
    * initializes component by creating model and rendering view.
    * Creates and initalizes cart if necessary.
    * Calls renderProducts.
