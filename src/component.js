@@ -7,6 +7,7 @@ import Iframe from './iframe';
 import Template from './template';
 import styles from './styles/embeds/all';
 import logger from './utils/logger';
+import defaultMoneyFormat from './defaults/money-format';
 
 const delegateEventSplitter = /^(\S+)\s*(.*)$/;
 const ESC_KEY = 27;
@@ -28,7 +29,7 @@ export default class Component {
     this.node = config.node;
     this.globalConfig = {
       debug: config.debug,
-      moneyFormat: config.moneyFormat || '${{amount}}',
+      moneyFormat: config.moneyFormat || defaultMoneyFormat,
       cartNode: config.cartNode,
       modalNode: config.modalNode,
       toggles: config.toggles,
