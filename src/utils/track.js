@@ -44,7 +44,7 @@ export default class Tracker {
       case 'product':
         return this.track('Viewed Product', properties);
       case 'collection':
-        return this.track('Viewed Product Category', propreties);
+        return this.track('Viewed Product Category', properties);
     }
   }
 
