@@ -40,7 +40,7 @@ export default class UI {
       toggle: CartToggle,
     };
     this.errorReporter = integrations.errorReporter;
-    this.tracker = new Tracker(integrations.tracker);
+    this.tracker = new Tracker(integrations.tracker, this.client.config);
     this.styleOverrides = styleOverrides;
     this.tracker.trackPageview();
     this.activeEl = null;

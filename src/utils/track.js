@@ -1,6 +1,7 @@
 export default class Tracker {
-  constructor(lib) {
+  constructor(lib, clientConfig) {
     this.lib = lib || null;
+    this.clientConfig = clientConfig;
   }
 
   trackMethod(fn, event, properties) {
@@ -49,7 +50,9 @@ export default class Tracker {
   }
 
   track(eventName, properties) {
-    properties.pageurl = document.referrer;
+    properties.pageurl = document.location.href;
+    properties.referrer = document.referrer;
+    properties.subdomain = this.clientConfig.domain;
     if (this.lib && this.lib.track) {
       this.lib.track(eventName, properties);
     }
