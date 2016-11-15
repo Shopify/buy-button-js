@@ -73,6 +73,7 @@ describe('Product class', () => {
         assert.equal(product.cart, 'test');
         assert.calledOnce(createCart);
         assert.calledWith(superInit, 'test');
+        createCart.restore();
         superInit.restore();
       });
     });
@@ -358,24 +359,14 @@ describe('Product class', () => {
       },
     }
 
-    let superSpy;
-
     beforeEach(() => {
-      superSpy = sinon.stub(Component.prototype, 'updateConfig');
-      product.wrapper = document.createElement('div');
-      product.cart = {
-        updateConfig: sinon.spy()
-      }
-    });
-
-    afterEach(() => {
-      superSpy.restore();
+      return product.init(testProductCopy);
     });
 
     it('calls updateConfig on cart', () => {
+      const cartUpdateConfigSpy = sinon.stub(product.cart, 'updateConfig');
       product.updateConfig(newConfig);
-      assert.calledWith(product.cart.updateConfig, newConfig);
-      assert.calledWith(superSpy, newConfig);
+      assert.calledWith(cartUpdateConfigSpy, newConfig);
     });
 
     it('calls updateConfig on modal if modal exists', () => {

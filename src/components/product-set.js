@@ -2,6 +2,7 @@ import merge from '../utils/merge';
 import Component from '../component';
 import Product from './product';
 import Template from '../template';
+import ProductSetUpdater from '../updaters/product-set';
 
 const pollInterval = 200;
 
@@ -29,6 +30,7 @@ export default class ProductSet extends Component {
     this.nextModel = {products: []};
     this.height = 0;
     this.resizeCompleted = false;
+    this.updater = new ProductSetUpdater(this);
   }
 
   /**
@@ -234,19 +236,6 @@ export default class ProductSet extends Component {
         clearInterval(productSetResize);
       }
     }, pollInterval);
-  }
-
-  /**
-   * re-assign configuration and re-render component.
-   * Update Cart component if necessary.
-   * Call renderProducts.
-   * @param {Object} config - new configuration object.
-   */
-  updateConfig(config) {
-    super.updateConfig(config);
-    this.props.destroyComponent('modal');
-    this.cart.updateConfig(config);
-    this.renderProducts();
   }
 
   /**

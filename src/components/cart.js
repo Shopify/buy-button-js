@@ -5,6 +5,7 @@ import Template from '../template';
 import Checkout from './checkout';
 import formatMoney from '../utils/money';
 import {addClassToElement} from '../utils/element-class';
+import CartUpdater from '../updaters/cart';
 
 const NO_IMG_URL = '//sdks.shopifycdn.com/buy-button/latest/no-image.jpg';
 
@@ -33,6 +34,7 @@ export default class Cart extends Component {
     this.toggles = toggles.map((toggle) => {
       return new CartToggle(merge({}, config, toggle), Object.assign({}, this.props, {cart: this}));
     });
+    this.updater = new CartUpdater(this);
   }
 
   /**
@@ -229,16 +231,6 @@ export default class Cart extends Component {
       }
       return cart;
     });
-  }
-
-  /**
-   * re-assign configuration and re-render component.
-   * Update toggle component.
-   * @param {Object} config - new configuration object.
-   */
-  updateConfig(config) {
-    super.updateConfig(config);
-    this.toggles.forEach((toggle) => toggle.updateConfig(config));
   }
 
   /**

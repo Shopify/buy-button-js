@@ -1,6 +1,7 @@
 import Cart from '../../src/components/cart';
 import Component from '../../src/component';
 import defaults from '../../src/defaults/components';
+import Updater from '../../src/updater';
 
 let cart;
 let fakeClient = {
@@ -156,7 +157,7 @@ describe('Cart class', () => {
     let superSpy;
 
     beforeEach(() => {
-      superSpy = sinon.stub(Component.prototype, 'updateConfig');
+      superSpy = sinon.stub(Updater.prototype, 'updateConfig');
       cart.toggles[0].updateConfig = sinon.spy();
     });
 

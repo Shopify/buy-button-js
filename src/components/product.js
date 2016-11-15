@@ -4,6 +4,7 @@ import Template from '../template';
 import Checkout from './checkout';
 import windowUtils from '../utils/window-utils';
 import formatMoney from '../utils/money';
+import ProductUpdater from '../updaters/product';
 
 const pollInterval = 200;
 
@@ -14,8 +15,6 @@ function isPseudoSelector(key) {
 function isMedia(key) {
   return key.charAt(0) === '@';
 }
-
-const MAX_WIDTH = '950px';
 
 const ENTER_KEY = 13;
 
@@ -70,6 +69,7 @@ export default class Product extends Component {
     this.modal = null;
     this.imgStyle = '';
     this.selectedQuantity = 1;
+    this.updater = new ProductUpdater(this);
   }
 
   /**
@@ -564,68 +564,6 @@ export default class Product extends Component {
       }
       throw new Error('Not Found');
     });
-  }
-
-  /**
-   * re-assign configuration and re-render component.
-   * Resize iframe based on change in dimensions of product.
-   * Update Cart or Modal components if necessary.
-   * @param {Object} config - new configuration object.
-   */
-  updateConfig(config) {
-    if (config.id || config.variantId) {
-      this.id = config.id || this.id;
-      this.defaultVariantId = config.variantId || this.defaultVariantId;
-      this.init();
-      return;
-    }
-
-    let layout = this.options.layout;
-
-    if (config.options && config.options.product) {
-      if (config.options.product.layout) {
-        layout = config.options.product.layout;
-      }
-
-      if (layout === 'vertical' && this.iframe.width === MAX_WIDTH) {
-        this.iframe.setWidth(this.options.width);
-      }
-
-      if (layout === 'horizontal' && this.iframe.width && this.iframe.width !== MAX_WIDTH) {
-        this.iframe.setWidth(MAX_WIDTH);
-      }
-
-      if (config.options.product.width && layout === 'vertical') {
-        this.iframe.setWidth(config.options.product.width);
-      }
-
-      if (config.options.product.layout) {
-        this.iframe.el.style.width = '100%';
-      }
-    }
-
-    if (this.iframe) {
-      this.iframe.removeClass(this.classes.product.vertical);
-      this.iframe.removeClass(this.classes.product.horizontal);
-      this.iframe.addClass(this.classes.product[layout]);
-      this.resizeUntilLoaded();
-    }
-    [...this.wrapper.querySelectorAll('img')].forEach((img) => {
-      img.addEventListener('load', () => {
-        this.resizeUntilLoaded();
-      });
-    });
-    super.updateConfig(config);
-    if (this.cart) {
-      this.cart.updateConfig(config);
-    }
-    if (this.modal) {
-      this.modal.updateConfig(Object.assign({}, config, {
-        options: Object.assign({}, this.config, {
-          product: this.modalProductConfig,
-        }),
-      }));
-    }
   }
 
   /**
