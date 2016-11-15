@@ -91,14 +91,14 @@ describe('Cart class', () => {
     let node;
 
     beforeEach(() => {
-      node = cart.document.createElement('div');
+      node = cart.frame.document.createElement('div');
       node.setAttribute('id', 123);
-      cart.document.body.appendChild(node);
+      cart.frame.document.body.appendChild(node);
       node.addEventListener = sinon.spy();
     });
 
     afterEach(() => {
-      cart.document.body.removeChild(node);
+      cart.frame.document.body.removeChild(node);
     });
 
     it('calls updateLineItem', () => {

@@ -43,7 +43,7 @@ describe('Toggle class', () => {
 
   describe('get isVisible', () => {
     it('returns true if greater than 0', () => {
-      assert(toggle.isVisible);
+      assert(toggle.frame.isVisible);
     });
   });
 });

@@ -88,16 +88,9 @@ describe('Component class', () => {
     });
   });
 
-  describe('get styles', () => {
-    it('returns classes based on manifest', () => {
-      assert.deepEqual(component.styles.product.product, config.options.product.styles.product);
-      assert.deepEqual(component.styles.option.option, config.options.option.styles.option);
-    });
-  });
-
   describe('init', () => {
     it('fetches and renders data', () => {
-      const setupView = sinon.stub(component, 'setupView').returns(Promise.resolve());
+      const setupView = sinon.stub(component.frame, 'init').returns(Promise.resolve());
       const setupModel = sinon.stub(component, 'setupModel').returns(Promise.resolve({ title: 'test' }));
       const render = sinon.stub(component, 'render');
       const delegateEvents = sinon.stub(component, 'delegateEvents');
@@ -138,7 +131,7 @@ describe('Component class', () => {
       return testComponent.init({}).then(() => {
         testComponent.render();
         testComponent.delegateEvents();
-        testComponent.document.getElementById('button').click();
+        testComponent.frame.document.getElementById('button').click();
         assert.calledWith(clickSpy, sinon.match.instanceOf(Event), sinon.match.instanceOf(window.Node));
       });
     });
@@ -158,7 +151,7 @@ describe('Component class', () => {
           'product');
         const setupModel = sinon.stub(iframeComponent, 'setupModel').returns(Promise.resolve({ title: 'test' }));
         return iframeComponent.init().then(() => {
-          assert.isOk(iframeComponent.iframe);
+          assert.isOk(iframeComponent.frame.iframe);
           setupModel.restore();
         });
       });
