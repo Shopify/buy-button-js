@@ -4,7 +4,7 @@ import Template from '../template';
 import Checkout from './checkout';
 import windowUtils from '../utils/window-utils';
 import formatMoney from '../utils/money';
-import ProductFrame from '../frames/product';
+import ProductContainer from '../containers/product';
 import ProductUpdater from '../updaters/product';
 
 
@@ -70,7 +70,7 @@ export default class Product extends Component {
     this.imgStyle = '';
     this.selectedQuantity = 1;
     this.updater = new ProductUpdater(this);
-    this.frame = new ProductFrame(this);
+    this.container = new ProductContainer(this);
   }
 
   /**
@@ -473,7 +473,7 @@ export default class Product extends Component {
    */
   render() {
     super.render();
-    this.frame.resizeUntilLoaded();
+    this.container.resizeUntilLoaded();
   }
 
   /**

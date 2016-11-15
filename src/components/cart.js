@@ -4,7 +4,7 @@ import CartToggle from './toggle';
 import Template from '../template';
 import Checkout from './checkout';
 import formatMoney from '../utils/money';
-import CartFrame from '../frames/cart';
+import CartContainer from '../containers/cart';
 import {addClassToElement} from '../utils/element-class';
 import CartUpdater from '../updaters/cart';
 
@@ -36,7 +36,7 @@ export default class Cart extends Component {
       return new CartToggle(merge({}, config, toggle), Object.assign({}, this.props, {cart: this}));
     });
     this.updater = new CartUpdater(this);
-    this.frame = new CartFrame(this);
+    this.container = new CartContainer(this);
   }
 
   createToggles(config) {
@@ -159,7 +159,7 @@ export default class Cart extends Component {
    */
   render() {
     super.render();
-    this.frame.render();
+    this.container.render();
   }
 
   destroy() {
@@ -284,7 +284,7 @@ export default class Cart extends Component {
   }
 
   _animateRemoveItem(id) {
-    const el = this.frame.document.getElementById(id);
+    const el = this.container.document.getElementById(id);
     addClassToElement('is-hidden', el);
     if (this.props.browserFeatures.animation) {
       el.addEventListener('animationend', () => {

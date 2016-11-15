@@ -1,8 +1,8 @@
-import Frame from '../frame';
+import Container from '../container';
 
 const pollInterval = 200;
 
-export default class ProductFrame extends Frame {
+export default class ProductContainer extends Container {
   get className() {
     return this.component.classes.product[this.component.options.layout];
   }

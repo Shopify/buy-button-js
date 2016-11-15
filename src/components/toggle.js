@@ -1,6 +1,6 @@
 import merge from '../utils/merge';
 import Component from '../component';
-import ToggleFrame from '../frames/toggle';
+import ToggleContainer from '../containers/toggle';
 
 const ENTER_KEY = 13;
 
@@ -8,7 +8,7 @@ export default class CartToggle extends Component {
   constructor(config, props) {
     super(config, props);
     this.node = config.node || this.props.cart.node.parentNode.insertBefore(document.createElement('div'), this.props.cart.node);
-    this.frame = new ToggleFrame(this);
+    this.container = new ToggleContainer(this);
   }
 
   get typeKey() {
@@ -66,6 +66,6 @@ export default class CartToggle extends Component {
 
   render() {
     super.render();
-    this.frame.render();
+    this.container.render();
   }
 }

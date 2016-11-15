@@ -3,7 +3,7 @@ import Component from '../component';
 import Product from './product';
 import Template from '../template';
 import ProductSetUpdater from '../updaters/product-set';
-import ProductSetFrame from '../frames/product-set';
+import ProductSetContainer from '../containers/product-set';
 
 function isArray(arg) {
   return Object.prototype.toString.call(arg) === '[object Array]';
@@ -28,7 +28,7 @@ export default class ProductSet extends Component {
     this.page = 1;
     this.nextModel = {products: []};
     this.frame = new ProductSetFrame(this);
-    this.updater = new ProductSetUpdater(this);
+    this.container = new ProductSetContainer(this);
   }
 
   /**
@@ -191,7 +191,7 @@ export default class ProductSet extends Component {
     return this.sdkFetch({page: this.page + 1}).then((data) => {
       this.nextModel = {products: data};
       this.renderChild(this.classes.productSet.paginationButton, this.paginationTemplate);
-      this.frame.resize();
+      this.container.resize();
       return;
     });
   }
@@ -241,7 +241,7 @@ export default class ProductSet extends Component {
       return Promise.resolve();
     }
     const productConfig = Object.assign({}, this.globalConfig, {
-      node: this.frame.document.querySelector(`.${this.classes.productSet.products}`),
+      node: this.container.document.querySelector(`.${this.classes.productSet.products}`),
       options: merge({}, this.config, {
         product: {
           iframe: false,
@@ -259,7 +259,7 @@ export default class ProductSet extends Component {
     });
 
     return Promise.all(promises).then(() => {
-      this.frame.resizeUntilFits();
+      this.container.resizeUntilFits();
       this.showPagination();
       return this;
     });

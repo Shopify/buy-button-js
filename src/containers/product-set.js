@@ -1,8 +1,8 @@
-import Frame from '../frame';
+import Container from '../container';
 
 const pollInterval = 200;
 
-export default class ProductSetFrame extends Frame {
+export default class ProductSetContainer extends Container {
   constructor(component) {
     super(component);
     this.height = 0;

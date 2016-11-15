@@ -1,7 +1,7 @@
-import Frame from '../frame';
+import Container from '../container';
 import {addClassToElement, removeClassFromElement} from '../utils/element-class';
 
-export default class ModalFrame extends Frame {
+export default class ModalContainer extends Container {
 
   /**
    * close modal.

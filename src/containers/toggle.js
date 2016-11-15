@@ -1,6 +1,6 @@
-import Frame from '../frame';
+import Container from '../container';
 
-export default class ToggleFrame extends Frame {
+export default class ToggleContainer extends Container {
   get shouldResizeY() {
     return true;
   }

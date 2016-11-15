@@ -6,7 +6,7 @@ import logNotFound from './utils/log-not-found';
 import Template from './template';
 import logger from './utils/logger';
 import defaultMoneyFormat from './defaults/money-format';
-import Updater from './updater';
+import Container from './container';
 import Frame from './frame';
 
 const delegateEventSplitter = /^(\S+)\s*(.*)$/;
@@ -38,7 +38,7 @@ export default class Component {
     this.model = {};
     this.template = new Template(this.options.templates, this.options.contents, this.options.order);
     this.updater = new Updater(this);
-    this.frame = new Frame(this);
+    this.container = new Container(this);
   }
 
   /**
@@ -157,7 +157,7 @@ export default class Component {
    */
   init(data) {
     this._userEvent('beforeInit');
-    return this.frame.init().then(() => this.setupModel(data)).then((model) => {
+    return this.container.init().then(() => this.setupModel(data)).then((model) => {
       this.model = model;
       this.render();
       this.delegateEvents();
@@ -235,7 +235,7 @@ export default class Component {
       this.wrapper = this._createWrapper();
     }
     this.updateNode(this.wrapper, html);
-    this.frame.resize();
+    this.container.resize();
     this._userEvent('afterRender');
   }
 
@@ -244,7 +244,7 @@ export default class Component {
    */
   delegateEvents() {
     this._userEvent('beforeDelegateEvents');
-    this.frame.closeComponentsOnEsc();
+    this.container.closeComponentsOnEsc();
     Object.keys(this.DOMEvents).forEach((key) => {
       const [, eventName, selectorString] = key.match(delegateEventSplitter);
       if (selectorString) {
@@ -321,7 +321,7 @@ export default class Component {
   _createWrapper() {
     const wrapper = document.createElement('div');
     wrapper.className = this.classes[this.typeKey][this.typeKey];
-    this.frame.append(wrapper);
+    this.container.append(wrapper);
     return wrapper;
   }
 

@@ -1,7 +1,7 @@
 import merge from '../utils/merge';
 import Component from '../component';
 import Product from './product';
-import ModalUpdater from '../updaters/modal';
+import ModalContainer from '../containers/modal';
 import ModalFrame from '../frames/modal';
 
 /**
@@ -21,7 +21,7 @@ export default class Modal extends Component {
     this.node.className = 'shopify-buy-modal-wrapper';
     this.product = null;
     this.updater = new ModalUpdater(this);
-    this.frame = new ModalFrame(this);
+    this.container = new ModalContainer(this);
   }
 
   /**
@@ -86,9 +86,20 @@ export default class Modal extends Component {
       this.product = new Product(this.productConfig, this.props);
       return this.product.init(this.model).then(() => {
         this.setFocus();
-        return this.frame.resize();
+        return this.container.resize();
       });
     });
+  }
+
+  /**
+   * re-assign configuration and re-render component.
+   * Update config on product within modal.
+   * @param {Object} config - new configuration object.
+   */
+  updateConfig(config) {
+    super.updateConfig(config);
+    this.product = new Product(this.productConfig, this.props);
+    return this.product.init(this.model).then(() => this.container.resize());
   }
 
   /**
@@ -96,7 +107,7 @@ export default class Modal extends Component {
    */
   close() {
     this._userEvent('closeModal');
-    this.frame.close();
+    this.container.close();
   }
 
   /**
@@ -107,6 +118,6 @@ export default class Modal extends Component {
       return;
     }
     super.render();
-    this.frame.render();
+    this.container.render();
   }
 }

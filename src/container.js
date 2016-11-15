@@ -3,7 +3,7 @@ import styles from './styles/embeds/all';
 
 const ESC_KEY = 27;
 
-export default class Frame {
+export default class Container {
   constructor(component) {
     this.component = component;
     this.iframe = null;

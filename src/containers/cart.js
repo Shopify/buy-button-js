@@ -1,6 +1,6 @@
-import Frame from '../frame';
+import Container from '../container';
 
-export default class CartFrame extends Frame {
+export default class CartContainer extends Container {
   render() {
     if (!this.iframe) {
       return;
