@@ -3,15 +3,13 @@ import merge from './utils/merge';
 import isFunction from './utils/is-function';
 import componentDefaults from './defaults/components';
 import logNotFound from './utils/log-not-found';
-import Iframe from './iframe';
 import Template from './template';
-import styles from './styles/embeds/all';
 import logger from './utils/logger';
 import defaultMoneyFormat from './defaults/money-format';
 import Updater from './updater';
+import Frame from './frame';
 
 const delegateEventSplitter = /^(\S+)\s*(.*)$/;
-const ESC_KEY = 27;
 
 /**
  * Manages rendering, lifecycle, and data fetching of a cmoponent.
@@ -40,6 +38,7 @@ export default class Component {
     this.model = {};
     this.template = new Template(this.options.templates, this.options.contents, this.options.order);
     this.updater = new Updater(this);
+    this.frame = new Frame(this);
   }
 
   /**
@@ -89,37 +88,12 @@ export default class Component {
   }
 
   /**
-   * get styles for component and any components it contains as determined by manifest.
-   * @return {Object} key-value pairs of CSS styles.
-   */
-  get styles() {
-    return this.options.manifest.filter((component) => this.config[component].styles).reduce((hash, component) => {
-      hash[component] = this.config[component].styles;
-      return hash;
-    }, {});
-  }
-
-  /**
    * get classes for component and any components it contains as determined by manifest.
    * @return {Object} class keys and names.
    */
   get classes() {
     return this.options.manifest.filter((component) => this.config[component].classes).reduce((hash, component) => {
       hash[component] = this.config[component].classes;
-      return hash;
-    }, {});
-  }
-
-  /**
-   * get classes formatted as CSS selectors.
-   * @return {Object} class keys and selectors.
-   */
-  get selectors() {
-    return this.options.manifest.filter((component) => this.config[component].classes).reduce((hash, component) => {
-      hash[component] = Object.keys(this.config[component].classes).reduce((classes, classKey) => {
-        classes[classKey] = `.${this.classes[component][classKey].split(' ').join('.')}`;
-        return classes;
-      }, {});
       return hash;
     }, {});
   }
@@ -132,14 +106,6 @@ export default class Component {
     return this.options.manifest
       .filter((component) => this.config[component].googleFonts)
       .reduce((fonts, component) => fonts.concat(this.config[component].googleFonts), []);
-  }
-
-  /**
-   * get reference to document object.
-   * @return {Objcet} instance of Document.
-   */
-  get document() {
-    return this.iframe ? this.iframe.document : window.document;
   }
 
   /**
@@ -171,29 +137,17 @@ export default class Component {
   }
 
   /**
-   * get class name for iframe element. Defined in subclass.
-   * @return {String}
+   * get classes formatted as CSS selectors.
+   * @return {Object} class keys and selectors.
+  get selectors() {
    */
-  get iframeClass() {
-    return '';
-  }
-
-  /**
-   * determines if iframe will require horizontal resizing to contain its children.
-   * May be defined in subclass.
-   * @return {Boolean}
-   */
-  get shouldResizeX() {
-    return false;
-  }
-
-  /**
-   * determines if iframe will require vertical resizing to contain its children.
-   * May be defined in subclass.
-   * @return {Boolean}
-   */
-  get shouldResizeY() {
-    return false;
+    return this.options.manifest.filter((component) => this.config[component].classes).reduce((hash, component) => {
+      hash[component] = Object.keys(this.config[component].classes).reduce((classes, classKey) => {
+        classes[classKey] = `.${this.classes[component][classKey].split(' ').join('.')}`;
+        return classes;
+      }, {});
+      return hash;
+    }, {});
   }
 
   /**
@@ -203,7 +157,7 @@ export default class Component {
    */
   init(data) {
     this._userEvent('beforeInit');
-    return this.setupView().then(() => this.setupModel(data)).then((model) => {
+    return this.frame.init().then(() => this.setupModel(data)).then((model) => {
       this.model = model;
       this.render();
       this.delegateEvents();
@@ -281,7 +235,7 @@ export default class Component {
       this.wrapper = this._createWrapper();
     }
     this.updateNode(this.wrapper, html);
-    this.resize();
+    this.frame.resize();
     this._userEvent('afterRender');
   }
 
@@ -290,7 +244,7 @@ export default class Component {
    */
   delegateEvents() {
     this._userEvent('beforeDelegateEvents');
-    this._closeComponentsOnEsc();
+    this.frame.closeComponentsOnEsc();
     Object.keys(this.DOMEvents).forEach((key) => {
       const [, eventName, selectorString] = key.match(delegateEventSplitter);
       if (selectorString) {
@@ -304,38 +258,6 @@ export default class Component {
       }
     });
     this._userEvent('afterDelegateEvents');
-  }
-
-  /**
-   * get total height of iframe contents
-   * @return {String} value in pixels.
-   */
-  get outerHeight() {
-    const style = window.getComputedStyle(this.wrapper, '');
-    if (!style) {
-      return `${this.wrapper.clientHeight}px`;
-    }
-    let height = style.getPropertyValue('height');
-    if (!height || height === '0px' || height === 'auto') {
-      const clientHeight = this.wrapper.clientHeight;
-      height = style.getPropertyValue('height') || `${clientHeight}px`;
-    }
-    return height;
-  }
-
-  /**
-   * resize iframe if necessary.
-   */
-  resize() {
-    if (!this.iframe || !this.wrapper) {
-      return;
-    }
-    if (this.shouldResizeX) {
-      this._resizeX();
-    }
-    if (this.shouldResizeY) {
-      this._resizeY();
-    }
   }
 
   /**
@@ -396,37 +318,11 @@ export default class Component {
     }
   }
 
-  _resizeX() {
-    this.iframe.el.style.width = `${this.document.body.clientWidth}px`;
-  }
-
-  _resizeY(value) {
-    const newHeight = value || this.outerHeight;
-    this.iframe.el.style.height = newHeight;
-  }
-
   _createWrapper() {
     const wrapper = document.createElement('div');
     wrapper.className = this.classes[this.typeKey][this.typeKey];
-    if (this.iframe) {
-      this.document.body.appendChild(wrapper);
-    } else {
-      this.node.appendChild(wrapper);
-    }
+    this.frame.append(wrapper);
     return wrapper;
-  }
-
-  _closeComponentsOnEsc() {
-    if (!this.iframe) {
-      return;
-    }
-    this.document.addEventListener('keydown', (evt) => {
-      if (evt.keyCode !== ESC_KEY) {
-        return;
-      }
-      this.props.closeModal();
-      this.props.closeCart();
-    });
   }
 
   _userEvent(methodName) {

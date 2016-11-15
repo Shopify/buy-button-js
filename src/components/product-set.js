@@ -3,8 +3,7 @@ import Component from '../component';
 import Product from './product';
 import Template from '../template';
 import ProductSetUpdater from '../updaters/product-set';
-
-const pollInterval = 200;
+import ProductSetFrame from '../frames/product-set';
 
 function isArray(arg) {
   return Object.prototype.toString.call(arg) === '[object Array]';
@@ -28,8 +27,7 @@ export default class ProductSet extends Component {
     this.cart = null;
     this.page = 1;
     this.nextModel = {products: []};
-    this.height = 0;
-    this.resizeCompleted = false;
+    this.frame = new ProductSetFrame(this);
     this.updater = new ProductSetUpdater(this);
   }
 
@@ -43,10 +41,6 @@ export default class ProductSet extends Component {
 
   get nextButtonClass() {
     return this.nextModel.products.length ? 'is-active' : '';
-  }
-
-  get shouldResizeY() {
-    return true;
   }
 
   /**
@@ -197,7 +191,7 @@ export default class ProductSet extends Component {
     return this.sdkFetch({page: this.page + 1}).then((data) => {
       this.nextModel = {products: data};
       this.renderChild(this.classes.productSet.paginationButton, this.paginationTemplate);
-      this.resize();
+      this.frame.resize();
       return;
     });
   }
@@ -213,7 +207,7 @@ export default class ProductSet extends Component {
   }
 
   /**
-   * resize iframe until it is tall enough to contain all products.
+   * re-assign configuration and re-render component.
    */
   resizeUntilFits() {
     if (!this.iframe || this.resizeCompleted) {
@@ -247,7 +241,7 @@ export default class ProductSet extends Component {
       return Promise.resolve();
     }
     const productConfig = Object.assign({}, this.globalConfig, {
-      node: this.document.querySelector(`.${this.classes.productSet.products}`),
+      node: this.frame.document.querySelector(`.${this.classes.productSet.products}`),
       options: merge({}, this.config, {
         product: {
           iframe: false,
@@ -265,10 +259,9 @@ export default class ProductSet extends Component {
     });
 
     return Promise.all(promises).then(() => {
-      this.resizeUntilFits();
+      this.frame.resizeUntilFits();
       this.showPagination();
       return this;
     });
   }
-
 }

@@ -4,6 +4,7 @@ import CartToggle from './toggle';
 import Template from '../template';
 import Checkout from './checkout';
 import formatMoney from '../utils/money';
+import CartFrame from '../frames/cart';
 import {addClassToElement} from '../utils/element-class';
 import CartUpdater from '../updaters/cart';
 
@@ -35,6 +36,7 @@ export default class Cart extends Component {
       return new CartToggle(merge({}, config, toggle), Object.assign({}, this.props, {cart: this}));
     });
     this.updater = new CartUpdater(this);
+    this.frame = new CartFrame(this);
   }
 
   createToggles(config) {
@@ -157,15 +159,7 @@ export default class Cart extends Component {
    */
   render() {
     super.render();
-    if (!this.iframe) {
-      return;
-    }
-    if (this.isVisible) {
-      this.iframe.addClass('is-active');
-      this.iframe.addClass('is-initialized');
-    } else {
-      this.iframe.removeClass('is-active');
-    }
+    this.frame.render();
   }
 
   destroy() {
@@ -236,10 +230,6 @@ export default class Cart extends Component {
     return this.model.updateLineItem(id, qty).then((cart) => {
       this.model = cart;
       this.toggles.forEach((toggle) => toggle.render());
-      if (!this.iframe) {
-        this.render();
-        return cart;
-      }
       if (qty > 0) {
         this.render();
       } else {
@@ -294,7 +284,7 @@ export default class Cart extends Component {
   }
 
   _animateRemoveItem(id) {
-    const el = this.document.getElementById(id);
+    const el = this.frame.document.getElementById(id);
     addClassToElement('is-hidden', el);
     if (this.props.browserFeatures.animation) {
       el.addEventListener('animationend', () => {

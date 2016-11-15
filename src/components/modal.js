@@ -2,6 +2,7 @@ import merge from '../utils/merge';
 import Component from '../component';
 import Product from './product';
 import ModalUpdater from '../updaters/modal';
+import ModalFrame from '../frames/modal';
 import {addClassToElement, removeClassFromElement} from '../utils/element-class';
 
 /**
@@ -21,6 +22,7 @@ export default class Modal extends Component {
     this.node.className = 'shopify-buy-modal-wrapper';
     this.product = null;
     this.updater = new ModalUpdater(this);
+    this.frame = new ModalFrame(this);
   }
 
   /**
@@ -85,7 +87,7 @@ export default class Modal extends Component {
       this.product = new Product(this.productConfig, this.props);
       return this.product.init(this.model).then(() => {
         this.setFocus();
-        return this.resize();
+        return this.frame.resize();
       });
     });
   }
@@ -95,20 +97,7 @@ export default class Modal extends Component {
    */
   close() {
     this._userEvent('closeModal');
-    this.isVisible = false;
-    removeClassFromElement('is-active', this.wrapper);
-    if (!this.iframe) {
-      return;
-    }
-    this.iframe.removeClass('is-active');
-    removeClassFromElement('is-active', this.document.body);
-    if (this.props.browserFeatures.transition) {
-      this.iframe.parent.addEventListener('transitionend', () => {
-        this.iframe.removeClass('is-block');
-      });
-    } else {
-      this.iframe.removeClass('is-block');
-    }
+    this.frame.close();
   }
 
   /**
@@ -119,12 +108,6 @@ export default class Modal extends Component {
       return;
     }
     super.render();
-    addClassToElement('is-active', this.document.body);
-    addClassToElement('is-active', this.wrapper);
-    if (!this.iframe) {
-      return;
-    }
-    this.iframe.addClass('is-active');
-    this.iframe.addClass('is-block');
+    this.frame.render();
   }
 }

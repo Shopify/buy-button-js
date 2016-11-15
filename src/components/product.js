@@ -4,9 +4,9 @@ import Template from '../template';
 import Checkout from './checkout';
 import windowUtils from '../utils/window-utils';
 import formatMoney from '../utils/money';
+import ProductFrame from '../frames/product';
 import ProductUpdater from '../updaters/product';
 
-const pollInterval = 200;
 
 function isPseudoSelector(key) {
   return key.charAt(0) === ':';
@@ -70,6 +70,7 @@ export default class Product extends Component {
     this.imgStyle = '';
     this.selectedQuantity = 1;
     this.updater = new ProductUpdater(this);
+    this.frame = new ProductFrame(this);
   }
 
   /**
@@ -78,14 +79,6 @@ export default class Product extends Component {
    */
   get typeKey() {
     return 'product';
-  }
-
-  /**
-   * get class name for iframe element.
-   * @return {String} iframe class.
-   */
-  get iframeClass() {
-    return this.classes.product[this.options.layout];
   }
 
   /**
@@ -137,14 +130,6 @@ export default class Product extends Component {
     }
 
     return this.model.selectedVariant.imageVariants.filter((imageVariant) => imageVariant.name === 'grande')[0];
-  }
-
-  get shouldResizeX() {
-    return false;
-  }
-
-  get shouldResizeY() {
-    return true;
   }
 
   /**
@@ -488,9 +473,7 @@ export default class Product extends Component {
    */
   render() {
     super.render();
-    if (this.iframe) {
-      this.resizeUntilLoaded();
-    }
+    this.frame.resizeUntilLoaded();
   }
 
   /**

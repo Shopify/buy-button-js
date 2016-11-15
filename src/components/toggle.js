@@ -1,5 +1,6 @@
 import merge from '../utils/merge';
 import Component from '../component';
+import ToggleFrame from '../frames/toggle';
 
 const ENTER_KEY = 13;
 
@@ -7,10 +8,7 @@ export default class CartToggle extends Component {
   constructor(config, props) {
     super(config, props);
     this.node = config.node || this.props.cart.node.parentNode.insertBefore(document.createElement('div'), this.props.cart.node);
-  }
-
-  get isVisible() {
-    return this.count > 0;
+    this.frame = new ToggleFrame(this);
   }
 
   get typeKey() {
@@ -29,10 +27,6 @@ export default class CartToggle extends Component {
       text: this.options.text,
       count: this.count,
     });
-  }
-
-  get shouldResizeY() {
-    return true;
   }
 
   get shouldResizeX() {
@@ -72,22 +66,6 @@ export default class CartToggle extends Component {
 
   render() {
     super.render();
-    if (!this.iframe) {
-      return;
-    }
-    this.iframe.parent.setAttribute('tabindex', 0);
-    if (this.options.sticky) {
-      this.iframe.addClass('is-sticky');
-    }
-    if (this.isVisible) {
-      this.iframe.addClass('is-active');
-    } else {
-      this.iframe.removeClass('is-active');
-    }
-    this.resize();
-  }
-
-  _resizeX() {
-    this.iframe.el.style.width = `${this.wrapper.clientWidth}px`;
+    this.frame.render();
   }
 }
