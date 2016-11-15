@@ -6,10 +6,9 @@ import logNotFound from './utils/log-not-found';
 import Template from './template';
 import logger from './utils/logger';
 import defaultMoneyFormat from './defaults/money-format';
-import Container from './container';
+import View from './view';
 import Frame from './frame';
 
-const delegateEventSplitter = /^(\S+)\s*(.*)$/;
 
 /**
  * Manages rendering, lifecycle, and data fetching of a cmoponent.
@@ -36,9 +35,7 @@ export default class Component {
     this.config = merge({}, componentDefaults, config.options || {});
     this.props = props;
     this.model = {};
-    this.template = new Template(this.options.templates, this.options.contents, this.options.order);
-    this.updater = new Updater(this);
-    this.container = new Container(this);
+    this.view = new View(this);
   }
 
   /**
@@ -77,6 +74,20 @@ export default class Component {
    */
   get DOMEvents() {
     return this.options.DOMEvents || {};
+  }
+
+  /**
+   * get classes formatted as CSS selectors.
+   * @return {Object} class keys and selectors.
+   */
+  get selectors() {
+    return this.options.manifest.filter((component) => this.config[component].classes).reduce((hash, component) => {
+      hash[component] = Object.keys(this.config[component].classes).reduce((classes, classKey) => {
+        classes[classKey] = `.${this.classes[component][classKey].split(' ').join('.')}`;
+        return classes;
+      }, {});
+      return hash;
+    }, {});
   }
 
   /**
@@ -135,21 +146,6 @@ export default class Component {
       },
     };
   }
-
-  /**
-   * get classes formatted as CSS selectors.
-   * @return {Object} class keys and selectors.
-   */
-  get selectors() {
-    return this.options.manifest.filter((component) => this.config[component].classes).reduce((hash, component) => {
-      hash[component] = Object.keys(this.config[component].classes).reduce((classes, classKey) => {
-        classes[classKey] = `.${this.classes[component][classKey].split(' ').join('.')}`;
-        return classes;
-      }, {});
-      return hash;
-    }, {});
-  }
-
   /**
    * initializes component by creating model and rendering view.
    * @param {Object} [data] - data to initialize model with.
@@ -157,10 +153,10 @@ export default class Component {
    */
   init(data) {
     this._userEvent('beforeInit');
-    return this.container.init().then(() => this.setupModel(data)).then((model) => {
+    return this.view.init().then(() => this.setupModel(data)).then((model) => {
       this.model = model;
-      this.render();
-      this.delegateEvents();
+      this.view.render();
+      this.view.delegateEvents();
       if (this.iframe) {
         this.iframe.el.onload = () => {
           this.iframe.el.onload = null;
@@ -224,43 +220,6 @@ export default class Component {
   }
 
   /**
-   * renders string template using viewData to wrapper element.
-   */
-  render() {
-    this._userEvent('beforeRender');
-    const html = this.template.render({data: this.viewData}, (data) => {
-      return this.wrapTemplate(data);
-    });
-    if (!this.wrapper || (this.iframe && !this.document.body.contains(this.wrapper))) {
-      this.wrapper = this._createWrapper();
-    }
-    this.updateNode(this.wrapper, html);
-    this.container.resize();
-    this._userEvent('afterRender');
-  }
-
-  /**
-   * delegates DOM events to event listeners.
-   */
-  delegateEvents() {
-    this._userEvent('beforeDelegateEvents');
-    this.container.closeComponentsOnEsc();
-    Object.keys(this.DOMEvents).forEach((key) => {
-      const [, eventName, selectorString] = key.match(delegateEventSplitter);
-      if (selectorString) {
-        this._on(eventName, selectorString, (evt, target) => {
-          this.DOMEvents[key].call(this, evt, target);
-        });
-      } else {
-        this.wrapper.addEventListener('click', (evt) => {
-          this.DOMEvents[key].call(this, evt);
-        });
-      }
-    });
-    this._userEvent('afterDelegateEvents');
-  }
-
-  /**
    * re-assign configuration and re-render component.
    * @param {Object} config - new configuration object.
    */
@@ -272,57 +231,7 @@ export default class Component {
    * remove node from DOM.
    */
   destroy() {
-    this.node.parentNode.removeChild(this.node);
-  }
-
-  /**
-   * update the contents of a DOM node with template
-   * @param {String} className - class name to select node.
-   * @param {Object} template - template to be rendered.
-   */
-  renderChild(className, template) {
-    const selector = `.${className.split(' ').join('.')}`;
-    const node = this.wrapper.querySelector(selector);
-    const html = template.render({data: this.viewData});
-    this.updateNode(node, html);
-  }
-
-  /**
-   * call morpdom on a node with new HTML
-   * @param {Object} node - DOM node to be updated.
-   * @param {String} html - HTML to update DOM node with.
-   */
-  updateNode(node, html) {
-    const div = document.createElement('div');
-    div.innerHTML = html;
-    morphdom(node, div.firstElementChild);
-  }
-
-  /**
-   * wrap HTML string in containing elements.
-   * May be defined in subclass.
-   * @param {String} html - HTML string.
-   * @return {String} wrapped string.
-   */
-  wrapTemplate(html) {
-    return `<div class="${this.classes[this.typeKey][this.typeKey]}">${html}</div>`;
-  }
-
-  /**
-   * Focus first focusable element in wrapper.
-   */
-  setFocus() {
-    const focusable = this.wrapper.querySelectorAll('a, button, input, select')[0];
-    if (focusable) {
-      focusable.focus();
-    }
-  }
-
-  _createWrapper() {
-    const wrapper = document.createElement('div');
-    wrapper.className = this.classes[this.typeKey][this.typeKey];
-    this.container.append(wrapper);
-    return wrapper;
+    this.view.destroy();
   }
 
   _userEvent(methodName) {
@@ -332,23 +241,5 @@ export default class Component {
     if (isFunction(this.events[methodName])) {
       this.events[methodName].call(this, this);
     }
-  }
-
-  _on(eventName, selector, fn) {
-    this.wrapper.addEventListener(eventName, (evt) => {
-      const possibleTargets = Array.prototype.slice.call(this.wrapper.querySelectorAll(selector));
-      const target = evt.target;
-
-      possibleTargets.forEach((possibleTarget) => {
-        let el = target;
-        while (el && el !== this.wrapper) {
-          if (el === possibleTarget) {
-            return fn.call(possibleTarget, evt, possibleTarget);
-          }
-          el = el.parentNode;
-        }
-        return el;
-      });
-    }, eventName === 'blur');
   }
 }

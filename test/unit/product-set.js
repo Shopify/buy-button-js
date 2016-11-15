@@ -182,7 +182,7 @@ describe('ProductSet class', () => {
       set.id = 1234;
       sdkFetchSpy = sinon.stub(set, 'sdkFetch').returns(Promise.resolve(newCollection));
       renderChildStub = sinon.stub(set, 'renderChild');
-      resizeSpy = sinon.stub(set.frame, 'resize');
+      resizeSpy = sinon.stub(set.view, 'resize');
     });
 
     it('sets nextModel and rerenders pagintaiton button', () => {

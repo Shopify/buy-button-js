@@ -1,14 +1,18 @@
-import Container from '../container';
+import View from '../view';
+import merge from '../utils/merge';
 import {addClassToElement, removeClassFromElement} from '../utils/element-class';
 
-export default class ModalContainer extends Container {
+export default class ModalView extends View {
 
+  wrapTemplate(html) {
+    return `<div class="${this.component.classes.modal.overlay}"><div class="${this.component.classes.modal.modal}">${html}</div></div>`;
+  }
   /**
    * close modal.
    */
   close() {
     this.component.isVisible = false;
-    removeClassFromElement('is-active', this.component.wrapper);
+    removeClassFromElement('is-active', this.wrapper);
     if (!this.iframe) {
       return;
     }
@@ -23,9 +27,22 @@ export default class ModalContainer extends Container {
     }
   }
 
+  /**
+   * delegates DOM events to event listeners.
+   * Adds event listener to wrapper to close modal on click.
+   */
+  delegateEvents() {
+    super.delegateEvents();
+    this.wrapper.addEventListener('click', this.component.closeOnBgClick.bind(this));
+  }
+
   render() {
+    if (!this.component.isVisible) {
+      return;
+    }
+    super.render();
     addClassToElement('is-active', this.document.body);
-    addClassToElement('is-active', this.component.wrapper);
+    addClassToElement('is-active', this.wrapper);
     if (!this.iframe) {
       return;
     }

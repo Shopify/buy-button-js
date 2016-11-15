@@ -1,14 +1,13 @@
 import merge from '../utils/merge';
 import Component from '../component';
-import ToggleContainer from '../containers/toggle';
+import ToggleView from '../views/toggle';
 
-const ENTER_KEY = 13;
 
 export default class CartToggle extends Component {
   constructor(config, props) {
     super(config, props);
     this.node = config.node || this.props.cart.node.parentNode.insertBefore(document.createElement('div'), this.props.cart.node);
-    this.container = new ToggleContainer(this);
+    this.view = new ToggleView(this);
   }
 
   get typeKey() {
@@ -29,43 +28,9 @@ export default class CartToggle extends Component {
     });
   }
 
-  get shouldResizeX() {
-    return true;
-  }
-
-  get outerHeight() {
-    return `${this.wrapper.clientHeight}px`;
-  }
-
-  get stickyClass() {
-    return this.options.sticky ? 'is-sticky' : 'is-inline';
-  }
-
   get DOMEvents() {
     return merge({}, {
       click: this.props.cart.toggleVisibility.bind(this.props.cart),
     }, this.options.DOMEvents);
-  }
-
-  delegateEvents() {
-    super.delegateEvents();
-    if (!this.iframe) {
-      return;
-    }
-    this.iframe.parent.addEventListener('keydown', (evt) => {
-      if (evt.keyCode !== ENTER_KEY) {
-        return;
-      }
-      this.props.cart.toggleVisibility(this.props.cart);
-    });
-  }
-
-  wrapTemplate(html) {
-    return `<div class="${this.stickyClass} ${this.classes.toggle.toggle}">${html}</div>`;
-  }
-
-  render() {
-    super.render();
-    this.container.render();
   }
 }

@@ -1,7 +1,7 @@
 import merge from '../utils/merge';
 import Component from '../component';
 import Product from './product';
-import ModalContainer from '../containers/modal';
+import ModalView from '../views/modal';
 import ModalFrame from '../frames/modal';
 
 /**
@@ -21,7 +21,7 @@ export default class Modal extends Component {
     this.node.className = 'shopify-buy-modal-wrapper';
     this.product = null;
     this.updater = new ModalUpdater(this);
-    this.container = new ModalContainer(this);
+    this.view = new ModalView(this);
   }
 
   /**
@@ -54,23 +54,10 @@ export default class Modal extends Component {
     });
   }
 
-  /**
-   * delegates DOM events to event listeners.
-   * Adds event listener to wrapper to close modal on click.
-   */
-  delegateEvents() {
-    super.delegateEvents();
-    this.wrapper.addEventListener('click', this.closeOnBgClick.bind(this));
-  }
-
   closeOnBgClick(evt) {
     if (!this.productWrapper.contains(evt.target)) {
       this.props.closeModal();
     }
-  }
-
-  wrapTemplate(html) {
-    return `<div class="${this.classes.modal.overlay}"><div class="${this.classes.modal.modal}">${html}</div></div>`;
   }
 
   /**
@@ -82,11 +69,11 @@ export default class Modal extends Component {
   init(data) {
     this.isVisible = true;
     return super.init(data).then(() => {
-      this.productWrapper = this.wrapper.getElementsByClassName(this.classes.modal.modal)[0];
+      this.productWrapper = this.view.wrapper.getElementsByClassName(this.classes.modal.modal)[0];
       this.product = new Product(this.productConfig, this.props);
       return this.product.init(this.model).then(() => {
-        this.setFocus();
-        return this.container.resize();
+        this.view.setFocus();
+        return this.view.resize();
       });
     });
   }
@@ -99,7 +86,7 @@ export default class Modal extends Component {
   updateConfig(config) {
     super.updateConfig(config);
     this.product = new Product(this.productConfig, this.props);
-    return this.product.init(this.model).then(() => this.container.resize());
+    return this.product.init(this.model).then(() => this.view.resize());
   }
 
   /**
@@ -107,17 +94,6 @@ export default class Modal extends Component {
    */
   close() {
     this._userEvent('closeModal');
-    this.container.close();
-  }
-
-  /**
-   * renders string template using viewData to wrapper element.
-   */
-  render() {
-    if (!this.isVisible) {
-      return;
-    }
-    super.render();
-    this.container.render();
+    this.view.close();
   }
 }

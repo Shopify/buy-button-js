@@ -79,7 +79,7 @@ describe('Modal class', () => {
 
   describe('close', () => {
     it('sets isVisible to false', () => {
-      modal.frame.iframe = {
+      modal.view.iframe = {
         removeClass: sinon.spy(),
         parent: document.createElement('div'),
         document: {
@@ -88,9 +88,9 @@ describe('Modal class', () => {
       }
       modal.wrapper = document.createElement('div');
       modal.close();
-      assert.notOk(modal.frame.isVisible);
-      assert.calledWith(modal.frame.iframe.removeClass, 'is-active');
-      assert(modal.frame.iframe.document.body.className.length < 1);
+      assert.notOk(modal.view.isVisible);
+      assert.calledWith(modal.view.iframe.removeClass, 'is-active');
+      assert(modal.view.iframe.document.body.className.length < 1);
     });
   });
 

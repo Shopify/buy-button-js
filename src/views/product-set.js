@@ -1,12 +1,16 @@
-import Container from '../container';
+import View from '../view';
 
 const pollInterval = 200;
 
-export default class ProductSetContainer extends Container {
+export default class ProductSetView extends View {
   constructor(component) {
     super(component);
     this.height = 0;
     this.resizeCompleted = false;
+  }
+
+  wrapTemplate(html) {
+    return `<div class="${this.component.classes.productSet.productSet}">${html}</div>`;
   }
 
   /**

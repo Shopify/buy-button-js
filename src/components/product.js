@@ -4,7 +4,7 @@ import Template from '../template';
 import Checkout from './checkout';
 import windowUtils from '../utils/window-utils';
 import formatMoney from '../utils/money';
-import ProductContainer from '../containers/product';
+import ProductView from '../views/product';
 import ProductUpdater from '../updaters/product';
 
 
@@ -70,7 +70,7 @@ export default class Product extends Component {
     this.imgStyle = '';
     this.selectedQuantity = 1;
     this.updater = new ProductUpdater(this);
-    this.container = new ProductContainer(this);
+    this.view = new ProductView(this);
   }
 
   /**
@@ -234,10 +234,6 @@ export default class Product extends Component {
     return this.model.selectedVariant && this.model.selectedVariant.compareAtPrice ? this.classes.product.loweredPrice : '';
   }
 
-  get wrapperClass() {
-    return `${this.currentImage ? 'has-image' : 'no-image'} ${this.classes.product[this.options.layout]}`;
-  }
-
   /**
    * get events to be bound to DOM.
    * @return {Object}
@@ -258,6 +254,15 @@ export default class Product extends Component {
       [`click ${this.selectors.product.quantityDecrement}`]: this.onQuantityIncrement.bind(this, -1),
       [`blur ${this.selectors.product.quantityInput}`]: this.onQuantityBlur.bind(this),
     }, this.options.DOMEvents);
+  }
+
+  /**
+   * prevent events from bubbling if entire product is being treated as button.
+   */
+  stopPropagation(evt) {
+    if (this.options.isButton) {
+      evt.stopImmediatePropagation();
+    }
   }
 
   /**
@@ -460,20 +465,11 @@ export default class Product extends Component {
       this.createCart().then((cart) => {
         this.cart = cart;
         if (model) {
-          this.render();
+          this.view.render();
         }
         return model;
       })
     ));
-  }
-
-  /**
-   * renders string template using viewData to wrapper element.
-   * Resizes iframe to match image size.
-   */
-  render() {
-    super.render();
-    this.container.resizeUntilLoaded();
   }
 
   /**
@@ -502,26 +498,6 @@ export default class Product extends Component {
     return super.setupModel(data).then((model) => {
       return this.setDefaultVariant(model);
     });
-  }
-
-  wrapTemplate(html) {
-    let ariaLabel;
-    switch (this.options.buttonDestination) {
-    case 'modal':
-      ariaLabel = 'View details';
-      break;
-    case 'cart':
-      ariaLabel = 'Add to cart';
-      break;
-    default:
-      ariaLabel = 'Buy Now';
-    }
-
-    if (this.options.isButton) {
-      return `<div class="${this.wrapperClass} ${this.classes.product.product}"><div tabindex="0" role="button" aria-label="${ariaLabel}" class="${this.classes.product.blockButton}">${html}</div></div>`;
-    } else {
-      return `<div class="${this.wrapperClass} ${this.classes.product.product}">${html}</div>`;
-    }
   }
 
   /**
@@ -661,7 +637,7 @@ export default class Product extends Component {
     }
     this.selectedQuantity = quantity;
     this._userEvent('updateQuantity');
-    this.render();
+    this.view.render();
   }
 
   /**
@@ -676,7 +652,7 @@ export default class Product extends Component {
     if (this.variantExists) {
       this.cachedImage = this.model.selectedVariantImage;
     }
-    this.render();
+    this.view.render();
     this._userEvent('updateVariant');
     return updatedOption;
   }

@@ -3,7 +3,7 @@ import Component from '../component';
 import Product from './product';
 import Template from '../template';
 import ProductSetUpdater from '../updaters/product-set';
-import ProductSetContainer from '../containers/product-set';
+import ProductSetView from '../views/product-set';
 
 function isArray(arg) {
   return Object.prototype.toString.call(arg) === '[object Array]';
@@ -28,7 +28,7 @@ export default class ProductSet extends Component {
     this.page = 1;
     this.nextModel = {products: []};
     this.frame = new ProductSetFrame(this);
-    this.container = new ProductSetContainer(this);
+    this.view = new ProductSetView(this);
   }
 
   /**
@@ -163,10 +163,6 @@ export default class ProductSet extends Component {
     /* eslint-enable camelcase */
   }
 
-  wrapTemplate(html) {
-    return `<div class="${this.classes.productSet.productSet}">${html}</div>`;
-  }
-
   /**
    * call sdkFetch and set model.products to products array.
    * @throw 'Not Found' if model not returned.
@@ -190,8 +186,8 @@ export default class ProductSet extends Component {
   showPagination() {
     return this.sdkFetch({page: this.page + 1}).then((data) => {
       this.nextModel = {products: data};
-      this.renderChild(this.classes.productSet.paginationButton, this.paginationTemplate);
-      this.container.resize();
+      this.view.renderChild(this.classes.productSet.paginationButton, this.paginationTemplate);
+      this.view.resize();
       return;
     });
   }
@@ -241,7 +237,7 @@ export default class ProductSet extends Component {
       return Promise.resolve();
     }
     const productConfig = Object.assign({}, this.globalConfig, {
-      node: this.container.document.querySelector(`.${this.classes.productSet.products}`),
+      node: this.view.document.querySelector(`.${this.classes.productSet.products}`),
       options: merge({}, this.config, {
         product: {
           iframe: false,
@@ -259,7 +255,7 @@ export default class ProductSet extends Component {
     });
 
     return Promise.all(promises).then(() => {
-      this.container.resizeUntilFits();
+      this.view.resizeUntilFits();
       this.showPagination();
       return this;
     });
