@@ -50,15 +50,6 @@ export default class Frame {
     }
   }
 
-  _resizeX() {
-    this.iframe.el.style.width = `${this.document.body.clientWidth}px`;
-  }
-
-  _resizeY(value) {
-    const newHeight = value || this.outerHeight;
-    this.iframe.el.style.height = newHeight;
-  }
-
   /**
    * get total height of iframe contents
    * @return {String} value in pixels.
@@ -130,4 +121,12 @@ export default class Frame {
     });
   }
 
+  _resizeX() {
+    this.iframe.el.style.width = `${this.document.body.clientWidth}px`;
+  }
+
+  _resizeY(value) {
+    const newHeight = value || this.outerHeight;
+    this.iframe.el.style.height = newHeight;
+  }
 }

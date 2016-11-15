@@ -3,7 +3,6 @@ import Component from '../component';
 import Product from './product';
 import ModalUpdater from '../updaters/modal';
 import ModalFrame from '../frames/modal';
-import {addClassToElement, removeClassFromElement} from '../utils/element-class';
 
 /**
  * Renders product modal.

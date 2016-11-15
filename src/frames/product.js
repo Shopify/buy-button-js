@@ -1,4 +1,4 @@
-import Frame from '../frame'
+import Frame from '../frame';
 
 const pollInterval = 200;
 

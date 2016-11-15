@@ -1,4 +1,4 @@
-import Frame from '../frame'
+import Frame from '../frame';
 
 export default class CartFrame extends Frame {
   render() {
