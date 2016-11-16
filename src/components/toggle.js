@@ -39,6 +39,10 @@ export default class CartToggle extends Component {
     return true;
   }
 
+  get outerHeight() {
+    return `${this.wrapper.clientHeight}px`;
+  }
+
   get stickyClass() {
     return this.options.sticky ? 'is-sticky' : 'is-inline';
   }
