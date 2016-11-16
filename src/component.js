@@ -209,15 +209,20 @@ export default class Component {
         this.iframe.el.onload = () => {
           this.iframe.el.onload = null;
           this.init();
-        }
+        };
       }
       this._userEvent('afterInit');
       return this;
-    }).catch((err) => {
+    })
+    .catch((err) => {
       if (err.message.indexOf('Not Found') > -1) {
         logNotFound(this);
       } else {
+
+        /* eslint-disable no-console */
         console.error(err);
+
+        /* eslint-enable no-console */
       }
     });
   }
