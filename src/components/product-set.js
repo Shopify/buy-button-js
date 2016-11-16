@@ -27,7 +27,7 @@ export default class ProductSet extends Component {
     this.cart = null;
     this.page = 1;
     this.nextModel = {products: []};
-    this.frame = new ProductSetFrame(this);
+    this.updater = new ProductSetUpdater(this);
     this.view = new ProductSetView(this);
   }
 

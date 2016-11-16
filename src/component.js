@@ -7,8 +7,6 @@ import Template from './template';
 import logger from './utils/logger';
 import defaultMoneyFormat from './defaults/money-format';
 import View from './view';
-import Frame from './frame';
-
 
 /**
  * Manages rendering, lifecycle, and data fetching of a cmoponent.

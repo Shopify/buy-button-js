@@ -2,7 +2,7 @@ import merge from '../utils/merge';
 import Component from '../component';
 import Product from './product';
 import ModalView from '../views/modal';
-import ModalFrame from '../frames/modal';
+import ModalUpdater from '../updaters/modal';
 
 /**
  * Renders product modal.
