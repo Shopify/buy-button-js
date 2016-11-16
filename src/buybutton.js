@@ -5,14 +5,14 @@ import productTemplates from './templates/product';
 window.ShopifyBuy = window.ShopifyBuy || ShopifyBuy;
 
 ShopifyBuy.UI = window.ShopifyBuy.UI || {
-  uis: {},
+  domains: {},
 
   init(client, integrations = {}, styleOverrides) {
     const domain = client.config.domain;
-    if (!this.uis[domain]) {
-      this.uis[domain] = new UI(client, integrations, styleOverrides);
+    if (!this.domains[domain]) {
+      this.domains[domain] = new UI(client, integrations, styleOverrides);
     }
-    return this.uis[domain];
+    return this.domains[domain];
   },
 
   adapterHelpers: {
