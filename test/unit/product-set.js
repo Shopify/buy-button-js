@@ -1,5 +1,6 @@
 import ProductSet from '../../src/components/product-set';
 import Component from '../../src/component';
+import Updater from '../../src/updater';
 import Product from '../../src/components/product';
 import testProduct from '../fixtures/product-fixture';
 
@@ -153,7 +154,7 @@ describe('ProductSet class', () => {
     let renderProductsSpy;
 
     beforeEach(() => {
-      superSpy = sinon.stub(Component.prototype, 'updateConfig');
+      superSpy = sinon.stub(Updater.prototype, 'updateConfig');
       renderProductsSpy = sinon.stub(set, 'renderProducts');
       set.cart = {
         updateConfig: sinon.spy()

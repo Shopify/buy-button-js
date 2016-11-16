@@ -1,6 +1,7 @@
 import merge from '../utils/merge';
 import Component from '../component';
 import Product from './product';
+import ModalUpdater from '../updaters/modal';
 import {addClassToElement, removeClassFromElement} from '../utils/element-class';
 
 /**
@@ -19,6 +20,7 @@ export default class Modal extends Component {
     this.node = config.node ? config.node.appendChild(document.createElement('div')) : document.body.appendChild(document.createElement('div'));
     this.node.className = 'shopify-buy-modal-wrapper';
     this.product = null;
+    this.updater = new ModalUpdater(this);
   }
 
   /**
@@ -86,17 +88,6 @@ export default class Modal extends Component {
         return this.resize();
       });
     });
-  }
-
-  /**
-   * re-assign configuration and re-render component.
-   * Update config on product within modal.
-   * @param {Object} config - new configuration object.
-   */
-  updateConfig(config) {
-    super.updateConfig(config);
-    this.product = new Product(this.productConfig, this.props);
-    return this.product.init(this.model).then(() => this.resize());
   }
 
   /**

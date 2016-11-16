@@ -8,6 +8,7 @@ import Template from './template';
 import styles from './styles/embeds/all';
 import logger from './utils/logger';
 import defaultMoneyFormat from './defaults/money-format';
+import Updater from './updater';
 
 const delegateEventSplitter = /^(\S+)\s*(.*)$/;
 const ESC_KEY = 27;
@@ -38,6 +39,7 @@ export default class Component {
     this.props = props;
     this.model = {};
     this.template = new Template(this.options.templates, this.options.contents, this.options.order);
+    this.updater = new Updater(this);
   }
 
   /**
@@ -330,15 +332,7 @@ export default class Component {
    * @param {Object} config - new configuration object.
    */
   updateConfig(config) {
-    this._userEvent('beforeUpdateConfig');
-    this.config = merge(this.config, config.options);
-    this.template = new Template(this.options.templates, this.options.contents, this.options.order);
-    if (this.iframe) {
-      this.iframe.updateStyles(this.styles, this.googleFonts);
-    }
-    this.render();
-    this.resize();
-    this._userEvent('afterUpdateConfig');
+    return this.updater.updateConfig(config);
   }
 
   /**
