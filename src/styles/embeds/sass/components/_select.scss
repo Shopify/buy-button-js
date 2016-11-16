@@ -52,4 +52,8 @@
   .shopify-buy__btn--parent & {
     cursor: pointer;
   }
+
+  &::-ms-expand {
+    display: none;
+  }
 }
