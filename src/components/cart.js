@@ -35,6 +35,15 @@ export default class Cart extends Component {
     });
   }
 
+  createToggles(config) {
+    this.toggles = this.toggles.concat(config.toggles.map((toggle) => {
+      return new CartToggle(merge({}, config, toggle), Object.assign({}, this.props, {cart: this}));
+    }));
+    return Promise.all(this.toggles.map((toggle) => {
+      return toggle.init({lineItems: this.model.lineItems});
+    }));
+  }
+
   /**
    * get key for configuration object.
    * @return {String}
