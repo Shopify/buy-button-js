@@ -358,7 +358,7 @@ export default class Component {
    * remove node from DOM.
    */
   destroy() {
-    this.node.parentNode.removechild(this.node);
+    this.node.parentNode.removeChild(this.node);
   }
 
   /**
