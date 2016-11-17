@@ -1,5 +1,4 @@
 import View from '../view';
-import merge from '../utils/merge';
 
 export default class CartView extends View {
   constructor(component) {

@@ -196,32 +196,6 @@ export default class ProductSet extends Component {
   }
 
   /**
-   * re-assign configuration and re-render component.
-   */
-  resizeUntilFits() {
-    if (!this.iframe || this.resizeCompleted) {
-      return;
-    }
-    const maxResizes = this.products.length;
-    let resizes = 0;
-
-    this.height = this.outerHeight;
-    this.resize();
-    const productSetResize = setInterval(() => {
-      const currentHeight = this.outerHeight;
-      if (parseInt(currentHeight, 10) > parseInt(this.height, 10)) {
-        resizes++;
-        this.height = currentHeight;
-        this.resize(currentHeight);
-      }
-      if (resizes > maxResizes) {
-        this.resizeCompleted = true;
-        clearInterval(productSetResize);
-      }
-    }, pollInterval);
-  }
-
-  /**
    * render product components into productSet container. Show pagination button if necessary.
    * @return {Promise} promise resolving to instance.
    */

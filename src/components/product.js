@@ -521,36 +521,6 @@ export default class Product extends Component {
     });
   }
 
-  /**
-   * check size of image until it is resolved, then set height of iframe.
-   */
-  resizeUntilLoaded() {
-    if (!this.iframe || !this.model.selectedVariantImage) {
-      return;
-    }
-    const img = this.wrapper.getElementsByClassName(this.classes.product.img)[0];
-    let intervals = 0;
-    if (img) {
-      const productResize = setInterval(() => {
-        if (!img.naturalWidth && intervals < 30) {
-          intervals++;
-          return;
-        }
-        this.resize();
-        clearInterval(productResize);
-      }, pollInterval);
-    }
-  }
-
-  /**
-   * prevent events from bubbling if entire product is being treated as button.
-   */
-  stopPropagation(evt) {
-    if (this.options.isButton) {
-      evt.stopImmediatePropagation();
-    }
-  }
-
   onButtonClick(evt, target) {
     evt.stopPropagation();
     if (this.options.buttonDestination === 'cart') {

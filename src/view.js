@@ -2,7 +2,7 @@ import morphdom from 'morphdom';
 import Template from './template';
 import Iframe from './iframe';
 import styles from './styles/embeds/all';
-import {addClassToElement, removeClassFromElement} from './utils/element-class';
+import {addClassToElement} from './utils/element-class';
 
 const delegateEventSplitter = /^(\S+)\s*(.*)$/;
 const ESC_KEY = 27;
@@ -127,23 +127,6 @@ export default class View {
   }
 
   /**
-   * Focus first focusable element in wrapper.
-   */
-  setFocus() {
-    const focusable = this.wrapper.querySelectorAll('a, button, input, select')[0];
-    if (focusable) {
-      focusable.focus();
-    }
-  }
-
-  _createWrapper() {
-    const wrapper = document.createElement('div');
-    wrapper.className = this.component.classes[this.component.typeKey][this.component.typeKey];
-    this.append(wrapper);
-    return wrapper;
-  }
-
-  /**
    * get total height of iframe contents
    * @return {String} value in pixels.
    */
@@ -162,6 +145,16 @@ export default class View {
 
   get className() {
     return '';
+  }
+
+  /**
+   * Focus first focusable element in wrapper.
+   */
+  setFocus() {
+    const focusable = this.wrapper.querySelectorAll('a, button, input, select')[0];
+    if (focusable) {
+      focusable.focus();
+    }
   }
 
   /**
@@ -232,6 +225,13 @@ export default class View {
   removeNode(el) {
     el.parentNode.removeChild(el);
     this.render();
+  }
+
+  _createWrapper() {
+    const wrapper = document.createElement('div');
+    wrapper.className = this.component.classes[this.component.typeKey][this.component.typeKey];
+    this.append(wrapper);
+    return wrapper;
   }
 
   _resizeX() {

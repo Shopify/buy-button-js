@@ -1,22 +1,19 @@
-import morphdom from 'morphdom';
 import merge from './utils/merge';
 import isFunction from './utils/is-function';
 import componentDefaults from './defaults/components';
 import logNotFound from './utils/log-not-found';
-import Template from './template';
 import logger from './utils/logger';
 import defaultMoneyFormat from './defaults/money-format';
 import View from './view';
 import Updater from './updater';
 
-/**
- * Manages rendering, lifecycle, and data fetching of a cmoponent.
- */
-
 function moneyFormat(format = defaultMoneyFormat) {
   return decodeURIComponent(format);
 }
 
+/**
+ * Manages rendering, lifecycle, and data fetching of a cmoponent.
+ */
 export default class Component {
 
   /**
@@ -142,6 +139,7 @@ export default class Component {
       },
     };
   }
+
   /**
    * initializes component by creating model and rendering view.
    * @param {Object} [data] - data to initialize model with.
@@ -171,36 +169,6 @@ export default class Component {
         console.error(err);
       }
     });
-  }
-
-  /**
-   * instantiates and configures Iframe if necessary.
-   * @return {Promise} resolves when iframe is loaded.
-   */
-  setupView() {
-    if (this.iframe) {
-      if (this.iframe.document.body.contains(this.wrapper)) {
-        return Promise.resolve();
-      }
-      this.iframe.parent.removeChild(this.iframe.el);
-    }
-    if (this.options.iframe) {
-      this.iframe = new Iframe(this.node, {
-        classes: this.classes,
-        customStyles: this.styles,
-        stylesheet: styles[this.typeKey],
-        browserFeatures: this.props.browserFeatures,
-        googleFonts: this.googleFonts,
-        name: this.name,
-        width: this.options.layout === 'vertical' ? this.options.width : null,
-      });
-      this.node.className += ` shopify-buy-frame shopify-buy-frame--${this.typeKey}`;
-      this.iframe.addClass(this.iframeClass);
-      return this.iframe.load();
-    } else {
-      this.iframe = null;
-      return Promise.resolve();
-    }
   }
 
   /**

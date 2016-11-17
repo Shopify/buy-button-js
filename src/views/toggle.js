@@ -1,4 +1,5 @@
 import View from '../view';
+
 const ENTER_KEY = 13;
 
 export default class ToggleView extends View {

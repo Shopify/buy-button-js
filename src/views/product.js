@@ -1,5 +1,4 @@
 import View from '../view';
-import merge from '../utils/merge';
 
 const pollInterval = 200;
 

@@ -5,7 +5,6 @@ import Template from '../template';
 import Checkout from './checkout';
 import formatMoney from '../utils/money';
 import CartView from '../views/cart';
-import {addClassToElement} from '../utils/element-class';
 import CartUpdater from '../updaters/cart';
 
 const NO_IMG_URL = '//sdks.shopifycdn.com/buy-button/latest/no-image.jpg';

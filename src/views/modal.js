@@ -1,12 +1,11 @@
 import View from '../view';
-import merge from '../utils/merge';
 import {addClassToElement, removeClassFromElement} from '../utils/element-class';
 
 export default class ModalView extends View {
-
   wrapTemplate(html) {
     return `<div class="${this.component.classes.modal.overlay}"><div class="${this.component.classes.modal.modal}">${html}</div></div>`;
   }
+
   /**
    * close modal.
    */

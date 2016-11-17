@@ -262,5 +262,56 @@ describe('View class', () => {
       assert.deepEqual(view.styles, {product: {button: {color: 'red'}}});
     });
   });
+
+  describe('animateRemoveNode()', () => {
+    let node;
+    let view;
+    let component;
+
+    beforeEach(() => {
+      component = new Component({
+        id: 1234,
+        node: document.createElement('div'),
+      }, {browserFeatures: {animation: true}});
+      component.typeKey = 'product';
+      view = new View(component);
+      node = document.createElement('div');
+      node.setAttribute('id', 123);
+      document.body.appendChild(node);
+      node.addEventListener = sinon.spy();
+    });
+
+    afterEach(() => {
+      document.body.removeChild(node);
+    });
+
+    it('adds event listener on animationend if browser supports it', () => {
+      view.animateRemoveNode(123);
+      assert.calledWith(node.addEventListener, 'animationend');
+    });
+
+    it('removes the node if animation is not supported', () => {
+      component.props.browserFeatures.animation = false;
+      view.removeNode = sinon.spy();
+      view.animateRemoveNode(123);
+      assert.calledOnce(view.removeNode);
+    });
+  });
+
+  describe('removeNode()', () => {
+    it('removes node and calls render', () => {
+      const component = new Component({
+        id: 1234,
+      });
+      const view = new View(component);
+      const div = document.createElement('div');
+      div.setAttribute('id', 123);
+      document.body.appendChild(div);
+      view.render = sinon.spy();
+      view.removeNode(div);
+      assert.notOk(document.getElementById(123));
+      assert.calledOnce(view.render);
+    });
+  });
 });
 
