@@ -106,6 +106,11 @@ export default class UI {
    */
   createCart(config) {
     if (this.components.cart.length) {
+      if (config.toggles && config.toggles.length > this.components.cart[0].toggles.length) {
+        return this.components.cart[0].createToggles(config).then(() => {
+          return this.components.cart[0];
+        });
+      }
       return Promise.resolve(this.components.cart[0]);
     } else {
       const cart = new Cart(config, this.componentProps);
