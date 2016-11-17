@@ -23,20 +23,13 @@ export default class ProductSet extends Component {
    */
   constructor(config, props) {
     super(config, props);
+    this.typeKey = 'productSet';
     this.products = [];
     this.cart = null;
     this.page = 1;
     this.nextModel = {products: []};
     this.updater = new ProductSetUpdater(this);
     this.view = new ProductSetView(this);
-  }
-
-  /**
-   * get key for configuration object.
-   * @return {String}
-   */
-  get typeKey() {
-    return 'productSet';
   }
 
   get nextButtonClass() {

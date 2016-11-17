@@ -6,12 +6,9 @@ import ToggleView from '../views/toggle';
 export default class CartToggle extends Component {
   constructor(config, props) {
     super(config, props);
+    this.typeKey = 'toggle';
     this.node = config.node || this.props.cart.node.parentNode.insertBefore(document.createElement('div'), this.props.cart.node);
     this.view = new ToggleView(this);
-  }
-
-  get typeKey() {
-    return 'toggle';
   }
 
   get count() {

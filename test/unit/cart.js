@@ -144,35 +144,6 @@ describe('Cart class', () => {
     });
   });
 
-  describe('updateConfig', () => {
-    const newConfig = {
-      options: {
-        styles: {
-          button: {
-            'color': 'red',
-          },
-        },
-      },
-    }
-
-    let superSpy;
-
-    beforeEach(() => {
-      superSpy = sinon.stub(Updater.prototype, 'updateConfig');
-      cart.toggles[0].updateConfig = sinon.spy();
-    });
-
-    afterEach(() => {
-      superSpy.restore();
-    });
-
-    it('calls updateConfig on toggle', () => {
-      cart.updateConfig(newConfig);
-      assert.calledWith(cart.toggles[0].updateConfig, newConfig);
-      assert.calledWith(superSpy, newConfig);
-    });
-  });
-
   describe('get formattedTotal', () => {
     it('uses money helper to return formatted value', () => {
       cart.model = {

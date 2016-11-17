@@ -17,19 +17,12 @@ export default class Modal extends Component {
    */
   constructor(config, props) {
     super(config, props);
+    this.typeKey = 'modal';
     this.node = config.node ? config.node.appendChild(document.createElement('div')) : document.body.appendChild(document.createElement('div'));
     this.node.className = 'shopify-buy-modal-wrapper';
     this.product = null;
     this.updater = new ModalUpdater(this);
     this.view = new ModalView(this);
-  }
-
-  /**
-   * get key for configuration object.
-   * @return {String}
-   */
-  get typeKey() {
-    return 'modal';
   }
 
   /**

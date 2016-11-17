@@ -62,6 +62,7 @@ export default class Product extends Component {
    */
   constructor(config, props) {
     super(config, props);
+    this.typeKey = 'product';
     this.defaultVariantId = config.variantId;
     this.cachedImage = null;
     this.childTemplate = new Template(this.config.option.templates, this.config.option.contents, this.config.option.order);
@@ -71,14 +72,6 @@ export default class Product extends Component {
     this.selectedQuantity = 1;
     this.updater = new ProductUpdater(this);
     this.view = new ProductView(this);
-  }
-
-  /**
-   * get key for configuration object.
-   * @return {String}
-   */
-  get typeKey() {
-    return 'product';
   }
 
   /**

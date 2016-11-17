@@ -12,6 +12,10 @@ import View from './view';
  * Manages rendering, lifecycle, and data fetching of a cmoponent.
  */
 
+function moneyFormat(format = defaultMoneyFormat) {
+  return decodeURIComponent(format);
+}
+
 export default class Component {
 
   /**
@@ -25,7 +29,7 @@ export default class Component {
     this.node = config.node;
     this.globalConfig = {
       debug: config.debug,
-      moneyFormat: decodeURIComponent(config.moneyFormat) || defaultMoneyFormat,
+      moneyFormat: moneyFormat(config.moneyFormat),
       cartNode: config.cartNode,
       modalNode: config.modalNode,
       toggles: config.toggles,
@@ -34,14 +38,6 @@ export default class Component {
     this.props = props;
     this.model = {};
     this.view = new View(this);
-  }
-
-  /**
-   * get reference to client from props.
-   * @return {Object} client instance
-   */
-  get client() {
-    return this.props.client;
   }
 
   /**
@@ -75,20 +71,6 @@ export default class Component {
   }
 
   /**
-   * get classes formatted as CSS selectors.
-   * @return {Object} class keys and selectors.
-   */
-  get selectors() {
-    return this.options.manifest.filter((component) => this.config[component].classes).reduce((hash, component) => {
-      hash[component] = Object.keys(this.config[component].classes).reduce((classes, classKey) => {
-        classes[classKey] = `.${this.classes[component][classKey].split(' ').join('.')}`;
-        return classes;
-      }, {});
-      return hash;
-    }, {});
-  }
-
-  /**
    * get events to be called on lifecycle methods.
    * @return {Object} events object.
    */
@@ -103,6 +85,20 @@ export default class Component {
   get classes() {
     return this.options.manifest.filter((component) => this.config[component].classes).reduce((hash, component) => {
       hash[component] = this.config[component].classes;
+      return hash;
+    }, {});
+  }
+
+  /**
+   * get classes formatted as CSS selectors.
+   * @return {Object} class keys and selectors.
+   */
+  get selectors() {
+    return this.options.manifest.filter((component) => this.config[component].classes).reduce((hash, component) => {
+      hash[component] = Object.keys(this.config[component].classes).reduce((classes, classKey) => {
+        classes[classKey] = `.${this.classes[component][classKey].split(' ').join('.')}`;
+        return classes;
+      }, {});
       return hash;
     }, {});
   }

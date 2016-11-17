@@ -1,245 +1,130 @@
 import ShopifyBuy from '../../src/buybutton';
 import Component from '../../src/component';
-import Iframe from '../../src/iframe';
-import Template from '../../src/template';
-
+import View from '../../src/view';
 import componentDefaults from '../../src/defaults/components';
 
-const config = {
-  id: 123,
-  node: document.getElementById('fixture'),
-  options: {
-    product: {
-      iframe: false,
-      styles: {
-        product: {
-          'background': 'red',
-        }
-      },
-      templates: {
-        button: '<button id="button" class="button">Fake button</button>'
-      },
-      contents: {
-        title: true,
-        button: true,
-      }
-    },
-    option: {
-      styles: {
-        option: {
-          'background': 'blue',
-        }
-      },
-    }
-  }
-}
-
-let component;
-let scriptNode;
-
 describe('Component class', () => {
-  beforeEach(() => {
-    config.node = document.createElement('div');
-    config.node.setAttribute('id', 'fixture');
-    document.body.appendChild(config.node);
-    Component.prototype.typeKey = 'product'
-    component = new Component(config, {client: {},
-      browserFeatures: {
-        transition: true,
-        animation: true,
-        transform: true,
-      }
-    });
-  });
-
-  afterEach(() => {
-    component = null;
-    document.body.removeChild(config.node);
-    config.node = null;
-  });
 
   describe('constructor', () => {
-    it('merges configuration options and defaults', () => {
-      assert.equal(component.config.product.templates.button, config.options.product.templates.button);
-      assert.equal(component.config.product.buttonDestination, 'cart');
+    it('stores id, node, and handle on instance', () => {
+      let node = document.createElement('div');
+      let component = new Component({
+        id: 1234,
+        handle: 'lol',
+        node: node,
+      });
+
+      assert.equal(component.id, 1234);
+      assert.equal(component.handle, 'lol');
+      assert.equal(component.node, node);
     });
 
-    it('proxies commonly accessed attributes to config options for type', () => {
-      assert.isOk(component.client);
-      assert.equal(component.options.iframe, config.options.product.iframe);
+    it('sets globalConfig based on passed in config', () => {
+      let component = new Component({
+        id: 1234
+      });
+      assert.equal(component.globalConfig.moneyFormat, '${{amount}}');
     });
 
-    it('instantiates a template', () => {
-      assert.isOk(component.template instanceof Template);
+    it('instantiates a view', () => {
+      let component = new Component({
+        id: 1234
+      });
+      assert.instanceOf(component.view, View);
+    });
+
+    it('merges configuration options with defaults', () => {
+      const config = {
+        options: {
+          product: {
+            buttonDestination: 'modal',
+          }
+        }
+      }
+      let component = new Component(config);
+      assert.equal(component.config.product.buttonDestination, 'modal', 'configuration options override defaults');
+      assert.equal(component.config.cart.iframe, true, 'defaults are merged into configuration');
     });
   });
 
-  describe('get classes', () => {
-    it('returns classes based on manifest', () => {
-      assert.equal(component.classes.product.product, componentDefaults.product.classes.product);
-      assert.equal(component.classes.option.option, componentDefaults.option.classes.option);
+  describe('get name()', () => {
+    it('returns name based on handle or id', () => {
+      let component = new Component({id: 1234});
+      assert.equal(component.name, 'frame-undefined-1234', 'uses ID if ID is set');
+      component = new Component({handle: 'lol'});
+      assert.equal(component.name, 'frame-undefined-lol', 'uses handle if handle is set');
     });
   });
 
-  describe('get classes', () => {
-    it('returns classes formatted as selectors based on manifest', () => {
+  describe('get options()', () => {
+    it('returns options for component by typeKey', () => {
+      let component = new Component({id: 1234});
+      component.typeKey = 'product';
+      assert.equal(component.options.buttonDestination, 'cart');
+    });
+  });
+
+  describe('get classes()', () => {
+    it('returns classes for each component in manifest', () => {
+      let component = new Component({id: 1234});
+      component.typeKey = 'product';
+      assert.equal(component.classes.product.product, 'shopify-buy__product');
+      assert.equal(component.classes.option.option, 'shopify-buy__option-select');
+    });
+  });
+
+  describe('get selectors()', () => {
+    it('returns classes formatted as css selectors for each component in manifest', () => {
+      let component = new Component({id: 1234});
+      component.typeKey = 'product';
       assert.equal(component.selectors.product.product, '.shopify-buy__product');
       assert.equal(component.selectors.option.option, '.shopify-buy__option-select');
     });
   });
 
-  describe('init', () => {
-    it('fetches and renders data', () => {
-      const setupView = sinon.stub(component.view, 'init').returns(Promise.resolve());
-      const setupModel = sinon.stub(component, 'setupModel').returns(Promise.resolve({ title: 'test' }));
-      const render = sinon.stub(component, 'render');
-      const delegateEvents = sinon.stub(component, 'delegateEvents');
-
-      return component.init().then(() => {
-        assert.deepEqual(component.model, {title: 'test'});
-        assert.calledOnce(setupView);
-        assert.calledOnce(setupModel);
-        assert.calledOnce(render);
-        assert.calledOnce(delegateEvents);
-      });
-    });
-
-    describe('with data passed as arg', () => {
-      it('sets model to data', () => {
-        return component.init({title: 'test'}).then(() => {
-          assert.equal('test', component.model.title);
-        });
-      });
-    });
-
-    describe('with no data passed as arg', () => {
-      it('fetches data and sets model', () => {
-        component.fetchData = sinon.stub().returns(Promise.resolve({title: 'rectangle'}));;
-        return component.init().then(() => {
-          assert.equal('rectangle', component.model.title);
-        });
-      });
-    });
-
-    it('adds event listeners to nodes', () => {
-      const clickSpy = sinon.spy();
-      const testConfig = Object.assign({}, config);
-      testConfig.options.product.DOMEvents = {
-        'click .button': clickSpy
-      }
-      const testComponent = new Component(testConfig, {client: {}, imageCache: {}});
-      return testComponent.init({}).then(() => {
-        testComponent.render();
-        testComponent.delegateEvents();
-        testComponent.view.document.getElementById('button').click();
-        assert.calledWith(clickSpy, sinon.match.instanceOf(Event), sinon.match.instanceOf(window.Node));
-      });
-    });
-
-    describe('if iframe is true', () => {
-      it('creates an iframe', () => {
-        const iframeComponent = new Component({
-          node: document.getElementById('fixture'),
-          id: 123,
-          options: { product: {iframe: true}}}, {client: {},
-            browserFeatures: {
-              transition: true,
-              animation: true,
-              transform: true,
-            }
-          },
-          'product');
-        const setupModel = sinon.stub(iframeComponent, 'setupModel').returns(Promise.resolve({ title: 'test' }));
-        return iframeComponent.init().then(() => {
-          assert.isOk(iframeComponent.view.iframe);
-          setupModel.restore();
-        });
-      });
-    });
-  });
-
-  describe('updateConfig', () => {
-    it('updates config with passed options', () => {
-      const updateConfig = {
-        id: 123,
+  describe('get googleFonts()', () => {
+    it('returns google fonts for each component in manifest', () => {
+      const config = {
         options: {
           product: {
-            styles: {
-              button: {
-                'color': 'blue'
-              }
-            },
+            googleFonts: ['lol']
+          },
+          option: {
+            googleFonts: ['bar']
           }
         }
       }
-      component.updateConfig(updateConfig);
-      assert.equal(component.options.styles.button.color, 'blue');
+      let component = new Component(config);
+      component.typeKey = 'product';
+      assert.deepEqual(component.googleFonts, ['lol', 'bar']);
     });
   });
 
-  describe('render', () => {
-    it('sets innerHTML of wrapper on initial call', () => {
-      const testHTML = '<h1>THIS IS ONLY A TEST</h1>';
-
-      const tmplRender = sinon.stub(component.template, 'render').returns(`<div>${testHTML}</div>`);
-      component.render();
-      assert.equal(component.wrapper.innerHTML, testHTML);
-    });
-
-    it('updates innerHTML of wrapper on second call', () => {
-      const testBeforeHTML = '<h1>THIS IS ONLY A TEST</h1>';
-      const testHTML = '<h1>THIS IS NOT A TEST</h1>'
-      const tmplRender = sinon.stub(component.template, 'render').returns(`<div>${testHTML}</div>`);
-      component.wrapper = component._createWrapper();
-      component.wrapper.innerHTML = testBeforeHTML;
-      component.render();
-      assert.equal(component.wrapper.innerHTML, testHTML);
+  describe('get viewData()', () => {
+    it('returns model and some other properties', () => {
+      let component = new Component({id: 1234});
+      component.typeKey = 'product';
+      component.model = {test: 'lol'};
+      assert.equal(component.viewData.test, 'lol');
+      assert.equal(component.viewData.classes.product.product, 'shopify-buy__product');
     });
   });
 
-  describe('renderChild', () => {
-    let updateNodeSpy;
-    let childNode;
-
-    beforeEach(() => {
-      const contents = {
-        title: true,
+  describe('init()', () => {
+    it('assigns model and initializes view', () => {
+      let component = new Component({id: 1234}, {
+        browserFeatures: {},
+      });
+      component.view = {
+        init: sinon.stub().returns(Promise.resolve()),
+        render: sinon.spy(),
+        delegateEvents: sinon.spy(),
       }
-      const templates = {
-        title: '<h1>BUY MY BUTTONS {{data.name}}</h1>',
-      }
-      const order = ['title'];
-      const template = new Template(templates, contents, order);
-      updateNodeSpy = sinon.stub(component, 'updateNode');
-      childNode = document.createElement('div');
-      childNode.className = 'foo';
-      component.model.name = 'lol';
-      component.wrapper = component._createWrapper();
-      component.wrapper.appendChild(childNode);
-      component.renderChild('foo', template);
-    });
-
-    it('calls updateNode with node and html', () => {
-      assert.calledWith(updateNodeSpy, childNode, '<h1>BUY MY BUTTONS lol</h1>');
-    });
-  });
-
-  describe('updateNode', () => {
-    it('updates contents of node', () => {
-      const div = document.createElement('div');
-      div.innerHTML = '<h1>OLD TEXT</h1>';
-      const html = '<h1>SO FRESH</h1>';
-      component.updateNode(div, `<div>${html}</div>`);
-      assert.equal(div.innerHTML, html);
-    });
-  });
-
-
-  describe('wrapTemplate', () => {
-    describe('when button exists', () => {
-      it('puts strings in a div', () => {
-        const string = component.wrapTemplate('test');
-        assert.equal(string, '<div class="shopify-buy__product">test</div>');
+      component.typeKey = 'product';
+      return component.init({
+        lol: 'yes',
+      }).then(() => {
+        assert.deepEqual(component.model, {lol: 'yes'});
       });
     });
   });
