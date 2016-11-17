@@ -72,22 +72,22 @@ describe('Cart class', () => {
         updateLineItem: () => {}
       }
       updateLineItemStub = sinon.stub(cart.model, 'updateLineItem').returns(Promise.resolve({test: 'lol'}))
-      cart.render = sinon.spy();
-      cart.toggles[0].render = sinon.spy();
+      cart.view.render = sinon.spy();
+      cart.toggles[0].view.render = sinon.spy();
     });
 
     it('calls updateLineItem', () => {
       return cart.updateItem(123, 3).then(() => {
         assert.calledWith(updateLineItemStub, 123, 3);
-        assert.calledOnce(cart.render);
-        assert.calledOnce(cart.toggles[0].render);
+        assert.calledOnce(cart.view.render);
+        assert.calledOnce(cart.toggles[0].view.render);
         assert.deepEqual(cart.model, {test: 'lol'});
       });
     });
   });
 
 
-  describe('_animateRemoveItem', () => {
+  describe('_animateRemoveNode', () => {
     let node;
 
     beforeEach(() => {
@@ -102,7 +102,7 @@ describe('Cart class', () => {
     });
 
     it('calls updateLineItem', () => {
-      cart._animateRemoveItem(123);
+      cart.view.animateRemoveNode(123);
       assert.calledWith(node.addEventListener, 'animationend');
     });
   });
@@ -131,15 +131,15 @@ describe('Cart class', () => {
 
   describe('addVariantToCart', () => {
     it('calls model createLineItemsFromVariants', () => {
-      cart.setFocus = sinon.spy();
+      cart.view.setFocus = sinon.spy();
       cart.model.createLineItemsFromVariants= sinon.stub().returns(Promise.resolve());
-      let render = sinon.stub(cart, 'render');
-      let toggleRender = sinon.stub(cart.toggles[0], 'render');
+      let render = sinon.stub(cart.view, 'render');
+      let toggleRender = sinon.stub(cart.toggles[0].view, 'render');
 
       return cart.addVariantToCart({id: 123}).then(() => {
         assert.calledWith(cart.model.createLineItemsFromVariants, {variant: {id: 123 }, quantity: 1});
         assert.calledOnce(toggleRender);
-        assert.called(cart.setFocus);
+        assert.called(cart.view.setFocus);
       });
     });
   });
@@ -158,13 +158,13 @@ describe('Cart class', () => {
       cart.model = {
         clearLineItems: sinon.stub().returns(Promise.resolve())
       }
-      cart.render = sinon.spy();
-      cart.toggles[0].render = sinon.spy();
+      cart.view.render = sinon.spy();
+      cart.toggles[0].view.render = sinon.spy();
 
       return cart.empty().then(() => {
         assert.calledOnce(cart.model.clearLineItems);
-        assert.calledOnce(cart.render);
-        assert.calledOnce(cart.toggles[0].render);
+        assert.calledOnce(cart.view.render);
+        assert.calledOnce(cart.toggles[0].view.render);
       });
     });
   });

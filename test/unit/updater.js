@@ -17,8 +17,8 @@ describe('Updater class', () => {
 
     beforeEach(() => {
       component = new Component({id: 1234});
-      component.render = sinon.spy();
-      component.resize = sinon.spy();
+      component.view.render = sinon.spy();
+      component.view.resize = sinon.spy();
       updater = new Updater(component);
     });
 
@@ -31,8 +31,8 @@ describe('Updater class', () => {
         },
       });
       assert.equal(component.config.product.buttonDestination, 'modal');
-      assert.calledOnce(component.render);
-      assert.calledOnce(component.resize);
+      assert.calledOnce(component.view.render);
+      assert.calledOnce(component.view.resize);
     });
 
     it('updates iframe if iframe exists', () => {

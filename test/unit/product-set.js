@@ -67,7 +67,7 @@ describe('ProductSet class', () => {
       it('calls fetchQueryProducts with collection id', () => {
         const result = collection.sdkFetch();
         assert.ok(result.then);
-        assert.calledWith(collection.client.fetchQueryProducts, {collection_id: 1234, page: 1, limit: 30, sort_by: 'collection-default'});
+        assert.calledWith(collection.props.client.fetchQueryProducts, {collection_id: 1234, page: 1, limit: 30, sort_by: 'collection-default'});
       });
     });
 
@@ -89,8 +89,8 @@ describe('ProductSet class', () => {
 
       it('calls fetchQueryProducts with collection id', () => {
         return collection.sdkFetch().then(() => {
-          assert.calledWith(collection.client.fetchQueryCollections, {handle: 'hats'});
-          assert.calledWith(collection.client.fetchQueryProducts, {collection_id: 2345, page: 1, limit: 30, sort_by: 'collection-default'});
+          assert.calledWith(collection.props.client.fetchQueryCollections, {handle: 'hats'});
+          assert.calledWith(collection.props.client.fetchQueryProducts, {collection_id: 2345, page: 1, limit: 30, sort_by: 'collection-default'});
         });
       });
     });
@@ -113,7 +113,7 @@ describe('ProductSet class', () => {
       it('calls fetchQueryProducts with collection id', () => {
         const result = collection.sdkFetch();
         assert.ok(result.then);
-        assert.calledWith(collection.client.fetchQueryProducts, {product_ids: [1234, 2345], page: 1, limit: 30});
+        assert.calledWith(collection.props.client.fetchQueryProducts, {product_ids: [1234, 2345], page: 1, limit: 30});
       });
     });
   });
@@ -123,7 +123,7 @@ describe('ProductSet class', () => {
 
     beforeEach(() => {
       initSpy = sinon.spy(Product.prototype, 'init');
-      set.render();
+      set.view.render();
     });
 
     afterEach(() => {
@@ -181,7 +181,7 @@ describe('ProductSet class', () => {
     beforeEach(() => {
       set.id = 1234;
       sdkFetchSpy = sinon.stub(set, 'sdkFetch').returns(Promise.resolve(newCollection));
-      renderChildStub = sinon.stub(set, 'renderChild');
+      renderChildStub = sinon.stub(set.view, 'renderChild');
       resizeSpy = sinon.stub(set.view, 'resize');
     });
 

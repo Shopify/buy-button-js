@@ -86,7 +86,7 @@ describe('Modal class', () => {
           body: document.createElement('body'),
         }
       }
-      modal.wrapper = document.createElement('div');
+      modal.view.wrapper = document.createElement('div');
       modal.close();
       assert.notOk(modal.view.isVisible);
       assert.calledWith(modal.view.iframe.removeClass, 'is-active');
@@ -98,11 +98,11 @@ describe('Modal class', () => {
     beforeEach(() => {
       modal.model = fakeProduct;
       modal.isVisible = true;
-      return modal.frame.init().then(() => modal.render());
+      return modal.view.init().then(() => modal.view.render());
     });
 
     it('makes modal visible', () => {
-      assert.match(modal.frame.iframe.parent.className, 'is-active');
+      assert.match(modal.view.iframe.parent.className, 'is-active');
     });
   });
 
