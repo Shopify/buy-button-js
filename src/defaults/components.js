@@ -206,7 +206,7 @@ const defaults = {
       title: 'Cart',
       empty: 'Your cart is empty.',
       button: 'CHECKOUT',
-      total: 'Total',
+      total: 'SUBTOTAL',
       currency: 'CAD',
       notice: 'Shipping and discount codes are added at checkout.',
     },
