@@ -291,7 +291,7 @@ describe('Product class', () => {
     it('returns supplemental view info', () => {
       return product.init(testProductCopy).then(() => {
         const viewData = product.viewData;
-        assert.equal(viewData.buttonText, 'SHOP NOW');
+        assert.equal(viewData.buttonText, 'ADD TO CART');
         assert.ok(viewData.optionsHtml);
         assert.equal(viewData.currentImage.src, 'https://cdn.shopify.com/image-two_large.jpg');
         assert.ok(viewData.hasVariants);
