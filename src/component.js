@@ -207,6 +207,12 @@ export default class Component {
       this.model = model;
       this.render();
       this.delegateEvents();
+      if (this.iframe) {
+        this.iframe.el.onload = () => {
+          this.iframe.el.onload = null;
+          this.init();
+        };
+      }
       this._userEvent('afterInit');
       return this;
     })
@@ -214,7 +220,9 @@ export default class Component {
       if (err.message.indexOf('Not Found') > -1) {
         logNotFound(this);
       } else {
-        throw err;
+
+        // eslint-disable-next-line no-console
+        console.error(err);
       }
     });
   }
@@ -225,7 +233,10 @@ export default class Component {
    */
   setupView() {
     if (this.iframe) {
-      return Promise.resolve();
+      if (this.iframe.document.contains(this.wrapper)) {
+        return Promise.resolve();
+      }
+      this.iframe.parent.removeChild(this.iframe.el);
     }
     if (this.options.iframe) {
       this.iframe = new Iframe(this.node, {
@@ -266,7 +277,7 @@ export default class Component {
     const html = this.template.render({data: this.viewData}, (data) => {
       return this.wrapTemplate(data);
     });
-    if (!this.wrapper) {
+    if (!this.wrapper || (this.iframe && !this.document.contains(this.wrapper))) {
       this.wrapper = this._createWrapper();
     }
     this.updateNode(this.wrapper, html);
