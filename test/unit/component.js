@@ -125,7 +125,45 @@ describe('Component class', () => {
         lol: 'yes',
       }).then(() => {
         assert.deepEqual(component.model, {lol: 'yes'});
+        assert.calledOnce(component.view.render);
+        assert.calledOnce(component.view.delegateEvents);
+        assert.calledOnce(component.view.init);
       });
+    });
+  });
+
+  describe('setupModel()', () => {
+    it('returns passed data', () => {
+      let component = new Component({id: 1234});
+      return component.setupModel({test: 'lol'}).then((model) => {
+        assert.deepEqual(model, {test: 'lol'});
+      });
+    });
+
+    it('calls fetchData if not passed data', () => {
+      let component = new Component({id: 1234});
+      component.fetchData = sinon.stub().returns(Promise.resolve({test: 'lol'}));
+      return component.setupModel().then((model) => {
+        assert.deepEqual(model, {test: 'lol'});
+      });
+    });
+  });
+
+  describe('updateConfig()', () => {
+    it('delegates to updater', () => {
+      let component = new Component({id: 1234});
+      component.updater.updateConfig = sinon.spy();
+      component.updateConfig({test: 'lol'});
+      assert.calledWith(component.updater.updateConfig, {test: 'lol'});
+    });
+  });
+
+  describe('destroy()', () => {
+    it('delegates to view', () => {
+      let component = new Component({id: 1234});
+      component.view.destroy = sinon.spy();
+      component.destroy();
+      assert.calledOnce(component.view.destroy);
     });
   });
 });

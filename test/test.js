@@ -22,3 +22,5 @@ import './unit/toggle';
 import './unit/tracker';
 import './unit/merge';
 import './unit/money';
+import './unit/updater';
+import './unit/view';

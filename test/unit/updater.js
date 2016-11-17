@@ -1,49 +1,47 @@
+import ShopifyBuy from '../../src/buybutton';
+import Component from '../../src/component';
+import Updater from '../../src/updater';
 
-  describe('updateConfig', () => {
-    const newConfig = {
-      options: {
-        styles: {
-          button: {
-            'color': 'red',
-          },
-        },
-      },
-    }
+describe('Updater class', () => {
+  describe('constructor', () => {
+    it('stores component to instance', () => {
+      const component = new Component({id: 1234});
+      const updater = new Updater(component);
+      assert.equal(updater.component, component);
+    });
+  });
 
-    let superSpy;
+  describe('updateConfig()', () => {
+    let component;
+    let updater;
 
     beforeEach(() => {
-      superSpy = sinon.stub(Updater.prototype, 'updateConfig');
-      cart.toggles[0].updateConfig = sinon.spy();
+      component = new Component({id: 1234});
+      component.render = sinon.spy();
+      component.resize = sinon.spy();
+      updater = new Updater(component);
     });
 
-    afterEach(() => {
-      superSpy.restore();
-    });
-
-    it('calls updateConfig on toggle', () => {
-      cart.updateConfig(newConfig);
-      assert.calledWith(cart.toggles[0].updateConfig, newConfig);
-      assert.calledWith(superSpy, newConfig);
-    });
-  });
-
-  describe('updateConfig', () => {
-    it('updates config with passed options', () => {
-      const updateConfig = {
-        id: 123,
+    it('merges new config with old config and updates view', () => {
+      updater.updateConfig({
         options: {
           product: {
-            styles: {
-              button: {
-                'color': 'blue'
-              }
-            },
-          }
-        }
-      }
-      component.updateConfig(updateConfig);
-      assert.equal(component.options.styles.button.color, 'blue');
+            buttonDestination: 'modal',
+          },
+        },
+      });
+      assert.equal(component.config.product.buttonDestination, 'modal');
+      assert.calledOnce(component.render);
+      assert.calledOnce(component.resize);
+    });
+
+    it('updates iframe if iframe exists', () => {
+      component.typeKey = 'product';
+      component.view.iframe = {
+        updateStyles: sinon.spy()
+      };
+      component.updateConfig({});
+      assert.calledWith(component.view.iframe.updateStyles, component.styles, component.googleFonts)
     });
   });
-
+});

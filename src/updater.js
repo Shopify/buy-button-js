@@ -9,8 +9,8 @@ export default class Updater {
   updateConfig(config) {
     this.component.config = merge(this.component.config, config.options);
     this.component.template = new Template(this.component.options.templates, this.component.options.contents, this.component.options.order);
-    if (this.component.iframe) {
-      this.component.iframe.updateStyles(this.component.styles, this.component.googleFonts);
+    if (this.component.view.iframe) {
+      this.component.view.iframe.updateStyles(this.component.styles, this.component.googleFonts);
     }
     this.component.render();
     this.component.resize();

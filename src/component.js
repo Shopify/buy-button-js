@@ -7,6 +7,7 @@ import Template from './template';
 import logger from './utils/logger';
 import defaultMoneyFormat from './defaults/money-format';
 import View from './view';
+import Updater from './updater';
 
 /**
  * Manages rendering, lifecycle, and data fetching of a cmoponent.
@@ -37,6 +38,7 @@ export default class Component {
     this.config = merge({}, componentDefaults, config.options || {});
     this.props = props;
     this.model = {};
+    this.updater = new Updater(this);
     this.view = new View(this);
   }
 
