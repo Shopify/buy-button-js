@@ -6,7 +6,7 @@
   "repository": "git@github.com:Shopify/buy-button-js.git",
   "scripts": {
     "start": "rm -rf tmp && mkdir tmp && npm run src:watch & npm run styles:watch & npm run serve",
-    "build": "npm run clean && npm run styles && npm run images:copy && npm run src:build",
+    "build": "npm run clean && npm run styles && npm run images:copy && npm run src:transpile && npm run src:build",
     "test": "npm run lint && npm run testem",
     "serve": "http-server",
     "lint": "eslint --max-warnings=0 $([ -n \"${CI}\" ] && echo -o $CIRCLE_TEST_REPORTS/xunit/lint-output.xml -f junit) src/*",
@@ -17,6 +17,7 @@
     "testem": "testem $([ -n \"${CI}\" ] && echo -f testem-ci.json) ci",
     "deploy": "node ./script/deploy.js",
     "---------- dist": null,
+    "src:transpile": "babel ./src --out-dir ./lib",
     "src:build": "node ./script/build.js",
     "---------- dev": null,
     "src:watch": "watchify src/buybutton.js -t babelify --outfile tmp/buybutton.dev.js -v",
