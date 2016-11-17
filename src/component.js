@@ -219,10 +219,8 @@ export default class Component {
         logNotFound(this);
       } else {
 
-        /* eslint-disable no-console */
+        // eslint-disable-next-line no-console
         console.error(err);
-
-        /* eslint-enable no-console */
       }
     });
   }
