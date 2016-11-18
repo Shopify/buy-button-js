@@ -233,7 +233,7 @@ export default class Component {
    */
   setupView() {
     if (this.iframe) {
-      if (this.iframe.document.contains(this.wrapper)) {
+      if (this.iframe.document.body.contains(this.wrapper)) {
         return Promise.resolve();
       }
       this.iframe.parent.removeChild(this.iframe.el);
@@ -277,7 +277,7 @@ export default class Component {
     const html = this.template.render({data: this.viewData}, (data) => {
       return this.wrapTemplate(data);
     });
-    if (!this.wrapper || (this.iframe && !this.document.contains(this.wrapper))) {
+    if (!this.wrapper || (this.iframe && !this.document.body.contains(this.wrapper))) {
       this.wrapper = this._createWrapper();
     }
     this.updateNode(this.wrapper, html);
