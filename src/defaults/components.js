@@ -179,6 +179,7 @@ const defaults = {
     iframe: true,
     templates: cartTemplates,
     startOpen: false,
+    popup: true,
     manifest: ['cart', 'lineItem', 'toggle'],
     contents: {
       title: true,

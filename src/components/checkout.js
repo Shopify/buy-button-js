@@ -13,6 +13,10 @@ export default class Checkout {
   }
 
   open(url) {
-    window.open(url, 'checkout', this.params);
+    if (this.config.cart.popup) {
+      window.open(url, 'checkout', this.params);
+    } else {
+      window.location = url;
+    }
   }
 }
