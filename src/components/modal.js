@@ -72,17 +72,6 @@ export default class Modal extends Component {
   }
 
   /**
-   * re-assign configuration and re-render component.
-   * Update config on product within modal.
-   * @param {Object} config - new configuration object.
-   */
-  updateConfig(config) {
-    super.updateConfig(config);
-    this.product = new Product(this.productConfig, this.props);
-    return this.product.init(this.model).then(() => this.view.resize());
-  }
-
-  /**
    * close modal.
    */
   close() {
