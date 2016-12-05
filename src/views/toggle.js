@@ -33,6 +33,7 @@ export default class ToggleView extends View {
     } else {
       this.iframe.removeClass('is-active');
     }
+    this.resize();
   }
 
   delegateEvents() {
