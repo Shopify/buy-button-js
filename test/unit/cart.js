@@ -116,7 +116,8 @@ describe('Cart class', () => {
             title: 'test',
             variant_title: 'test2',
             line_price: 20,
-            quantity: 1
+            quantity: 1,
+            imageVariants: []
           }
         ]
       }

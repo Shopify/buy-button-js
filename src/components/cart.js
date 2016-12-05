@@ -76,7 +76,7 @@ export default class Cart extends Component {
     return this.model.lineItems.reduce((acc, lineItem) => {
       const data = merge(lineItem, this.options.viewData);
       data.classes = this.classes;
-      data.lineItemImage = data.image || {src: NO_IMG_URL};
+      data.lineItemImage = data.imageVariants.filter((image) => image.name === 'compact')[0] || {src: NO_IMG_URL};
       data.variantTitle = data.variant_title === 'Default Title' ? '' : data.variant_title;
       data.formattedPrice = formatMoney(data.line_price, this.globalConfig.moneyFormat);
       return acc + this.childTemplate.render({data}, (output) => `<div id="${lineItem.id}" class=${this.classes.lineItem.lineItem}>${output}</div>`);

@@ -1,4 +1,4 @@
-import ShopifyBuy from 'shopify-buy/lib/shopify-polyfilled';
+import ShopifyBuy from 'shopify-buy/polyfilled';
 import UI from './ui';
 import productTemplates from './templates/product';
 
