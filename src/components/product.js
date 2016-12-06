@@ -4,9 +4,9 @@ import Template from '../template';
 import Checkout from './checkout';
 import windowUtils from '../utils/window-utils';
 import formatMoney from '../utils/money';
+import ProductView from '../views/product';
 import ProductUpdater from '../updaters/product';
 
-const pollInterval = 200;
 
 function isPseudoSelector(key) {
   return key.charAt(0) === ':';
@@ -62,6 +62,7 @@ export default class Product extends Component {
    */
   constructor(config, props) {
     super(config, props);
+    this.typeKey = 'product';
     this.defaultVariantId = config.variantId;
     this.cachedImage = null;
     this.childTemplate = new Template(this.config.option.templates, this.config.option.contents, this.config.option.order);
@@ -70,22 +71,7 @@ export default class Product extends Component {
     this.imgStyle = '';
     this.selectedQuantity = 1;
     this.updater = new ProductUpdater(this);
-  }
-
-  /**
-   * get key for configuration object.
-   * @return {String}
-   */
-  get typeKey() {
-    return 'product';
-  }
-
-  /**
-   * get class name for iframe element.
-   * @return {String} iframe class.
-   */
-  get iframeClass() {
-    return this.classes.product[this.options.layout];
+    this.view = new ProductView(this);
   }
 
   /**
@@ -137,14 +123,6 @@ export default class Product extends Component {
     }
 
     return this.model.selectedVariant.imageVariants.filter((imageVariant) => imageVariant.name === 'grande')[0];
-  }
-
-  get shouldResizeX() {
-    return false;
-  }
-
-  get shouldResizeY() {
-    return true;
   }
 
   /**
@@ -249,10 +227,6 @@ export default class Product extends Component {
     return this.model.selectedVariant && this.model.selectedVariant.compareAtPrice ? this.classes.product.loweredPrice : '';
   }
 
-  get wrapperClass() {
-    return `${this.currentImage ? 'has-image' : 'no-image'} ${this.classes.product[this.options.layout]}`;
-  }
-
   /**
    * get events to be bound to DOM.
    * @return {Object}
@@ -273,6 +247,15 @@ export default class Product extends Component {
       [`click ${this.selectors.product.quantityDecrement}`]: this.onQuantityIncrement.bind(this, -1),
       [`blur ${this.selectors.product.quantityInput}`]: this.onQuantityBlur.bind(this),
     }, this.options.DOMEvents);
+  }
+
+  /**
+   * prevent events from bubbling if entire product is being treated as button.
+   */
+  stopPropagation(evt) {
+    if (this.options.isButton) {
+      evt.stopImmediatePropagation();
+    }
   }
 
   /**
@@ -475,22 +458,11 @@ export default class Product extends Component {
       this.createCart().then((cart) => {
         this.cart = cart;
         if (model) {
-          this.render();
+          this.view.render();
         }
         return model;
       })
     ));
-  }
-
-  /**
-   * renders string template using viewData to wrapper element.
-   * Resizes iframe to match image size.
-   */
-  render() {
-    super.render();
-    if (this.iframe) {
-      this.resizeUntilLoaded();
-    }
   }
 
   /**
@@ -521,26 +493,6 @@ export default class Product extends Component {
     });
   }
 
-  wrapTemplate(html) {
-    let ariaLabel;
-    switch (this.options.buttonDestination) {
-    case 'modal':
-      ariaLabel = 'View details';
-      break;
-    case 'cart':
-      ariaLabel = 'Add to cart';
-      break;
-    default:
-      ariaLabel = 'Buy Now';
-    }
-
-    if (this.options.isButton) {
-      return `<div class="${this.wrapperClass} ${this.classes.product.product}"><div tabindex="0" role="button" aria-label="${ariaLabel}" class="${this.classes.product.blockButton}">${html}</div></div>`;
-    } else {
-      return `<div class="${this.wrapperClass} ${this.classes.product.product}">${html}</div>`;
-    }
-  }
-
   /**
    * fetch product data from API.
    * @return {Promise} promise resolving to model data.
@@ -567,36 +519,6 @@ export default class Product extends Component {
       }
       throw new Error('Not Found');
     });
-  }
-
-  /**
-   * check size of image until it is resolved, then set height of iframe.
-   */
-  resizeUntilLoaded() {
-    if (!this.iframe || !this.model.selectedVariantImage) {
-      return;
-    }
-    const img = this.wrapper.getElementsByClassName(this.classes.product.img)[0];
-    let intervals = 0;
-    if (img) {
-      const productResize = setInterval(() => {
-        if (!img.naturalWidth && intervals < 30) {
-          intervals++;
-          return;
-        }
-        this.resize();
-        clearInterval(productResize);
-      }, pollInterval);
-    }
-  }
-
-  /**
-   * prevent events from bubbling if entire product is being treated as button.
-   */
-  stopPropagation(evt) {
-    if (this.options.isButton) {
-      evt.stopImmediatePropagation();
-    }
   }
 
   onButtonClick(evt, target) {
@@ -678,7 +600,7 @@ export default class Product extends Component {
     }
     this.selectedQuantity = quantity;
     this._userEvent('updateQuantity');
-    this.render();
+    this.view.render();
   }
 
   /**
@@ -693,7 +615,7 @@ export default class Product extends Component {
     if (this.variantExists) {
       this.cachedImage = this.model.selectedVariantImage;
     }
-    this.render();
+    this.view.render();
     this._userEvent('updateVariant');
     return updatedOption;
   }

@@ -79,18 +79,18 @@ describe('Modal class', () => {
 
   describe('close', () => {
     it('sets isVisible to false', () => {
-      modal.iframe = {
+      modal.view.iframe = {
         removeClass: sinon.spy(),
         parent: document.createElement('div'),
         document: {
           body: document.createElement('body'),
         }
       }
-      modal.wrapper = document.createElement('div');
+      modal.view.wrapper = document.createElement('div');
       modal.close();
-      assert.notOk(modal.isVisible);
-      assert.calledWith(modal.iframe.removeClass, 'is-active');
-      assert(modal.iframe.document.body.className.length < 1);
+      assert.notOk(modal.view.isVisible);
+      assert.calledWith(modal.view.iframe.removeClass, 'is-active');
+      assert(modal.view.iframe.document.body.className.length < 1);
     });
   });
 
@@ -98,11 +98,11 @@ describe('Modal class', () => {
     beforeEach(() => {
       modal.model = fakeProduct;
       modal.isVisible = true;
-      return modal.setupView().then(() => modal.render());
+      return modal.view.init().then(() => modal.view.render());
     });
 
     it('makes modal visible', () => {
-      assert.match(modal.iframe.parent.className, 'is-active');
+      assert.match(modal.view.iframe.parent.className, 'is-active');
     });
   });
 

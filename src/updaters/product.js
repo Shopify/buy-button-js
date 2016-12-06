@@ -41,7 +41,7 @@ export default class ProductUpdater extends Updater {
       this.component.iframe.addClass(this.component.classes.product[layout]);
       this.component.resizeUntilLoaded();
     }
-    [...this.component.wrapper.querySelectorAll('img')].forEach((img) => {
+    [...this.component.view.wrapper.querySelectorAll('img')].forEach((img) => {
       img.addEventListener('load', () => {
         this.component.resizeUntilLoaded();
       });

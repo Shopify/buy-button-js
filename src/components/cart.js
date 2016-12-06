@@ -4,7 +4,7 @@ import CartToggle from './toggle';
 import Template from '../template';
 import Checkout from './checkout';
 import formatMoney from '../utils/money';
-import {addClassToElement} from '../utils/element-class';
+import CartView from '../views/cart';
 import CartUpdater from '../updaters/cart';
 
 const NO_IMG_URL = '//sdks.shopifycdn.com/buy-button/latest/no-image.jpg';
@@ -25,7 +25,6 @@ export default class Cart extends Component {
     this.addVariantToCart = this.addVariantToCart.bind(this);
     this.childTemplate = new Template(this.config.lineItem.templates, this.config.lineItem.contents, this.config.lineItem.order);
     this.node = config.node || document.body.appendChild(document.createElement('div'));
-    this.node.className = 'shopify-buy-cart-wrapper';
     this.isVisible = this.options.startOpen;
     this.checkout = new Checkout(this.config);
     const toggles = this.globalConfig.toggles || [{
@@ -35,6 +34,7 @@ export default class Cart extends Component {
       return new CartToggle(merge({}, config, toggle), Object.assign({}, this.props, {cart: this}));
     });
     this.updater = new CartUpdater(this);
+    this.view = new CartView(this);
   }
 
   createToggles(config) {
@@ -132,10 +132,6 @@ export default class Cart extends Component {
     return this.props.client.fetchRecentCart();
   }
 
-  wrapTemplate(html) {
-    return `<div class="${this.classes.cart.cart}">${html}</div>`;
-  }
-
   /**
    * initializes component by creating model and rendering view.
    * Creates and initalizes toggle component.
@@ -151,23 +147,6 @@ export default class Cart extends Component {
       }).then(() => this);
   }
 
-  /**
-   * renders string template using viewData to wrapper element.
-   * Sets iframe class based on visibility.
-   */
-  render() {
-    super.render();
-    if (!this.iframe) {
-      return;
-    }
-    if (this.isVisible) {
-      this.iframe.addClass('is-active');
-      this.iframe.addClass('is-initialized');
-    } else {
-      this.iframe.removeClass('is-active');
-    }
-  }
-
   destroy() {
     super.destroy();
     this.toggles.forEach((toggle) => toggle.destroy());
@@ -178,7 +157,7 @@ export default class Cart extends Component {
    */
   close() {
     this.isVisible = false;
-    this.render();
+    this.view.render();
   }
 
   /**
@@ -186,8 +165,8 @@ export default class Cart extends Component {
    */
   open() {
     this.isVisible = true;
-    this.render();
-    this.setFocus();
+    this.view.render();
+    this.view.setFocus();
   }
 
   /**
@@ -196,9 +175,9 @@ export default class Cart extends Component {
    */
   toggleVisibility(visible) {
     this.isVisible = visible || !this.isVisible;
-    this.render();
+    this.view.render();
     if (this.isVisible) {
-      this.setFocus();
+      this.view.setFocus();
     }
   }
 
@@ -235,15 +214,11 @@ export default class Cart extends Component {
     this._userEvent('updateItemQuantity');
     return this.model.updateLineItem(id, qty).then((cart) => {
       this.model = cart;
-      this.toggles.forEach((toggle) => toggle.render());
-      if (!this.iframe) {
-        this.render();
-        return cart;
-      }
+      this.toggles.forEach((toggle) => toggle.view.render());
       if (qty > 0) {
-        this.render();
+        this.view.render();
       } else {
-        this._animateRemoveItem(id);
+        this.view.animateRemoveNode(id);
       }
       return cart;
     });
@@ -260,9 +235,9 @@ export default class Cart extends Component {
     }
     this.open();
     return this.model.createLineItemsFromVariants({variant, quantity}).then((cart) => {
-      this.render();
-      this.toggles.forEach((toggle) => toggle.render());
-      this.setFocus();
+      this.view.render();
+      this.toggles.forEach((toggle) => toggle.view.render());
+      this.view.setFocus();
       return cart;
     });
   }
@@ -272,8 +247,8 @@ export default class Cart extends Component {
    */
   empty() {
     return this.model.clearLineItems().then(() => {
-      this.render();
-      this.toggles.forEach((toggle) => toggle.render());
+      this.view.render();
+      this.toggles.forEach((toggle) => toggle.view.render());
       return;
     });
   }
@@ -291,25 +266,5 @@ export default class Cart extends Component {
       prevQuantity: item.quantity,
       quantity: parseFloat(quantity),
     };
-  }
-
-  _animateRemoveItem(id) {
-    const el = this.document.getElementById(id);
-    addClassToElement('is-hidden', el);
-    if (this.props.browserFeatures.animation) {
-      el.addEventListener('animationend', () => {
-        if (!el.parentNode) {
-          return;
-        }
-        this._removeItem(el);
-      });
-    } else {
-      this._removeItem(el);
-    }
-  }
-
-  _removeItem(el) {
-    el.parentNode.removeChild(el);
-    this.render();
   }
 }

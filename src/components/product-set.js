@@ -3,8 +3,7 @@ import Component from '../component';
 import Product from './product';
 import Template from '../template';
 import ProductSetUpdater from '../updaters/product-set';
-
-const pollInterval = 200;
+import ProductSetView from '../views/product-set';
 
 function isArray(arg) {
   return Object.prototype.toString.call(arg) === '[object Array]';
@@ -24,29 +23,17 @@ export default class ProductSet extends Component {
    */
   constructor(config, props) {
     super(config, props);
+    this.typeKey = 'productSet';
     this.products = [];
     this.cart = null;
     this.page = 1;
     this.nextModel = {products: []};
-    this.height = 0;
-    this.resizeCompleted = false;
     this.updater = new ProductSetUpdater(this);
-  }
-
-  /**
-   * get key for configuration object.
-   * @return {String}
-   */
-  get typeKey() {
-    return 'productSet';
+    this.view = new ProductSetView(this);
   }
 
   get nextButtonClass() {
     return this.nextModel.products.length ? 'is-active' : '';
-  }
-
-  get shouldResizeY() {
-    return true;
   }
 
   /**
@@ -169,10 +156,6 @@ export default class ProductSet extends Component {
     /* eslint-enable camelcase */
   }
 
-  wrapTemplate(html) {
-    return `<div class="${this.classes.productSet.productSet}">${html}</div>`;
-  }
-
   /**
    * call sdkFetch and set model.products to products array.
    * @throw 'Not Found' if model not returned.
@@ -196,8 +179,8 @@ export default class ProductSet extends Component {
   showPagination() {
     return this.sdkFetch({page: this.page + 1}).then((data) => {
       this.nextModel = {products: data};
-      this.renderChild(this.classes.productSet.paginationButton, this.paginationTemplate);
-      this.resize();
+      this.view.renderChild(this.classes.productSet.paginationButton, this.paginationTemplate);
+      this.view.resize();
       return;
     });
   }
@@ -213,32 +196,6 @@ export default class ProductSet extends Component {
   }
 
   /**
-   * resize iframe until it is tall enough to contain all products.
-   */
-  resizeUntilFits() {
-    if (!this.iframe || this.resizeCompleted) {
-      return;
-    }
-    const maxResizes = this.products.length;
-    let resizes = 0;
-
-    this.height = this.outerHeight;
-    this.resize();
-    const productSetResize = setInterval(() => {
-      const currentHeight = this.outerHeight;
-      if (parseInt(currentHeight, 10) > parseInt(this.height, 10)) {
-        resizes++;
-        this.height = currentHeight;
-        this.resize(currentHeight);
-      }
-      if (resizes > maxResizes) {
-        this.resizeCompleted = true;
-        clearInterval(productSetResize);
-      }
-    }, pollInterval);
-  }
-
-  /**
    * render product components into productSet container. Show pagination button if necessary.
    * @return {Promise} promise resolving to instance.
    */
@@ -247,7 +204,7 @@ export default class ProductSet extends Component {
       return Promise.resolve();
     }
     const productConfig = Object.assign({}, this.globalConfig, {
-      node: this.document.querySelector(`.${this.classes.productSet.products}`),
+      node: this.view.document.querySelector(`.${this.classes.productSet.products}`),
       options: merge({}, this.config, {
         product: {
           iframe: false,
@@ -265,10 +222,9 @@ export default class ProductSet extends Component {
     });
 
     return Promise.all(promises).then(() => {
-      this.resizeUntilFits();
+      this.view.resizeUntilFits();
       this.showPagination();
       return this;
     });
   }
-
 }

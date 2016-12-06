@@ -1,22 +1,19 @@
-import morphdom from 'morphdom';
 import merge from './utils/merge';
 import isFunction from './utils/is-function';
 import componentDefaults from './defaults/components';
 import logNotFound from './utils/log-not-found';
-import Iframe from './iframe';
-import Template from './template';
-import styles from './styles/embeds/all';
 import logger from './utils/logger';
 import defaultMoneyFormat from './defaults/money-format';
+import View from './view';
 import Updater from './updater';
 
-const delegateEventSplitter = /^(\S+)\s*(.*)$/;
-const ESC_KEY = 27;
+function moneyFormat(format = defaultMoneyFormat) {
+  return decodeURIComponent(format);
+}
 
 /**
  * Manages rendering, lifecycle, and data fetching of a cmoponent.
  */
-
 export default class Component {
 
   /**
@@ -30,7 +27,7 @@ export default class Component {
     this.node = config.node;
     this.globalConfig = {
       debug: config.debug,
-      moneyFormat: decodeURIComponent(config.moneyFormat) || defaultMoneyFormat,
+      moneyFormat: moneyFormat(config.moneyFormat),
       cartNode: config.cartNode,
       modalNode: config.modalNode,
       toggles: config.toggles,
@@ -38,16 +35,8 @@ export default class Component {
     this.config = merge({}, componentDefaults, config.options || {});
     this.props = props;
     this.model = {};
-    this.template = new Template(this.options.templates, this.options.contents, this.options.order);
     this.updater = new Updater(this);
-  }
-
-  /**
-   * get reference to client from props.
-   * @return {Object} client instance
-   */
-  get client() {
-    return this.props.client;
+    this.view = new View(this);
   }
 
   /**
@@ -89,17 +78,6 @@ export default class Component {
   }
 
   /**
-   * get styles for component and any components it contains as determined by manifest.
-   * @return {Object} key-value pairs of CSS styles.
-   */
-  get styles() {
-    return this.options.manifest.filter((component) => this.config[component].styles).reduce((hash, component) => {
-      hash[component] = this.config[component].styles;
-      return hash;
-    }, {});
-  }
-
-  /**
    * get classes for component and any components it contains as determined by manifest.
    * @return {Object} class keys and names.
    */
@@ -135,14 +113,6 @@ export default class Component {
   }
 
   /**
-   * get reference to document object.
-   * @return {Objcet} instance of Document.
-   */
-  get document() {
-    return this.iframe ? this.iframe.document : window.document;
-  }
-
-  /**
    * get data to be passed to view.
    * @return {Object} viewData object.
    */
@@ -171,42 +141,16 @@ export default class Component {
   }
 
   /**
-   * get class name for iframe element. Defined in subclass.
-   * @return {String}
-   */
-  get iframeClass() {
-    return '';
-  }
-
-  /**
-   * determines if iframe will require horizontal resizing to contain its children.
-   * May be defined in subclass.
-   * @return {Boolean}
-   */
-  get shouldResizeX() {
-    return false;
-  }
-
-  /**
-   * determines if iframe will require vertical resizing to contain its children.
-   * May be defined in subclass.
-   * @return {Boolean}
-   */
-  get shouldResizeY() {
-    return false;
-  }
-
-  /**
    * initializes component by creating model and rendering view.
    * @param {Object} [data] - data to initialize model with.
    * @return {Promise} promise resolving to instance.
    */
   init(data) {
     this._userEvent('beforeInit');
-    return this.setupView().then(() => this.setupModel(data)).then((model) => {
+    return this.view.init().then(() => this.setupModel(data)).then((model) => {
       this.model = model;
-      this.render();
-      this.delegateEvents();
+      this.view.render();
+      this.view.delegateEvents();
       if (this.iframe) {
         this.iframe.el.onload = () => {
           this.iframe.el.onload = null;
@@ -228,36 +172,6 @@ export default class Component {
   }
 
   /**
-   * instantiates and configures Iframe if necessary.
-   * @return {Promise} resolves when iframe is loaded.
-   */
-  setupView() {
-    if (this.iframe) {
-      if (this.iframe.document.body.contains(this.wrapper)) {
-        return Promise.resolve();
-      }
-      this.iframe.parent.removeChild(this.iframe.el);
-    }
-    if (this.options.iframe) {
-      this.iframe = new Iframe(this.node, {
-        classes: this.classes,
-        customStyles: this.styles,
-        stylesheet: styles[this.typeKey],
-        browserFeatures: this.props.browserFeatures,
-        googleFonts: this.googleFonts,
-        name: this.name,
-        width: this.options.layout === 'vertical' ? this.options.width : null,
-      });
-      this.node.className += ` shopify-buy-frame shopify-buy-frame--${this.typeKey}`;
-      this.iframe.addClass(this.iframeClass);
-      return this.iframe.load();
-    } else {
-      this.iframe = null;
-      return Promise.resolve();
-    }
-  }
-
-  /**
    * fetches data if necessary
    * @param {Object} [data] - data to initialize model with.
    */
@@ -266,75 +180,6 @@ export default class Component {
       return Promise.resolve(data);
     } else {
       return this.fetchData();
-    }
-  }
-
-  /**
-   * renders string template using viewData to wrapper element.
-   */
-  render() {
-    this._userEvent('beforeRender');
-    const html = this.template.render({data: this.viewData}, (data) => {
-      return this.wrapTemplate(data);
-    });
-    if (!this.wrapper || (this.iframe && !this.document.body.contains(this.wrapper))) {
-      this.wrapper = this._createWrapper();
-    }
-    this.updateNode(this.wrapper, html);
-    this.resize();
-    this._userEvent('afterRender');
-  }
-
-  /**
-   * delegates DOM events to event listeners.
-   */
-  delegateEvents() {
-    this._userEvent('beforeDelegateEvents');
-    this._closeComponentsOnEsc();
-    Object.keys(this.DOMEvents).forEach((key) => {
-      const [, eventName, selectorString] = key.match(delegateEventSplitter);
-      if (selectorString) {
-        this._on(eventName, selectorString, (evt, target) => {
-          this.DOMEvents[key].call(this, evt, target);
-        });
-      } else {
-        this.wrapper.addEventListener('click', (evt) => {
-          this.DOMEvents[key].call(this, evt);
-        });
-      }
-    });
-    this._userEvent('afterDelegateEvents');
-  }
-
-  /**
-   * get total height of iframe contents
-   * @return {String} value in pixels.
-   */
-  get outerHeight() {
-    const style = window.getComputedStyle(this.wrapper, '');
-    if (!style) {
-      return `${this.wrapper.clientHeight}px`;
-    }
-    let height = style.getPropertyValue('height');
-    if (!height || height === '0px' || height === 'auto') {
-      const clientHeight = this.wrapper.clientHeight;
-      height = style.getPropertyValue('height') || `${clientHeight}px`;
-    }
-    return height;
-  }
-
-  /**
-   * resize iframe if necessary.
-   */
-  resize() {
-    if (!this.iframe || !this.wrapper) {
-      return;
-    }
-    if (this.shouldResizeX) {
-      this._resizeX();
-    }
-    if (this.shouldResizeY) {
-      this._resizeY();
     }
   }
 
@@ -350,83 +195,7 @@ export default class Component {
    * remove node from DOM.
    */
   destroy() {
-    this.node.parentNode.removeChild(this.node);
-  }
-
-  /**
-   * update the contents of a DOM node with template
-   * @param {String} className - class name to select node.
-   * @param {Object} template - template to be rendered.
-   */
-  renderChild(className, template) {
-    const selector = `.${className.split(' ').join('.')}`;
-    const node = this.wrapper.querySelector(selector);
-    const html = template.render({data: this.viewData});
-    this.updateNode(node, html);
-  }
-
-  /**
-   * call morpdom on a node with new HTML
-   * @param {Object} node - DOM node to be updated.
-   * @param {String} html - HTML to update DOM node with.
-   */
-  updateNode(node, html) {
-    const div = document.createElement('div');
-    div.innerHTML = html;
-    morphdom(node, div.firstElementChild);
-  }
-
-  /**
-   * wrap HTML string in containing elements.
-   * May be defined in subclass.
-   * @param {String} html - HTML string.
-   * @return {String} wrapped string.
-   */
-  wrapTemplate(html) {
-    return `<div class="${this.classes[this.typeKey][this.typeKey]}">${html}</div>`;
-  }
-
-  /**
-   * Focus first focusable element in wrapper.
-   */
-  setFocus() {
-    const focusable = this.wrapper.querySelectorAll('a, button, input, select')[0];
-    if (focusable) {
-      focusable.focus();
-    }
-  }
-
-  _resizeX() {
-    this.iframe.el.style.width = `${this.document.body.clientWidth}px`;
-  }
-
-  _resizeY(value) {
-    const newHeight = value || this.outerHeight;
-    this.iframe.el.style.height = newHeight;
-  }
-
-  _createWrapper() {
-    const wrapper = document.createElement('div');
-    wrapper.className = this.classes[this.typeKey][this.typeKey];
-    if (this.iframe) {
-      this.document.body.appendChild(wrapper);
-    } else {
-      this.node.appendChild(wrapper);
-    }
-    return wrapper;
-  }
-
-  _closeComponentsOnEsc() {
-    if (!this.iframe) {
-      return;
-    }
-    this.document.addEventListener('keydown', (evt) => {
-      if (evt.keyCode !== ESC_KEY) {
-        return;
-      }
-      this.props.closeModal();
-      this.props.closeCart();
-    });
+    this.view.destroy();
   }
 
   _userEvent(methodName) {
@@ -436,23 +205,5 @@ export default class Component {
     if (isFunction(this.events[methodName])) {
       this.events[methodName].call(this, this);
     }
-  }
-
-  _on(eventName, selector, fn) {
-    this.wrapper.addEventListener(eventName, (evt) => {
-      const possibleTargets = Array.prototype.slice.call(this.wrapper.querySelectorAll(selector));
-      const target = evt.target;
-
-      possibleTargets.forEach((possibleTarget) => {
-        let el = target;
-        while (el && el !== this.wrapper) {
-          if (el === possibleTarget) {
-            return fn.call(possibleTarget, evt, possibleTarget);
-          }
-          el = el.parentNode;
-        }
-        return el;
-      });
-    }, eventName === 'blur');
   }
 }

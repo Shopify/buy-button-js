@@ -284,9 +284,9 @@ export default class UI {
   _bindResize() {
     throttle('resize', 'safeResize');
     window.addEventListener('safeResize', () => {
-      this.components.collection.forEach((collection) => collection.resize());
-      this.components.productSet.forEach((set) => set.resize());
-      this.components.product.forEach((product) => product.resize());
+      this.components.collection.forEach((collection) => collection.view.resize());
+      this.components.productSet.forEach((set) => set.view.resize());
+      this.components.product.forEach((product) => product.view.resize());
     });
   }
 

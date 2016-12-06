@@ -67,7 +67,7 @@ describe('Product class', () => {
     it('calls createCart', () => {
       const createCart = sinon.stub(product.props, 'createCart').returns(Promise.resolve('test'));
       const superInit = sinon.stub(Component.prototype, 'init').returns(Promise.resolve());
-      const render = sinon.stub(product, 'render');
+      const render = sinon.stub(product.view, 'render');
 
       return product.init('test').then(() => {
         assert.equal(product.cart, 'test');
@@ -326,7 +326,7 @@ describe('Product class', () => {
 
       it('calls fetchProduct with product id', () => {
         idProduct.sdkFetch();
-        assert.calledWith(idProduct.client.fetchProduct, 1234);
+        assert.calledWith(idProduct.props.client.fetchProduct, 1234);
       });
     });
 
@@ -346,7 +346,7 @@ describe('Product class', () => {
 
       it('calls fetchQueryProducts with product handle', () => {
         handleProduct.sdkFetch()
-        assert.calledWith(handleProduct.client.fetchQueryProducts, {handle: 'hat'});
+        assert.calledWith(handleProduct.props.client.fetchQueryProducts, {handle: 'hat'});
       });
     });
   });
@@ -457,7 +457,7 @@ describe('Product class', () => {
 
     describe('when isButton is false', () => {
       it('calls super', () => {
-        const string = product.wrapTemplate('test');
+        const string = product.view.wrapTemplate('test');
         assert.equal(string, '<div class="has-image shopify-buy__layout-vertical shopify-buy__product">test</div>');
       });
     });
@@ -465,7 +465,7 @@ describe('Product class', () => {
     describe('when isButton is true', () => {
       it('wraps html in a button', () => {
         product.config.product.isButton = true;
-        const string = product.wrapTemplate('test');
+        const string = product.view.wrapTemplate('test');
         assert.equal(string, '<div class="has-image shopify-buy__layout-vertical shopify-buy__product"><div tabindex="0" role="button" aria-label="Add to cart" class="shopify-buy__btn--parent">test</div></div>');
       });
     });

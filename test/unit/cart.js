@@ -1,7 +1,11 @@
 import Cart from '../../src/components/cart';
+import CartToggle from '../../src/components/toggle';
 import Component from '../../src/component';
+import Checkout from '../../src/components/checkout';
+import Template from '../../src/template';
 import defaults from '../../src/defaults/components';
-import Updater from '../../src/updater';
+import CartUpdater from '../../src/updaters/cart';
+import CartView from '../../src/views/cart';
 
 let cart;
 let fakeClient = {
@@ -28,10 +32,54 @@ describe('Cart class', () => {
   });
   afterEach(() => {
     cart.destroy();
-    cart = null;
   });
 
-  describe('fetchData', () => {
+  describe('constructor', () => {
+    it('instantiates child template, checkout, toggles, updater, view', () => {
+      assert.instanceOf(cart.childTemplate, Template);
+      assert.instanceOf(cart.checkout, Checkout);
+      assert.instanceOf(cart.updater, CartUpdater);
+      assert.instanceOf(cart.view, CartView);
+      assert.instanceOf(cart.toggles[0], CartToggle);
+    });
+  });
+
+  describe('createToggles()', () => {
+    it('creates toggle instances for passed nodes', () => {
+      cart.model.lineItems = [{}]
+      const config = {
+        toggles: [{
+          node: document.body.appendChild(document.createElement('div'))
+        }]
+      }
+      return cart.createToggles(config).then(() => {
+        assert.equal(cart.toggles.length, 2);
+      });
+    });
+  });
+
+  describe('get lineItemsHtml', () => {
+    it('returns an html string', () => {
+      cart.model = {
+        lineItems: [
+          {
+            id: 123,
+            title: 'test',
+            variant_title: 'test2',
+            line_price: 20,
+            quantity: 1
+          }
+        ]
+      }
+
+      let render = sinon.spy(cart.childTemplate, 'render');
+
+      assert.include(cart.lineItemsHtml, 'data-line-item-id="123"');
+      assert.calledOnce(render);
+    });
+  });
+
+  describe('fetchData()', () => {
     it('calls fetchRecentCart on client', () => {
       let fetchCart = sinon.stub(cart.props.client, 'fetchRecentCart').returns(Promise.resolve({id: 1234}));
 
@@ -43,7 +91,7 @@ describe('Cart class', () => {
     });
   });
 
-  describe('setQuantity', () => {
+  describe('setQuantity()', () => {
     const node = {
       getAttribute: () => 1234
     };
@@ -64,7 +112,7 @@ describe('Cart class', () => {
     });
   });
 
-  describe('updateItem', () => {
+  describe('updateItem()', () => {
     let updateLineItemStub;
 
     beforeEach(() => {
@@ -72,104 +120,33 @@ describe('Cart class', () => {
         updateLineItem: () => {}
       }
       updateLineItemStub = sinon.stub(cart.model, 'updateLineItem').returns(Promise.resolve({test: 'lol'}))
-      cart.render = sinon.spy();
-      cart.toggles[0].render = sinon.spy();
+      cart.view.render = sinon.spy();
+      cart.toggles[0].view.render = sinon.spy();
     });
 
     it('calls updateLineItem', () => {
       return cart.updateItem(123, 3).then(() => {
         assert.calledWith(updateLineItemStub, 123, 3);
-        assert.calledOnce(cart.render);
-        assert.calledOnce(cart.toggles[0].render);
+        assert.calledOnce(cart.view.render);
+        assert.calledOnce(cart.toggles[0].view.render);
         assert.deepEqual(cart.model, {test: 'lol'});
       });
     });
   });
 
 
-  describe('_animateRemoveItem', () => {
-    let node;
-
-    beforeEach(() => {
-      node = cart.document.createElement('div');
-      node.setAttribute('id', 123);
-      cart.document.body.appendChild(node);
-      node.addEventListener = sinon.spy();
-    });
-
-    afterEach(() => {
-      cart.document.body.removeChild(node);
-    });
-
-    it('calls updateLineItem', () => {
-      cart._animateRemoveItem(123);
-      assert.calledWith(node.addEventListener, 'animationend');
-    });
-  });
-
-  describe('get lineItemsHtml', () => {
-    it('returns an html string', () => {
-      cart.model = {
-        lineItems: [
-          {
-            id: 123,
-            title: 'test',
-            variant_title: 'test2',
-            line_price: 20,
-            quantity: 1,
-            imageVariants: []
-          }
-        ]
-      }
-
-      let render = sinon.spy(cart.childTemplate, 'render');
-
-      assert.include(cart.lineItemsHtml, 'data-line-item-id="123"');
-      assert.calledOnce(render);
-    });
-  });
-
   describe('addVariantToCart', () => {
     it('calls model createLineItemsFromVariants', () => {
-      cart.setFocus = sinon.spy();
+      cart.view.setFocus = sinon.spy();
       cart.model.createLineItemsFromVariants= sinon.stub().returns(Promise.resolve());
-      let render = sinon.stub(cart, 'render');
-      let toggleRender = sinon.stub(cart.toggles[0], 'render');
+      let render = sinon.stub(cart.view, 'render');
+      let toggleRender = sinon.stub(cart.toggles[0].view, 'render');
 
       return cart.addVariantToCart({id: 123}).then(() => {
         assert.calledWith(cart.model.createLineItemsFromVariants, {variant: {id: 123 }, quantity: 1});
         assert.calledOnce(toggleRender);
-        assert.called(cart.setFocus);
+        assert.called(cart.view.setFocus);
       });
-    });
-  });
-
-  describe('updateConfig', () => {
-    const newConfig = {
-      options: {
-        styles: {
-          button: {
-            'color': 'red',
-          },
-        },
-      },
-    }
-
-    let superSpy;
-
-    beforeEach(() => {
-      superSpy = sinon.stub(Updater.prototype, 'updateConfig');
-      cart.toggles[0].updateConfig = sinon.spy();
-    });
-
-    afterEach(() => {
-      superSpy.restore();
-    });
-
-    it('calls updateConfig on toggle', () => {
-      cart.updateConfig(newConfig);
-      assert.calledWith(cart.toggles[0].updateConfig, newConfig);
-      assert.calledWith(superSpy, newConfig);
     });
   });
 
@@ -187,13 +164,13 @@ describe('Cart class', () => {
       cart.model = {
         clearLineItems: sinon.stub().returns(Promise.resolve())
       }
-      cart.render = sinon.spy();
-      cart.toggles[0].render = sinon.spy();
+      cart.view.render = sinon.spy();
+      cart.toggles[0].view.render = sinon.spy();
 
       return cart.empty().then(() => {
         assert.calledOnce(cart.model.clearLineItems);
-        assert.calledOnce(cart.render);
-        assert.calledOnce(cart.toggles[0].render);
+        assert.calledOnce(cart.view.render);
+        assert.calledOnce(cart.toggles[0].view.render);
       });
     });
   });
