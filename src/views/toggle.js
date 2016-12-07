@@ -19,6 +19,10 @@ export default class ToggleView extends View {
     return this.component.options.sticky ? 'is-sticky' : 'is-inline';
   }
 
+  get outerHeight() {
+    return `${this.wrapper.clientHeight}px`;
+  }
+
   render() {
     if (!this.iframe) {
       return;
