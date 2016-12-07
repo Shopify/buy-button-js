@@ -28,10 +28,6 @@ export default class View {
       name: this.component.name,
       width: this.component.options.layout === 'vertical' ? this.component.options.width : null,
     });
-    this.iframe.el.onload = () => {
-      this.iframe.el.onload = null;
-      this.component.init();
-    };
     this.component.node.className += ` shopify-buy-frame shopify-buy-frame--${this.component.typeKey}`;
     this.iframe.addClass(this.className);
     return this.iframe.load();
@@ -68,6 +64,19 @@ export default class View {
         });
       }
     });
+    if (this.iframe) {
+      this.iframe.el.onload = () => {
+        this.iframe.el.onload = null;
+        this.reloadIframe();
+      };
+    }
+  }
+
+  reloadIframe() {
+    this.node.removeChild(this.iframe.el);
+    this.wrapper = null;
+    this.iframe = null;
+    this.component.init();
   }
 
   append(wrapper) {

@@ -149,9 +149,7 @@ export default class Component {
     this._userEvent('beforeInit');
     return this.view.init().then(() => this.setupModel(data)).then((model) => {
       this.model = model;
-      this._userEvent('beforeRender');
       this.view.render();
-      this._userEvent('afterRender');
       this.view.delegateEvents();
       this._userEvent('afterInit');
       return this;
