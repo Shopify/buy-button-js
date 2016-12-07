@@ -243,26 +243,6 @@ describe('View class', () => {
     });
   });
 
-  describe('get styles()', () => {
-    it('returns styles for each component in manifest', () => {
-      let component = new Component({
-        id: 1234,
-        options: {
-          product: {
-            styles: {
-              button: {
-                color: 'red',
-              }
-            }
-          }
-        }
-      });
-      component.typeKey = 'product';
-      let view = new View(component);
-      assert.deepEqual(view.styles, {product: {button: {color: 'red'}}});
-    });
-  });
-
   describe('animateRemoveNode()', () => {
     let node;
     let view;
