@@ -21,7 +21,7 @@ export default class View {
     }
     this.iframe = new Iframe(this.component.node, {
       classes: this.component.classes,
-      customStyles: this.styles,
+      customStyles: this.component.styles,
       stylesheet: styles[this.component.typeKey],
       browserFeatures: this.component.props.browserFeatures,
       googleFonts: this.component.googleFonts,
@@ -186,17 +186,6 @@ export default class View {
    */
   get shouldResizeY() {
     return false;
-  }
-
-  /**
-   * get styles for component and any components it contains as determined by manifest.
-   * @return {Object} key-value pairs of CSS styles.
-   */
-  get styles() {
-    return this.component.options.manifest.filter((component) => this.component.config[component].styles).reduce((hash, component) => {
-      hash[component] = this.component.config[component].styles;
-      return hash;
-    }, {});
   }
 
   /**

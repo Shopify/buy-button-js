@@ -18,32 +18,32 @@ export default class ProductUpdater extends Updater {
         layout = config.options.product.layout;
       }
 
-      if (layout === 'vertical' && this.component.iframe.width === MAX_WIDTH) {
-        this.component.iframe.setWidth(this.component.options.width);
+      if (layout === 'vertical' && this.component.view.iframe.width === MAX_WIDTH) {
+        this.component.view.iframe.setWidth(this.component.options.width);
       }
 
-      if (layout === 'horizontal' && this.component.iframe.width && this.component.iframe.width !== MAX_WIDTH) {
-        this.component.iframe.setWidth(MAX_WIDTH);
+      if (layout === 'horizontal' && this.component.view.iframe.width && this.component.iframe.width !== MAX_WIDTH) {
+        this.component.view.iframe.setWidth(MAX_WIDTH);
       }
 
       if (config.options.product.width && layout === 'vertical') {
-        this.component.iframe.setWidth(config.options.product.width);
+        this.component.view.iframe.setWidth(config.options.product.width);
       }
 
       if (config.options.product.layout) {
-        this.component.iframe.el.style.width = '100%';
+        this.component.view.iframe.el.style.width = '100%';
       }
     }
 
-    if (this.component.iframe) {
-      this.component.iframe.removeClass(this.component.classes.product.vertical);
-      this.component.iframe.removeClass(this.component.classes.product.horizontal);
-      this.component.iframe.addClass(this.component.classes.product[layout]);
-      this.component.resizeUntilLoaded();
+    if (this.component.view.iframe) {
+      this.component.view.iframe.removeClass(this.component.classes.product.vertical);
+      this.component.view.iframe.removeClass(this.component.classes.product.horizontal);
+      this.component.view.iframe.addClass(this.component.classes.product[layout]);
+      this.component.view.resizeUntilLoaded();
     }
     [...this.component.view.wrapper.querySelectorAll('img')].forEach((img) => {
       img.addEventListener('load', () => {
-        this.component.resizeUntilLoaded();
+        this.component.view.resizeUntilLoaded();
       });
     });
     super.updateConfig(config);
