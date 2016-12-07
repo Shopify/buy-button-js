@@ -28,6 +28,10 @@ export default class View {
       name: this.component.name,
       width: this.component.options.layout === 'vertical' ? this.component.options.width : null,
     });
+    this.iframe.el.onload = () => {
+      this.iframe.el.onload = null;
+      this.component.init();
+    };
     this.component.node.className += ` shopify-buy-frame shopify-buy-frame--${this.component.typeKey}`;
     this.iframe.addClass(this.className);
     return this.iframe.load();

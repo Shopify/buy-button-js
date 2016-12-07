@@ -149,14 +149,10 @@ export default class Component {
     this._userEvent('beforeInit');
     return this.view.init().then(() => this.setupModel(data)).then((model) => {
       this.model = model;
+      this._userEvent('beforeRender');
       this.view.render();
+      this._userEvent('afterRender');
       this.view.delegateEvents();
-      if (this.iframe) {
-        this.iframe.el.onload = () => {
-          this.iframe.el.onload = null;
-          this.init();
-        };
-      }
       this._userEvent('afterInit');
       return this;
     })
