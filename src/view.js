@@ -141,7 +141,7 @@ export default class View {
     }
     let height = style.getPropertyValue('height');
     if (!height || height === '0px' || height === 'auto') {
-      const clientHeight = this.component.clientHeight;
+      const clientHeight = this.wrapper.clientHeight;
       height = style.getPropertyValue('height') || `${clientHeight}px`;
     }
     return height;
