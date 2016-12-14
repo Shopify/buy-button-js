@@ -103,6 +103,17 @@ export default class Component {
   }
 
   /**
+   * get styles for component and any components it contains as determined by manifest.
+   * @return {Object} key-value pairs of CSS styles.
+   */
+  get styles() {
+    return this.options.manifest.filter((component) => this.config[component].styles).reduce((hash, component) => {
+      hash[component] = this.config[component].styles;
+      return hash;
+    }, {});
+  }
+
+  /**
    * get google fonts for component and any components it contains as determined by manifest.
    * @return {Array} array of names of fonts to be loaded.
    */
@@ -151,12 +162,6 @@ export default class Component {
       this.model = model;
       this.view.render();
       this.view.delegateEvents();
-      if (this.iframe) {
-        this.iframe.el.onload = () => {
-          this.iframe.el.onload = null;
-          this.init();
-        };
-      }
       this._userEvent('afterInit');
       return this;
     })

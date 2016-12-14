@@ -5,6 +5,10 @@ export function addClassToElement(className, element) {
   if (element.classList) {
     element.classList.add(className);
   } else {
+    const classes = element.className.split(' ');
+    if (classes.indexOf(className) > -1) {
+      return;
+    }
     element.setAttribute('class', `${element.className} ${className}`);
   }
 }

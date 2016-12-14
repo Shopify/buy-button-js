@@ -21,7 +21,7 @@ export default class View {
     }
     this.iframe = new Iframe(this.component.node, {
       classes: this.component.classes,
-      customStyles: this.styles,
+      customStyles: this.component.styles,
       stylesheet: styles[this.component.typeKey],
       browserFeatures: this.component.props.browserFeatures,
       googleFonts: this.component.googleFonts,
@@ -64,6 +64,19 @@ export default class View {
         });
       }
     });
+    if (this.iframe) {
+      this.iframe.el.onload = () => {
+        this.iframe.el.onload = null;
+        this.reloadIframe();
+      };
+    }
+  }
+
+  reloadIframe() {
+    this.node.removeChild(this.iframe.el);
+    this.wrapper = null;
+    this.iframe = null;
+    this.component.init();
   }
 
   append(wrapper) {
@@ -137,7 +150,7 @@ export default class View {
     }
     let height = style.getPropertyValue('height');
     if (!height || height === '0px' || height === 'auto') {
-      const clientHeight = this.component.clientHeight;
+      const clientHeight = this.wrapper.clientHeight;
       height = style.getPropertyValue('height') || `${clientHeight}px`;
     }
     return height;
@@ -173,17 +186,6 @@ export default class View {
    */
   get shouldResizeY() {
     return false;
-  }
-
-  /**
-   * get styles for component and any components it contains as determined by manifest.
-   * @return {Object} key-value pairs of CSS styles.
-   */
-  get styles() {
-    return this.component.options.manifest.filter((component) => this.component.config[component].styles).reduce((hash, component) => {
-      hash[component] = this.component.config[component].styles;
-      return hash;
-    }, {});
   }
 
   /**

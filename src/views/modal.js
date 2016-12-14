@@ -32,7 +32,7 @@ export default class ModalView extends View {
    */
   delegateEvents() {
     super.delegateEvents();
-    this.wrapper.addEventListener('click', this.component.closeOnBgClick.bind(this));
+    this.wrapper.addEventListener('click', this.component.closeOnBgClick.bind(this.component));
   }
 
   render() {

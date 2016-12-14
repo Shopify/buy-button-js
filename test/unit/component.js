@@ -64,6 +64,26 @@ describe('Component class', () => {
     });
   });
 
+  describe('get styles()', () => {
+    it('returns styles for each component in manifest', () => {
+      let component = new Component({
+        id: 1234,
+        options: {
+          product: {
+            styles: {
+              button: {
+                color: 'red',
+              }
+            }
+          }
+        }
+      });
+      component.typeKey = 'product';
+      assert.deepEqual(component.styles, {product: {button: {color: 'red'}}});
+    });
+  });
+
+
   describe('get classes()', () => {
     it('returns classes for each component in manifest', () => {
       let component = new Component({id: 1234});
