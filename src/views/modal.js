@@ -44,12 +44,12 @@ export default class ModalView extends View {
     super.render();
     addClassToElement('is-active', this.document.body);
     addClassToElement('is-active', this.wrapper);
-    if (!this.iframe) {
-      addClassToElement('is-active', this.component.node);
-      addClassToElement('is-block', this.component.node);
-    } else {
+    if (this.iframe) {
       this.iframe.addClass('is-active');
       this.iframe.addClass('is-block');
+    } else {
+      addClassToElement('is-active', this.component.node);
+      addClassToElement('is-block', this.component.node);
     }
   }
 }

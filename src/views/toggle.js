@@ -1,5 +1,4 @@
 import View from '../view';
-import {addClassToElement, removeClassFromElement} from '../utils/element-class';
 
 const ENTER_KEY = 13;
 
