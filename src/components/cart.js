@@ -182,7 +182,7 @@ export default class Cart extends Component {
   }
 
   onQuantityBlur(evt, target) {
-    this.setQuantity(target, () => target.value);
+    this.setQuantity(target, () => parseInt(target.value));
   }
 
   onQuantityIncrement(qty, evt, target) {

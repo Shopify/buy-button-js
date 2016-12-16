@@ -555,7 +555,7 @@ export default class Product extends Component {
   }
 
   onQuantityBlur(evt, target) {
-    this.updateQuantity(() => target.value);
+    this.updateQuantity(() => parseInt(target.value));
   }
 
   onQuantityIncrement(qty) {
