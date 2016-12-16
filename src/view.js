@@ -37,6 +37,7 @@ export default class View {
    * renders string template using viewData to wrapper element.
    */
   render() {
+    this.component._userEvent('beforeRender');
     const html = this.template.render({data: this.component.viewData}, (data) => {
       return this.wrapTemplate(data);
     });
@@ -45,6 +46,7 @@ export default class View {
     }
     this.updateNode(this.wrapper, html);
     this.resize();
+    this.component._userEvent('afterRender');
   }
 
   /**
