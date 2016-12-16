@@ -11,9 +11,11 @@ export default class ModalView extends View {
    */
   close() {
     this.component.isVisible = false;
-    removeClassFromElement('is-active', this.document.body);
     removeClassFromElement('is-active', this.wrapper);
+    removeClassFromElement('is-active', this.document.body);
     if (!this.iframe) {
+      removeClassFromElement('is-active', this.component.node);
+      removeClassFromElement('is-block', this.component.node);
       return;
     }
     this.iframe.removeClass('is-block');
@@ -43,9 +45,11 @@ export default class ModalView extends View {
     addClassToElement('is-active', this.document.body);
     addClassToElement('is-active', this.wrapper);
     if (!this.iframe) {
-      return;
+      addClassToElement('is-active', this.component.node);
+      addClassToElement('is-block', this.component.node);
+    } else {
+      this.iframe.addClass('is-active');
+      this.iframe.addClass('is-block');
     }
-    this.iframe.addClass('is-active');
-    this.iframe.addClass('is-block');
   }
 }

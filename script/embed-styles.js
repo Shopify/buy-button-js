@@ -22,4 +22,15 @@ sass.render({
     var js = css.css.toString();
     fs.writeFileSync('src/styles/embeds/conditional.js', 'export default ' + JSON.stringify(js));
   }
-})
+});
+
+sass.render({
+  file: './src/styles/manifest.scss'
+}, function (err, css) {
+  if (err) {
+    console.log(err);
+  } else {
+    var js = css.css.toString();
+    fs.writeFileSync('./dist/buybutton.css', css.css);
+  }
+});

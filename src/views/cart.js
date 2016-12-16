@@ -8,14 +8,11 @@ export default class CartView extends View {
 
   render() {
     super.render();
-    if (!this.iframe) {
-      return;
-    }
     if (this.component.isVisible) {
-      this.iframe.addClass('is-active');
-      this.iframe.addClass('is-initialized');
+      this.addClass('is-active');
+      this.addClass('is-initialized');
     } else {
-      this.iframe.removeClass('is-active');
+      this.removeClass('is-active');
     }
   }
 

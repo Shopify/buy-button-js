@@ -108,14 +108,16 @@ describe('Modal class', () => {
 
   describe('updateConfig', () => {
     it('updates product', () => {
-      modal.updateConfig({
-        options: {
-          product: {
-            buttonDestination: 'checkout',
+      return modal.init(fakeProduct).then((modal) => {
+        return modal.updateConfig({
+          options: {
+            product: {
+              buttonDestination: 'checkout',
+            }
           }
-        }
-      }).then(() => {
-        assert.equal(modal.product.config.options.product.buttonDestination, 'checkout');
+        }).then(() => {
+          assert.equal(modal.product.config.options.product.buttonDestination, 'checkout');
+        });
       });
     });
   });
