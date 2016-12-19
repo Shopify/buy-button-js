@@ -101,6 +101,20 @@ $modal-footer-height: 90px;
   }
 }
 
+@keyframes slideOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+    -webkit-transform: translateY(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(-200px);
+    -webkit-transform: translateY(-200px);
+  }
+}
+
 @media (min-width: 500px) {
   html,
   body.is-active {
@@ -121,14 +135,10 @@ $modal-footer-height: 90px;
     border: 1px solid rgba(0, 0, 0, 0.72);
     transform: translateY(-200px);
     max-width: 1000px;
-    animation-name: slideOut;
-    animation-duration: 200ms;
-    animation-fill-mode: forwards;
+    animation: 200ms slideOut forwards;
 
     .is-active & {
       animation-name: slideIn;
-      animation-duration: 200ms;
-      animation-fill-mode: forwards;
     }
   }
 
