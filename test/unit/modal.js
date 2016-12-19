@@ -89,7 +89,7 @@ describe('Modal class', () => {
       modal.view.wrapper = document.createElement('div');
       modal.close();
       assert.notOk(modal.view.isVisible);
-      assert.calledWith(modal.view.iframe.removeClass, 'is-active');
+      assert.calledWith(modal.view.iframe.removeClass, 'is-block');
       assert(modal.view.iframe.document.body.className.length < 1);
     });
   });
