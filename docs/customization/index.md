@@ -130,6 +130,8 @@ exposed on all components, several components additionally support component-spe
 The value for each event key must be a function, which will be called with one argument, which is the instance of the
 component.
 
+Note that the below hooks exist for all components except `modalProduct` and `lineItem`.
+
 ```js
 var events = {
   'beforeInit': function (component) {}, // before component is initialized

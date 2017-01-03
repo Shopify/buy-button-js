@@ -11,18 +11,18 @@ export default class ModalView extends View {
    */
   close() {
     this.component.isVisible = false;
+    removeClassFromElement('is-active', this.document.body);
     removeClassFromElement('is-active', this.wrapper);
     if (!this.iframe) {
       return;
     }
-    this.iframe.removeClass('is-active');
-    removeClassFromElement('is-active', this.document.body);
+    this.iframe.removeClass('is-block');
     if (this.component.props.browserFeatures.transition) {
       this.iframe.parent.addEventListener('transitionend', () => {
-        this.iframe.removeClass('is-block');
+        this.iframe.removeClass('is-active');
       });
     } else {
-      this.iframe.removeClass('is-block');
+      this.iframe.removeClass('is-active');
     }
   }
 
