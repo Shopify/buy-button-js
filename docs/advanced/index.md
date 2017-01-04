@@ -4,7 +4,7 @@ layout: default
 
 # Advanced customization
 
-For more advanced customizations, such as those found on our [Blog post](), we'll go over how a component's DOM is constructed
+For more advanced customizations, such as those found on our [Blog post](https://www.shopify.com/partners/blog/introducing-buybutton-js-shopifys-new-javascript-library), we'll go over how a component's DOM is constructed
 from configuration options, which will make customization much more straightforward.
 
 For each component, the DOM is determined by the following attributes in its configuration hash:
@@ -154,4 +154,30 @@ var options = {
 }
 ```
 
+## Custom styling without iframes
 
+If you want direct control over the css in your components you can selectively opt out of the iframe sandboxing by passing `iframe: false` through to a component's options.
+The component will then be rendered directly into the host DOM and you can target the selectors with CSS.
+
+The following code will render the product and cart components directly in the host DOM, but will still render the cart toggle in an iframe.
+
+{% raw %}
+```js
+var options = {
+  product: {
+    iframe: false
+  },
+  cart: {
+    iframe: false
+  }
+}
+
+```
+{% endraw %}
+
+By default the components will have no styling outside the iframes, but you can include the compiled css for the components from the CDN if you wish to start from the
+original design.
+
+```html
+<link href="http://sdks.shopifycdn.com/buy-button/latest/buybutton.css" rel="stylesheet" type="text/css" />
+```
