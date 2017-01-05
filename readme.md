@@ -29,3 +29,23 @@ npm run test-dev
 ```
 
 Will watch for changes and run test suite.
+
+
+## Deployment
+
+First ensure you have the latest code, and install all dependencies
+```
+git pull origin master
+npm install
+```
+
+Create a new version
+```
+npm version patch
+git push origin master --tags
+```
+
+Publish! (Note: a paid NPM account is required for this step)
+```
+npm publish
+```
