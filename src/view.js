@@ -2,7 +2,7 @@ import morphdom from 'morphdom';
 import Template from './template';
 import Iframe from './iframe';
 import styles from './styles/embeds/all';
-import {addClassToElement} from './utils/element-class';
+import {addClassToElement, removeClassFromElement} from './utils/element-class';
 
 const delegateEventSplitter = /^(\S+)\s*(.*)$/;
 const ESC_KEY = 27;
@@ -16,6 +16,7 @@ export default class View {
   }
 
   init() {
+    this.component.node.className += ` shopify-buy-frame shopify-buy-frame--${this.component.typeKey}`;
     if (this.iframe || !this.component.options.iframe) {
       return Promise.resolve(this.iframe);
     }
@@ -28,7 +29,6 @@ export default class View {
       name: this.component.name,
       width: this.component.options.layout === 'vertical' ? this.component.options.width : null,
     });
-    this.component.node.className += ` shopify-buy-frame shopify-buy-frame--${this.component.typeKey}`;
     this.iframe.addClass(this.className);
     return this.iframe.load();
   }
@@ -86,6 +86,22 @@ export default class View {
       this.document.body.appendChild(wrapper);
     } else {
       this.component.node.appendChild(wrapper);
+    }
+  }
+
+  addClass(className) {
+    if (this.iframe) {
+      this.iframe.addClass(className);
+    } else {
+      addClassToElement(className, this.component.node);
+    }
+  }
+
+  removeClass(className) {
+    if (this.iframe) {
+      this.iframe.removeClass(className);
+    } else {
+      removeClassFromElement(className, this.component.node);
     }
   }
 

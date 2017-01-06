@@ -18,20 +18,22 @@ export default class ProductUpdater extends Updater {
         layout = config.options.product.layout;
       }
 
-      if (layout === 'vertical' && this.component.view.iframe.width === MAX_WIDTH) {
-        this.component.view.iframe.setWidth(this.component.options.width);
-      }
+      if (this.component.view.iframe) {
+        if (layout === 'vertical' && this.component.view.iframe.width === MAX_WIDTH) {
+          this.component.view.iframe.setWidth(this.component.options.width);
+        }
 
-      if (layout === 'horizontal' && this.component.view.iframe.width && this.component.iframe.width !== MAX_WIDTH) {
-        this.component.view.iframe.setWidth(MAX_WIDTH);
-      }
+        if (layout === 'horizontal' && this.component.view.iframe.width && this.component.iframe.width !== MAX_WIDTH) {
+          this.component.view.iframe.setWidth(MAX_WIDTH);
+        }
 
-      if (config.options.product.width && layout === 'vertical') {
-        this.component.view.iframe.setWidth(config.options.product.width);
-      }
+        if (config.options.product.width && layout === 'vertical') {
+          this.component.view.iframe.setWidth(config.options.product.width);
+        }
 
-      if (config.options.product.layout) {
-        this.component.view.iframe.el.style.width = '100%';
+        if (config.options.product.layout) {
+          this.component.view.iframe.el.style.width = '100%';
+        }
       }
     }
 

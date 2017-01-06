@@ -27,7 +27,12 @@ export default class CartToggle extends Component {
 
   get DOMEvents() {
     return merge({}, {
-      click: this.props.cart.toggleVisibility.bind(this.props.cart),
+      click: this.toggleCart.bind(this),
     }, this.options.DOMEvents);
+  }
+
+  toggleCart(evt) {
+    evt.stopPropagation();
+    this.props.cart.toggleVisibility();
   }
 }

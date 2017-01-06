@@ -1,0 +1,21 @@
+@import "./embeds/sass/variables";
+@import "./embeds/sass/initializers";
+@import "./embeds/sass/utilities";
+@import "./embeds/sass/components/buttons";
+@import "./embeds/sass/components/quantity";
+
+.shopify-buy-frame--product {
+  @import "./embeds/sass/components/product";
+}
+
+.shopify-buy-frame--modal {
+  @import "./embeds/sass/components/modal";
+}
+
+@import "./embeds/sass/components/cart";
+@import "./embeds/sass/components/toggle";
+
+.shopify-buy__collection-products {
+  @import "./embeds/sass/components/collection";
+}
+@import "./host/sass/host";

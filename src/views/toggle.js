@@ -24,20 +24,19 @@ export default class ToggleView extends View {
   }
 
   render() {
-    if (!this.iframe) {
-      return;
-    }
     super.render();
-    this.iframe.parent.setAttribute('tabindex', 0);
     if (this.component.options.sticky) {
-      this.iframe.addClass('is-sticky');
+      this.addClass('is-sticky');
     }
     if (this.isVisible) {
-      this.iframe.addClass('is-active');
+      this.addClass('is-active');
     } else {
-      this.iframe.removeClass('is-active');
+      this.removeClass('is-active');
     }
-    this.resize();
+    if (this.iframe) {
+      this.iframe.parent.setAttribute('tabindex', 0);
+      this.resize();
+    }
   }
 
   delegateEvents() {
