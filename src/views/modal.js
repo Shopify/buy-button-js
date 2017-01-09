@@ -13,6 +13,8 @@ export default class ModalView extends View {
     this.component.isVisible = false;
     removeClassFromElement('is-active', this.wrapper);
     removeClassFromElement('is-active', this.document.body);
+    removeClassFromElement('shopify-buy-modal-is-active', document.body);
+    removeClassFromElement('shopify-buy-modal-is-active', document.getElementsByTagName('html')[0]);
     if (!this.iframe) {
       removeClassFromElement('is-active', this.component.node);
       removeClassFromElement('is-block', this.component.node);
@@ -43,6 +45,8 @@ export default class ModalView extends View {
     }
     super.render();
     addClassToElement('is-active', this.document.body);
+    addClassToElement('shopify-buy-modal-is-active', document.body);
+    addClassToElement('shopify-buy-modal-is-active', document.getElementsByTagName('html')[0]);
     addClassToElement('is-active', this.wrapper);
     if (this.iframe) {
       this.iframe.addClass('is-active');
