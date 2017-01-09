@@ -1,5 +1,7 @@
-$cartMaxWidth: 350px;
-$max-z-index: 2147483647;
+:root {
+  --cartMaxWidth: 350px;
+  --max-z-index: 2147483647;
+}
 
 .shopify-buy-modal-is-active {
   height: 100%;
@@ -10,7 +12,7 @@ $max-z-index: 2147483647;
 .shopify-buy-frame {
   display: inline-block;
 
-  iframe {
+  & iframe {
     width: 100%;
     display: block;
     height: 0;
@@ -20,16 +22,16 @@ $max-z-index: 2147483647;
 
 .shopify-buy-frame--cart {
   width: 100%;
-  max-width: $cartMaxWidth;
+  max-width: var(--cartMaxWidth);
   position: fixed;
   top: 0;
   right: 0;
   height: 100%;
-  z-index: $max-z-index;
+  z-index: var(--max-z-index);
   transform: translateX(100%);
   -webkit-transform: translateX(100%);
 
-  iframe {
+  & iframe {
     height: 100%;
   }
 
@@ -49,8 +51,9 @@ $max-z-index: 2147483647;
   &.shopify-buy__layout-horizontal {
     display: block;
     margin-left: auto;
+
     margin-right: auto;
-    iframe {
+    & iframe {
       max-width: 100%;
 
       @media (min-width: 950px) {
@@ -83,11 +86,11 @@ $max-z-index: 2147483647;
   &.is-active.is-sticky {
     display: block;
   }
+}
 
-  iframe {
-    height: auto;
-
-    .is-active & {
+.is-active {
+  & .shopify-buy-frame--toggle {
+    & iframe {
       min-height: 67px;
     }
   }
@@ -103,11 +106,11 @@ $max-z-index: 2147483647;
   height: 100%;
   top: 0;
   left: 0;
-  z-index: $max-z-index - 1;
+  z-index: calc(var(--max-z-index) - 1);
   display: none;
   transition: background 300ms ease;
 
-  iframe {
+  & iframe {
     height: 100%;
     width: 100%;
     max-width: none;

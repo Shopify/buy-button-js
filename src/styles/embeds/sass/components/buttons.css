@@ -1,7 +1,7 @@
 .shopify-buy__btn {
   color: #fff;
   font-size: 15px;
-  background-color: $color-primary;
+  background-color: var(--color-primary);
   padding: 12px 40px;
   letter-spacing: .3px;
   display: block;
@@ -18,7 +18,7 @@
 
   &:hover,
   &:focus {
-    background-color: $color-primary-hover;
+    background-color: var(--color-primary-hover);
   }
 }
 
@@ -30,7 +30,7 @@
 
   &:hover,
   &:focus {
-    .product__variant-img {
+    & .product__variant-img {
       opacity: .7;
     }
   }
@@ -47,7 +47,7 @@
   min-width: inherit;
   width: auto;
   height: auto;
-  z-index: $max-z-index;
+  z-index: var(--max-z-index);
 
   &.is-active {
     transform: translateY(-50%);
@@ -76,16 +76,16 @@
   right: 9px;
   top: 8px;
   font-size: 35px;
-  color: $color-cart-title;
+  color: var(--color-cart-title);
   border: none;
   background-color: transparent;
-  transition: transform 100ms ease;
+  transition: transform 100ms ease, color 100ms ease;
   cursor: pointer;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   padding-right: 9px;
 
   &:hover {
     transform: scale(1.2);
-    color: darken($color-cart-title, 5%);
+    color: color(var(--color-cart-title) lightness(- 5%));
   }
 }

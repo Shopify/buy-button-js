@@ -531,10 +531,10 @@ input[type=number]::-webkit-outer-spin-button {
   .shopify-buy__product-img-wrapper {
     height: 100%;
     padding-right: 30px;
-    max-height: 570; }
+    max-height: 570px; }
   .shopify-buy__product-img-wrapper {
     height: 100%;
-    max-height: 570; }
+    max-height: 570px; }
   .shopify-buy__product__variant-img {
     max-height: 100%; }
   .shopify-buy__btn--close {

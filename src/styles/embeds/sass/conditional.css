@@ -1,7 +1,9 @@
 .shopify-buy__modal {
   display: none;
+}
 
-  .is-active & {
+.is-active {
+  & .shopify-buy__modal {
     display: block;
     opacity: 1;
     margin-left: auto;

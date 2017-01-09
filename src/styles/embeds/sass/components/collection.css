@@ -7,13 +7,13 @@
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  margin-left: -$gutter;
+  margin-left: -var(--gutter);
   text-align: center;
 }
 
 .shopify-buy__product {
-  margin-left: $gutter;
-  margin-bottom: $gutter;
+  margin-left: var(--gutter);
+  margin-bottom: var(--gutter);
   flex: 0 0 auto;
   display: inline-block;
   vertical-align: top;
@@ -23,7 +23,7 @@
 
 .shopify-buy__btn.shopify-buy__collection-pagination-button  {
   display: none;
-  margin: $gutter auto;
+  margin: var(--gutter) auto;
 
   &.is-active {
     display: block;
