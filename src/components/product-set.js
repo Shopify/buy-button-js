@@ -111,15 +111,15 @@ export default class ProductSet extends Component {
       options: this.config,
     });
 
-    return super.init.call(this, data).then((model) => (
-      this.props.createCart(cartConfig).then((cart) => {
-        this.cart = cart;
+    return this.props.createCart(cartConfig).then((cart) => {
+      this.cart = cart;
+      return super.init.call(this, data).then((model) => {
         if (model) {
           return this.renderProducts(this.model.products);
         }
         return this;
-      })
-    ));
+      });
+    });
   }
 
   /**
