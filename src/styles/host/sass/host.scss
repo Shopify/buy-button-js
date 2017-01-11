@@ -1,6 +1,12 @@
 $cartMaxWidth: 350px;
 $max-z-index: 2147483647;
 
+.shopify-buy-modal-is-active {
+  height: 100%;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 .shopify-buy-frame {
   display: inline-block;
 
