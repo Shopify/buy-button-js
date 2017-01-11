@@ -365,6 +365,9 @@ export default class Product extends Component {
    * @return {Object}
    */
   get trackingInfo() {
+    if (!this.model.selectedVariant) {
+      return {};
+    }
     return {
       id: this.id,
       name: this.model.selectedVariant.productTitle,
