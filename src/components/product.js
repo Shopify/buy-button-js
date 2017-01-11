@@ -454,15 +454,15 @@ export default class Product extends Component {
    * @return {Promise} promise resolving to instance.
    */
   init(data) {
-    return super.init.call(this, data).then((model) => (
-      this.createCart().then((cart) => {
-        this.cart = cart;
+    return this.createCart().then((cart) => {
+      this.cart = cart;
+      return super.init.call(this, data).then((model) => {
         if (model) {
           this.view.render();
         }
         return model;
-      })
-    ));
+      });
+    });
   }
 
   /**
