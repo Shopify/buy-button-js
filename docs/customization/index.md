@@ -260,7 +260,7 @@ Whether or not the checkout process is in a pop-up or the same window.
 
 **Type**: Boolean
 
-**Default value**: `false`
+**Default value**: `true`
 
 ### Cart contents defaults
 
