@@ -254,6 +254,14 @@ Whether cart should be visible or not when initialized.
 
 **Default value**: `false`
 
+### `popup`
+
+Whether or not the checkout process is in a pop-up or the same window.
+
+**Type**: Boolean
+
+**Default value**: `false`
+
 ### Cart contents defaults
 
 ```js
