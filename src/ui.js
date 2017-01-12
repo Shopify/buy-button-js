@@ -71,6 +71,7 @@ export default class UI {
       if (this.errorReporter) {
         this.errorReporter.notifyException(error);
       }
+
       // eslint-disable-next-line
       console.error(error);
     });
