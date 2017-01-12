@@ -169,7 +169,7 @@ export default class Component {
       if (err.message.indexOf('Not Found') > -1) {
         logNotFound(this);
       } else {
-        throw(err);
+        throw err;
       }
     });
   }
