@@ -169,9 +169,7 @@ export default class Component {
       if (err.message.indexOf('Not Found') > -1) {
         logNotFound(this);
       } else {
-
-        // eslint-disable-next-line no-console
-        console.error(err);
+        throw(err);
       }
     });
   }
