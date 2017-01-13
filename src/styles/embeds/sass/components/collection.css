@@ -3,22 +3,25 @@
 }
 
 .shopify-buy__collection-products {
-  display: -webkit-box;
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
   margin-left: -var(--gutter);
   text-align: center;
+  @media(min-width: 601px) {
+    margin-left: -var(--gutter-collection);
+  }
 }
 
 .shopify-buy__product {
+  min-width: 240px;
+  width: auto;
   margin-left: var(--gutter);
-  margin-bottom: var(--gutter);
-  flex: 0 0 auto;
   display: inline-block;
   vertical-align: top;
-  max-width: 250px;
-  width: auto;
+
+  @media(min-width: 601px) {
+    width: calc(25% - 20px);
+    margin-left: var(--gutter-collection);
+    margin-bottom: 50px;
+  }
 }
 
 .shopify-buy__btn.shopify-buy__collection-pagination-button  {
