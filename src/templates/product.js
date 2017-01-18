@@ -13,6 +13,18 @@ const buttonTemplate = '<div class="{{data.classes.product.buttonWrapper}}"><but
 
 const productTemplate = {
   img: '<div class="{{data.classes.product.imgWrapper}}"><img class="{{data.classes.product.img}}" src="{{data.currentImage.src}}" /></div>',
+  imgWithCarousel: `<div class="{{data.classes.product.imgWrapper}}">
+                      <div class="main-image-wrapper">
+                        <button type="button" class="carousel-button carousel-button--previous">Left</button>
+                        <img class="{{data.classes.product.img}}" src="{{data.currentImage.src}}" />
+                        <button type="button" class="carousel-button carousel-button--next">Right</button>
+                      </div>
+                      <div class="{{data.classes.product.carousel}}">
+                        {{#data.carouselImages}}
+                        <a href="{{src}}" class="{{data.classes.product.carouselItem}} {{#isSelected}} {{data.classes.product.carouselItemSelected}} {{/isSelected}}" data-image-id="{{id}}" style="background-image: url({{carouselSrc}})"></a>
+                        {{/data.carouselImages}}
+                      </div>
+                    </div>`,
   title: '<h1 class="{{data.classes.product.title}}">{{data.title}}</h1>',
   variantTitle: '{{#data.hasVariants}}<h2 class="{{data.classes.product.variantTitle}}">{{data.selectedVariant.title}}</h2>{{/data.hasVariants}}',
   options: '{{#data.hasVariants}}<div class="{{data.classes.product.options}}">{{{data.optionsHtml}}}</div>{{/data.hasVariants}}',

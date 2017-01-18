@@ -275,3 +275,73 @@
     stroke-dashoffset: 0;
   }
 }
+
+
+.shopify-buy__carousel {
+  font-size: 0;
+  text-align: center;
+  min-height: 90px;
+  margin-left: -var(--gutter);
+}
+
+.shopify-buy__carousel-item {
+  width: calc(16.666% - var(--gutter));
+  margin-left: var(--gutter);
+  display: inline-block;
+  vertical-align: middle;
+  cursor: pointer;
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  padding: 0;
+  border: none;
+
+  &:nth-child(n+7) {
+    margin-top: var(--gutter);
+  }
+
+  &:before {
+    content: "";
+    display: block;
+    padding-top: 100%;
+  }
+}
+
+.main-image-wrapper {
+  position: relative;
+}
+
+.carousel-button {
+  position: absolute;
+  width: 75px;
+  top: 0;
+  height: 100%;
+  border: none;
+  font-size: 0;
+  background-image: url("//sdks.shopifycdn.com/buy-button/latest/arrow.svg");
+  background-color: transparent;
+  background-size: 20px;
+  background-repeat: no-repeat;
+  background-position: 45px center;
+  opacity: 0.4;
+  cursor: pointer;
+
+  &:hover,
+  &:focus {
+    opacity: 0.9;
+    outline: none;
+  }
+}
+
+.carousel-button--previous {
+  left: 0;
+  transform: rotate(180deg);
+}
+
+.carousel-button--next {
+  right: 0;
+}
+
+.shopify-buy__carousel-item--selected {
+  opacity: 0.6;
+}

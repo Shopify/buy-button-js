@@ -75,6 +75,7 @@ export default class Product extends Component {
     this.selectedQuantity = 1;
     this.updater = new ProductUpdater(this);
     this.view = new ProductView(this);
+    this.selectedImage = null;
   }
 
   /**
@@ -110,22 +111,34 @@ export default class Product extends Component {
    * @return {Object} image object.
    */
   get image() {
-    if (!this.model.selectedVariant || !this.model.selectedVariant.imageVariants) {
+    if (!this.model.selectedVariant || !this.model.selectedVariant.image.variants.length) {
       return null;
+    }
+    const availableSizes = this.model.selectedVariant.image.variants;
+
+    let imageSize = 'grande';
+
+    if (this.options.width && this.options.layout === 'vertical') {
+      imageSize = availableSizes.filter((image) => {
+        const containerWidth = parseInt(this.options.width, 10);
+        return parseInt(image.dimension, 10) >= containerWidth * 1.5;
+      })[0].name;
     }
 
     if (this.options.imageSize) {
-      return this.model.selectedVariant.imageVariants.filter((imageVariant) => imageVariant.name === this.options.imageSize)[0];
+      imageSize = this.options.imageSize;
     }
 
-    if (this.options.width && this.options.layout === 'vertical') {
-      return this.model.selectedVariant.imageVariants.filter((image) => {
-        const containerWidth = parseInt(this.options.width, 10);
-        return parseInt(image.dimension, 10) >= containerWidth * 1.5;
+    let sourceImage = this.model.selectedVariant.image;
+    if (this.selectedImage) {
+      sourceImage = this.model.images.filter((image) => {
+        return image.id === this.selectedImage.id;
       })[0];
     }
 
-    return this.model.selectedVariant.imageVariants.filter((imageVariant) => imageVariant.name === 'grande')[0];
+    return sourceImage.variants.filter((image) => {
+      return image.name === imageSize;
+    })[0];
   }
 
   /**
@@ -172,6 +185,17 @@ export default class Product extends Component {
       priceClass: this.priceClass,
       formattedPrice: this.formattedPrice,
       formattedCompareAtPrice: this.formattedCompareAtPrice,
+      carouselIndex: 0,
+      carouselImages: this.carouselImages,
+    });
+  }
+
+  get carouselImages() {
+    return this.model.images.map((image) => {
+      return Object.assign({}, image, {
+        isSelected: image.id === this.currentImage.id,
+        carouselSrc: image.variants[3].src,
+      });
     });
   }
 
@@ -253,6 +277,9 @@ export default class Product extends Component {
       [`click ${this.selectors.product.quantityIncrement}`]: this.onQuantityIncrement.bind(this, 1),
       [`click ${this.selectors.product.quantityDecrement}`]: this.onQuantityIncrement.bind(this, -1),
       [`blur ${this.selectors.product.quantityInput}`]: this.onQuantityBlur.bind(this),
+      [`click ${this.selectors.product.carouselItem}`]: this.onCarouselItemClick.bind(this),
+      [`click ${this.selectors.product.carouselNext}`]: this.onCarouselChange.bind(this, 1),
+      [`click ${this.selectors.product.carouselPrevious}`]: this.onCarouselChange.bind(this, -1),
     }, this.options.DOMEvents);
   }
 
@@ -563,6 +590,7 @@ export default class Product extends Component {
     const target = evt.target;
     const value = target.options[target.selectedIndex].value;
     const name = target.getAttribute('name');
+    this.selectedImage = null;
     this.updateVariant(name, value);
   }
 
@@ -578,6 +606,41 @@ export default class Product extends Component {
     if (this.cart && this.cart.isVisible) {
       this.cart.close();
     }
+  }
+
+  onCarouselItemClick(evt, target) {
+    evt.preventDefault();
+    const selectedImageId = target.getAttribute('data-image-id');
+    const imageList = this.model.images;
+    const foundImage = imageList.filter((image) => {
+      return image.id === parseInt(selectedImageId, 10);
+    })[0];
+
+    if (foundImage) {
+      this.selectedImage = foundImage;
+    }
+    this.view.render();
+  }
+
+  nextIndex(currentIndex, offset) {
+    const nextIndex = currentIndex + offset;
+    if (nextIndex > this.model.images.length) {
+      return 0;
+    }
+    if (nextIndex < 0) {
+      return this.model.images.length - 1;
+    }
+    return nextIndex;
+  }
+
+  onCarouselChange(offset) {
+    const imageList = this.model.images;
+    const currentImage = imageList.filter((image) => {
+      return image.id === this.currentImage.id;
+    })[0];
+    const currentImageIndex = imageList.indexOf(currentImage);
+    this.selectedImage = imageList[this.nextIndex(currentImageIndex, offset)];
+    this.view.render();
   }
 
   /**
