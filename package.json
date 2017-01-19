@@ -93,7 +93,7 @@
     "rollup-plugin-babel": "2.6.1",
     "rollup-plugin-commonjs": "3.3.1",
     "rollup-plugin-node-resolve": "1.7.1",
-    "shopify-buy": "0.5.1",
+    "shopify-buy": "0.6.0",
     "uglify-js": "2.7.0"
   }
 }
