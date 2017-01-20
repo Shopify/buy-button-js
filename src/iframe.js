@@ -113,15 +113,23 @@ export default class iframe {
       return Promise.resolve(true);
     }
     return this.loadFontScript().then(() => {
-      if (window.WebFont) {
+      return new Promise((resolve) => {
+        if (!window.WebFont) {
+          return resolve();
+        }
         window.WebFont.load({
           google: {
             families: this.googleFonts,
           },
+          fontactive: () => {
+            return resolve();
+          },
           context: this.el.contentWindow || frames[this.name],
         });
-      }
-      return true;
+        return window.setTimeout(() => {
+          return resolve();
+        }, 1000);
+      });
     });
   }
 
