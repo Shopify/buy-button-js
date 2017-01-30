@@ -7,6 +7,9 @@ import formatMoney from '../utils/money';
 import ProductView from '../views/product';
 import ProductUpdater from '../updaters/product';
 
+function isFunction(obj) {
+  return !!(obj && obj.constructor && obj.call && obj.apply);
+};
 
 function isPseudoSelector(key) {
   return key.charAt(0) === ':';
@@ -526,6 +529,9 @@ export default class Product extends Component {
 
   onButtonClick(evt, target) {
     evt.stopPropagation();
+    if (isFunction(this.options.buttonDestination)) {
+      return this.options.buttonDestination(this);
+    }
     if (this.options.buttonDestination === 'cart') {
       this.props.closeModal();
       this._userEvent('addVariantToCart');
