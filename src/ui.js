@@ -280,6 +280,9 @@ export default class UI {
 
   _bindHostClick() {
     document.addEventListener('click', (evt) => {
+      if (this.components.cart.length < 1) {
+        return;
+      }
       const cartNode = this.components.cart[0].node;
       if (evt.target === cartNode || cartNode.contains(evt.target)) {
         return;
