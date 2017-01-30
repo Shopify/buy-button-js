@@ -8,8 +8,8 @@ import ProductView from '../views/product';
 import ProductUpdater from '../updaters/product';
 
 function isFunction(obj) {
-  return !!(obj && obj.constructor && obj.call && obj.apply);
-};
+  return Boolean(obj && obj.constructor && obj.call && obj.apply);
+}
 
 function isPseudoSelector(key) {
   return key.charAt(0) === ':';
@@ -82,7 +82,7 @@ export default class Product extends Component {
    * @return {Boolean}
    */
   get shouldCreateCart() {
-    return this.options.buttonDestination === 'cart' || (this.options.buttonDestination === 'modal' && this.config.modalProduct.buttonDestination === 'cart');
+    return this.options.buttonDestination !== 'checkout' && this.config.modalProduct.buttonDestination !== 'checkout';
   }
 
   /**
@@ -530,9 +530,8 @@ export default class Product extends Component {
   onButtonClick(evt, target) {
     evt.stopPropagation();
     if (isFunction(this.options.buttonDestination)) {
-      return this.options.buttonDestination(this);
-    }
-    if (this.options.buttonDestination === 'cart') {
+      this.options.buttonDestination(this);
+    } else if (this.options.buttonDestination === 'cart') {
       this.props.closeModal();
       this._userEvent('addVariantToCart');
       this.props.tracker.trackMethod(this.cart.addVariantToCart.bind(this), 'Update Cart', this.selectedVariantTrackingInfo)(this.model.selectedVariant, this.model.selectedQuantity);
