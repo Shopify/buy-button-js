@@ -230,6 +230,10 @@ export default class Product extends Component {
     return this.model.selectedVariant && this.model.selectedVariant.compareAtPrice ? this.classes.product.loweredPrice : '';
   }
 
+  get isButton() {
+    return this.options.isButton && !(this.options.contents.button || this.options.contents.buttonWithQuantity);
+  }
+
   /**
    * get events to be bound to DOM.
    * @return {Object}
@@ -256,7 +260,7 @@ export default class Product extends Component {
    * prevent events from bubbling if entire product is being treated as button.
    */
   stopPropagation(evt) {
-    if (this.options.isButton) {
+    if (this.isButton) {
       evt.stopImmediatePropagation();
     }
   }
