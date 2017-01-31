@@ -20,10 +20,10 @@ export default class ProductUpdater extends Updater {
 
       if (this.component.view.iframe) {
         if (layout === 'vertical' && this.component.view.iframe.width === MAX_WIDTH) {
-          this.component.view.iframe.setWidth(this.component.options.width);
+          this.component.view.iframe.setWidth(this.component.iframe.options.width);
         }
 
-        if (layout === 'horizontal' && this.component.view.iframe.width && this.component.iframe.width !== MAX_WIDTH) {
+        if (layout === 'horizontal' && this.component.view.iframe.width && this.component.view.iframe.width !== MAX_WIDTH) {
           this.component.view.iframe.setWidth(MAX_WIDTH);
         }
 
