@@ -300,6 +300,39 @@ describe('Product class', () => {
     });
   });
 
+  describe('get isButton', () => {
+    it('is true when isButton is turn on and there is no button', () => {
+      product.config.product.isButton = true;
+      product.config.product.contents.button = false;
+      product.config.product.contents.buttonWithQuantity = false;
+      const isButton = product.isButton;
+      assert.equal(isButton, true);
+    });
+
+    it('is false when there is a button', () => {
+      product.config.product.isButton = true;
+      product.config.product.contents.button = true;
+      product.config.product.contents.buttonWithQuantity = false;
+      const isButton = product.isButton;
+      assert.equal(isButton, false);
+    });
+
+    it('is false when there is a buttonWithQuantity', () => {
+      product.config.product.isButton = true;
+      product.config.product.contents.button = false;
+      product.config.product.contents.buttonWithQuantity = true;
+      const isButton = product.isButton;
+      assert.equal(isButton, false);
+    });
+
+    it('is false when isButton is turn off', () => {
+      product.config.product.isButton = false;
+      const isButton = product.isButton;
+      assert.equal(isButton, false);
+    });
+
+  });
+
   describe('updateVariant', () => {
     it('it updates selected variant', () => {
       return product.init(testProductCopy).then(() => {
@@ -455,16 +488,18 @@ describe('Product class', () => {
       return product.init(testProductCopy);
     });
 
-    describe('when isButton is false', () => {
+    describe('when isButton() is false', () => {
       it('calls super', () => {
         const string = product.view.wrapTemplate('test');
         assert.equal(string, '<div class="has-image shopify-buy__layout-vertical shopify-buy__product">test</div>');
       });
     });
 
-    describe('when isButton is true', () => {
+    describe('when isButton() is true', () => {
       it('wraps html in a button', () => {
         product.config.product.isButton = true;
+        product.config.product.contents.button = false;
+        product.config.product.contents.buttonWithQuantity = false;
         const string = product.view.wrapTemplate('test');
         assert.equal(string, '<div class="has-image shopify-buy__layout-vertical shopify-buy__product"><div tabindex="0" role="button" aria-label="Add to cart" class="shopify-buy__btn--parent">test</div></div>');
       });
