@@ -3,7 +3,7 @@ npm-debug.log
 /dist
 /tmp
 /lib
-index.html
+/index.html
 index.js
 legacy.html
 /src/styles/embeds/all.js
