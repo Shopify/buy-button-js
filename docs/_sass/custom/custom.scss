@@ -46,11 +46,7 @@ main .marketing-markdown > a,
   border-bottom: 0;
 }
 
-blockquote,
-.marketing-markdown blockquote,
-pre,
-pre.code,
-pre.prettyprint {
+%blockquote {
   margin-left: 0;
   margin-right: 0;
   background: $grey--pale;
@@ -66,6 +62,24 @@ pre.prettyprint {
   &:before,
   &:after {
     display: none;
+  }
+}
+
+blockquote,
+.marketing-markdown blockquote,
+pre,
+pre.code,
+pre.prettyprint {
+  @extend %blockquote;
+}
+
+table {
+  pre,
+  pre.code,
+  pre.prettyprint {
+    @extend %blockquote;
+    margin: 0;
+    padding: 0;
   }
 }
 
