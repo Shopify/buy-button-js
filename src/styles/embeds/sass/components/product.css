@@ -1,4 +1,4 @@
-@import "./select.scss";
+@import "./select";
 
 .shopify-buy__product {
   overflow: hidden;
@@ -6,7 +6,7 @@
 }
 
 .shopify-buy__product__variant-img {
-  margin: 0 auto $gutter auto;
+  margin: 0 auto var(--gutter) auto;
   transition: opacity 0.3s ease;
   opacity: 1;
 
@@ -20,7 +20,7 @@
 }
 
 .shopify-buy__no-image {
-  .shopify-buy__product__variant-img {
+  & .shopify-buy__product__variant-img {
     display: none;
   }
 }
@@ -28,12 +28,14 @@
 .shopify-buy__product__title {
   font-size: 18px;
   line-height: 1.2;
-  color: $color-black;
-  margin-bottom: $gutter;
+  color: var(--color-black);
+  margin-bottom: var(--gutter);
   font-weight: 700;
+}
 
-  .shopify-buy__layout-horizontal & {
-    margin-top: $gutter * (2/3);
+.shopify-buy__layout-horizontal {
+  & .shopify-buy__product__title {
+    margin-top: calc(var(--gutter) * (2/3));
   }
 }
 
@@ -42,51 +44,55 @@
   color: #666;
   font-weight: 400;
   text-align: center;
-  margin-bottom: $gutter;
+  margin-bottom: var(--gutter);
 }
 
 .shopify-buy__product__price {
-  margin-bottom: $gutter;
+  margin-bottom: var(--gutter);
 }
 
 .shopify-buy__product-description {
-  margin-top: $gutter * 2;
+  margin-top: calc(var(--gutter) * 2);
   line-height: 1.65;
-  color: $color-black;
+  color: var(--color-black);
 
-  p, ul, ol, img {
-    margin-bottom: $gutter * (2/3);
+  & p,
+  & ul,
+  & ol,
+  & img {
+    margin-bottom: calc(var(--gutter) * (2/3));
 
     &:last-child {
       margin-bottom: 0;
     }
   }
 
-  a {
+  & a {
     color: inherit;
   }
 
-  img {
+  & img {
     max-width: 100%;
   }
 
-  h1 {
+  & h1 {
     font-size: 20px;
   }
 
-  h2 {
+  & h2 {
     font-size: 18px;
   }
 
-  h3 {
+  & h3 {
     font-size: 17px;
   }
 
-  ul, ol {
+  & ul,
+  & ol {
     margin-left: 2em;
   }
 
-  ul {
+  & ul {
     list-style-type: disc;
   }
 }
@@ -97,7 +103,7 @@
 
 .shopify-buy__product__actual-price,
 .shopify-buy__product__compare-price {
-  color: $color-black;
+  color: var(--color-black);
   display: inline-block;
 }
 
@@ -115,8 +121,10 @@
 .shopify-buy__product__variant-selectors {
   text-align: left;
   font-size: 14px;
+}
 
-  .shopify-buy__layout-vertical & {
+.shopify-buy__layout-vertical {
+  & .shopify-buy__product__variant-selectors {
     width: 100%;
     max-width: 280px;
     display: inline-block;
@@ -132,7 +140,7 @@
 .shopify-buy__quantity,
 .shopify-buy__quantity-increment,
 .shopify-buy__quantity-decrement {
-  border-color: $color-border;
+  border-color: var(--color-border);
   line-height: 1.2;
   font-size: 15px;
   height: auto;
@@ -145,7 +153,7 @@
 }
 
 .shopify-buy__btn-wrapper {
-  margin-top: $gutter + 5;
+  margin-top: calc(var(--gutter) + 5px);
 }
 
 .shopify-buy__btn.shopify-buy__beside-quantity {
@@ -157,19 +165,19 @@
 }
 
 .shopify-buy__btn-and-quantity {
-  .shopify-buy__quantity {
+  & .shopify-buy__quantity {
     border-right: 0;
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
-    background: $color-white;
+    background: var(--color-white);
   }
 
-  .shopify-buy__quantity-container {
+  & .shopify-buy__quantity-container {
     display: inline-block;
     vertical-align: top;
   }
 
-  .shopify-buy__btn-wrapper {
+  & .shopify-buy__btn-wrapper {
     display: inline-block;
     vertical-align: top;
     margin: 0;
@@ -177,15 +185,15 @@
 }
 
 .shopify-buy__cart-item__quantity-container {
-  margin-top: $gutter + 5;
+  margin-top: calc(var(--gutter) + 5);
   display: inline-block;
 }
 
 .shopify-buy__layout-vertical,
 .shopify-buy__layout-horizontal {
-  .shopify-buy__btn,
-  .shopify-buy__quantity-container {
-    margin: ($gutter + 5) auto 0;
+  & .shopify-buy__btn,
+  & .shopify-buy__quantity-container {
+    margin: calc(var(--gutter) + 5) auto 0;
   }
 
   .shopify-buy__btn:first-child {
@@ -193,10 +201,10 @@
   }
 
   .shopify-buy__btn-and-quantity {
-    margin: ($gutter + 5) auto 0;
+    margin: (var(--gutter) + 5) auto 0;
 
-    .shopify-buy__btn,
-    .shopify-buy__quantity-container {
+    & .shopify-buy__btn,
+    & .shopify-buy__quantity-container {
       margin: 0 auto;
     }
   }
@@ -213,24 +221,24 @@
 @media (min-width: 500px) {
   .shopify-buy__layout-horizontal:not(.no-image) {
 
-    .shopify-buy__product-img-wrapper {
+    & .shopify-buy__product-img-wrapper {
       float: left;
       width: 40%;
     }
 
-    .shopify-buy__product__variant-title {
+    & .shopify-buy__product__variant-title {
       text-align: left;
     }
 
-    .shopify-buy__product__title,
-    .shopify-buy__product__variant-title,
-    .shopify-buy__product__price,
-    .shopify-buy__product-description,
-    .shopify-buy__btn-and-quantity,
-    > .shopify-buy__btn-wrapper,
-    > .shopify-buy__quantity-container,
-    .shopify-buy__product__variant-selectors {
-      margin-left: calc(40% + #{$gutter-modal});
+    & .shopify-buy__product__title,
+    & .shopify-buy__product__variant-title,
+    & .shopify-buy__product__price,
+    & .shopify-buy__product-description,
+    & .shopify-buy__btn-and-quantity,
+    & > .shopify-buy__btn-wrapper,
+    & > .shopify-buy__quantity-container,
+    & .shopify-buy__product__variant-selectors {
+      margin-left: calc(40% + var(--gutter-modal));
     }
   }
 }
@@ -238,20 +246,20 @@
 @media (min-width: 680px) {
   .shopify-buy__layout-horizontal:not(.no-image) {
 
-    .shopify-buy__product-img-wrapper {
+    & .shopify-buy__product-img-wrapper {
       float: left;
       width: 60%;
     }
 
-    .shopify-buy__product__title,
-    .shopify-buy__product__variant-title,
-    .shopify-buy__product__price,
-    .shopify-buy__product-description,
-    .shopify-buy__btn-and-quantity,
-    > .shopify-buy__btn-wrapper,
-    > .shopify-buy__quantity-container,
-    .shopify-buy__product__variant-selectors {
-      margin-left: calc(60% + #{$gutter-modal});
+    & .shopify-buy__product__title,
+    & .shopify-buy__product__variant-title,
+    & .shopify-buy__product__price,
+    & .shopify-buy__product-description,
+    & .shopify-buy__btn-and-quantity,
+    & > .shopify-buy__btn-wrapper,
+    & > .shopify-buy__quantity-container,
+    & .shopify-buy__product__variant-selectors {
+      margin-left: calc(60% + var(--gutter-modal));
     }
   }
 }
