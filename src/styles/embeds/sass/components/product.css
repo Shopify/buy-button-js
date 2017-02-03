@@ -196,11 +196,11 @@
     margin: calc(var(--gutter) + 5) auto 0;
   }
 
-  .shopify-buy__btn:first-child {
+  & .shopify-buy__btn:first-child {
     margin-top: 0;
   }
 
-  .shopify-buy__btn-and-quantity {
+  & .shopify-buy__btn-and-quantity {
     margin: (var(--gutter) + 5) auto 0;
 
     & .shopify-buy__btn,
@@ -209,11 +209,11 @@
     }
   }
 
-  .shopify-buy__btn-and-quantity:first-child {
+  & .shopify-buy__btn-and-quantity:first-child {
     margin: 0 auto;
   }
 
-  .shopify-buy__product__variant-img {
+  & .shopify-buy__product__variant-img {
     max-width: 100%;
   }
 }
