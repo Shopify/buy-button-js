@@ -264,6 +264,12 @@
   }
 }
 
+.no-image {
+  & .shopify-buy__product-img-wrapper {
+    display: none;
+  }
+}
+
 @keyframes dash {
   to {
     stroke-dashoffset: 0;
