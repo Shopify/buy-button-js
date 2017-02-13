@@ -26,6 +26,7 @@ const defaults = {
     ],
     contents: {
       img: true,
+      imgWithCarousel: false,
       title: true,
       variantTitle: false,
       price: true,
@@ -44,6 +45,11 @@ const defaults = {
       product: 'shopify-buy__product',
       img: 'shopify-buy__product__variant-img',
       imgWrapper: 'shopify-buy__product-img-wrapper',
+      carousel: 'shopify-buy__carousel',
+      carouselNext: 'carousel-button--next',
+      carouselPrevious: 'carousel-button--previous',
+      carouselItem: 'shopify-buy__carousel-item',
+      carouselItemSelected: 'shopify-buy__carousel-item--selected',
       blockButton: 'shopify-buy__btn--parent',
       button: 'shopify-buy__btn',
       buttonWrapper: 'shopify-buy__btn-wrapper',
@@ -78,6 +84,7 @@ const defaults = {
     layout: 'horizontal',
     contents: {
       img: true,
+      imgWithCarousel: false,
       title: true,
       variantTitle: false,
       price: true,
@@ -91,6 +98,7 @@ const defaults = {
     },
     order: [
       'img',
+      'imgWithCarousel',
       'title',
       'variantTitle',
       'price',
@@ -119,6 +127,7 @@ const defaults = {
       wrapper: 'shopify-buy__modal-wrapper',
       product: 'shopify-buy__product-modal',
       img: 'shopify-buy__modal-img',
+      imgWithCarousel: 'shopify-buy__modal-img',
       footer: 'shopify-buy__modal-footer',
       footerWithImg: 'shopify-buy__modal-footer--has-img',
       imgWithImg: 'shopify-buy__modal-img--has-img',

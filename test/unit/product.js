@@ -652,7 +652,7 @@ describe('Product class', () => {
       });
 
       it('returns medium image', () => {
-        assert.equal(product.image.name, 'large');
+        assert.equal(product.image.src, 'https://cdn.shopify.com/image-two_large.jpg');
       });
     });
 
@@ -663,7 +663,8 @@ describe('Product class', () => {
       });
 
       it('returns image size specified', () => {
-        assert.equal(product.image.name, 'pico');
+        // console.log(product.image)
+        assert.equal(product.image.src, 'https://cdn.shopify.com/image-two_pico.jpg');
       });
     });
 
@@ -673,7 +674,7 @@ describe('Product class', () => {
         return product.init(testProductCopy);
       });
       it('returns smallest image larger than explicit width', () => {
-        assert.equal(product.image.name, '1024x1025');
+        assert.equal(product.image.src, 'https://cdn.shopify.com/image-two_1024x1024.jpg');
       });
     });
 
@@ -683,8 +684,38 @@ describe('Product class', () => {
         return product.init(testProductCopy);
       });
       it('returns large image', () => {
-        assert.equal(product.image.name, 'grande');
+        assert.equal(product.image.src, 'https://cdn.shopify.com/image-two_grande.jpg');
       });
+    });
+
+    describe('when user selects an image from thumbnails', () => {
+      beforeEach(() => {
+        return product.init(testProductCopy).then(() => {
+          product.selectedImage = product.model.images[2];
+          return Promise.resolve();
+        });
+      });
+      it('returns selected image', () => {
+        assert.equal(product.image.src, 'https://cdn.shopify.com/image-three_large.jpg');
+      });
+      it('returns selected image of appropriate size if set', () => {
+        product.config.product.imageSize = 'pico';
+        assert.equal(product.image.src, 'https://cdn.shopify.com/image-three_pico.jpg');
+      })
+    });
+  });
+
+  describe('onCarouselChange', () => {
+    beforeEach(() => {
+      return product.init(testProductCopy).then(() => {
+        return Promise.resolve();
+      });
+    });
+    it('sets selected image based on offset', () => {
+      product.onCarouselChange(-1);
+      assert.equal(product.image.src, 'https://cdn.shopify.com/image-four_large.jpg')
+      product.onCarouselChange(1);
+      assert.equal(product.image.src, 'https://cdn.shopify.com/image-one_large.jpg')
     });
   });
 });
