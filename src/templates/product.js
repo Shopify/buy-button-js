@@ -12,16 +12,16 @@ const quantityTemplate = `<div class="{{data.classes.product.quantity}} {{data.q
 const buttonTemplate = '<div class="{{data.classes.product.buttonWrapper}}" data-element="product.buttonWrapper"><button {{#data.buttonDisabled}}disabled{{/data.buttonDisabled}} class="{{data.classes.product.button}} {{data.buttonClass}}" data-element="product.button">{{data.buttonText}}</button></div>';
 
 const productTemplate = {
-  img: '<div class="{{data.classes.product.imgWrapper}}"><img class="{{data.classes.product.img}}" src="{{data.currentImage.src}}" /></div>',
-  imgWithCarousel: `<div class="{{data.classes.product.imgWrapper}}">
+  img: '<div class="{{data.classes.product.imgWrapper}}" data-element="product.imgWrapper"><img data-element="product.img" class="{{data.classes.product.img}}" src="{{data.currentImage.src}}" /></div>',
+  imgWithCarousel: `<div class="{{data.classes.product.imgWrapper}}" data-element="product.imageWrapper">
                       <div class="main-image-wrapper">
                         <button type="button" class="carousel-button carousel-button--previous">Left</button>
-                        <img class="{{data.classes.product.img}}" src="{{data.currentImage.src}}" />
+                        <img class="{{data.classes.product.img}}" src="{{data.currentImage.src}}" data-element="product.img" />
                         <button type="button" class="carousel-button carousel-button--next">Right</button>
                       </div>
                       <div class="{{data.classes.product.carousel}}">
                         {{#data.carouselImages}}
-                        <a href="{{src}}" class="{{data.classes.product.carouselItem}} {{#isSelected}} {{data.classes.product.carouselItemSelected}} {{/isSelected}}" data-image-id="{{id}}" style="background-image: url({{carouselSrc}})"></a>
+                        <a data-element="product.carouselitem" href="{{src}}" class="{{data.classes.product.carouselItem}} {{#isSelected}} {{data.classes.product.carouselItemSelected}} {{/isSelected}}" data-image-id="{{id}}" style="background-image: url({{carouselSrc}})"></a>
                         {{/data.carouselImages}}
                       </div>
                     </div>`,
