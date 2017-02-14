@@ -168,13 +168,14 @@ export default class Product extends Component {
    * @return {Object} viewData object.
    */
   get viewData() {
+    const image = Object.assign({}, this.currentImage);
     return merge(this.model, this.options.viewData, {
       classes: this.classes,
       contents: this.options.contents,
       text: this.options.text,
       optionsHtml: this.optionsHtml,
       decoratedOptions: this.decoratedOptions,
-      currentImage: this.currentImage,
+      currentImage: image,
       buttonClass: this.buttonClass,
       hasVariants: this.hasVariants,
       buttonDisabled: !this.buttonEnabled,
@@ -618,6 +619,7 @@ export default class Product extends Component {
 
     if (foundImage) {
       this.selectedImage = foundImage;
+      this.cachedImage = foundImage;
     }
     this.view.render();
   }
@@ -640,6 +642,7 @@ export default class Product extends Component {
     })[0];
     const currentImageIndex = imageList.indexOf(currentImage);
     this.selectedImage = imageList[this.nextIndex(currentImageIndex, offset)];
+    this.cachedImage = this.selectedImage;
     this.view.render();
   }
 
