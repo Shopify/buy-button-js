@@ -38,3 +38,14 @@ postcss([cssnext])
   .catch(function(err) {
     console.log(err);
   });
+
+postcss([cssimports, cssnext])
+  .process(fs.readFileSync('./src/styles/manifest.css'), {
+    from: './src/styles/manifest.css'
+  })
+  .then(function(result) {
+    fs.writeFileSync('./dist/buybutton.css', result.css);
+  })
+  .catch(function(err) {
+    console.log(err);
+  });

@@ -1,0 +1,41 @@
+.shopify-buy-frame--product {
+  & .shopify-buy__product {
+    padding: 0;
+  }
+}
+
+.shopify-buy-frame--cart {
+  & .shopify-buy__quantity {
+    border-radius: 0;
+    border-left: 0;
+    border-left: 0;
+    padding: 0;
+    font-size: 16px;
+  }
+
+  & .shopify-buy__quantity,
+  & .shopify-buy__quantity-increment,
+  & .shopify-buy__quantity-decrement {
+    height: 30px;
+  }
+}
+
+@media (max-width: 600px) {
+  .shopify-buy-frame--modal {
+    & .shopify-buy__product {
+      width: 100%;
+      padding: 30px;
+      margin: 0;
+    }
+  }
+}
+
+@media (min-width: 601px) {
+  .shopify-buy-frame--modal {
+    & .shopify-buy__product {
+      width: 100%;
+      padding: 45px;
+      margin: 0;
+    }
+  }
+}
