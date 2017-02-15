@@ -1,0 +1,644 @@
+---
+layout: wide
+---
+<h1>Configuration Options</h1>
+
+<p>All configuration options for each component nested within the <code>options</code> object.</p>
+<ul>
+  <li><a href="#product">product</a></li>
+  <li><a href="#modalProduct">modalProduct</a></li>
+  <li><a href="#modal">modal</a></li>
+  <li><a href="#productSet">productSet</a></li>
+  <li><a href="#option">option</a></li>
+  <li><a href="#cart">cart</a></li>
+  <li><a href="#lineItem">lineItem</a></li>
+  <li><a href="#toggle">toggle</a></li>
+</ul>
+
+<a name="product"></a>
+<h2>product</h2>
+<p>Buyable product embed, featuring product info and buy button. Optionally opens modal.</p>
+
+<table class="config-table">
+  <tbody>
+  <tr>
+    <th>option</th>
+    <th>type</th>
+    <th>description</th>
+    <th>default</th>
+    <th>possible values</th>
+  </tr>
+  <tr>
+    <td>iframe</td>
+    <td>boolean</td>
+    <td>Whether to render the component inside an iframe. Iframes are beneficial for most users because they isolate the embed in a “sandbox” so that other parts of your website don’t interact with it in unwanted ways. If you wish to have full control over the appearance of your embed and know how to use CSS, you may choose to change this value to false. If you do so, your components will appear unstyled.</td>
+    <td>true</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>isButton</td>
+    <td>boolean</td>
+    <td>whether the entire product component should be clickable. Only set to "true" if the button itself is hidden</td>
+    <td>false</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>buttonDestination</td>
+    <td>string/function</td>
+    <td>what happens when button is clicked</td>
+    <td>'cart'</td>
+    <td>'cart', 'modal', 'checkout', 'onlineStore', callback function</td>
+  </tr>
+  <tr>
+    <td>layout</td>
+    <td>string</td>
+    <td>Whether to orient the product vertically (with image on top) or horizontally (with image to the side). Vertically oriented products will have a set width (defaults to 240px) configurable by the width property, and horizontally oriented products will take up the full width of their location on your website.</td>
+    <td>'vertical'</td>
+    <td>'vertical', 'horizontal'</td>
+  </tr>
+  <tr>
+    <td>width</td>
+    <td>string</td>
+    <td>maximum width of container element, with unit</td>
+    <td>'280px'</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>contents</td>
+    <td>object</td>
+    <td>Whether or not to render each element within the component. There is a key for each element in the object, set to either true or false by default. You may override any of these values.</td>
+    <td>
+<pre><code>
+{
+  img: true,
+  title: true,
+  variantTitle: false,
+  price: true,
+  options: true,
+  quantity: false,
+  quantityIncrement: false,
+  quantityDecrement: false,
+  quantityInput: true,
+  button: true,
+  buttonWithQuantity: false,
+  description: false,
+}
+</pre></code>
+    </td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>order</td>
+    <td>array</td>
+    <td>Order in which elements appear in embed.</td>
+    <td>
+<pre><code>
+[
+  'img',
+  'title',
+  'variantTitle',
+  'price',
+  'options',
+  'quantity',
+  'button',
+  'buttonWithQuantity',
+  'description',
+]
+</pre></code>
+    </td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>text</td>
+    <td>object</td>
+    <td>Values for all text visible in embeds except for that defined in the product itself (for example, you cannot change the title of a product from the text object, you would change that from your Shopify admin).</td>
+    <td>
+<pre><code>
+{
+  button: 'ADD TO CART',
+  outOfStock: 'Out of stock',
+  unavailable: 'Unavailable'
+}
+</pre></code>
+    </td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>templates</td>
+    <td>object</td>
+    <td>mustache templates used to display contents</td>
+    <td><a href="https://github.com/Shopify/buy-button-js/blob/master/src/templates/product.js">product.js</a></td>
+    <td></td>
+  </tr>
+  </tbody>
+</table>
+
+<a name="modalProduct"></a>
+<h2>modalProduct</h2>
+
+<p>Configures product within modal. Most options are as per product, with different defaults.
+
+<table class="config-table">
+  <tbody>
+  <tr>
+    <th>option</th>
+    <th>type</th>
+    <th>description</th>
+    <th>default</th>
+    <th>possible values</th>
+  </tr>
+  <tr>
+    <td>iframe</td>
+    <td>boolean</td>
+    <td>Whether to render the component inside an iframe. Iframes are beneficial for most users because they isolate the embed in a “sandbox” so that other parts of your website don’t interact with it in unwanted ways. If you wish to have full control over the appearance of your embed and know how to use CSS, you may choose to change this value to false. If you do so, your components will appear unstyled.</td>
+    <td>false</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>isButton</td>
+    <td>boolean</td>
+    <td>whether the entire button component should be clickable. Only set to "true" if the button itself is hidden</td>
+    <td>false</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>buttonDestination</td>
+    <td>string/function</td>
+    <td>what happens when button is clicked</td>
+    <td>'cart'</td>
+    <td>'cart', 'modal', 'checkout', callback function</td>
+  </tr>
+  <tr>
+    <td>layout</td>
+    <td>string</td>
+    <td>Whether to orient the product vertically (with image on top) or horizontally (with image to the side). Vertically oriented products will have a set width (defaults to 240px) configurable by the width property, and horizontally oriented products will take up the full width of their location on your website.</td>
+    <td>'horizontal'</td>
+    <td>'vertical', 'horizontal'</td>
+  </tr>
+  <tr>
+    <td>contents</td>
+    <td>object</td>
+    <td>Whether or not to render each element within the component. There is a key for each element in the object, set to either true or false by default. You may override any of these values.</td>
+    <td>
+<pre><code>
+{
+  img: true,
+  title: true,
+  variantTitle: false,
+  price: true,
+  options: true,
+  button: true,
+  buttonWithQuantity: false,
+  quantity: false,
+  quantityIncrement: false,
+  quantityDecrement: false,
+  description: true,
+}
+</pre></code>
+    </td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>order</td>
+    <td>array</td>
+    <td>Order in which elements appear in embed.</td>
+    <td>
+<pre><code>
+[
+  'img',
+  'title',
+  'variantTitle',
+  'price',
+  'options',
+  'buttonWithQuantity',
+  'button',
+  'description',
+]
+</pre></code>
+    </td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>text</td>
+    <td>object</td>
+    <td>Values for all text visible in embeds except for that defined in the product itself (for example, you cannot change the title of a product from the text object, you would change that from your Shopify admin).</td>
+    <td>
+<pre><code>
+{
+  button: 'ADD TO CART',
+  outOfStock: 'Out of stock',
+  unavailable: 'Unavailable'
+}
+</pre></code>
+    </td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>templates</td>
+    <td>object</td>
+    <td>mustache templates used to display contents</td>
+    <td><a href="https://github.com/Shopify/buy-button-js/blob/master/src/templates/product.js">product.js</a></td>
+    <td></td>
+  </tr>
+  </tbody>
+</table>
+
+<a name="modal"></a>
+<h2>modal</h2>
+
+<p>Modal window which contains modalProduct. To configure the product within the modal, see <a href="#modalProduct">modalProduct</a>.</p>
+
+<table class="config-table">
+  <tbody>
+  <tr>
+    <th>option</th>
+    <th>type</th>
+    <th>description</th>
+    <th>default</th>
+    <th>possible values</th>
+  </tr>
+  <tr>
+    <td>iframe</td>
+    <td>boolean</td>
+    <td>Whether to render the component inside an iframe. Iframes are beneficial for most users because they isolate the embed in a “sandbox” so that other parts of your website don’t interact with it in unwanted ways. If you wish to have full control over the appearance of your embed and know how to use CSS, you may choose to change this value to false. If you do so, your components will appear unstyled.</td>
+    <td>true</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>contents</td>
+    <td>object</td>
+    <td>Whether or not to render each element within the component. There is a key for each element in the object, set to either true or false by default. You may override any of these values.</td>
+    <td>
+<pre><code>
+{
+  contents: true
+}
+</pre></code>
+    </td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>order</td>
+    <td>array</td>
+    <td>Order in which elements appear in embed.</td>
+    <td>
+<pre><code>
+[
+  'contents'
+]
+</pre></code>
+    </td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>templates</td>
+    <td>object</td>
+    <td>mustache templates used to display contents</td>
+    <td><a href="https://github.com/Shopify/buy-button-js/blob/master/src/templates/modal.js">modal.js</a></td>
+    <td></td>
+  </tr>
+  </tbody>
+</table>
+
+<a name="productSet"></a>
+<h2>productSet</h2>
+
+<p>Configures a collection or array of products. To customize the products themselves, see <a href="#product">product</a>.</p>
+
+<table class="config-table">
+  <tbody>
+  <tr>
+    <th>option</th>
+    <th>type</th>
+    <th>description</th>
+    <th>default</th>
+    <th>possible values</th>
+  </tr>
+  <tr>
+    <td>iframe</td>
+    <td>boolean</td>
+    <td>Whether to render the component inside an iframe. Iframes are beneficial for most users because they isolate the embed in a “sandbox” so that other parts of your website don’t interact with it in unwanted ways. If you wish to have full control over the appearance of your embed and know how to use CSS, you may choose to change this value to false. If you do so, your components will appear unstyled.</td>
+    <td>true</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>contents</td>
+    <td>object</td>
+    <td>Whether or not to render each element within the component. There is a key for each element in the object, set to either true or false by default. You may override any of these values.</td>
+    <td>
+<pre><code>
+{
+  title: false,
+  products: true,
+  pagination: true,
+ }
+</pre></code>
+    </td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>order</td>
+    <td>array</td>
+    <td>Order in which elements appear in embed.</td>
+    <td>
+<pre><code>
+['title', 'products', 'pagination']
+</pre></code>
+    </td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>text</td>
+    <td>object</td>
+    <td>Values for all text visible in embeds except for that defined in the product itself (for example, you cannot change the title of a product from the text object, you would change that from your Shopify admin).</td>
+    <td>
+<pre><code>
+{
+  nextPageButton: 'Next page',
+}
+</pre></code>
+    </td>
+    <td></td>
+  </tr>
+  </tbody>
+</table>
+
+<a name="option"></a>
+<h2>option</h2>
+
+<p>Selectable option within a product embed.</p>
+
+<table class="config-table">
+  <tbody>
+  <tr>
+    <th>option</th>
+    <th>type</th>
+    <th>description</th>
+    <th>default</th>
+    <th>possible values</th>
+  </tr>
+  <tr>
+    <td>contents</td>
+    <td>object</td>
+    <td>Whether or not to render each element within the component. There is a key for each element in the object, set to either true or false by default. You may override any of these values.</td>
+    <td>
+<pre><code>
+{
+  option: true
+}
+</pre></code>
+    </td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>order</td>
+    <td>array</td>
+    <td>Order in which elements appear in embed.</td>
+    <td>
+<pre><code>
+[
+  'option'
+]
+</pre></code>
+    </td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>templates</td>
+    <td>object</td>
+    <td>mustache templates used to display contents</td>
+    <td><a href="https://github.com/Shopify/buy-button-js/blob/master/src/templates/option.js">option.js</a></td>
+    <td></td>
+  </tr>
+  </tbody>
+</table>
+
+<a name="cart"></a>
+<h2>cart</h2>
+
+<p>Shopping cart. For the button that opens the shopping cart, see <a href="#toggle">toggle</a>.</p>
+
+<table class="config-table">
+  <tbody>
+  <tr>
+    <th>option</th>
+    <th>type</th>
+    <th>description</th>
+    <th>default</th>
+    <th>possible values</th>
+  </tr>
+  <tr>
+    <td>iframe</td>
+    <td>boolean</td>
+    <td>Whether to render the component inside an iframe. Iframes are beneficial for most users because they isolate the embed in a “sandbox” so that other parts of your website don’t interact with it in unwanted ways. If you wish to have full control over the appearance of your embed and know how to use CSS, you may choose to change this value to false. If you do so, your components will appear unstyled.</td>
+    <td>true</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>popup</td>
+    <td>boolean</td>
+    <td>whether checkout should open in a popup window.</td>
+    <td>true</td>
+    <td></td>
+  </tr>
+  <tr>
+  <td>startOpen</td>
+    <td>boolean</td>
+    <td>whether cart should start visible.</td>
+    <td>false</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>contents</td>
+    <td>object</td>
+    <td>Whether or not to render each element within the component. There is a key for each element in the object, set to either true or false by default. You may override any of these values.</td>
+    <td>
+<pre><code>
+{
+  title: true,
+  lineItems: true,
+  footer: true,
+}
+</pre></code>
+    </td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>order</td>
+    <td>array</td>
+    <td>Order in which elements appear in embed.</td>
+    <td>
+<pre><code>
+['title', 'lineItems', 'footer']
+</pre></code>
+    </td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>text</td>
+    <td>object</td>
+    <td>Values for all text visible in embeds except for that defined in the product itself (for example, you cannot change the title of a product from the text object, you would change that from your Shopify admin).</td>
+    <td>
+<pre><code>
+{
+  title: 'Cart',
+  empty: 'Your cart is empty.',
+  button: 'CHECKOUT',
+  total: 'SUBTOTAL',
+  notice: 'Shipping and discount codes are added at checkout.',
+}
+</pre></code>
+    </td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>templates</td>
+    <td>object</td>
+    <td>mustache templates used to display contents</td>
+    <td><a href="https://github.com/Shopify/buy-button-js/blob/master/src/templates/cart.js">cart.js</a></td>
+    <td></td>
+  </tr>
+  </tbody>
+</table>
+
+<a name="lineItem"></a>
+<h2>lineItem</h2>
+
+<p>Individual line item within cart.</p>
+
+<table class="config-table">
+  <tbody>
+  <tr>
+    <th>option</th>
+    <th>type</th>
+    <th>description</th>
+    <th>default</th>
+    <th>possible values</th>
+  </tr>
+  <tr>
+    <td>contents</td>
+    <td>object</td>
+    <td>Whether or not to render each element within the component. There is a key for each element in the object, set to either true or false by default. You may override any of these values.</td>
+    <td>
+<pre><code>
+{
+  image: true,
+  variantTitle: true,
+  title: true,
+  price: true,
+  quantity: true,
+  quantityIncrement: true,
+  quantityDecrement: true,
+  quantityInput: true,
+},
+</pre></code>
+    </td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>order</td>
+    <td>array</td>
+    <td>Order in which elements appear in embed.</td>
+    <td>
+<pre><code>
+[
+  'image',
+  'variantTitle',
+  'title',
+  'price',
+  'quantity',
+]
+</pre></code>
+    </td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>templates</td>
+    <td>object</td>
+    <td>mustache templates used to display contents</td>
+    <td><a href="https://github.com/Shopify/buy-button-js/blob/master/src/templates/line-item.js">line-item.js</a></td>
+    <td></td>
+  </tr>
+  </tbody>
+</table>
+
+<a name="toggle"></a>
+<h2>toggle</h2>
+
+<p>Button that toggles cart visibility.</p>
+
+<table class="config-table">
+  <tbody>
+  <tr>
+    <th>option</th>
+    <th>type</th>
+    <th>description</th>
+    <th>default</th>
+    <th>possible values</th>
+  </tr>
+  <tr>
+    <td>iframe</td>
+    <td>boolean</td>
+    <td>Whether to render the component inside an iframe. Iframes are beneficial for most users because they isolate the embed in a “sandbox” so that other parts of your website don’t interact with it in unwanted ways. If you wish to have full control over the appearance of your embed and know how to use CSS, you may choose to change this value to false. If you do so, your components will appear unstyled.</td>
+    <td>true</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>sticky</td>
+    <td>boolean</td>
+    <td>whether cart toggle should stay stuck to the side of the page. If false, cart toggle will appear inline wherever embed code was added.</td>
+    <td>true</td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>contents</td>
+    <td>object</td>
+    <td>Which elements to display in the embed.</td>
+    <td>
+<pre><code>
+{
+  count: true,
+  icon: true,
+  title: false,
+}
+</pre></code>
+    </td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>order</td>
+    <td>array</td>
+    <td>Order in which elements appear in embed.</td>
+    <td>
+<pre><code>
+[
+  'count',
+  'icon',
+  'title',
+]
+</pre></code>
+    </td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>text</td>
+    <td>object</td>
+    <td>Values for all text visible in embeds except for that defined in the product itself (for example, you cannot change the title of a product from the text object, you would change that from your Shopify admin).</td>
+    <td>
+<pre><code>
+{
+  title: 'cart',
+}
+</pre></code>
+    </td>
+    <td></td>
+  </tr>
+  <tr>
+    <td>templates</td>
+    <td>object</td>
+    <td>mustache templates used to display contents</td>
+    <td><a href="https://github.com/Shopify/buy-button-js/blob/master/src/templates/toggle.js">toggle.js</a></td>
+    <td></td>
+  </tr>
+  </tbody>
+</table>
