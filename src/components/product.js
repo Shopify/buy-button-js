@@ -111,7 +111,7 @@ export default class Product extends Component {
    * @return {Object} image object.
    */
   get image() {
-    if (!this.model.selectedVariant || !this.model.selectedVariant.image.variants.length) {
+    if (!this.model.selectedVariant || !this.model.selectedVariant.image || !this.model.selectedVariant.image.variants.length) {
       return null;
     }
     const availableSizes = this.model.selectedVariant.image.variants;
