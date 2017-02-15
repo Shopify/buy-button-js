@@ -108,37 +108,37 @@ const testProduct = {
     ],
     image: {
       id: 666,
-      src: 'https://cdn.shopify.com/image-two.jpg',
+      src: 'https://cdn.shopify.com/image-one.jpg',
       variants: [
         {
           name: 'pico',
           dimension: '16x16',
-          src: 'https://cdn.shopify.com/image-two_pico.jpg'
+          src: 'https://cdn.shopify.com/image-one_pico.jpg'
         },
         {
           name: 'small',
           dimension: '100x100',
-          src: 'https://cdn.shopify.com/image-two_small.jpg'
+          src: 'https://cdn.shopify.com/image-one_small.jpg'
         },
         {
           name: 'medium',
           dimension: '240x240',
-          src: 'https://cdn.shopify.com/image-two_medium.jpg'
+          src: 'https://cdn.shopify.com/image-one_medium.jpg'
         },
         {
           name: 'large',
           dimension: '480x480',
-          src: 'https://cdn.shopify.com/image-two_large.jpg'
+          src: 'https://cdn.shopify.com/image-one_large.jpg'
         },
         {
           name: 'grande',
           dimension: '600x600',
-          src: 'https://cdn.shopify.com/image-two_grande.jpg'
+          src: 'https://cdn.shopify.com/image-one_grande.jpg'
         },
         {
           name: '1024x1025',
           dimension: '1024x1024',
-          src: 'https://cdn.shopify.com/image-two_1024x1024.jpg'
+          src: 'https://cdn.shopify.com/image-one_1024x1024.jpg'
         },
       ],
     },
@@ -176,17 +176,17 @@ const testProduct = {
         {
           name: 'small',
           dimension: '100x100',
-          src: 'https://cdn.shopify.com/image-two_small.jpg'
+          src: 'https://cdn.shopify.com/image-one_small.jpg'
         },
         {
           name: 'medium',
           dimension: '240x240',
-          src: 'https://cdn.shopify.com/image-two_medium.jpg'
+          src: 'https://cdn.shopify.com/image-one_medium.jpg'
         },
         {
           name: 'large',
           dimension: '480x480',
-          src: 'https://cdn.shopify.com/image-two_large.jpg'
+          src: 'https://cdn.shopify.com/image-one_large.jpg'
         },
       ],
       optionValues: [
@@ -209,17 +209,17 @@ const testProduct = {
         {
           name: 'small',
           dimension: '100x100',
-          src: 'https://cdn.shopify.com/image-two_small.jpg'
+          src: 'https://cdn.shopify.com/image-one_small.jpg'
         },
         {
           name: 'medium',
           dimension: '240x240',
-          src: 'https://cdn.shopify.com/image-two_medium.jpg'
+          src: 'https://cdn.shopify.com/image-one_medium.jpg'
         },
         {
           name: 'large',
           dimension: '480x480',
-          src: 'https://cdn.shopify.com/image-two_large.jpg'
+          src: 'https://cdn.shopify.com/image-one_large.jpg'
         },
       ],
       optionValues: [
@@ -242,17 +242,17 @@ const testProduct = {
         {
           name: 'small',
           dimension: '100x100',
-          src: 'https://cdn.shopify.com/image-two_small.jpg'
+          src: 'https://cdn.shopify.com/image-one_small.jpg'
         },
         {
           name: 'medium',
           dimension: '240x240',
-          src: 'https://cdn.shopify.com/image-two_medium.jpg'
+          src: 'https://cdn.shopify.com/image-one_medium.jpg'
         },
         {
           name: 'large',
           dimension: '480x480',
-          src: 'https://cdn.shopify.com/image-two_large.jpg'
+          src: 'https://cdn.shopify.com/image-one_large.jpg'
         },
       ],
       optionValues: [

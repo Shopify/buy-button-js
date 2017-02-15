@@ -136,9 +136,11 @@ export default class Product extends Component {
       })[0];
     }
 
-    return sourceImage.variants.filter((image) => {
+    return Object.assign({}, sourceImage.variants.filter((image) => {
       return image.name === imageSize;
-    })[0];
+    })[0], {
+      id: sourceImage.id,
+    });
   }
 
   /**

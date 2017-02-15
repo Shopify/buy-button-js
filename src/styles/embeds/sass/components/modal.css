@@ -153,11 +153,10 @@
   .shopify-buy__product-img-wrapper {
     height: 100%;
     padding-right: calc(var(--gutter) * 2);
-    max-height: var(--modal-height);
   }
 
   .shopify-buy__product__variant-img {
-    max-height: $modal-height;
+    margin: 0 auto;
   }
 
   .shopify-buy__btn--close {
