@@ -1,6 +1,6 @@
 {
   "name": "@shopify/buy-button-js",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "BuyButton.js allows merchants to build Shopify interfaces into any website",
   "main": "lib/buybutton.cjs.js",
   "repository": "git@github.com:Shopify/buy-button-js.git",
