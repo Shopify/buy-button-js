@@ -1,0 +1,21 @@
+---
+name: buy-button-js
+
+up:
+  - node:
+      version: v6.9.5
+      yarn: true
+
+commands:
+  test:
+    run: yarn run test
+  start:
+    run: yarn run start
+  build:
+    run: yarn run build
+
+open:
+  example: 'http://localhost:8080/'
+
+packages:
+  - git@github.com:Shopify/dev-shopify.git
