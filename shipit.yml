@@ -1,6 +1,6 @@
 dependencies:
   override:
-    - npm install --no-progress --ignore-engines
+    - yarn install --no-progress --ignore-engines
 
 deploy:
   override:
