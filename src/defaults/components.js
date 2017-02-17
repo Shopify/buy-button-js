@@ -15,6 +15,7 @@ const defaults = {
     width: '280px',
     order: [
       'img',
+      'imgWithCarousel',
       'title',
       'variantTitle',
       'price',
