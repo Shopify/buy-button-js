@@ -50,3 +50,4 @@ dev open docs
 ```
 
 Docs source files are located in /docs.
+Docs are automatically deployed to gh-pages from master.
