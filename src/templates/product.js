@@ -15,9 +15,15 @@ const productTemplate = {
   img: '<div class="{{data.classes.product.imgWrapper}}" data-element="product.imgWrapper"><img data-element="product.img" class="{{data.classes.product.img}}" src="{{data.currentImage.src}}" /></div>',
   imgWithCarousel: `<div class="{{data.classes.product.imgWrapper}}" data-element="product.imageWrapper">
                       <div class="main-image-wrapper">
-                        <button type="button" class="carousel-button carousel-button--previous">Left</button>
+                        <button type="button" class="carousel-button carousel-button--previous">
+                          Left
+                          <img class="carousel-button-arrow" src="//sdks.shopifycdn.com/buy-button/latest/arrow.svg" alt="Carousel Arrow"/>
+                        </button>
                         <img class="{{data.classes.product.img}}" src="{{data.currentImage.src}}" data-element="product.img" />
-                        <button type="button" class="carousel-button carousel-button--next">Right</button>
+                        <button type="button" class="carousel-button carousel-button--next">
+                          Right
+                          <img class="carousel-button-arrow" src="//sdks.shopifycdn.com/buy-button/latest/arrow.svg" alt="Carousel Arrow"/>
+                        </button>
                       </div>
                       <div class="{{data.classes.product.carousel}}">
                         {{#data.carouselImages}}
