@@ -8,7 +8,7 @@ To get started, take a look at [the documentation](http://shopify.github.io/buy-
 ## Development
 
 ```
-npm install
+dev up
 cp index.example.html index.html
 ```
 
@@ -16,7 +16,7 @@ cp index.example.html index.html
 * Set a product ID in index.html
 
 ```
-npm run start
+dev start
 
 ```
 
@@ -25,7 +25,13 @@ Will watch for changes, compile src/ to tmp/ using babel & browserify, and run a
 ## Testing
 
 ```
-npm run test-dev
+dev test
+```
+
+will run full test suite locally
+
+```
+yarn run test-dev
 ```
 
 Will watch for changes and run test suite.
