@@ -319,11 +319,7 @@
   height: 100%;
   border: none;
   font-size: 0;
-  background-image: url("//sdks.shopifycdn.com/buy-button/latest/arrow.svg");
   background-color: transparent;
-  background-size: 20px;
-  background-repeat: no-repeat;
-  background-position: 45px center;
   opacity: 0.4;
   cursor: pointer;
 
@@ -332,6 +328,12 @@
     opacity: 0.9;
     outline: none;
   }
+}
+
+.carousel-button-arrow {
+  width: 20px;
+  display: inline-block;
+  margin-left: 25px;
 }
 
 .carousel-button--previous {
