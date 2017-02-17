@@ -35,3 +35,18 @@ yarn run test-dev
 ```
 
 Will watch for changes and run test suite.
+
+## Documentation
+
+To run docs locally, install jekyll:
+
+```
+gem intsall jekyll
+```
+
+```
+dev docs
+dev open docs
+```
+
+Docs source files are located in /docs.
