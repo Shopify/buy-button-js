@@ -5,5 +5,4 @@ dependencies:
 deploy:
   override:
     - ejson decrypt -o config.json config.ejson
-    - yarn run build
-    - yarn run deploy
+    - npm run deploy
