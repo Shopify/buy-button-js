@@ -1,5 +1,6 @@
 # BuyButton.js
 
+
 BuyButton.js is a highly customizable UI library for adding ecommerce functionality to any website. It allows you to create interactive UI components such as product listings and shopping carts with minimal configuration, while allowing you to easily customize the appearance and behaviour of the components.
 It uses the [JS Buy SDK](http://shopify.github.io/js-buy-sdk/) to connect to your Shopify store, giving you access to your products and collections.
 
@@ -8,7 +9,7 @@ To get started, take a look at [the documentation](http://shopify.github.io/buy-
 ## Development
 
 ```
-dev up
+yarn
 cp index.example.html index.html
 ```
 
@@ -16,7 +17,7 @@ cp index.example.html index.html
 * Set a product ID in index.html
 
 ```
-dev start
+yarn run start
 
 ```
 
@@ -25,7 +26,7 @@ Will watch for changes, compile src/ to tmp/ using babel & browserify, and run a
 ## Testing
 
 ```
-dev test
+yarn run test
 ```
 
 will run full test suite locally
@@ -45,9 +46,8 @@ gem intsall jekyll
 ```
 
 ```
-dev docs
-dev open docs
+yarn run docs
 ```
-
+Doc server will run at http://localhost:4000/buy-button-js/
 Docs source files are located in /docs.
 Docs are automatically deployed to gh-pages from master.
