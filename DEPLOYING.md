@@ -3,7 +3,7 @@
 Pull from master and install all dependencies
 ```
 git pull origin master
-npm install
+yarn install
 ```
 Then run
 
@@ -18,8 +18,7 @@ Which will do 3 things:
 - create a tag
 
 ```
-npm publish
 git push origin master --tags
 ```
 
-Then deploy to S3 via [Shipit](https://shipit.shopify.io/shopify/buy-button-js/production)
+Then deploy to S3 and NPM via [Shipit](https://shipit.shopify.io/shopify/buy-button-js/production)
