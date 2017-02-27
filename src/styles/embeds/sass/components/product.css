@@ -220,6 +220,7 @@
 
 @media (min-width: 500px) {
   .shopify-buy__layout-horizontal:not(.no-image) {
+    text-align: left;
 
     & .shopify-buy__product-img-wrapper {
       float: left;
@@ -245,6 +246,7 @@
 
 @media (min-width: 680px) {
   .shopify-buy__layout-horizontal:not(.no-image) {
+    text-align: left;
 
     & .shopify-buy__product-img-wrapper {
       float: left;
