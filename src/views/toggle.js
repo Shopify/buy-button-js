@@ -62,7 +62,7 @@ export default class ToggleView extends View {
   }
 
   wrapTemplate(html) {
-    return `<div role="button" class="${this.stickyClass} ${this.component.classes.toggle.toggle}">
+    return `<div class="${this.stickyClass} ${this.component.classes.toggle.toggle}">
       ${html}
       ${this.readableLabel}
     </div>`;
