@@ -24,7 +24,7 @@ export default class ToggleView extends View {
   }
 
   get readableLabel() {
-    if(this.component.options.contents.title) {
+    if (this.component.options.contents.title) {
       return '';
     }
     return `<p class="shopify-buy--visually-hidden">${this.component.options.text.title}</p>`;
