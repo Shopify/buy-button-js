@@ -190,7 +190,8 @@ export default class Cart extends Component {
   }
 
   onCheckout() {
-    this.checkout.open(this.model.checkoutUrl);
+	  this._userEvent('openCheckout');
+	  this.checkout.open(this.model.checkoutUrl);
   }
 
   /**
