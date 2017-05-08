@@ -21,8 +21,9 @@ export default class UI {
    * @param {Object} integrations - optional tracker and logger integrations
    * @param {String} styleOverrides - additional CSS to be added to _host_ style tag
    */
-  constructor(client, integrations = {}, styleOverrides = '') {
+  constructor(client, config, integrations = {}, styleOverrides = '') {
     this.client = client;
+    this.config = config;
     this.iframeComponents = [];
     this.components = {
       product: [],
@@ -40,7 +41,7 @@ export default class UI {
       toggle: CartToggle,
     };
     this.errorReporter = integrations.errorReporter;
-    this.tracker = new Tracker(integrations.tracker, this.client.config);
+    this.tracker = new Tracker(integrations.tracker, this.config);
     this.styleOverrides = styleOverrides;
     this.tracker.trackPageview();
     this.activeEl = null;
@@ -326,4 +327,3 @@ export default class UI {
     });
   }
 }
-
