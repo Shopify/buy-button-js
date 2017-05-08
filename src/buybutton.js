@@ -4,7 +4,7 @@ import UI from './ui';
 import productTemplates from './templates/product';
 
 window.ShopifyBuy = window.ShopifyBuy || ShopifyBuy;
-window.Config = window.Config || Config;
+window.ShopifyBuyConfig = window.ShopifyBuyConfig || Config;
 
 ShopifyBuy.UI = window.ShopifyBuy.UI || {
   domains: {},
