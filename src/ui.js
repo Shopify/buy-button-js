@@ -21,9 +21,13 @@ export default class UI {
    * @param {Object} integrations - optional tracker and logger integrations
    * @param {String} styleOverrides - additional CSS to be added to _host_ style tag
    */
-  constructor(client, config, integrations = {}, styleOverrides = '') {
+  constructor(client, integrations = {}, styleOverrides = '') {
     this.client = client;
-    this.config = config;
+    // this.config = config;
+    this.config = {};
+    this.config.domain = client.fetchShopInfo().then((res) => {
+      return res.attrs.primaryDomain.attrs.host.value;
+    });
     this.iframeComponents = [];
     this.components = {
       product: [],
