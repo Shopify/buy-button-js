@@ -9,10 +9,12 @@ window.Config = window.Config || Config;
 ShopifyBuy.UI = window.ShopifyBuy.UI || {
   domains: {},
 
-  init(client, config, integrations = {}, styleOverrides) {
-    const domain = config.domain;
+  init(client, integrations = {}, styleOverrides) {
+    const domain = client.fetchShopInfo().then((res) => {
+      return res.attrs.primaryDomain.attrs.host.value;
+    });
     if (!this.domains[domain]) {
-      this.domains[domain] = new UI(client, config, integrations, styleOverrides);
+      this.domains[domain] = new UI(client, integrations, styleOverrides);
     }
     return this.domains[domain];
   },
