@@ -41,6 +41,7 @@ export default class View {
     const html = this.template.render({data: this.component.viewData}, (data) => {
       return this.wrapTemplate(data);
     });
+    console.log(this.wrapper);
     if (!this.wrapper) {
       this.wrapper = this._createWrapper();
     }
