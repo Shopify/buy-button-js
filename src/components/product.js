@@ -100,7 +100,7 @@ export default class Product extends Component {
    */
   get currentImage() {
     if (this.shouldUpdateImage) {
-      this.cachedImage = this.image;
+      this.cachedImage = this.model.images[0];
     }
 
     return this.cachedImage;
@@ -196,8 +196,11 @@ export default class Product extends Component {
   get carouselImages() {
     return this.model.images.map((image) => {
       return Object.assign({}, image, {
-        isSelected: image.id === this.currentImage.id,
-        carouselSrc: image.variants[3].src,
+        // isSelected: image.id === this.currentImage.id,
+        isSelected: true,
+        // use correct image size
+        // carouselSrc: image.variants[3].src,
+        carouselSrc: image.src,
       });
     });
   }
@@ -382,7 +385,7 @@ export default class Product extends Component {
    * @return {Array}
    */
   get decoratedOptions() {
-    const selections = this.selections;
+    // const selections = this.selections;
     return this.model.options.map((option) => {
       return {
         name: option.name,
@@ -390,7 +393,8 @@ export default class Product extends Component {
           return {
             name: value,
             selected: value === option.selected,
-            disabled: !this.optionValueCanBeSelected(selections, option.name, value),
+            disabled: false,
+            // disabled: !this.optionValueCanBeSelected(selections, option.name, value),
           };
         }),
       };

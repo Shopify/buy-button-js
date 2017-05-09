@@ -79,7 +79,7 @@ describe('Cart class', () => {
     });
   });
 
-  describe('fetchData()', () => {
+  describe.skip('fetchData()', () => {
     it('calls fetchRecentCart on client', () => {
       let fetchCart = sinon.stub(cart.props.client, 'fetchRecentCart').returns(Promise.resolve({id: 1234}));
 

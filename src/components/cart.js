@@ -129,7 +129,18 @@ export default class Cart extends Component {
    * @return {Promise} promise resolving to cart instance.
    */
   fetchData() {
-    return this.props.client.fetchRecentCart();
+    const checkoutId = localStorage.getItem('checkoutId');
+    if (checkoutId) {
+      return this.props.client.fetchCheckout(checkoutId).then((checkout) => {
+        return checkout;
+      });
+    } else {
+      return this.props.client.createCheckout().then((checkout) => {
+        localStorage.setItem('checkoutId', checkout.id);
+        return checkout;
+      });
+    }
+    // return this.props.client.fetchRecentCart();
   }
 
   /**
