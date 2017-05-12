@@ -310,7 +310,6 @@ export default class Product extends Component {
       const data = merge(option, this.options.viewData);
       data.classes = this.classes;
       data.onlyOption = (this.model.options.length === 1);
-
       return acc + this.childTemplate.render({data});
     }, '');
   }
@@ -339,6 +338,7 @@ export default class Product extends Component {
   /**
    * get selected values for options
    * @return {Object} object with option names as keys
+   * TODO: remove this.
    */
   get selections() {
     const selections = {};
@@ -385,14 +385,13 @@ export default class Product extends Component {
    * @return {Array}
    */
   get decoratedOptions() {
-    // const selections = this.selections;
     return this.model.options.map((option) => {
       return {
         name: option.name,
         values: option.values.map((value) => {
           return {
             name: value,
-            selected: value === option.selected,
+            selected: value.value === option.selected,
             disabled: false,
             // disabled: !this.optionValueCanBeSelected(selections, option.name, value),
           };

@@ -45,6 +45,7 @@ export default class ProductUpdater extends Updater {
     }
     [...this.component.view.wrapper.querySelectorAll('img')].forEach((img) => {
       img.addEventListener('load', () => {
+        // TODO: refactor this logic out from the views?
         this.component.view.resizeUntilLoaded();
       });
     });
