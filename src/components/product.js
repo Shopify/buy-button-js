@@ -1,3 +1,4 @@
+import ShopifyBuy from 'shopify-buy';
 import merge from '../utils/merge';
 import Component from '../component';
 import Template from '../template';
@@ -73,6 +74,8 @@ export default class Product extends Component {
     this.modal = null;
     this.imgStyle = '';
     this.selectedQuantity = 1;
+    this.selectedVariant = null;
+    this.selectedOptions = {};
     this.updater = new ProductUpdater(this);
     this.view = new ProductView(this);
     this.selectedImage = null;
@@ -111,10 +114,10 @@ export default class Product extends Component {
    * @return {Object} image object.
    */
   get image() {
-    if (!this.model.selectedVariant || !this.model.selectedVariant.image || !this.model.selectedVariant.image.variants.length) {
+    if (!this.selectedVariant || !this.selectedVariant.image || !this.selectedVariant.image.variants.length) {
       return null;
     }
-    const availableSizes = this.model.selectedVariant.image.variants;
+    const availableSizes = this.selectedVariant.image.variants;
 
     let imageSize = 'grande';
 
@@ -129,7 +132,7 @@ export default class Product extends Component {
       imageSize = this.options.imageSize;
     }
 
-    let sourceImage = this.model.selectedVariant.image;
+    let sourceImage = this.selectedVariant.image;
     if (this.selectedImage) {
       sourceImage = this.model.images.filter((image) => {
         return image.id === this.selectedImage.id;
@@ -148,10 +151,10 @@ export default class Product extends Component {
    * @return {String}
    */
   get formattedPrice() {
-    if (!this.model.selectedVariant) {
+    if (!this.selectedVariant) {
       return '';
     }
-    return formatMoney(this.model.selectedVariant.price, this.globalConfig.moneyFormat);
+    return formatMoney(this.selectedVariant.price, this.globalConfig.moneyFormat);
   }
 
   /**
@@ -159,10 +162,10 @@ export default class Product extends Component {
    * @return {String}
    */
   get formattedCompareAtPrice() {
-    if (!this.model.selectedVariant) {
+    if (!this.selectedVariant) {
       return '';
     }
-    return formatMoney(this.model.selectedVariant.compareAtPrice, this.globalConfig.moneyFormat);
+    return formatMoney(this.selectedVariant.compareAtPrice, this.globalConfig.moneyFormat);
   }
 
   /**
@@ -233,11 +236,12 @@ export default class Product extends Component {
   }
 
   get variantExists() {
-    return Boolean(this.model.selectedVariant);
+    return Boolean(this.selectedVariant);
   }
 
   get variantInStock() {
-    return this.variantExists && this.model.selectedVariant.available;
+    // todo: product availability
+    return this.variantExists // && this.selectedVariant.available;
   }
 
   get hasVariants() {
@@ -257,7 +261,7 @@ export default class Product extends Component {
   }
 
   get priceClass() {
-    return this.model.selectedVariant && this.model.selectedVariant.compareAtPrice ? this.classes.product.loweredPrice : '';
+    return this.selectedVariant && this.selectedVariant.compareAtPrice ? this.classes.product.loweredPrice : '';
   }
 
   get isButton() {
@@ -390,10 +394,11 @@ export default class Product extends Component {
         name: option.name,
         values: option.values.map((value) => {
           return {
-            name: value,
-            selected: value.value === option.selected,
+            name: value.value,
+            selected: Boolean(this.selectedVariant.selectedOptions.find((selectedOption) => {
+              return selectedOption.value === value.value;
+            })),
             disabled: false,
-            // disabled: !this.optionValueCanBeSelected(selections, option.name, value),
           };
         }),
       };
@@ -405,14 +410,14 @@ export default class Product extends Component {
    * @return {Object}
    */
   get trackingInfo() {
-    if (!this.model.selectedVariant) {
+    if (!this.selectedVariant) {
       return {};
     }
     return {
       id: this.id,
-      name: this.model.selectedVariant.productTitle,
+      name: this.selectedVariant.productTitle,
       sku: null,
-      price: this.model.selectedVariant.price,
+      price: this.selectedVariant.price,
     };
   }
 
@@ -421,7 +426,7 @@ export default class Product extends Component {
    * @return {Object}
    */
   get selectedVariantTrackingInfo() {
-    const variant = this.model.selectedVariant;
+    const variant = this.selectedVariant;
     return {
       id: variant.id,
       name: variant.productTitle,
@@ -459,7 +464,7 @@ export default class Product extends Component {
     return {
       channel: 'buy_button',
       referrer: encodeURIComponent(windowUtils.location()),
-      variant: this.model.selectedVariant.id,
+      variant: this.selectedVariant.id,
     };
   }
 
@@ -571,7 +576,7 @@ export default class Product extends Component {
     } else if (this.options.buttonDestination === 'cart') {
       this.props.closeModal();
       this._userEvent('addVariantToCart');
-      this.props.tracker.trackMethod(this.cart.addVariantToCart.bind(this), 'Update Cart', this.selectedVariantTrackingInfo)(this.model.selectedVariant, this.model.selectedQuantity);
+      this.props.tracker.trackMethod(this.cart.addVariantToCart.bind(this), 'Update Cart', this.selectedVariantTrackingInfo)(this.selectedVariant, this.model.selectedQuantity);
       if (this.iframe) {
         this.props.setActiveEl(target);
       }
@@ -582,7 +587,7 @@ export default class Product extends Component {
       this.openOnlineStore();
     } else {
       this._userEvent('openCheckout');
-      new Checkout(this.config).open(this.model.selectedVariant.checkoutUrl(this.selectedQuantity));
+      new Checkout(this.config).open(this.selectedVariant.checkoutUrl(this.selectedQuantity));
     }
   }
 
@@ -694,10 +699,13 @@ export default class Product extends Component {
    */
   updateVariant(optionName, value) {
     const updatedOption = this.model.options.filter((option) => option.name === optionName)[0];
-    updatedOption.selected = value;
+    this.selectedOptions[updatedOption.name] = value;
+    this.selectedVariant = ShopifyBuy.Product.Helpers.variantForOptions(this.model, this.selectedOptions);
+
     if (this.variantExists) {
-      this.cachedImage = this.model.selectedVariantImage;
+      this.cachedImage = this.selectedVariantImage;
     }
+
     this.view.render();
     this._userEvent('updateVariant');
     return updatedOption;
@@ -708,17 +716,21 @@ export default class Product extends Component {
    * @param {Object} model - model to be modified.
    */
   setDefaultVariant(model) {
+    let selectedVariant;
+
     if (!this.defaultVariantId) {
-      return model;
+      this.defaultVariantId = model.variants[0].id;
+      selectedVariant = model.variants[0];
+    } else {
+      selectedVariant = model.variants.filter((variant) => variant.id === this.defaultVariantId)[0];
     }
 
-    const selectedVariant = model.variants.filter((variant) => variant.id === this.defaultVariantId)[0];
     if (selectedVariant) {
-      model.options.forEach((option) => {
-        option.selected = selectedVariant.optionValues.filter((optionValue) => optionValue.name === option.name)[0].value;
+      selectedVariant.selectedOptions.forEach((option) => {
+        this.selectedOptions[option.name] = option.value;
       });
+      this.selectedVariant = selectedVariant;
     } else {
-
       // eslint-disable-next-line
       console.error('invalid variant ID');
     }
