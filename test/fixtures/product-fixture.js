@@ -96,7 +96,7 @@ const testProduct = {
     productId: 123,
     title: 'sloth / small',
     available: true,
-    optionValues: [
+    selectedOptions: [
       {
         name: 'Print',
         value: 'sloth'
@@ -189,7 +189,7 @@ const testProduct = {
           src: 'https://cdn.shopify.com/image-one_large.jpg'
         },
       ],
-      optionValues: [
+      selectedOptions: [
         {
           name: 'Print',
           value: 'sloth'
@@ -222,7 +222,7 @@ const testProduct = {
           src: 'https://cdn.shopify.com/image-one_large.jpg'
         },
       ],
-      optionValues: [
+      selectedOptions: [
         {
           name: 'Print',
           value: 'shark'
@@ -255,7 +255,7 @@ const testProduct = {
           src: 'https://cdn.shopify.com/image-one_large.jpg'
         },
       ],
-      optionValues: [
+      selectedOptions: [
         {
           name: 'Print',
           value: 'shark'
@@ -271,7 +271,7 @@ const testProduct = {
       productId: 123,
       title: 'cat / small',
       available: false,
-      optionValues: [
+      selectedOptions: [
         {
           name: 'Print',
           value: 'cat'

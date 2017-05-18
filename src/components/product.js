@@ -74,7 +74,7 @@ export default class Product extends Component {
     this.modal = null;
     this.imgStyle = '';
     this.selectedQuantity = 1;
-    this.selectedVariant = null;
+    this.selectedVariant = {};
     this.selectedOptions = {};
     this.updater = new ProductUpdater(this);
     this.view = new ProductView(this);
@@ -236,12 +236,18 @@ export default class Product extends Component {
   }
 
   get variantExists() {
-    return Boolean(this.selectedVariant);
+    return Boolean(this.model.variants.find((variant) => {
+      if (this.selectedVariant) {
+        return variant.id === this.selectedVariant.id;
+      } else {
+        return false;
+      }
+    }));
   }
 
   get variantInStock() {
-    // todo: product availability
-    return this.variantExists // && this.selectedVariant.available;
+    // variant availability is no longer provided as part of the api?
+    return this.variantExists && this.selectedVariant.available;
   }
 
   get hasVariants() {
@@ -340,22 +346,6 @@ export default class Product extends Component {
   }
 
   /**
-   * get selected values for options
-   * @return {Object} object with option names as keys
-   * TODO: remove this.
-   */
-  get selections() {
-    const selections = {};
-
-    this.model.selections.forEach((selection, index) => {
-      const option = this.model.options[index];
-      selections[option.name] = selection;
-    });
-
-    return selections;
-  }
-
-  /**
    * determines whether an option can resolve to an available variant given current selections
    * @return {Boolean}
    */
@@ -395,9 +385,9 @@ export default class Product extends Component {
         values: option.values.map((value) => {
           return {
             name: value.value,
-            selected: Boolean(this.selectedVariant.selectedOptions.find((selectedOption) => {
-              return selectedOption.value === value.value;
-            })),
+            selected: Object.values(this.selectedOptions).find((selectedOption) => {
+              return selectedOption === value.value;
+            }),
             disabled: false,
           };
         }),
@@ -699,8 +689,11 @@ export default class Product extends Component {
    */
   updateVariant(optionName, value) {
     const updatedOption = this.model.options.filter((option) => option.name === optionName)[0];
-    this.selectedOptions[updatedOption.name] = value;
-    this.selectedVariant = ShopifyBuy.Product.Helpers.variantForOptions(this.model, this.selectedOptions);
+
+    if (updatedOption) {
+      this.selectedOptions[updatedOption.name] = value;
+      this.selectedVariant = ShopifyBuy.Product.Helpers.variantForOptions(this.model, this.selectedOptions);
+    }
 
     if (this.variantExists) {
       this.cachedImage = this.selectedVariantImage;
@@ -718,17 +711,19 @@ export default class Product extends Component {
   setDefaultVariant(model) {
     let selectedVariant;
 
-    if (!this.defaultVariantId) {
+    if (this.defaultVariantId) {
+      selectedVariant = model.variants.filter((variant) => variant.id === this.defaultVariantId)[0];
+    } else {
       this.defaultVariantId = model.variants[0].id;
       selectedVariant = model.variants[0];
-    } else {
-      selectedVariant = model.variants.filter((variant) => variant.id === this.defaultVariantId)[0];
     }
 
     if (selectedVariant) {
+
       selectedVariant.selectedOptions.forEach((option) => {
         this.selectedOptions[option.name] = option.value;
       });
+
       this.selectedVariant = selectedVariant;
     } else {
       // eslint-disable-next-line
