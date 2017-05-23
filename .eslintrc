@@ -2,5 +2,8 @@
   "extends": "plugin:shopify/esnext",
   "env": {
     "browser": true
+  },
+  "rules": {
+  	"no-warning-commends": 0
   }
 }

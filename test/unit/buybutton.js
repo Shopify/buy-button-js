@@ -2,16 +2,15 @@ import ShopifyBuy from '../../src/buybutton';
 import UI from '../../src/ui';
 
 describe.skip('ShopifyBuy.UI', () => {
-  const configAttrs = {
+  const config = new Config({
     domain: 'embeds.myshopify.com',
-    apiKey: 123,
-    appId: 6
-  };
+    storefrontAccessToken: 'meow',
+  });
   let client;
   let ui;
 
   beforeEach(() => {
-     client = ShopifyBuy.buildClient(configAttrs);
+     client = new ShopifyBuy(config);
      ui = ShopifyBuy.UI.init(client);
   });
 

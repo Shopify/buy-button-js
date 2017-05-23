@@ -76,9 +76,9 @@ export default class Product extends Component {
     this.selectedQuantity = 1;
     this.selectedVariant = {};
     this.selectedOptions = {};
+    this.selectedImage = null;
     this.updater = new ProductUpdater(this);
     this.view = new ProductView(this);
-    this.selectedImage = null;
   }
 
   /**
@@ -94,7 +94,7 @@ export default class Product extends Component {
    * @return {Boolean}
    */
   get shouldUpdateImage() {
-    return !this.cachedImage || (this.image && this.image.src && this.image.src !== this.cachedImage.src);
+    return !this.cachedImage || (this.image && this.image !== this.cachedImage);
   }
 
   /**
@@ -103,7 +103,7 @@ export default class Product extends Component {
    */
   get currentImage() {
     if (this.shouldUpdateImage) {
-      this.cachedImage = this.model.images[0];
+      this.cachedImage = this.image;
     }
 
     return this.cachedImage;
@@ -114,36 +114,19 @@ export default class Product extends Component {
    * @return {Object} image object.
    */
   get image() {
-    if (!this.selectedVariant || !this.selectedVariant.image || !this.selectedVariant.image.variants.length) {
+    if (!this.selectedVariant || !this.selectedVariant.image) {
       return null;
     }
-    const availableSizes = this.selectedVariant.image.variants;
+    let imageSize = parseInt(this.options.width, 10) || 480;
+    
+    const imageOptions = {
+      maxWidth: imageSize,
+      maxHeight: imageSize,
+    }  
 
-    let imageSize = 'grande';
-
-    if (this.options.width && this.options.layout === 'vertical') {
-      imageSize = availableSizes.filter((image) => {
-        const containerWidth = parseInt(this.options.width, 10);
-        return parseInt(image.dimension, 10) >= containerWidth * 1.5;
-      })[0].name;
-    }
-
-    if (this.options.imageSize) {
-      imageSize = this.options.imageSize;
-    }
-
-    let sourceImage = this.selectedVariant.image;
-    if (this.selectedImage) {
-      sourceImage = this.model.images.filter((image) => {
-        return image.id === this.selectedImage.id;
-      })[0];
-    }
-
-    return Object.assign({}, sourceImage.variants.filter((image) => {
-      return image.name === imageSize;
-    })[0], {
-      id: sourceImage.id,
-    });
+    // todo: handle selected image by fetching next page
+    const img = ShopifyBuy.Image.Helpers.imageForSize(this.selectedVariant.image, imageOptions);
+    return img;
   }
 
   /**
@@ -173,14 +156,13 @@ export default class Product extends Component {
    * @return {Object} viewData object.
    */
   get viewData() {
-    const image = Object.assign({}, this.currentImage);
     return merge(this.model, this.options.viewData, {
       classes: this.classes,
       contents: this.options.contents,
       text: this.options.text,
       optionsHtml: this.optionsHtml,
       decoratedOptions: this.decoratedOptions,
-      currentImage: image,
+      currentImage: this.currentImage,
       buttonClass: this.buttonClass,
       hasVariants: this.hasVariants,
       buttonDisabled: !this.buttonEnabled,
@@ -316,6 +298,7 @@ export default class Product extends Component {
     if (!this.options.contents.options) {
       return '';
     }
+
     return this.decoratedOptions.reduce((acc, option) => {
       const data = merge(option, this.options.viewData);
       data.classes = this.classes;
@@ -384,11 +367,10 @@ export default class Product extends Component {
         name: option.name,
         values: option.values.map((value) => {
           return {
-            name: value.value,
-            selected: Object.values(this.selectedOptions).find((selectedOption) => {
+            name: value.value, // naming lol
+            selected: Boolean(Object.values(this.selectedOptions).find((selectedOption) => {
               return selectedOption === value.value;
-            }),
-            disabled: false,
+            })),
           };
         }),
       };
