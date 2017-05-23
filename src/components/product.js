@@ -117,14 +117,14 @@ export default class Product extends Component {
     if (!this.selectedVariant || !this.selectedVariant.image) {
       return null;
     }
-    let imageSize = parseInt(this.options.width, 10) || 480;
-    
+    const imageSize = parseInt(this.options.width, 10) || 480;
+
     const imageOptions = {
       maxWidth: imageSize,
       maxHeight: imageSize,
-    }  
+    };
 
-    // todo: handle selected image by fetching next page
+    // handle selected image by fetching next page
     const img = ShopifyBuy.Image.Helpers.imageForSize(this.selectedVariant.image, imageOptions);
     return img;
   }

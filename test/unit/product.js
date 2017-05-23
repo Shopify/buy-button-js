@@ -222,21 +222,20 @@ describe('Product class', () => {
     });
   });
 
-  describe.skip('get currentImage', () => {
+  describe('get currentImage', () => {
     describe('if variant exists', () => {
       it('returns selected image', () => {
         return product.init(testProductCopy).then(() => {
-          assert.equal(product.currentImage.src, 'https://cdn.shopify.com/image-one_large.jpg');
+          assert.equal(product.currentImage, 'https://cdn.shopify.com/s/image-two_280x280.jpg?undefined');
         });
       });
     });
 
-    describe('if variant does not exist', () => {
+    describe.skip('if variant does not exist', () => {
       it('returns cached image', () => {
         return product.init(testProductCopy).then(() => {
-          product.model.selectedVariant = null;
-          product.model.selectedVariantImage = null;
-          assert.equal(product.currentImage.src, 'https://cdn.shopify.com/image-one_large.jpg');
+          product.selectedVariant = {};
+          assert.equal(product.currentImage, 'https://cdn.shopify.com/image-one_large.jpg');
         });
       });
     });
@@ -290,7 +289,7 @@ describe('Product class', () => {
         const viewData = product.viewData;
         assert.equal(viewData.buttonText, 'ADD TO CART');
         assert.ok(viewData.optionsHtml);
-        assert.equal(viewData.currentImage, 'https://cdn.shopify_280x280.com/image-two?undefined');
+        assert.equal(viewData.currentImage, 'https://cdn.shopify.com/s/image-two_280x280.jpg?undefined');
         assert.ok(viewData.hasVariants);
         assert.equal(viewData.test, 'test string');
       });
