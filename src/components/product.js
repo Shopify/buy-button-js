@@ -94,7 +94,7 @@ export default class Product extends Component {
    * @return {Boolean}
    */
   get shouldUpdateImage() {
-    return !this.cachedImage || (this.image && this.image !== this.cachedImage);
+    return !this.cachedImage || (this.image && this.image.src !== this.cachedImage);
   }
 
   /**
@@ -114,19 +114,25 @@ export default class Product extends Component {
    * @return {Object} image object.
    */
   get image() {
-    if (!this.selectedVariant || !this.selectedVariant.image) {
+    if ((!this.selectedVariant || !this.selectedVariant.image) && !this.selectedImage) {
       return null;
     }
     const imageSize = parseInt(this.options.width, 10) || 480;
+    let image;
+    let id;
 
     const imageOptions = {
       maxWidth: imageSize,
       maxHeight: imageSize,
     };
-
-    // handle selected image by fetching next page
-    const img = ShopifyBuy.Image.Helpers.imageForSize(this.selectedVariant.image, imageOptions);
-    return img;
+    if (this.selectedImage) {
+      id = this.selectedImage.id;
+      image = ShopifyBuy.Image.Helpers.imageForSize(this.selectedImage, imageOptions);
+    } else {
+      id = this.selectedVariant.image.id;
+      image = ShopifyBuy.Image.Helpers.imageForSize(this.selectedVariant.image, imageOptions);
+    }
+    return {id, src: image};
   }
 
   /**
@@ -180,13 +186,14 @@ export default class Product extends Component {
 
   get carouselImages() {
     return this.model.images.map((image) => {
-      return Object.assign({}, image, {
+      return {
+        id: image.id,
+        src: image.src,
+        carouselSrc: image.src, // thumbnails
         // isSelected: image.id === this.currentImage.id,
-        isSelected: true,
         // use correct image size
         // carouselSrc: image.variants[3].src,
-        carouselSrc: image.src,
-      });
+      };
     });
   }
 
@@ -534,6 +541,7 @@ export default class Product extends Component {
   fetchData() {
     return this.sdkFetch().then((model) => {
       if (model) {
+        this.handle = model.handle;
         model.selectedQuantity = 0;
         return model;
       }
@@ -573,7 +581,6 @@ export default class Product extends Component {
     const target = evt.target;
     const value = target.options[target.selectedIndex].value;
     const name = target.getAttribute('name');
-    this.selectedImage = null;
     this.updateVariant(name, value);
   }
 
@@ -595,20 +602,21 @@ export default class Product extends Component {
     evt.preventDefault();
     const selectedImageId = target.getAttribute('data-image-id');
     const imageList = this.model.images;
-    const foundImage = imageList.filter((image) => {
-      return image.id === parseInt(selectedImageId, 10);
-    })[0];
+    const foundImage = imageList.find((image) => {
+      return image.id === selectedImageId;
+    });
 
     if (foundImage) {
       this.selectedImage = foundImage;
       this.cachedImage = foundImage;
     }
+
     this.view.render();
   }
 
   nextIndex(currentIndex, offset) {
     const nextIndex = currentIndex + offset;
-    if (nextIndex > this.model.images.length) {
+    if (nextIndex > this.model.images.length - 1) {
       return 0;
     }
     if (nextIndex < 0) {
@@ -678,7 +686,7 @@ export default class Product extends Component {
     }
 
     if (this.variantExists) {
-      this.cachedImage = this.selectedVariantImage;
+      this.cachedImage = this.selectedVariant.image;
     }
 
     this.view.render();
@@ -701,11 +709,9 @@ export default class Product extends Component {
     }
 
     if (selectedVariant) {
-
       selectedVariant.selectedOptions.forEach((option) => {
         this.selectedOptions[option.name] = option.value;
       });
-
       this.selectedVariant = selectedVariant;
     } else {
       // eslint-disable-next-line

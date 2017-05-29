@@ -226,16 +226,16 @@ describe('Product class', () => {
     describe('if variant exists', () => {
       it('returns selected image', () => {
         return product.init(testProductCopy).then(() => {
-          assert.equal(product.currentImage, 'https://cdn.shopify.com/s/image-two_280x280.jpg?undefined');
+          assert.equal(product.currentImage.src, 'https://cdn.shopify.com/s/image-one_280x280.jpg');
         });
       });
     });
 
-    describe.skip('if variant does not exist', () => {
+    describe('if variant does not exist', () => {
       it('returns cached image', () => {
         return product.init(testProductCopy).then(() => {
           product.selectedVariant = {};
-          assert.equal(product.currentImage, 'https://cdn.shopify.com/image-one_large.jpg');
+          assert.equal(product.currentImage.src, 'https://cdn.shopify.com/s/image-one_280x280.jpg');
         });
       });
     });
@@ -289,7 +289,7 @@ describe('Product class', () => {
         const viewData = product.viewData;
         assert.equal(viewData.buttonText, 'ADD TO CART');
         assert.ok(viewData.optionsHtml);
-        assert.equal(viewData.currentImage, 'https://cdn.shopify.com/s/image-two_280x280.jpg?undefined');
+        assert.equal(viewData.currentImage.src, 'https://cdn.shopify.com/s/image-one_280x280.jpg');
         assert.ok(viewData.hasVariants);
         assert.equal(viewData.test, 'test string');
       });
@@ -566,13 +566,13 @@ describe('Product class', () => {
     });
   });
 
-  describe.skip('onlineStore methods', () => {
+  describe('onlineStore methods', () => {
     let windowStub;
     const expectedQs = '?channel=buy_button&referrer=http%3A%2F%2Ftest.com&variant=123&';
 
     beforeEach(() => {
       windowStub = sinon.stub(windowUtils, 'location').returns('http://test.com');
-      product.model.selectedVariant = {id: 123};
+      product.selectedVariant = {id: 123}
     });
 
     afterEach(() => {
@@ -584,7 +584,7 @@ describe('Product class', () => {
         assert.deepEqual(product.onlineStoreParams, {
           channel: 'buy_button',
           referrer: 'http%3A%2F%2Ftest.com',
-          variant: 12345,
+          variant: 123,
         });
       });
       describe('get onlineStoreQueryString', () => {
@@ -633,44 +633,35 @@ describe('Product class', () => {
       });
 
       it('returns true', () => {
-        product.cachedImage = 'https://cdn.shopify.com/s/image-two_240x240.jpg?undefined'
+        product.cachedImage = 'https://cdn.shopify.com/s/image-one_240x240.jpg'
         assert.notOk(product.shouldUpdateImage);
       });
     });
   });
 
   describe('get image', () => {
-    describe.skip('default', () => {
+    describe('default', () => {
       beforeEach(() => {
         return product.init(testProductCopy);
       });
 
-      it('returns medium image', () => {
-        assert.equal(product.image, 'image_url.jpg');
+      it('returns 480x480 image', () => {
+        product.config.product.width = undefined;
+        assert.equal(product.image.src, 'https://cdn.shopify.com/s/image-one_480x480.jpg');
       });
     });
 
-    describe.skip('if width explicitly set and layout vertical', () => {
+    describe('if width explicitly set and layout vertical', () => {
       beforeEach(() => {
         product.config.product.width = '160px';
         return product.init(testProductCopy);
       });
       it('returns smallest image larger than explicit width', () => {
-        assert.equal(product.image, 'image_url.jpg');
+        assert.equal(product.image.src, 'https://cdn.shopify.com/s/image-one_160x160.jpg');
       });
     });
 
-    describe.skip('with horizontal layout and no explicit image size', () => {
-      beforeEach(() => {
-        product.config.product.layout = 'horizontal';
-        return product.init(testProductCopy);
-      });
-      it('returns large image', () => {
-        assert.equal(product.image, 'https://cdn.shopify.com/image-one_grande.jpg');
-      });
-    });
-
-    describe.skip('when user selects an image from thumbnails', () => {
+    describe('when user selects an image from thumbnails', () => {
       beforeEach(() => {
         return product.init(testProductCopy).then(() => {
           product.selectedImage = product.model.images[2];
@@ -678,16 +669,16 @@ describe('Product class', () => {
         });
       });
       it('returns selected image', () => {
-        assert.equal(product.image.src, 'https://cdn.shopify.com/image-three_large.jpg');
+        assert.equal(product.image.src, 'https://cdn.shopify.com/s/image-three_280x280.jpg');
       });
       it('returns selected image of appropriate size if set', () => {
-        product.config.product.imageSize = 'pico';
-        assert.equal(product.image.src, 'https://cdn.shopify.com/image-three_pico.jpg');
+        product.config.product.width = '480px';
+        assert.equal(product.image.src, 'https://cdn.shopify.com/s/image-three_480x480.jpg');
       })
     });
   });
 
-  describe.skip('onCarouselChange', () => {
+  describe('onCarouselChange', () => {
     beforeEach(() => {
       return product.init(testProductCopy).then(() => {
         return Promise.resolve();
@@ -695,13 +686,13 @@ describe('Product class', () => {
     });
     it('sets selected image based on various offsets', () => {
       product.onCarouselChange(-1);
-      assert.equal(product.image.src, 'https://cdn.shopify.com/image-four_large.jpg');
+      assert.equal(product.image.src, 'https://cdn.shopify.com/s/image-four_280x280.jpg');
       product.onCarouselChange(-1);
-      assert.equal(product.image.src, 'https://cdn.shopify.com/image-three_large.jpg');
+      assert.equal(product.image.src, 'https://cdn.shopify.com/s/image-three_280x280.jpg');
       product.onCarouselChange(1);
-      assert.equal(product.image.src, 'https://cdn.shopify.com/image-four_large.jpg');
+      assert.equal(product.image.src, 'https://cdn.shopify.com/s/image-four_280x280.jpg');
       product.onCarouselChange(1);
-      assert.equal(product.image.src, 'https://cdn.shopify.com/image-one_large.jpg');
+      assert.equal(product.image.src, 'https://cdn.shopify.com/s/image-one_280x280.jpg');
     });
   });
 });

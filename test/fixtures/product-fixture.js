@@ -4,116 +4,21 @@ const testProduct = {
   images: [
     {
       id: 1,
-      src: 'https://cdn.shopify.com/s/image-one.jpg.jpg',
-      variants: [
-        {
-          name: 'pico',
-          src: 'https://cdn.shopify.com/s/image-one.jpg_pico.jpg',
-        },
-        {
-          name: 'small',
-          src: 'https://cdn.shopify.com/s/image-one.jpg_small.jpg',
-        },
-        {
-          name: 'medium',
-          src: 'https://cdn.shopify.com/s/image-one.jpg_medium.jpg',
-        },
-        {
-          name: 'large',
-          src: 'https://cdn.shopify.com/s/image-one.jpg_large.jpg',
-        },
-      ],
+      src: 'https://cdn.shopify.com/s/image-one.jpg',
     },
     {
       id: 2,
-      src: 'https://cdn.shopify.com/s/image-two.jpg.jpg',
-      variants: [
-        {
-          name: 'pico',
-          src: 'https://cdn.shopify.com/s/image-two.jpg_pico.jpg',
-        },
-        {
-          name: 'small',
-          src: 'https://cdn.shopify.com/s/image-two.jpg_small.jpg',
-        },
-        {
-          name: 'medium',
-          src: 'https://cdn.shopify.com/s/image-two.jpg_medium.jpg',
-        },
-        {
-          name: 'large',
-          src: 'https://cdn.shopify.com/s/image-two.jpg_large.jpg',
-        },
-      ],
+      src: 'https://cdn.shopify.com/s/image-two.jpg',
     },
     {
       id: 3,
-      src: 'https://cdn.shopify.com/s/image-three.jpg.jpg',
-      variants: [
-        {
-          name: 'pico',
-          src: 'https://cdn.shopify.com/s/image-three.jpg_pico.jpg',
-        },
-        {
-          name: 'small',
-          src: 'https://cdn.shopify.com/s/image-three.jpg_small.jpg',
-        },
-        {
-          name: 'medium',
-          src: 'https://cdn.shopify.com/s/image-three.jpg_medium.jpg',
-        },
-        {
-          name: 'large',
-          src: 'https://cdn.shopify.com/s/image-three.jpg_large.jpg',
-        },
-      ],
+      src: 'https://cdn.shopify.com/s/image-three.jpg',
     },
     {
       id: 4,
-      src: 'https://cdn.shopify.com/s/image-four.jpg.jpg',
-      variants: [
-        {
-          name: 'pico',
-          src: 'https://cdn.shopify.com/s/image-four.jpg_pico.jpg',
-        },
-        {
-          name: 'small',
-          src: 'https://cdn.shopify.com/s/image-four.jpg_small.jpg',
-        },
-        {
-          name: 'medium',
-          src: 'https://cdn.shopify.com/s/image-four.jpg_medium.jpg',
-        },
-        {
-          name: 'large',
-          src: 'https://cdn.shopify.com/s/image-four.jpg_large.jpg',
-        },
-      ],
+      src: 'https://cdn.shopify.com/s/image-four.jpg',
     },
   ],
-  selectedVariant: {
-    id: 12345,
-    productId: 123,
-    title: 'sloth / small',
-    available: true,
-    image: {
-      id: 200,
-      src: "https://cdn.shopify.com/s/image-two.jpg"
-    },
-    selectedOptions: [
-      {
-        name: 'Print',
-        value: 'sloth'
-      },
-      {
-        name: 'Size',
-        value: 'small'
-      }
-    ],
-  },
-  selectedVariantImage: {
-    img: 'http://test.com/test.jpg'
-  },
   options: [
     {
       name: 'Print',
@@ -141,7 +46,7 @@ const testProduct = {
       available: true,
       image: {
         id: 100,
-        src: "https://cdn.shopify.com/s/image-two.jpg"
+        src: "https://cdn.shopify.com/s/image-one.jpg"
       },
       selectedOptions: [
         {
