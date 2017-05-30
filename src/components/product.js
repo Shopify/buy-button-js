@@ -690,6 +690,10 @@ export default class Product extends Component {
       } else {
         this.selectedImage = this.model.images[0]; // get cached image
       }
+    } else {
+      this.selectedImage = this.model.images.find((image) => {
+        return image.id === this.cachedImage.id;
+      });
     }
 
     this.view.render();
