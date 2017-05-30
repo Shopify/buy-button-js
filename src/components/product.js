@@ -173,6 +173,7 @@ export default class Product extends Component {
       buttonClass: this.buttonClass,
       hasVariants: this.hasVariants,
       buttonDisabled: !this.buttonEnabled,
+      selectedVariant: this.selectedVariant,
       selectedQuantity: this.selectedQuantity,
       buttonText: this.buttonText,
       imgStyle: this.imgStyle,
@@ -695,7 +696,6 @@ export default class Product extends Component {
         return image.id === this.cachedImage.id;
       });
     }
-
     this.view.render();
     this._userEvent('updateVariant');
     return updatedOption;
