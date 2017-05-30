@@ -4,7 +4,7 @@ import UI from '../../src/ui';
 describe('ShopifyBuy.UI', () => {
   const config = new Config({
     domain: 'embeds.myshopify.com',
-    storefrontAccessToken: 'meow',
+    storefrontAccessToken: 'fake-access-token-12345',
   });
   let client;
   let ui;

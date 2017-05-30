@@ -171,7 +171,6 @@ describe('Product class', () => {
         });
       });
       describe('if variant is not in stock', () => {
-
         it('returns false', () => {
           product.selectedVariant = {
             available: false,
@@ -333,7 +332,7 @@ describe('Product class', () => {
     it('it updates selected variant', () => {
       return product.init(testProductCopy).then(() => {
         let updated = product.updateVariant('Size', 'large');
-        assert.equal(product.selectedOptions['Size'], 'large');
+        assert.equal(product.selectedOptions.Size, 'large');
       });
     });
   });
@@ -446,8 +445,8 @@ describe('Product class', () => {
     it('sets selectedVariant to product.defalutVariantId', () => {
       product.defaultVariantId = 12347;
       const model = product.setDefaultVariant(testProduct);
-      assert.equal(product.selectedOptions['Print'], 'shark');
-      assert.equal(product.selectedOptions['Size'], 'large');
+      assert.equal(product.selectedOptions.Print, 'shark');
+      assert.equal(product.selectedOptions.Size, 'large');
     });
   });
 
