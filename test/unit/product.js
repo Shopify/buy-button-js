@@ -398,7 +398,7 @@ describe('Product class', () => {
       assert.calledWith(cartUpdateConfigSpy, newConfig);
     });
 
-    it('calls updateConfig on modal if modal exists', () => {
+    it.skip('calls updateConfig on modal if modal exists', () => {
       const modalProduct = new Product({
         node: configCopy.node,
         options: Object.assign({}, configCopy.options, {
@@ -408,7 +408,7 @@ describe('Product class', () => {
         }),
       }, props);
       return modalProduct.init(testProductCopy).then(() => {
-        modalProduct.openModal().then(() => {;
+        modalProduct.openModal().then(() => {
           modalProduct.cart = {
             updateConfig: sinon.spy()
           }

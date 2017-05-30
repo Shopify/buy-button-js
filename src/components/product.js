@@ -102,7 +102,7 @@ export default class Product extends Component {
    * @return {Object} image objcet.
    */
   get currentImage() {
-    if (this.shouldUpdateImage) {
+    if (this.shouldUpdateImage && this.image) {
       this.cachedImage = this.image;
     }
 
@@ -114,7 +114,7 @@ export default class Product extends Component {
    * @return {Object} image object.
    */
   get image() {
-    if ((!this.selectedVariant || !this.selectedVariant.image) && !this.selectedImage) {
+    if (!this.selectedVariant || (!this.selectedVariant.image && !this.options.contents.imgWithCarousel)) {
       return null;
     }
     const imageSize = parseInt(this.options.width, 10) || 480;
@@ -125,6 +125,7 @@ export default class Product extends Component {
       maxWidth: imageSize,
       maxHeight: imageSize,
     };
+
     if (this.selectedImage) {
       id = this.selectedImage.id;
       image = ShopifyBuy.Image.Helpers.imageForSize(this.selectedImage, imageOptions);
@@ -687,6 +688,11 @@ export default class Product extends Component {
 
     if (this.variantExists) {
       this.cachedImage = this.selectedVariant.image;
+      if (this.selectedVariant.image) {
+        this.selectedImage = null;
+      } else {
+        this.selectedImage = this.model.images[0]; // get cached image
+      }
     }
 
     this.view.render();
@@ -706,6 +712,7 @@ export default class Product extends Component {
     } else {
       this.defaultVariantId = model.variants[0].id;
       selectedVariant = model.variants[0];
+      this.selectedImage = model.images[0];
     }
 
     if (selectedVariant) {

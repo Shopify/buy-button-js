@@ -1,7 +1,7 @@
 import ShopifyBuy from '../../src/buybutton';
 import UI from '../../src/ui';
 
-describe.skip('ShopifyBuy.UI', () => {
+describe('ShopifyBuy.UI', () => {
   const config = new Config({
     domain: 'embeds.myshopify.com',
     storefrontAccessToken: 'meow',
