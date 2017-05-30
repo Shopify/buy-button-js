@@ -7,6 +7,8 @@ import Component from '../../src/component';
 import testProduct from '../fixtures/product-fixture';
 import windowUtils from '../../src/utils/window-utils';
 
+const rootImageURI = 'https://cdn.shopify.com/s/';
+
 const config = {
   id: 123,
   node: document.getElementById('qunit-fixture'),
@@ -225,7 +227,7 @@ describe('Product class', () => {
     describe('if variant exists', () => {
       it('returns selected image', () => {
         return product.init(testProductCopy).then(() => {
-          assert.equal(product.currentImage.src, 'https://cdn.shopify.com/s/image-one_280x280.jpg');
+          assert.equal(product.currentImage.src, rootImageURI + 'image-one_280x280.jpg');
         });
       });
     });
@@ -234,7 +236,7 @@ describe('Product class', () => {
       it('returns cached image', () => {
         return product.init(testProductCopy).then(() => {
           product.selectedVariant = {};
-          assert.equal(product.currentImage.src, 'https://cdn.shopify.com/s/image-one_280x280.jpg');
+          assert.equal(product.currentImage.src, rootImageURI + 'image-one_280x280.jpg');
         });
       });
     });
@@ -288,7 +290,7 @@ describe('Product class', () => {
         const viewData = product.viewData;
         assert.equal(viewData.buttonText, 'ADD TO CART');
         assert.ok(viewData.optionsHtml);
-        assert.equal(viewData.currentImage.src, 'https://cdn.shopify.com/s/image-one_280x280.jpg');
+        assert.equal(viewData.currentImage.src, rootImageURI + 'image-one_280x280.jpg');
         assert.ok(viewData.hasVariants);
         assert.equal(viewData.test, 'test string');
       });
@@ -632,7 +634,7 @@ describe('Product class', () => {
       });
 
       it('returns true', () => {
-        product.cachedImage = 'https://cdn.shopify.com/s/image-one_240x240.jpg'
+        product.cachedImage = rootImageURI + 'image-one_240x240.jpg'
         assert.notOk(product.shouldUpdateImage);
       });
     });
@@ -646,7 +648,7 @@ describe('Product class', () => {
 
       it('returns 480x480 image', () => {
         product.config.product.width = undefined;
-        assert.equal(product.image.src, 'https://cdn.shopify.com/s/image-one_480x480.jpg');
+        assert.equal(product.image.src, rootImageURI + 'image-one_480x480.jpg');
       });
     });
 
@@ -656,7 +658,7 @@ describe('Product class', () => {
         return product.init(testProductCopy);
       });
       it('returns smallest image larger than explicit width', () => {
-        assert.equal(product.image.src, 'https://cdn.shopify.com/s/image-one_160x160.jpg');
+        assert.equal(product.image.src, rootImageURI + 'image-one_160x160.jpg');
       });
     });
 
@@ -668,11 +670,11 @@ describe('Product class', () => {
         });
       });
       it('returns selected image', () => {
-        assert.equal(product.image.src, 'https://cdn.shopify.com/s/image-three_280x280.jpg');
+        assert.equal(product.image.src, rootImageURI + 'image-three_280x280.jpg');
       });
       it('returns selected image of appropriate size if set', () => {
         product.config.product.width = '480px';
-        assert.equal(product.image.src, 'https://cdn.shopify.com/s/image-three_480x480.jpg');
+        assert.equal(product.image.src, rootImageURI + 'image-three_480x480.jpg');
       })
     });
   });
@@ -685,13 +687,13 @@ describe('Product class', () => {
     });
     it('sets selected image based on various offsets', () => {
       product.onCarouselChange(-1);
-      assert.equal(product.image.src, 'https://cdn.shopify.com/s/image-four_280x280.jpg');
+      assert.equal(product.image.src, rootImageURI + 'image-four_280x280.jpg');
       product.onCarouselChange(-1);
-      assert.equal(product.image.src, 'https://cdn.shopify.com/s/image-three_280x280.jpg');
+      assert.equal(product.image.src, rootImageURI + 'image-three_280x280.jpg');
       product.onCarouselChange(1);
-      assert.equal(product.image.src, 'https://cdn.shopify.com/s/image-four_280x280.jpg');
+      assert.equal(product.image.src, rootImageURI + 'image-four_280x280.jpg');
       product.onCarouselChange(1);
-      assert.equal(product.image.src, 'https://cdn.shopify.com/s/image-one_280x280.jpg');
+      assert.equal(product.image.src, rootImageURI + 'image-one_280x280.jpg');
     });
   });
 });
