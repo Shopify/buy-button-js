@@ -1,3 +1,4 @@
+import ShopifyBuy from 'shopify-buy';
 import merge from '../utils/merge';
 import Component from '../component';
 import CartToggle from './toggle';
@@ -77,8 +78,8 @@ export default class Cart extends Component {
       const data = merge(lineItem, this.options.viewData);
       data.classes = this.classes;
       data.lineItemImage = this.imageForLineItem(data);
-      data.variantTitle = data.variant_title === 'Default Title' ? '' : data.variant_title;
-      data.formattedPrice = formatMoney(data.line_price, this.globalConfig.moneyFormat);
+      data.variantTitle = data.variant.title === 'Default Title' ? '' : data.variant.title;
+      data.formattedPrice = formatMoney(data.variant.price * data.quantity, this.globalConfig.moneyFormat);
       return acc + this.childTemplate.render({data}, (output) => `<div id="${lineItem.id}" class=${this.classes.lineItem.lineItem}>${output}</div>`);
     }, '');
   }
@@ -118,10 +119,16 @@ export default class Cart extends Component {
   }
 
   imageForLineItem(lineItem) {
-    if (!lineItem.imageVariants) {
-      return lineItem.image;
+    const imageSize = 180;
+    const imageOptions = {
+      maxWidth: imageSize,
+      maxHeight: imageSize,
+    };
+    if (lineItem.variant.image) {
+      return ShopifyBuy.Image.Helpers.imageForSize(lineItem.variant.image, imageOptions);
+    } else {
+      return NO_IMG_URL;
     }
-    return lineItem.imageVariants.filter((image) => image.name === 'compact')[0] || {src: NO_IMG_URL};
   }
 
   /**
@@ -132,11 +139,13 @@ export default class Cart extends Component {
     const checkoutId = localStorage.getItem('checkoutId');
     if (checkoutId) {
       return this.props.client.fetchCheckout(checkoutId).then((checkout) => {
+        this.model = checkout;
         return checkout;
       });
     } else {
       return this.props.client.createCheckout().then((checkout) => {
         localStorage.setItem('checkoutId', checkout.id);
+        this.model = checkout;
         return checkout;
       });
     }
@@ -221,17 +230,18 @@ export default class Cart extends Component {
    * @param {Number} id - lineItem id.
    * @param {Number} qty - quantity for line item.
    */
-  updateItem(id, qty) {
+  updateItem(id, quantity) {
     this._userEvent('updateItemQuantity');
-    return this.model.updateLineItem(id, qty).then((cart) => {
-      this.model = cart;
+    const lineItem = {id, quantity};
+    return this.props.client.updateLineItems(this.model.id, [lineItem]).then((checkout) => {
+      this.model = checkout;
       this.toggles.forEach((toggle) => toggle.view.render());
-      if (qty > 0) {
+      if (quantity > 0) {
         this.view.render();
       } else {
         this.view.animateRemoveNode(id);
       }
-      return cart;
+      return checkout;
     });
   }
 
@@ -245,11 +255,13 @@ export default class Cart extends Component {
       return null;
     }
     this.open();
-    return this.model.createLineItemsFromVariants({variant, quantity}).then((cart) => {
+    const lineItem = {variantId: variant.id, quantity};
+    return this.props.client.addLineItems(this.model.id, [lineItem]).then((checkout) => {
+      this.model = checkout;
       this.view.render();
       this.toggles.forEach((toggle) => toggle.view.render());
       this.view.setFocus();
-      return cart;
+      return checkout;
     });
   }
 
