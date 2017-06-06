@@ -9,7 +9,10 @@ import CartView from '../../src/views/cart';
 
 let cart;
 let fakeClient = {
+  fetchCheckout: () => {},
   fetchRecentCart: () => {},
+  updateLineItems: () => {},
+  addLineItems: () => {},
 }
 
 describe('Cart class', () => {
@@ -67,7 +70,8 @@ describe('Cart class', () => {
             title: 'test',
             variant_title: 'test2',
             line_price: 20,
-            quantity: 1
+            quantity: 1,
+            variant: { image: { src: 'cdn.shopify.com/image.jpg' } }
           }
         ]
       }
@@ -79,12 +83,13 @@ describe('Cart class', () => {
     });
   });
 
-  describe.skip('fetchData()', () => {
+  describe('fetchData()', () => {
     it('calls fetchRecentCart on client', () => {
-      let fetchCart = sinon.stub(cart.props.client, 'fetchRecentCart').returns(Promise.resolve({id: 1234}));
+      localStorage.setItem('checkoutId', 12345)
+      let fetchCart = sinon.stub(cart.props.client, 'fetchCheckout').returns(Promise.resolve({id: 12345}));
 
       return cart.fetchData().then((data) => {
-        assert.deepEqual(data, {id: 1234});
+        assert.deepEqual(data, {id: 12345});
         assert.calledOnce(fetchCart);
         fetchCart.restore();
       });
@@ -113,20 +118,20 @@ describe('Cart class', () => {
   });
 
   describe('updateItem()', () => {
-    let updateLineItemStub;
+    let updateLineItemsStub;
 
     beforeEach(() => {
       cart.model = {
-        updateLineItem: () => {}
+        id: 123456,
       }
-      updateLineItemStub = sinon.stub(cart.model, 'updateLineItem').returns(Promise.resolve({test: 'lol'}))
+      updateLineItemsStub = sinon.stub(cart.props.client, 'updateLineItems').returns(Promise.resolve({test: 'lol'}))
       cart.view.render = sinon.spy();
       cart.toggles[0].view.render = sinon.spy();
     });
 
     it('calls updateLineItem', () => {
       return cart.updateItem(123, 3).then(() => {
-        assert.calledWith(updateLineItemStub, 123, 3);
+        assert.calledWith(updateLineItemsStub, 123456, [{id: 123, quantity:3}]);
         assert.calledOnce(cart.view.render);
         assert.calledOnce(cart.toggles[0].view.render);
         assert.deepEqual(cart.model, {test: 'lol'});
@@ -136,14 +141,17 @@ describe('Cart class', () => {
 
 
   describe('addVariantToCart', () => {
-    it('calls model createLineItemsFromVariants', () => {
+    it('calls addLineItems on client', () => {
+      cart.model = {
+        id: 123456,
+      }
       cart.view.setFocus = sinon.spy();
-      cart.model.createLineItemsFromVariants= sinon.stub().returns(Promise.resolve());
+      let addLineItemsStub = sinon.stub(cart.props.client, 'addLineItems').returns(Promise.resolve());
       let render = sinon.stub(cart.view, 'render');
       let toggleRender = sinon.stub(cart.toggles[0].view, 'render');
 
       return cart.addVariantToCart({id: 123}).then(() => {
-        assert.calledWith(cart.model.createLineItemsFromVariants, {variant: {id: 123 }, quantity: 1});
+        assert.calledWith(addLineItemsStub, 123456, [{variantId: 123, quantity:1}]);
         assert.calledOnce(toggleRender);
         assert.called(cart.view.setFocus);
       });
@@ -153,7 +161,7 @@ describe('Cart class', () => {
   describe('get formattedTotal', () => {
     it('uses money helper to return formatted value', () => {
       cart.model = {
-        subtotal: '20.00',
+        subtotalPrice: '20.00',
       }
       assert.equal(cart.formattedTotal, '$20.00');
     });

@@ -103,7 +103,7 @@ export default class Cart extends Component {
    * @return {String}
    */
   get formattedTotal() {
-    return formatMoney(this.model.subtotal, this.globalConfig.moneyFormat);
+    return formatMoney(this.model.subtotalPrice, this.globalConfig.moneyFormat);
   }
 
   /**
@@ -210,7 +210,7 @@ export default class Cart extends Component {
   }
 
   onCheckout() {
-    this.checkout.open(this.model.checkoutUrl);
+    this.checkout.open(this.model.webUrl);
   }
 
   /**
