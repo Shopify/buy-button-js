@@ -19,7 +19,7 @@ export default class ProductView extends View {
    * check size of image until it is resolved, then set height of iframe.
    */
   resizeUntilLoaded() {
-    if (!this.iframe || !this.component.currentImage) {
+    if (!(this.iframe && this.component.currentImage)) {
       return;
     }
     const img = this.wrapper.getElementsByClassName(this.component.classes.product.img)[0];

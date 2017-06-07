@@ -114,7 +114,7 @@ export default class Product extends Component {
    * @return {Object} image object.
    */
   get image() {
-    if (!this.selectedVariant && !this.options.contents.imgWithCarousel) {
+    if (!(this.selectedVariant || this.options.contents.imgWithCarousel)) {
       return null;
     }
     const imageSize = parseInt(this.options.width, 10) || 480;
@@ -234,7 +234,6 @@ export default class Product extends Component {
   }
 
   get variantInStock() {
-    // variant availability is no longer provided as part of the api?
     return this.variantExists && this.selectedVariant.available;
   }
 
@@ -373,7 +372,7 @@ export default class Product extends Component {
         name: option.name,
         values: option.values.map((value) => {
           return {
-            name: value.value, // naming lol
+            name: value.value,
             selected: Object.values(this.selectedOptions).some((selectedOption) => {
               return selectedOption === value.value;
             }),
@@ -388,15 +387,16 @@ export default class Product extends Component {
    * @return {Object}
    */
   get trackingInfo() {
-    if (!this.selectedVariant) {
+    if (this.selectedVariant) {
+      return {
+        id: this.id,
+        name: this.selectedVariant.productTitle,
+        sku: null,
+        price: this.selectedVariant.price,
+      };
+    } else {
       return {};
     }
-    return {
-      id: this.id,
-      name: this.selectedVariant.productTitle,
-      sku: null,
-      price: this.selectedVariant.price,
-    };
   }
 
   /**
@@ -615,7 +615,7 @@ export default class Product extends Component {
 
   nextIndex(currentIndex, offset) {
     const nextIndex = currentIndex + offset;
-    if (nextIndex > this.model.images.length - 1) {
+    if (nextIndex >= this.model.images.length) {
       return 0;
     }
     if (nextIndex < 0) {
