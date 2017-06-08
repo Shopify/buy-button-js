@@ -7,6 +7,8 @@ import Component from '../../src/component';
 import testProduct from '../fixtures/product-fixture';
 import windowUtils from '../../src/utils/window-utils';
 
+const rootImageURI = 'https://cdn.shopify.com/s/';
+
 const config = {
   id: 123,
   node: document.getElementById('qunit-fixture'),
@@ -98,7 +100,7 @@ describe('Product class', () => {
     describe('if variant exists for selected options', () => {
       it('returns true', () => {
         return product.init(testProductCopy).then(() => {
-          product.model.selectedVariant = {id: 123};
+          product.selectedVariant = { id: 12345 };
           assert.isOk(product.variantExists);
         });
       });
@@ -107,7 +109,7 @@ describe('Product class', () => {
     describe('if variant does not exist for selected options', () => {
       it('returns false', () => {
         return product.init(testProductCopy).then(() => {
-          product.model.selectedVariant = null;
+          product.selectedVariant = null;
           assert.isNotOk(product.variantExists);
         });
       });
@@ -172,7 +174,7 @@ describe('Product class', () => {
       });
       describe('if variant is not in stock', () => {
         it('returns false', () => {
-          product.model.selectedVariant = {
+          product.selectedVariant = {
             available: false,
           }
           assert.notOk(product.buttonEnabled);
@@ -192,7 +194,8 @@ describe('Product class', () => {
     });
     describe('if variant is not in stock', () => {
       it('returns "out of stock"', () => {
-        product.model.selectedVariant = {
+        product.selectedVariant = {
+          id: 12345,
           available: false,
         }
         assert.equal(product.buttonText, product.options.text.outOfStock);
@@ -220,11 +223,11 @@ describe('Product class', () => {
     });
   });
 
-  describe.skip('get currentImage', () => {
+  describe('get currentImage', () => {
     describe('if variant exists', () => {
       it('returns selected image', () => {
         return product.init(testProductCopy).then(() => {
-          assert.equal(product.currentImage.src, 'https://cdn.shopify.com/image-one_large.jpg');
+          assert.equal(product.currentImage.src, rootImageURI + 'image-one_280x280.jpg');
         });
       });
     });
@@ -232,16 +235,15 @@ describe('Product class', () => {
     describe('if variant does not exist', () => {
       it('returns cached image', () => {
         return product.init(testProductCopy).then(() => {
-          product.model.selectedVariant = null;
-          product.model.selectedVariantImage = null;
-          assert.equal(product.currentImage.src, 'https://cdn.shopify.com/image-one_large.jpg');
+          product.selectedVariant = {};
+          assert.equal(product.currentImage.src, rootImageURI + 'image-one_280x280.jpg');
         });
       });
     });
   });
 
 
-  describe.skip('get decoratedOptions', () => {
+  describe('get decoratedOptions', () => {
     const expectedArray = [
       {
         name: 'Print',
@@ -249,17 +251,14 @@ describe('Product class', () => {
           {
             name: 'sloth',
             selected: true,
-            disabled: false,
           },
           {
             name: 'shark',
             selected: false,
-            disabled: false,
           },
           {
             name: 'cat',
             selected: false,
-            disabled: true,
           }
         ]
       },
@@ -269,12 +268,10 @@ describe('Product class', () => {
           {
             name: 'small',
             selected: true,
-            disabled: false,
           },
           {
             name: 'large',
             selected: false,
-            disabled: true,
           }
         ]
       }
@@ -287,13 +284,13 @@ describe('Product class', () => {
     });
   });
 
-  describe.skip('get viewData', () => {
+  describe('get viewData', () => {
     it('returns supplemental view info', () => {
       return product.init(testProductCopy).then(() => {
         const viewData = product.viewData;
         assert.equal(viewData.buttonText, 'ADD TO CART');
         assert.ok(viewData.optionsHtml);
-        assert.equal(viewData.currentImage.src, 'https://cdn.shopify.com/image-one_large.jpg');
+        assert.equal(viewData.currentImage.src, rootImageURI + 'image-one_280x280.jpg');
         assert.ok(viewData.hasVariants);
         assert.equal(viewData.test, 'test string');
       });
@@ -337,7 +334,7 @@ describe('Product class', () => {
     it('it updates selected variant', () => {
       return product.init(testProductCopy).then(() => {
         let updated = product.updateVariant('Size', 'large');
-        assert.equal(updated.selected, 'large');
+        assert.equal(product.selectedOptions.Size, 'large');
       });
     });
   });
@@ -402,7 +399,7 @@ describe('Product class', () => {
       assert.calledWith(cartUpdateConfigSpy, newConfig);
     });
 
-    it('calls updateConfig on modal if modal exists', () => {
+    it.skip('calls updateConfig on modal if modal exists', () => {
       const modalProduct = new Product({
         node: configCopy.node,
         options: Object.assign({}, configCopy.options, {
@@ -412,7 +409,7 @@ describe('Product class', () => {
         }),
       }, props);
       return modalProduct.init(testProductCopy).then(() => {
-        modalProduct.openModal().then(() => {;
+        modalProduct.openModal().then(() => {
           modalProduct.cart = {
             updateConfig: sinon.spy()
           }
@@ -450,8 +447,8 @@ describe('Product class', () => {
     it('sets selectedVariant to product.defalutVariantId', () => {
       product.defaultVariantId = 12347;
       const model = product.setDefaultVariant(testProduct);
-      assert.equal(model.options[0].selected, 'shark');
-      assert.equal(model.options[1].selected, 'large');
+      assert.equal(product.selectedOptions.Print, 'shark');
+      assert.equal(product.selectedOptions.Size, 'large');
     });
   });
 
@@ -462,13 +459,14 @@ describe('Product class', () => {
 
     describe('when variant does not exist', () => {
       it('returns unavailable text', () => {
-        product.model.selectedVariant = null;
+        product.selectedVariant = null;
         assert.equal(product.buttonText, product.options.text.unavailable);
       });
     });
     describe('when variant is out of stock', () => {
       it('returns out of stock text', () => {
-        product.model.selectedVariant = {
+        product.selectedVariant = {
+          id: 12345,
           available: false,
         };
         assert.equal(product.buttonText, product.options.text.outOfStock);
@@ -476,7 +474,8 @@ describe('Product class', () => {
     });
     describe('when variant is available', () => {
       it('returns button text', () => {
-        product.model.selectedVariant = {
+        product.selectedVariant = {
+          id: 12345,
           available: true,
         };
         assert.equal(product.buttonText, product.options.text.button);
@@ -574,7 +573,7 @@ describe('Product class', () => {
 
     beforeEach(() => {
       windowStub = sinon.stub(windowUtils, 'location').returns('http://test.com');
-      product.model.selectedVariant = {id: 123};
+      product.selectedVariant = {id: 123}
     });
 
     afterEach(() => {
@@ -618,28 +617,24 @@ describe('Product class', () => {
 
     describe('if image and cached image are different', () => {
       beforeEach(() => {
-        product.imageSize = 'pico';
+        product.config.product.width = '100px';
         return product.init(testProductCopy);
       });
 
       it('returns true', () => {
-        product.cachedImage = {
-          src: 'bar.jpg'
-        }
+        product.cachedImage = 'bar.jpg'
         assert.ok(product.shouldUpdateImage);
       });
     });
 
     describe('if image and cached image are same', () => {
       beforeEach(() => {
-        product.config.product.imageSize = 'pico';
+        product.config.product.width = '240px';
         return product.init(testProductCopy);
       });
 
       it('returns true', () => {
-        product.cachedImage = {
-          src: 'https://cdn.shopify.com/image-one_pico.jpg'
-        }
+        product.cachedImage = rootImageURI + 'image-one_240x240.jpg'
         assert.notOk(product.shouldUpdateImage);
       });
     });
@@ -651,39 +646,19 @@ describe('Product class', () => {
         return product.init(testProductCopy);
       });
 
-      it('returns medium image', () => {
-        assert.equal(product.image.src, 'https://cdn.shopify.com/image-one_large.jpg');
-      });
-    });
-
-    describe('if imageSize explicitly set', () => {
-      beforeEach(() => {
-        product.config.product.imageSize = 'pico';
-        return product.init(testProductCopy);
-      });
-
-      it('returns image size specified', () => {
-        assert.equal(product.image.src, 'https://cdn.shopify.com/image-one_pico.jpg');
+      it('returns 480x480 image', () => {
+        product.config.product.width = undefined;
+        assert.equal(product.image.src, rootImageURI + 'image-one_480x480.jpg');
       });
     });
 
     describe('if width explicitly set and layout vertical', () => {
       beforeEach(() => {
-        product.config.product.width = '500px';
+        product.config.product.width = '160px';
         return product.init(testProductCopy);
       });
       it('returns smallest image larger than explicit width', () => {
-        assert.equal(product.image.src, 'https://cdn.shopify.com/image-one_1024x1024.jpg');
-      });
-    });
-
-    describe('with horizontal layout and no explicit image size', () => {
-      beforeEach(() => {
-        product.config.product.layout = 'horizontal';
-        return product.init(testProductCopy);
-      });
-      it('returns large image', () => {
-        assert.equal(product.image.src, 'https://cdn.shopify.com/image-one_grande.jpg');
+        assert.equal(product.image.src, rootImageURI + 'image-one_160x160.jpg');
       });
     });
 
@@ -695,16 +670,16 @@ describe('Product class', () => {
         });
       });
       it('returns selected image', () => {
-        assert.equal(product.image.src, 'https://cdn.shopify.com/image-three_large.jpg');
+        assert.equal(product.image.src, rootImageURI + 'image-three_280x280.jpg');
       });
       it('returns selected image of appropriate size if set', () => {
-        product.config.product.imageSize = 'pico';
-        assert.equal(product.image.src, 'https://cdn.shopify.com/image-three_pico.jpg');
+        product.config.product.width = '480px';
+        assert.equal(product.image.src, rootImageURI + 'image-three_480x480.jpg');
       })
     });
   });
 
-  describe.skip('onCarouselChange', () => {
+  describe('onCarouselChange', () => {
     beforeEach(() => {
       return product.init(testProductCopy).then(() => {
         return Promise.resolve();
@@ -712,13 +687,13 @@ describe('Product class', () => {
     });
     it('sets selected image based on various offsets', () => {
       product.onCarouselChange(-1);
-      assert.equal(product.image.src, 'https://cdn.shopify.com/image-four_large.jpg');
+      assert.equal(product.image.src, rootImageURI + 'image-four_280x280.jpg');
       product.onCarouselChange(-1);
-      assert.equal(product.image.src, 'https://cdn.shopify.com/image-three_large.jpg');
+      assert.equal(product.image.src, rootImageURI + 'image-three_280x280.jpg');
       product.onCarouselChange(1);
-      assert.equal(product.image.src, 'https://cdn.shopify.com/image-four_large.jpg');
+      assert.equal(product.image.src, rootImageURI + 'image-four_280x280.jpg');
       product.onCarouselChange(1);
-      assert.equal(product.image.src, 'https://cdn.shopify.com/image-one_large.jpg');
+      assert.equal(product.image.src, rootImageURI + 'image-one_280x280.jpg');
     });
   });
 });

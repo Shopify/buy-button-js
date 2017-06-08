@@ -1,3 +1,4 @@
+import ShopifyBuy from 'shopify-buy';
 import merge from '../utils/merge';
 import Component from '../component';
 import Template from '../template';
@@ -73,9 +74,11 @@ export default class Product extends Component {
     this.modal = null;
     this.imgStyle = '';
     this.selectedQuantity = 1;
+    this.selectedVariant = {};
+    this.selectedOptions = {};
+    this.selectedImage = null;
     this.updater = new ProductUpdater(this);
     this.view = new ProductView(this);
-    this.selectedImage = null;
   }
 
   /**
@@ -91,7 +94,7 @@ export default class Product extends Component {
    * @return {Boolean}
    */
   get shouldUpdateImage() {
-    return !this.cachedImage || (this.image && this.image.src && this.image.src !== this.cachedImage.src);
+    return !this.cachedImage || (this.image && this.image.src !== this.cachedImage);
   }
 
   /**
@@ -100,7 +103,7 @@ export default class Product extends Component {
    */
   get currentImage() {
     if (this.shouldUpdateImage) {
-      this.cachedImage = this.model.images[0];
+      this.cachedImage = this.image;
     }
 
     return this.cachedImage;
@@ -111,36 +114,26 @@ export default class Product extends Component {
    * @return {Object} image object.
    */
   get image() {
-    if (!this.model.selectedVariant || !this.model.selectedVariant.image || !this.model.selectedVariant.image.variants.length) {
+    if (!(this.selectedVariant || this.options.contents.imgWithCarousel)) {
       return null;
     }
-    const availableSizes = this.model.selectedVariant.image.variants;
+    const imageSize = parseInt(this.options.width, 10) || 480;
+    let src;
+    let id;
 
-    let imageSize = 'grande';
+    const imageOptions = {
+      maxWidth: imageSize,
+      maxHeight: imageSize,
+    };
 
-    if (this.options.width && this.options.layout === 'vertical') {
-      imageSize = availableSizes.filter((image) => {
-        const containerWidth = parseInt(this.options.width, 10);
-        return parseInt(image.dimension, 10) >= containerWidth * 1.5;
-      })[0].name;
-    }
-
-    if (this.options.imageSize) {
-      imageSize = this.options.imageSize;
-    }
-
-    let sourceImage = this.model.selectedVariant.image;
     if (this.selectedImage) {
-      sourceImage = this.model.images.filter((image) => {
-        return image.id === this.selectedImage.id;
-      })[0];
+      id = this.selectedImage.id;
+      src = ShopifyBuy.Image.Helpers.imageForSize(this.selectedImage, imageOptions);
+    } else {
+      id = this.selectedVariant.image.id;
+      src = ShopifyBuy.Image.Helpers.imageForSize(this.selectedVariant.image, imageOptions);
     }
-
-    return Object.assign({}, sourceImage.variants.filter((image) => {
-      return image.name === imageSize;
-    })[0], {
-      id: sourceImage.id,
-    });
+    return {id, src};
   }
 
   /**
@@ -148,10 +141,10 @@ export default class Product extends Component {
    * @return {String}
    */
   get formattedPrice() {
-    if (!this.model.selectedVariant) {
+    if (!this.selectedVariant) {
       return '';
     }
-    return formatMoney(this.model.selectedVariant.price, this.globalConfig.moneyFormat);
+    return formatMoney(this.selectedVariant.price, this.globalConfig.moneyFormat);
   }
 
   /**
@@ -159,10 +152,10 @@ export default class Product extends Component {
    * @return {String}
    */
   get formattedCompareAtPrice() {
-    if (!this.model.selectedVariant) {
+    if (!this.selectedVariant) {
       return '';
     }
-    return formatMoney(this.model.selectedVariant.compareAtPrice, this.globalConfig.moneyFormat);
+    return formatMoney(this.selectedVariant.compareAtPrice, this.globalConfig.moneyFormat);
   }
 
   /**
@@ -170,17 +163,17 @@ export default class Product extends Component {
    * @return {Object} viewData object.
    */
   get viewData() {
-    const image = Object.assign({}, this.currentImage);
     return merge(this.model, this.options.viewData, {
       classes: this.classes,
       contents: this.options.contents,
       text: this.options.text,
       optionsHtml: this.optionsHtml,
       decoratedOptions: this.decoratedOptions,
-      currentImage: image,
+      currentImage: this.currentImage,
       buttonClass: this.buttonClass,
       hasVariants: this.hasVariants,
       buttonDisabled: !this.buttonEnabled,
+      selectedVariant: this.selectedVariant,
       selectedQuantity: this.selectedQuantity,
       buttonText: this.buttonText,
       imgStyle: this.imgStyle,
@@ -195,13 +188,11 @@ export default class Product extends Component {
 
   get carouselImages() {
     return this.model.images.map((image) => {
-      return Object.assign({}, image, {
-        // isSelected: image.id === this.currentImage.id,
-        isSelected: true,
-        // use correct image size
-        // carouselSrc: image.variants[3].src,
-        carouselSrc: image.src,
-      });
+      return {
+        id: image.id,
+        src: image.src,
+        carouselSrc: ShopifyBuy.Image.Helpers.imageForSize(image, {maxWidth: 100, maxHeight: 100}),
+      };
     });
   }
 
@@ -233,11 +224,17 @@ export default class Product extends Component {
   }
 
   get variantExists() {
-    return Boolean(this.model.selectedVariant);
+    return this.model.variants.some((variant) => {
+      if (this.selectedVariant) {
+        return variant.id === this.selectedVariant.id;
+      } else {
+        return false;
+      }
+    });
   }
 
   get variantInStock() {
-    return this.variantExists && this.model.selectedVariant.available;
+    return this.variantExists && this.selectedVariant.available;
   }
 
   get hasVariants() {
@@ -257,7 +254,7 @@ export default class Product extends Component {
   }
 
   get priceClass() {
-    return this.model.selectedVariant && this.model.selectedVariant.compareAtPrice ? this.classes.product.loweredPrice : '';
+    return this.selectedVariant && this.selectedVariant.compareAtPrice ? this.classes.product.loweredPrice : '';
   }
 
   get isButton() {
@@ -306,11 +303,11 @@ export default class Product extends Component {
     if (!this.options.contents.options) {
       return '';
     }
+
     return this.decoratedOptions.reduce((acc, option) => {
       const data = merge(option, this.options.viewData);
       data.classes = this.classes;
       data.onlyOption = (this.model.options.length === 1);
-
       return acc + this.childTemplate.render({data});
     }, '');
   }
@@ -334,21 +331,6 @@ export default class Product extends Component {
       return betterVariant;
     });
     return this.variantArrayMemo;
-  }
-
-  /**
-   * get selected values for options
-   * @return {Object} object with option names as keys
-   */
-  get selections() {
-    const selections = {};
-
-    this.model.selections.forEach((selection, index) => {
-      const option = this.model.options[index];
-      selections[option.name] = selection;
-    });
-
-    return selections;
   }
 
   /**
@@ -385,16 +367,15 @@ export default class Product extends Component {
    * @return {Array}
    */
   get decoratedOptions() {
-    // const selections = this.selections;
     return this.model.options.map((option) => {
       return {
         name: option.name,
         values: option.values.map((value) => {
           return {
-            name: value,
-            selected: value === option.selected,
-            disabled: false,
-            // disabled: !this.optionValueCanBeSelected(selections, option.name, value),
+            name: value.value,
+            selected: Object.values(this.selectedOptions).some((selectedOption) => {
+              return selectedOption === value.value;
+            }),
           };
         }),
       };
@@ -406,15 +387,16 @@ export default class Product extends Component {
    * @return {Object}
    */
   get trackingInfo() {
-    if (!this.model.selectedVariant) {
+    if (this.selectedVariant) {
+      return {
+        id: this.id,
+        name: this.selectedVariant.productTitle,
+        sku: null,
+        price: this.selectedVariant.price,
+      };
+    } else {
       return {};
     }
-    return {
-      id: this.id,
-      name: this.model.selectedVariant.productTitle,
-      sku: null,
-      price: this.model.selectedVariant.price,
-    };
   }
 
   /**
@@ -422,7 +404,7 @@ export default class Product extends Component {
    * @return {Object}
    */
   get selectedVariantTrackingInfo() {
-    const variant = this.model.selectedVariant;
+    const variant = this.selectedVariant;
     return {
       id: variant.id,
       name: variant.productTitle,
@@ -460,7 +442,7 @@ export default class Product extends Component {
     return {
       channel: 'buy_button',
       referrer: encodeURIComponent(windowUtils.location()),
-      variant: this.model.selectedVariant.id,
+      variant: this.selectedVariant.id,
     };
   }
 
@@ -558,6 +540,7 @@ export default class Product extends Component {
   fetchData() {
     return this.sdkFetch().then((model) => {
       if (model) {
+        this.handle = model.handle;
         model.selectedQuantity = 0;
         return model;
       }
@@ -572,7 +555,7 @@ export default class Product extends Component {
     } else if (this.options.buttonDestination === 'cart') {
       this.props.closeModal();
       this._userEvent('addVariantToCart');
-      this.props.tracker.trackMethod(this.cart.addVariantToCart.bind(this), 'Update Cart', this.selectedVariantTrackingInfo)(this.model.selectedVariant, this.model.selectedQuantity);
+      this.props.tracker.trackMethod(this.cart.addVariantToCart.bind(this), 'Update Cart', this.selectedVariantTrackingInfo)(this.selectedVariant, this.model.selectedQuantity);
       if (this.iframe) {
         this.props.setActiveEl(target);
       }
@@ -583,7 +566,7 @@ export default class Product extends Component {
       this.openOnlineStore();
     } else {
       this._userEvent('openCheckout');
-      new Checkout(this.config).open(this.model.selectedVariant.checkoutUrl(this.selectedQuantity));
+      new Checkout(this.config).open(this.selectedVariant.checkoutUrl(this.selectedQuantity));
     }
   }
 
@@ -597,7 +580,6 @@ export default class Product extends Component {
     const target = evt.target;
     const value = target.options[target.selectedIndex].value;
     const name = target.getAttribute('name');
-    this.selectedImage = null;
     this.updateVariant(name, value);
   }
 
@@ -619,20 +601,21 @@ export default class Product extends Component {
     evt.preventDefault();
     const selectedImageId = target.getAttribute('data-image-id');
     const imageList = this.model.images;
-    const foundImage = imageList.filter((image) => {
-      return image.id === parseInt(selectedImageId, 10);
-    })[0];
+    const foundImage = imageList.find((image) => {
+      return image.id === selectedImageId;
+    });
 
     if (foundImage) {
       this.selectedImage = foundImage;
       this.cachedImage = foundImage;
     }
+
     this.view.render();
   }
 
   nextIndex(currentIndex, offset) {
     const nextIndex = currentIndex + offset;
-    if (nextIndex > this.model.images.length) {
+    if (nextIndex >= this.model.images.length) {
       return 0;
     }
     if (nextIndex < 0) {
@@ -694,10 +677,24 @@ export default class Product extends Component {
    * @return {Object} updated option object.
    */
   updateVariant(optionName, value) {
-    const updatedOption = this.model.options.filter((option) => option.name === optionName)[0];
-    updatedOption.selected = value;
+    const updatedOption = this.model.options.find((option) => option.name === optionName);
+
+    if (updatedOption) {
+      this.selectedOptions[updatedOption.name] = value;
+      this.selectedVariant = ShopifyBuy.Product.Helpers.variantForOptions(this.model, this.selectedOptions);
+    }
+
     if (this.variantExists) {
-      this.cachedImage = this.model.selectedVariantImage;
+      this.cachedImage = this.selectedVariant.image;
+      if (this.selectedVariant.image) {
+        this.selectedImage = null;
+      } else {
+        this.selectedImage = this.model.images[0]; // get cached image
+      }
+    } else {
+      this.selectedImage = this.model.images.find((image) => {
+        return image.id === this.cachedImage.id;
+      });
     }
     this.view.render();
     this._userEvent('updateVariant');
@@ -709,17 +706,23 @@ export default class Product extends Component {
    * @param {Object} model - model to be modified.
    */
   setDefaultVariant(model) {
-    if (!this.defaultVariantId) {
-      return model;
+    let selectedVariant;
+
+    if (this.defaultVariantId) {
+      selectedVariant = model.variants.find((variant) => variant.id === this.defaultVariantId);
+    } else {
+      this.defaultVariantId = model.variants[0].id;
+      selectedVariant = model.variants[0];
+      this.selectedImage = model.images[0];
     }
 
-    const selectedVariant = model.variants.filter((variant) => variant.id === this.defaultVariantId)[0];
     if (selectedVariant) {
-      model.options.forEach((option) => {
-        option.selected = selectedVariant.optionValues.filter((optionValue) => optionValue.name === option.name)[0].value;
-      });
+      this.selectedOptions = selectedVariant.selectedOptions.reduce((acc, option) => {
+        acc[option.name] = option.value;
+        return acc;
+      }, {});
+      this.selectedVariant = selectedVariant;
     } else {
-
       // eslint-disable-next-line
       console.error('invalid variant ID');
     }
