@@ -4676,9 +4676,9 @@ shellwords@^0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/shellwords/-/shellwords-0.1.0.tgz#66afd47b6a12932d9071cbfd98a52e785cd0ba14"
 
-shopify-buy@^1.0.0-alpha.7:
-  version "1.0.0-alpha.7"
-  resolved "https://registry.yarnpkg.com/shopify-buy/-/shopify-buy-1.0.0-alpha.7.tgz#2e564068313e77ceae490e20c606daab02e36ca3"
+shopify-buy@1.0.0-alpha.8:
+  version "1.0.0-alpha.8"
+  resolved "https://registry.yarnpkg.com/shopify-buy/-/shopify-buy-1.0.0-alpha.8.tgz#60e5af1b45fe39f2711b6c6af0f1f18a6095d8af"
 
 sigmund@~1.0.0:
   version "1.0.1"
