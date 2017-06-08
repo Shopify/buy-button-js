@@ -1,7 +1,5 @@
 import View from '../view';
 
-const pollInterval = 200;
-
 export default class ProductView extends View {
   get className() {
     return this.component.classes.product[this.component.options.layout];
@@ -16,24 +14,13 @@ export default class ProductView extends View {
   }
 
   /**
-   * check size of image until it is resolved, then set height of iframe.
+   * add event listener which triggers resize when the product image is loaded.
    */
-  resizeUntilLoaded() {
-    if (!this.iframe || !this.component.model.selectedVariantImage) {
-      return;
-    }
-    const img = this.wrapper.getElementsByClassName(this.component.classes.product.img)[0];
-    let intervals = 0;
-    if (img) {
-      const productResize = setInterval(() => {
-        if (!img.naturalWidth && intervals < 30) {
-          intervals++;
-          return;
-        }
-        this.resize();
-        clearInterval(productResize);
-      }, pollInterval);
-    }
+  resizeOnLoad() {
+    const image = this.wrapper.getElementsByClassName(this.component.classes.product.img)[0];
+    image.addEventListener('load', () => {
+      this.resize();
+    });
   }
 
   /**
@@ -42,7 +29,7 @@ export default class ProductView extends View {
    */
   render() {
     super.render();
-    this.resizeUntilLoaded();
+    this.resizeOnLoad();
   }
 
 
