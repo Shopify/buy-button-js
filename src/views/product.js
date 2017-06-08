@@ -1,7 +1,5 @@
 import View from '../view';
 
-const pollInterval = 200;
-
 export default class ProductView extends View {
   get className() {
     return this.component.classes.product[this.component.options.layout];
@@ -16,7 +14,7 @@ export default class ProductView extends View {
   }
 
   /**
-   * check size of image until it is resolved, then set height of iframe.
+   * add event listener which triggers resize when the product image is loaded.
    */
   resizeUntilLoaded() {
     if (!(this.iframe && this.component.currentImage)) {
@@ -42,7 +40,7 @@ export default class ProductView extends View {
    */
   render() {
     super.render();
-    this.resizeUntilLoaded();
+    this.resizeOnLoad();
   }
 
 
