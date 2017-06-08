@@ -16,22 +16,11 @@ export default class ProductView extends View {
   /**
    * add event listener which triggers resize when the product image is loaded.
    */
-  resizeUntilLoaded() {
-    if (!(this.iframe && this.component.currentImage)) {
-      return;
-    }
-    const img = this.wrapper.getElementsByClassName(this.component.classes.product.img)[0];
-    let intervals = 0;
-    if (img) {
-      const productResize = setInterval(() => {
-        if (!img.naturalWidth && intervals < 30) {
-          intervals++;
-          return;
-        }
-        this.resize();
-        clearInterval(productResize);
-      }, pollInterval);
-    }
+  resizeOnLoad() {
+    const image = this.wrapper.getElementsByClassName(this.component.classes.product.img)[0];
+    image.addEventListener('load', () => {
+      this.resize();
+    });
   }
 
   /**
