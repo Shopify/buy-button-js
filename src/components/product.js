@@ -191,7 +191,7 @@ export default class Product extends Component {
       return {
         id: image.id,
         src: image.src,
-        carouselSrc: image.src,
+        carouselSrc: ShopifyBuy.Image.Helpers.imageForSize(image, {maxWidth: 100, maxHeight: 100}),
       };
     });
   }
