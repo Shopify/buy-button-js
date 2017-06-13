@@ -1,4 +1,4 @@
-export default class Checkout {
+export default class CheckoutNavigator {
   constructor(config) {
     this.config = config;
   }
