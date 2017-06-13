@@ -27,6 +27,7 @@ export default class Cart extends Component {
     this.childTemplate = new Template(this.config.lineItem.templates, this.config.lineItem.contents, this.config.lineItem.order);
     this.node = config.node || document.body.appendChild(document.createElement('div'));
     this.isVisible = this.options.startOpen;
+    this.cache = null;
     this.checkout = new Checkout(this.config);
     const toggles = this.globalConfig.toggles || [{
       node: this.node.parentNode.insertBefore(document.createElement('div'), this.node),
@@ -74,8 +75,8 @@ export default class Cart extends Component {
    * @return {String} HTML
    */
   get lineItemsHtml() {
-    return this.model.lineItems.reduce((acc, lineItem) => {
-      const data = merge(lineItem, this.options.viewData);
+    return this.cache.reduce((acc, lineItem) => {
+      const data = Object.assign({}, lineItem, this.options.viewData);
       data.classes = this.classes;
       data.lineItemImage = this.imageForLineItem(data);
       data.variantTitle = data.variant.title === 'Default Title' ? '' : data.variant.title;
@@ -140,6 +141,7 @@ export default class Cart extends Component {
     if (checkoutId) {
       return this.props.client.fetchCheckout(checkoutId).then((checkout) => {
         this.model = checkout;
+        this.updateCache(this.model.lineItems);
         return checkout;
       });
     } else {
@@ -220,9 +222,43 @@ export default class Cart extends Component {
    */
   setQuantity(target, fn) {
     const id = target.getAttribute('data-line-item-id');
-    const item = this.model.lineItems.filter((lineItem) => lineItem.id === id)[0];
+    const item = this.model.lineItems.find((lineItem) => lineItem.id === id);
     const newQty = fn(item.quantity);
     return this.props.tracker.trackMethod(this.updateItem.bind(this), 'Update Cart', this.cartItemTrackingInfo(item, newQty))(id, newQty);
+  }
+
+  /**
+   * set cache using line items.
+   * @param {Array} lineItems - array of GraphModel line item objects.
+   */
+  updateCache(lineItems) {
+    if (this.cache) {
+      this.cache = lineItems.map((item) => {
+        const updatedItem = this.cache.find((cacheItem) => {
+          return cacheItem.id === item.id;
+        });
+        return Object.assign({}, item, updatedItem);
+      });
+    } else {
+      this.cache = lineItems.map((item) => {
+        return Object.assign({}, item);
+      });
+    }
+    return this.cache;
+  }
+
+  /**
+   * update cached line item.
+   * @param {Number} id - lineItem id.
+   * @param {Number} qty - quantity for line item.
+   */
+  updateCacheItem(lineItemId, quantity) {
+    if (!this.cache) { return; }
+    const lineItem = this.cache.find((item) => {
+      return lineItemId === item.id;
+    });
+    lineItem.quantity = quantity;
+    this.view.render();
   }
 
   /**
@@ -233,8 +269,10 @@ export default class Cart extends Component {
   updateItem(id, quantity) {
     this._userEvent('updateItemQuantity');
     const lineItem = {id, quantity};
+    this.updateCacheItem(id, quantity);
     return this.props.client.updateLineItems(this.model.id, [lineItem]).then((checkout) => {
       this.model = checkout;
+      this.updateCache(this.model.lineItems);
       this.toggles.forEach((toggle) => toggle.view.render());
       if (quantity > 0) {
         this.view.render();
