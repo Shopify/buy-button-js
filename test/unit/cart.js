@@ -63,18 +63,16 @@ describe('Cart class', () => {
 
   describe('get lineItemsHtml', () => {
     it('returns an html string', () => {
-      cart.model = {
-        lineItems: [
-          {
-            id: 123,
-            title: 'test',
-            variant_title: 'test2',
-            line_price: 20,
-            quantity: 1,
-            variant: { image: { src: 'cdn.shopify.com/image.jpg' } }
-          }
-        ]
-      }
+      cart.cache = [
+        {
+          id: 123,
+          title: 'test',
+          variant_title: 'test2',
+          line_price: 20,
+          quantity: 1,
+          variant: { image: { src: 'cdn.shopify.com/image.jpg' } }
+        }
+      ]
 
       let render = sinon.spy(cart.childTemplate, 'render');
 
@@ -86,10 +84,10 @@ describe('Cart class', () => {
   describe('fetchData()', () => {
     it('calls fetchRecentCart on client', () => {
       localStorage.setItem('checkoutId', 12345)
-      let fetchCart = sinon.stub(cart.props.client, 'fetchCheckout').returns(Promise.resolve({id: 12345}));
+      let fetchCart = sinon.stub(cart.props.client, 'fetchCheckout').returns(Promise.resolve({id: 12345, lineItems: []}));
 
       return cart.fetchData().then((data) => {
-        assert.deepEqual(data, {id: 12345});
+        assert.deepEqual(data, {id: 12345, lineItems: []});
         assert.calledOnce(fetchCart);
         fetchCart.restore();
       });
@@ -124,7 +122,7 @@ describe('Cart class', () => {
       cart.model = {
         id: 123456,
       }
-      updateLineItemsStub = sinon.stub(cart.props.client, 'updateLineItems').returns(Promise.resolve({test: 'lol'}))
+      updateLineItemsStub = sinon.stub(cart.props.client, 'updateLineItems').returns(Promise.resolve({lineItems: [{id: 123, quantity: 5}]}))
       cart.view.render = sinon.spy();
       cart.toggles[0].view.render = sinon.spy();
     });
@@ -134,7 +132,7 @@ describe('Cart class', () => {
         assert.calledWith(updateLineItemsStub, 123456, [{id: 123, quantity:3}]);
         assert.calledOnce(cart.view.render);
         assert.calledOnce(cart.toggles[0].view.render);
-        assert.deepEqual(cart.model, {test: 'lol'});
+        assert.deepEqual(cart.model, {lineItems: [{id: 123, quantity: 5}]});
       });
     });
   });
