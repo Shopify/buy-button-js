@@ -70,7 +70,7 @@ describe('Cart class', () => {
           variant_title: 'test2',
           line_price: 20,
           quantity: 1,
-          variant: { image: { src: 'cdn.shopify.com/image.jpg' } }
+          variant: {image: {src: 'cdn.shopify.com/image.jpg'}},
         }
       ]
 
@@ -128,8 +128,8 @@ describe('Cart class', () => {
     });
 
     it('calls updateLineItem', () => {
-      return cart.updateItem(123, 3).then(() => {
-        assert.calledWith(updateLineItemsStub, 123456, [{id: 123, quantity:3}]);
+      return cart.updateItem(123, 5).then(() => {
+        assert.calledWith(updateLineItemsStub, 123456, [{id: 123, quantity:5}]);
         assert.calledOnce(cart.view.render);
         assert.calledOnce(cart.toggles[0].view.render);
         assert.deepEqual(cart.model, {lineItems: [{id: 123, quantity: 5}]});
@@ -144,7 +144,7 @@ describe('Cart class', () => {
         id: 123456,
       }
       cart.view.setFocus = sinon.spy();
-      let addLineItemsStub = sinon.stub(cart.props.client, 'addLineItems').returns(Promise.resolve());
+      let addLineItemsStub = sinon.stub(cart.props.client, 'addLineItems').returns(Promise.resolve({lineItems: [{id: 123, quantity: 1}]}));
       let render = sinon.stub(cart.view, 'render');
       let toggleRender = sinon.stub(cart.toggles[0].view, 'render');
 
@@ -152,6 +152,7 @@ describe('Cart class', () => {
         assert.calledWith(addLineItemsStub, 123456, [{variantId: 123, quantity:1}]);
         assert.calledOnce(toggleRender);
         assert.called(cart.view.setFocus);
+        assert.deepEqual(cart.model, {lineItems: [{id: 123, quantity: 1}]});
       });
     });
   });

@@ -237,7 +237,7 @@ export default class Cart extends Component {
         const updatedItem = this.cache.find((cacheItem) => {
           return cacheItem.id === item.id;
         });
-        return Object.assign({}, item, updatedItem);
+        return Object.assign({}, updatedItem, item);
       });
     } else {
       this.cache = lineItems.map((item) => {
@@ -296,6 +296,7 @@ export default class Cart extends Component {
     const lineItem = {variantId: variant.id, quantity};
     return this.props.client.addLineItems(this.model.id, [lineItem]).then((checkout) => {
       this.model = checkout;
+      this.updateCache(this.model.lineItems);
       this.view.render();
       this.toggles.forEach((toggle) => toggle.view.render());
       this.view.setFocus();
