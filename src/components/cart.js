@@ -80,7 +80,10 @@ export default class Cart extends Component {
       data.classes = this.classes;
       data.lineItemImage = this.imageForLineItem(data);
       data.variantTitle = data.variant.title === 'Default Title' ? '' : data.variant.title;
-      data.formattedPrice = formatMoney(data.variant.price * data.quantity, this.globalConfig.moneyFormat);
+      if (this.config.moneyFormat) {
+        this.moneyFormat = this.globalConfig.moneyFormat;
+      }
+      data.formattedPrice = formatMoney(data.variant.price * data.quantity, this.moneyFormat);
       return acc + this.childTemplate.render({data}, (output) => `<div id="${lineItem.id}" class=${this.classes.lineItem.lineItem}>${output}</div>`);
     }, '');
   }
@@ -104,7 +107,7 @@ export default class Cart extends Component {
    * @return {String}
    */
   get formattedTotal() {
-    return formatMoney(this.model.subtotalPrice, this.globalConfig.moneyFormat);
+    return formatMoney(this.model.subtotalPrice, this.moneyFormat);
   }
 
   /**
@@ -154,6 +157,12 @@ export default class Cart extends Component {
     // return this.props.client.fetchRecentCart();
   }
 
+  fetchMoneyFormat() {
+    return this.props.client.fetchShopInfo().then((res) => {
+      return res.moneyFormat;
+    });
+  }
+
   /**
    * initializes component by creating model and rendering view.
    * Creates and initalizes toggle component.
@@ -161,6 +170,12 @@ export default class Cart extends Component {
    * @return {Promise} promise resolving to instance.
    */
   init(data) {
+    this.fetchMoneyFormat().then((moneyFormat) => {
+      this.moneyFormat = moneyFormat;
+      return moneyFormat;
+    }).catch((err) => {
+      return err;
+    });
     return super.init(data)
       .then((cart) => {
         return this.toggles.map((toggle) => {
