@@ -13,6 +13,7 @@ let fakeClient = {
   fetchRecentCart: () => {},
   updateLineItems: () => {},
   addLineItems: () => {},
+  fetchShopInfo: () => {}
 }
 
 describe('Cart class', () => {
@@ -90,6 +91,19 @@ describe('Cart class', () => {
         assert.deepEqual(data, {id: 12345, lineItems: []});
         assert.calledOnce(fetchCart);
         fetchCart.restore();
+      });
+    });
+  });
+
+  describe('fetchMoneyFormat()', () => {
+    it('calls fetchShopInfo on client', () => {
+      localStorage.setItem('checkoutId', 12345)
+      let fetchMoneyFormat = sinon.stub(cart.props.client, 'fetchShopInfo').returns(Promise.resolve({ moneyFormat: '₿{{amount}}'}));
+
+      return cart.fetchMoneyFormat().then((data) => {
+        assert.deepEqual(data, '₿{{amount}}');
+        assert.calledOnce(fetchMoneyFormat);
+        fetchMoneyFormat.restore();
       });
     });
   });
