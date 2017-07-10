@@ -64,7 +64,7 @@ describe('Cart class', () => {
 
   describe('get lineItemsHtml', () => {
     it('returns an html string', () => {
-      cart.cache = [
+      cart.lineItemCache = [
         {
           id: 123,
           title: 'test',
@@ -75,8 +75,7 @@ describe('Cart class', () => {
         }
       ]
 
-      let render = sinon.spy(cart.childTemplate, 'render');
-
+      const render = sinon.spy(cart.childTemplate, 'render');
       assert.include(cart.lineItemsHtml, 'data-line-item-id="123"');
       assert.calledOnce(render);
     });
@@ -85,7 +84,7 @@ describe('Cart class', () => {
   describe('fetchData()', () => {
     it('calls fetchRecentCart on client', () => {
       localStorage.setItem('checkoutId', 12345)
-      let fetchCart = sinon.stub(cart.props.client, 'fetchCheckout').returns(Promise.resolve({id: 12345, lineItems: []}));
+      const fetchCart = sinon.stub(cart.props.client, 'fetchCheckout').returns(Promise.resolve({id: 12345, lineItems: []}));
 
       return cart.fetchData().then((data) => {
         assert.deepEqual(data, {id: 12345, lineItems: []});
@@ -98,7 +97,7 @@ describe('Cart class', () => {
   describe('fetchMoneyFormat()', () => {
     it('calls fetchShopInfo on client', () => {
       localStorage.setItem('checkoutId', 12345)
-      let fetchMoneyFormat = sinon.stub(cart.props.client, 'fetchShopInfo').returns(Promise.resolve({ moneyFormat: '₿{{amount}}'}));
+      const fetchMoneyFormat = sinon.stub(cart.props.client, 'fetchShopInfo').returns(Promise.resolve({ moneyFormat: '₿{{amount}}'}));
 
       return cart.fetchMoneyFormat().then((data) => {
         assert.deepEqual(data, '₿{{amount}}');
@@ -158,9 +157,9 @@ describe('Cart class', () => {
         id: 123456,
       }
       cart.view.setFocus = sinon.spy();
-      let addLineItemsStub = sinon.stub(cart.props.client, 'addLineItems').returns(Promise.resolve({lineItems: [{id: 123, quantity: 1}]}));
-      let render = sinon.stub(cart.view, 'render');
-      let toggleRender = sinon.stub(cart.toggles[0].view, 'render');
+      const addLineItemsStub = sinon.stub(cart.props.client, 'addLineItems').returns(Promise.resolve({lineItems: [{id: 123, quantity: 1}]}));
+      const render = sinon.stub(cart.view, 'render');
+      const toggleRender = sinon.stub(cart.toggles[0].view, 'render');
 
       return cart.addVariantToCart({id: 123}).then(() => {
         assert.calledWith(addLineItemsStub, 123456, [{variantId: 123, quantity:1}]);

@@ -27,7 +27,8 @@ export default class Cart extends Component {
     this.childTemplate = new Template(this.config.lineItem.templates, this.config.lineItem.contents, this.config.lineItem.order);
     this.node = config.node || document.body.appendChild(document.createElement('div'));
     this.isVisible = this.options.startOpen;
-    this.cache = null;
+    this.lineItemCache = [];
+    this.moneyFormat = this.globalConfig.moneyFormat;
     this.checkout = new Checkout(this.config);
     const toggles = this.globalConfig.toggles || [{
       node: this.node.parentNode.insertBefore(document.createElement('div'), this.node),
@@ -75,14 +76,11 @@ export default class Cart extends Component {
    * @return {String} HTML
    */
   get lineItemsHtml() {
-    return this.cache.reduce((acc, lineItem) => {
+    return this.lineItemCache.reduce((acc, lineItem) => {
       const data = Object.assign({}, lineItem, this.options.viewData);
       data.classes = this.classes;
       data.lineItemImage = this.imageForLineItem(data);
       data.variantTitle = data.variant.title === 'Default Title' ? '' : data.variant.title;
-      if (this.config.moneyFormat) {
-        this.moneyFormat = this.globalConfig.moneyFormat;
-      }
       data.formattedPrice = formatMoney(data.variant.price * data.quantity, this.moneyFormat);
       return acc + this.childTemplate.render({data}, (output) => `<div id="${lineItem.id}" class=${this.classes.lineItem.lineItem}>${output}</div>`);
     }, '');
@@ -170,12 +168,14 @@ export default class Cart extends Component {
    * @return {Promise} promise resolving to instance.
    */
   init(data) {
-    this.fetchMoneyFormat().then((moneyFormat) => {
-      this.moneyFormat = moneyFormat;
-      return moneyFormat;
-    }).catch((err) => {
-      return err;
-    });
+    if (!this.config.moneyFormat) {
+      this.fetchMoneyFormat().then((moneyFormat) => {
+        this.moneyFormat = moneyFormat;
+        return moneyFormat;
+      }).catch((err) => {
+        return err;
+      });
+    }
     return super.init(data)
       .then((cart) => {
         return this.toggles.map((toggle) => {
@@ -247,19 +247,16 @@ export default class Cart extends Component {
    * @param {Array} lineItems - array of GraphModel line item objects.
    */
   updateCache(lineItems) {
-    if (this.cache) {
-      this.cache = lineItems.map((item) => {
-        const updatedItem = this.cache.find((cacheItem) => {
-          return cacheItem.id === item.id;
-        });
-        return Object.assign({}, updatedItem, item);
-      });
-    } else {
-      this.cache = lineItems.map((item) => {
-        return Object.assign({}, item);
-      });
-    }
-    return this.cache;
+    const lineItemCache = this.lineItemCache.reduce((acc, item) => {
+      acc[item.id] = item;
+
+      return acc;
+    }, {});
+
+    this.lineItemCache = lineItems.map((item) => {
+      return Object.assign({}, lineItemCache[item.id], item);
+    });
+    return this.lineItemCache;
   }
 
   /**
@@ -268,8 +265,8 @@ export default class Cart extends Component {
    * @param {Number} qty - quantity for line item.
    */
   updateCacheItem(lineItemId, quantity) {
-    if (!this.cache) { return; }
-    const lineItem = this.cache.find((item) => {
+    if (this.lineItemCache.length === 0) { return; }
+    const lineItem = this.lineItemCache.find((item) => {
       return lineItemId === item.id;
     });
     lineItem.quantity = quantity;
