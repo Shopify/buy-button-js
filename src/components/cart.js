@@ -171,9 +171,6 @@ export default class Cart extends Component {
     if (!this.config.moneyFormat) {
       this.fetchMoneyFormat().then((moneyFormat) => {
         this.moneyFormat = moneyFormat;
-        return moneyFormat;
-      }).catch((err) => {
-        return err;
       });
     }
     return super.init(data)
@@ -247,14 +244,14 @@ export default class Cart extends Component {
    * @param {Array} lineItems - array of GraphModel line item objects.
    */
   updateCache(lineItems) {
-    const lineItemCache = this.lineItemCache.reduce((acc, item) => {
+    const cachedLineItems = this.lineItemCache.reduce((acc, item) => {
       acc[item.id] = item;
 
       return acc;
     }, {});
 
     this.lineItemCache = lineItems.map((item) => {
-      return Object.assign({}, lineItemCache[item.id], item);
+      return Object.assign({}, cachedLineItems[item.id], item);
     });
     return this.lineItemCache;
   }
