@@ -17,6 +17,8 @@ export default class ProductView extends View {
    * add event listener which triggers resize when the product image is loaded.
    */
   resizeOnLoad() {
+    const productContents = this.component.config.product.contents;
+    if (!(productContents.img || productContents.imgWithCarousel)) { return; }
     const image = this.wrapper.getElementsByClassName(this.component.classes.product.img)[0];
     image.addEventListener('load', () => {
       this.resize();
