@@ -52,6 +52,22 @@ function whitelistedProperties(selectorStyles) {
   }, {});
 }
 
+function adaptConfig(config) {
+  if (config.id && !isBase64(config.id)) {
+    config.id = btoa(`gid://shopify/Product/${config.id}`);
+  }
+
+  return config;
+}
+
+function isBase64(str) {
+  try {
+    return btoa(atob(str)) === str;
+  } catch (err) {
+    return false;
+  }
+}
+
 /**
  * Renders and fetches data for product embed.
  * @extends Component.
@@ -65,7 +81,7 @@ export default class Product extends Component {
    * @param {Object} props - data and utilities passed down from UI instance.
    */
   constructor(config, props) {
-    super(config, props);
+    super(adaptConfig(config), props);
     this.typeKey = 'product';
     this.defaultVariantId = config.variantId;
     this.cachedImage = null;
@@ -461,7 +477,7 @@ export default class Product extends Component {
    * @return {String}
    */
   get onlineStoreURL() {
-    const identifier = this.handle ? this.handle : this.id;
+    const identifier = this.handle ? this.handle : atob(this.id).split('/').pop();
     return `https://${this.props.client.config.domain}/products/${identifier}${this.onlineStoreQueryString}`;
   }
 
