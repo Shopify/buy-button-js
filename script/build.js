@@ -18,7 +18,7 @@ const buildPaths = {
 rollup({
   entry: srcPath,
   plugins: [
-    babel({ 
+    babel({
       exclude: ['node_modules/**'],
     }),
     nodeResolve({
