@@ -18,12 +18,12 @@ const buildPaths = {
 rollup({
   entry: srcPath,
   plugins: [
-    babel({
+    babel({ 
       exclude: ['node_modules/**'],
     }),
     nodeResolve({
       extensions: ['.js'],
-      preferBuiltins: true
+      jsnext: true
     }),
     commonjs()
   ],
