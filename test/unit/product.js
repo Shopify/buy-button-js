@@ -345,7 +345,7 @@ describe('Product class', () => {
 
       beforeEach(() => {
         idProduct = new Product({
-          id: 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0Lzk1NTUyMjc0NjI=',
+          id: '12345',
           options: configCopy.options,
         }, {
           client: {
@@ -356,7 +356,7 @@ describe('Product class', () => {
 
       it('calls fetchProduct with product id', () => {
         idProduct.sdkFetch();
-        assert.calledWith(idProduct.props.client.fetchProduct, 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0Lzk1NTUyMjc0NjI=');
+        assert.calledWith(idProduct.props.client.fetchProduct, 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0LzEyMzQ1');
       });
     });
 

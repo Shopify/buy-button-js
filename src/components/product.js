@@ -52,20 +52,14 @@ function whitelistedProperties(selectorStyles) {
   }, {});
 }
 
-function adaptConfig(config) {
-  if (config.id && !isBase64(config.id)) {
+function normalizeProductId(config) {
+  if (config.storefrontId) {
+    config.id = config.storefrontId;
+  } else if (config.id) {
     config.id = btoa(`gid://shopify/Product/${config.id}`);
   }
 
   return config;
-}
-
-function isBase64(str) {
-  try {
-    return btoa(atob(str)) === str;
-  } catch (err) {
-    return false;
-  }
 }
 
 /**
@@ -81,7 +75,7 @@ export default class Product extends Component {
    * @param {Object} props - data and utilities passed down from UI instance.
    */
   constructor(config, props) {
-    super(adaptConfig(config), props);
+    super(normalizeProductId(config), props);
     this.typeKey = 'product';
     this.defaultVariantId = config.variantId;
     this.cachedImage = null;
@@ -179,7 +173,8 @@ export default class Product extends Component {
    * @return {Object} viewData object.
    */
   get viewData() {
-    return merge(this.model, this.options.viewData, {
+    const model = Object.assign({}, this.model);
+    return merge(model, this.options.viewData, {
       classes: this.classes,
       contents: this.options.contents,
       text: this.options.text,
