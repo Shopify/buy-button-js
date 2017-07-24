@@ -73,7 +73,6 @@
     "postcss-cssnext": "2.9.0",
     "postcss-import": "9.0.0",
     "pretender": "1.1.0",
-    "promise-polyfill": "^6.0.2",
     "rollup": "0.45.2",
     "rollup-plugin-babel": "2.7.1",
     "rollup-plugin-commonjs": "8.0.2",
@@ -86,7 +85,7 @@
     "wdio-junit-reporter": "0.1.0",
     "wdio-mocha-framework": "^0.4.0",
     "webdriverio": "4.2.8",
-    "whatwg-fetch": "^2.0.3"
+    "whatwg-fetch": "2.0.3"
   },
   "dependencies": {
     "babel-runtime": "6.11.6",
