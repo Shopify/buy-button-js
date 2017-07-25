@@ -23,7 +23,7 @@ rollup({
     }),
     nodeResolve({
       extensions: ['.js'],
-      preferBuiltins: true
+      jsnext: true
     }),
     commonjs()
   ],
