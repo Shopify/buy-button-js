@@ -75,7 +75,8 @@ export default class Product extends Component {
    * @param {Object} props - data and utilities passed down from UI instance.
    */
   constructor(config, props) {
-    super(normalizeProductId(config), props);
+    config.id = normalizeProductId(config).id;
+    super(config, props);
     this.typeKey = 'product';
     this.defaultVariantId = config.variantId;
     this.cachedImage = null;
@@ -173,8 +174,7 @@ export default class Product extends Component {
    * @return {Object} viewData object.
    */
   get viewData() {
-    const model = Object.assign({}, this.model);
-    return merge(model, this.options.viewData, {
+    return Object.assign({}, this.model, this.options.viewData, {
       classes: this.classes,
       contents: this.options.contents,
       text: this.options.text,

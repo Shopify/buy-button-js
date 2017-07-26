@@ -65,6 +65,13 @@ describe('Product class', () => {
     assert.instanceOf(product.childTemplate, Template);
   });
 
+  it('converts shopify product id to storefrontId', () => {
+    product = new Product({
+      id: 123
+    }, props);
+    assert.equal(product.id, 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0LzEyMw==')
+  })
+
   describe('init', () => {
     it('calls createCart', () => {
       const createCart = sinon.stub(product.props, 'createCart').returns(Promise.resolve('test'));
@@ -345,7 +352,7 @@ describe('Product class', () => {
 
       beforeEach(() => {
         idProduct = new Product({
-          id: '12345',
+          storefrontId: 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0LzEyMzQ1',
           options: configCopy.options,
         }, {
           client: {
