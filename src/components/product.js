@@ -54,12 +54,12 @@ function whitelistedProperties(selectorStyles) {
 
 function normalizeProductId(config) {
   if (config.storefrontId) {
-    config.id = config.storefrontId;
+    return config.storefrontId;
   } else if (config.id) {
-    config.id = btoa(`gid://shopify/Product/${config.id}`);
+    return btoa(`gid://shopify/Product/${config.id}`);
+  } else {
+    return null;
   }
-
-  return config;
 }
 
 /**
@@ -75,7 +75,7 @@ export default class Product extends Component {
    * @param {Object} props - data and utilities passed down from UI instance.
    */
   constructor(config, props) {
-    config.id = normalizeProductId(config).id;
+    config.id = normalizeProductId(config);
     super(config, props);
     this.typeKey = 'product';
     this.defaultVariantId = config.variantId;
