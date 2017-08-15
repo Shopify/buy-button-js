@@ -65,6 +65,13 @@ describe('Product class', () => {
     assert.instanceOf(product.childTemplate, Template);
   });
 
+  it('converts shopify product id to storefrontId', () => {
+    product = new Product({
+      id: 123
+    }, props);
+    assert.equal(product.id, 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0LzEyMw==')
+  })
+
   describe('init', () => {
     it('calls createCart', () => {
       const createCart = sinon.stub(product.props, 'createCart').returns(Promise.resolve('test'));
@@ -345,7 +352,7 @@ describe('Product class', () => {
 
       beforeEach(() => {
         idProduct = new Product({
-          id: 1234,
+          storefrontId: 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0LzEyMzQ1',
           options: configCopy.options,
         }, {
           client: {
@@ -354,9 +361,9 @@ describe('Product class', () => {
         });
       });
 
-      it('calls fetchProduct with product id', () => {
+      it('calls fetchProduct with product storefront id', () => {
         idProduct.sdkFetch();
-        assert.calledWith(idProduct.props.client.fetchProduct, 1234);
+        assert.calledWith(idProduct.props.client.fetchProduct, 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0LzEyMzQ1');
       });
     });
 
@@ -369,14 +376,14 @@ describe('Product class', () => {
           options: configCopy.options,
         }, {
           client: {
-            fetchQueryProducts: sinon.stub().returns(Promise.resolve([{}])),
+            fetchProductByHandle: sinon.stub().returns(Promise.resolve([{}])),
           }
         });
       });
 
-      it('calls fetchQueryProducts with product handle', () => {
+      it('calls fetchProductByHandle with product handle', () => {
         handleProduct.sdkFetch()
-        assert.calledWith(handleProduct.props.client.fetchQueryProducts, {handle: 'hat'});
+        assert.calledWith(handleProduct.props.client.fetchProductByHandle, 'hat');
       });
     });
   });
@@ -595,13 +602,11 @@ describe('Product class', () => {
       });
 
       describe('get onlineStoreURL', () => {
-        it('returns URL for a product ID on online store', () => {
-          assert.equal(product.onlineStoreURL, `https://test.myshopify.com/products/123${expectedQs}`);
+        beforeEach(() => {
+          product.model.onlineStoreUrl = 'https://test.myshopify.com/products/123'
         });
-
-        it('returns URL for a product handle on online store', () => {
-          product.handle = 'fancy-product';
-          assert.equal(product.onlineStoreURL, `https://test.myshopify.com/products/fancy-product${expectedQs}`);
+        it('returns URL for a product on online store', () => {
+          assert.equal(product.onlineStoreURL, `https://test.myshopify.com/products/123${expectedQs}`);
         });
       });
     });

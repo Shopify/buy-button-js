@@ -52,6 +52,16 @@ function whitelistedProperties(selectorStyles) {
   }, {});
 }
 
+function normalizeProductId(config) {
+  if (config.storefrontId) {
+    return config.storefrontId;
+  } else if (config.id) {
+    return btoa(`gid://shopify/Product/${config.id}`);
+  } else {
+    return null;
+  }
+}
+
 /**
  * Renders and fetches data for product embed.
  * @extends Component.
@@ -65,6 +75,7 @@ export default class Product extends Component {
    * @param {Object} props - data and utilities passed down from UI instance.
    */
   constructor(config, props) {
+    config.id = normalizeProductId(config);
     super(config, props);
     this.typeKey = 'product';
     this.defaultVariantId = config.variantId;
@@ -163,7 +174,7 @@ export default class Product extends Component {
    * @return {Object} viewData object.
    */
   get viewData() {
-    return merge(this.model, this.options.viewData, {
+    return Object.assign({}, this.model, this.options.viewData, {
       classes: this.classes,
       contents: this.options.contents,
       text: this.options.text,
@@ -461,8 +472,7 @@ export default class Product extends Component {
    * @return {String}
    */
   get onlineStoreURL() {
-    const identifier = this.handle ? this.handle : this.id;
-    return `https://${this.props.client.config.domain}/products/${identifier}${this.onlineStoreQueryString}`;
+    return `${this.model.onlineStoreUrl}${this.onlineStoreQueryString}`;
   }
 
   /**
@@ -527,7 +537,7 @@ export default class Product extends Component {
     if (this.id) {
       return this.props.client.fetchProduct(this.id);
     } else if (this.handle) {
-      return this.props.client.fetchQueryProducts({handle: this.handle}).then((products) => products[0]);
+      return this.props.client.fetchProductByHandle(this.handle).then((product) => product);
     }
     return Promise.reject(new Error('SDK Fetch Failed'));
   }
@@ -540,8 +550,8 @@ export default class Product extends Component {
   fetchData() {
     return this.sdkFetch().then((model) => {
       if (model) {
+        this.id = model.id;
         this.handle = model.handle;
-        model.selectedQuantity = 0;
         return model;
       }
       throw new Error('Not Found');
