@@ -472,8 +472,7 @@ export default class Product extends Component {
    * @return {String}
    */
   get onlineStoreURL() {
-    const identifier = this.handle ? this.handle : atob(this.id).split('/').pop();
-    return `https://${this.props.client.config.domain}/products/${identifier}${this.onlineStoreQueryString}`;
+    return `${this.model.onlineStoreUrl}${this.onlineStoreQueryString}`;
   }
 
   /**

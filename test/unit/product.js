@@ -602,13 +602,11 @@ describe('Product class', () => {
       });
 
       describe('get onlineStoreURL', () => {
-        it('returns URL for a product ID on online store', () => {
-          assert.equal(product.onlineStoreURL, `https://test.myshopify.com/products/123${expectedQs}`);
+        beforeEach(() => {
+          product.model.onlineStoreUrl = 'https://test.myshopify.com/products/123'
         });
-
-        it('returns URL for a product handle on online store', () => {
-          product.handle = 'fancy-product';
-          assert.equal(product.onlineStoreURL, `https://test.myshopify.com/products/fancy-product${expectedQs}`);
+        it('returns URL for a product on online store', () => {
+          assert.equal(product.onlineStoreURL, `https://test.myshopify.com/products/123${expectedQs}`);
         });
       });
     });
