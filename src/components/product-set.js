@@ -139,7 +139,7 @@ export default class ProductSet extends Component {
       });
     }
     return method.then((collection) => {
-      return Promise.resolve(collection.products);
+      return collection.products;
     });
 
     /* eslint-enable camelcase */
