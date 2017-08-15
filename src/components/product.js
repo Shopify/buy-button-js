@@ -538,7 +538,7 @@ export default class Product extends Component {
     if (this.id) {
       return this.props.client.fetchProduct(this.id);
     } else if (this.handle) {
-      return this.props.client.fetchQueryProducts({handle: this.handle}).then((products) => products[0]);
+      return this.props.client.fetchProductByHandle(this.handle).then((product) => product);
     }
     return Promise.reject(new Error('SDK Fetch Failed'));
   }
@@ -551,8 +551,8 @@ export default class Product extends Component {
   fetchData() {
     return this.sdkFetch().then((model) => {
       if (model) {
+        this.id = model.id;
         this.handle = model.handle;
-        model.selectedQuantity = 0;
         return model;
       }
       throw new Error('Not Found');

@@ -376,14 +376,14 @@ describe('Product class', () => {
           options: configCopy.options,
         }, {
           client: {
-            fetchQueryProducts: sinon.stub().returns(Promise.resolve([{}])),
+            fetchProductByHandle: sinon.stub().returns(Promise.resolve([{}])),
           }
         });
       });
 
-      it('calls fetchQueryProducts with product handle', () => {
+      it('calls fetchProductByHandle with product handle', () => {
         handleProduct.sdkFetch()
-        assert.calledWith(handleProduct.props.client.fetchQueryProducts, {handle: 'hat'});
+        assert.calledWith(handleProduct.props.client.fetchProductByHandle, 'hat');
       });
     });
   });

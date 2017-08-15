@@ -127,31 +127,20 @@ export default class ProductSet extends Component {
    * @param {Object} options - query options for request
    * @return {Promise} promise resolving to collection data.
    */
-  sdkFetch(options = {}) {
-
-    /* eslint-disable camelcase */
-    const queryOptions = Object.assign({}, this.fetchQuery, options);
+  sdkFetch() {
     let method;
+
     if (this.id) {
-      let queryKey;
-      if (isArray(this.id)) {
-        queryKey = 'product_ids';
-      } else {
-        queryKey = 'collection_id';
-        queryOptions.sort_by = 'collection-default';
-      }
-      method = this.props.client.fetchQueryProducts(Object.assign({}, queryOptions, {[queryKey]: this.id}));
+      method = this.props.client.fetchCollectionWithProducts(this.id);
     } else if (this.handle) {
-      method = this.props.client.fetchQueryCollections({handle: this.handle}).then((collections) => {
-        if (collections.length) {
-          const collection = collections[0];
-          this.id = collection.attrs.collection_id;
-          return this.sdkFetch(options);
-        }
-        return Promise.resolve([]);
+      method = this.props.client.fetchCollectionByHandle(this.handle).then((collection) => {
+        this.id = collection.shop.collectionByHandle.id;
+        return this.props.client.fetchCollectionWithProducts(this.id);
       });
     }
-    return method;
+    return method.then((collection) => {
+      return Promise.resolve(collection.products);
+    });
 
     /* eslint-enable camelcase */
   }
