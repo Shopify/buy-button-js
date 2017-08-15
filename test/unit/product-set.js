@@ -83,11 +83,7 @@ describe('ProductSet class', () => {
         }, {
           client: {
             fetchCollectionWithProducts: sinon.stub().returns(Promise.resolve({})),
-            fetchCollectionByHandle: sinon.stub().returns(Promise.resolve({shop: {
-              collectionByHandle: {
-                id: 2345,
-              }
-            }}))
+            fetchCollectionByHandle: sinon.stub().returns(Promise.resolve({id: 2345}))
           },
           createCart: () => Promise.resolve()
         });

@@ -134,7 +134,7 @@ export default class ProductSet extends Component {
       method = this.props.client.fetchCollectionWithProducts(this.id);
     } else if (this.handle) {
       method = this.props.client.fetchCollectionByHandle(this.handle).then((collection) => {
-        this.id = collection.shop.collectionByHandle.id;
+        this.id = collection.id;
         return this.props.client.fetchCollectionWithProducts(this.id);
       });
     }

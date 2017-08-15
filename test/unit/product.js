@@ -361,7 +361,7 @@ describe('Product class', () => {
         });
       });
 
-      it('calls fetchProduct with product id', () => {
+      it('calls fetchProduct with product storefront id', () => {
         idProduct.sdkFetch();
         assert.calledWith(idProduct.props.client.fetchProduct, 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0LzEyMzQ1');
       });
