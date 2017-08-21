@@ -69,7 +69,7 @@ describe('Product class', () => {
     product = new Product({
       id: 123
     }, props);
-    assert.equal(product.id, 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0LzEyMw==')
+    assert.equal(product.storefrontId, 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0LzEyMw==')
   })
 
   describe('init', () => {
