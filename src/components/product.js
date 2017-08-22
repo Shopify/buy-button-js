@@ -5,6 +5,7 @@ import Template from '../template';
 import Checkout from './checkout';
 import windowUtils from '../utils/window-utils';
 import formatMoney from '../utils/money';
+import normalizeConfig from '../utils/normalize-config';
 import ProductView from '../views/product';
 import ProductUpdater from '../updaters/product';
 
@@ -52,16 +53,6 @@ function whitelistedProperties(selectorStyles) {
   }, {});
 }
 
-function normalizeProductId(config) {
-  if (config.storefrontId) {
-    return config.storefrontId;
-  } else if (config.id) {
-    return btoa(`gid://shopify/Product/${config.id}`);
-  } else {
-    return null;
-  }
-}
-
 /**
  * Renders and fetches data for product embed.
  * @extends Component.
@@ -75,10 +66,12 @@ export default class Product extends Component {
    * @param {Object} props - data and utilities passed down from UI instance.
    */
   constructor(config, props) {
-    config.storefrontId = normalizeProductId(config);
+    // eslint-disable-next-line no-param-reassign
+    config = normalizeConfig(config);
+
     super(config, props);
     this.typeKey = 'product';
-    this.defaultVariantId = config.variantId;
+    this.defaultStorefrontVariantId = config.storefrontVariantId;
     this.cachedImage = null;
     this.childTemplate = new Template(this.config.option.templates, this.config.option.contents, this.config.option.order);
     this.cart = null;
@@ -128,13 +121,20 @@ export default class Product extends Component {
     if (!(this.selectedVariant || this.options.contents.imgWithCarousel)) {
       return null;
     }
-    const imageSize = parseInt(this.options.width, 10) || 480;
+
+    let imageSize;
+    if (this.options.width && this.options.width.slice(-1) === '%') {
+      imageSize = 1000;
+    } else {
+      imageSize = parseInt(this.options.width, 10) || 480;
+    }
+
     let src;
     let id;
 
     const imageOptions = {
       maxWidth: imageSize,
-      maxHeight: imageSize,
+      maxHeight: imageSize * 1.5,
     };
 
     if (this.selectedImage) {
@@ -203,6 +203,7 @@ export default class Product extends Component {
         id: image.id,
         src: image.src,
         carouselSrc: ShopifyBuy.Image.Helpers.imageForSize(image, {maxWidth: 100, maxHeight: 100}),
+        isSelected: image.id === this.currentImage.id,
       };
     });
   }
@@ -717,11 +718,10 @@ export default class Product extends Component {
    */
   setDefaultVariant(model) {
     let selectedVariant;
-
-    if (this.defaultVariantId) {
-      selectedVariant = model.variants.find((variant) => variant.id === this.defaultVariantId);
+    if (this.defaultStorefrontVariantId) {
+      selectedVariant = model.variants.find((variant) => variant.id === this.defaultStorefrontVariantId);
     } else {
-      this.defaultVariantId = model.variants[0].id;
+      this.defaultStorefrontVariantId = model.variants[0].id;
       selectedVariant = model.variants[0];
       this.selectedImage = model.images[0];
     }
