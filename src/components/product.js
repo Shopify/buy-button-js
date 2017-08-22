@@ -75,7 +75,7 @@ export default class Product extends Component {
    * @param {Object} props - data and utilities passed down from UI instance.
    */
   constructor(config, props) {
-    config.id = normalizeProductId(config);
+    config.storefrontId = normalizeProductId(config);
     super(config, props);
     this.typeKey = 'product';
     this.defaultVariantId = config.variantId;
@@ -534,8 +534,8 @@ export default class Product extends Component {
    * @return {Promise} promise resolving to model data.
    */
   sdkFetch() {
-    if (this.id) {
-      return this.props.client.fetchProduct(this.id);
+    if (this.storefrontId) {
+      return this.props.client.fetchProduct(this.storefrontId);
     } else if (this.handle) {
       return this.props.client.fetchProductByHandle(this.handle).then((product) => product);
     }
@@ -550,7 +550,7 @@ export default class Product extends Component {
   fetchData() {
     return this.sdkFetch().then((model) => {
       if (model) {
-        this.id = model.id;
+        this.storefrontId = model.id;
         this.handle = model.handle;
         return model;
       }
