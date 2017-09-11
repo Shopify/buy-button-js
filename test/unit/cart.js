@@ -181,14 +181,14 @@ describe('Cart class', () => {
 
   describe('empty', () => {
     it('empties and rerenders the cart', () => {
-      cart.model = {
-        clearLineItems: sinon.stub().returns(Promise.resolve())
-      }
+      cart.props.client = {
+        removeLineItems: sinon.stub().returns(Promise.resolve()),
+      };
       cart.view.render = sinon.spy();
       cart.toggles[0].view.render = sinon.spy();
 
       return cart.empty().then(() => {
-        assert.calledOnce(cart.model.clearLineItems);
+        assert.calledOnce(cart.props.client.removeLineItems);
         assert.calledOnce(cart.view.render);
         assert.calledOnce(cart.toggles[0].view.render);
       });

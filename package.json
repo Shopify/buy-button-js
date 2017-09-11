@@ -2,7 +2,7 @@
   "name": "@shopify/buy-button-js",
   "version": "0.4.13",
   "description": "BuyButton.js allows merchants to build Shopify interfaces into any website",
-  "main": "lib/buybutton.cjs.js",
+  "main": "lib/buybutton.umd.js",
   "repository": "git@github.com:Shopify/buy-button-js.git",
   "scripts": {
     "start": "rm -rf tmp && mkdir tmp && yarn run src:watch & yarn run styles:watch & yarn run serve",
@@ -93,7 +93,7 @@
     "morphdom": "1.4.6",
     "mustache": "2.2.1",
     "node-sass": "3.8.0",
-    "shopify-buy": "1.0.0-alpha.11",
+    "shopify-buy": "1.0.0-alpha.12",
     "uglify-js": "2.7.0"
   }
 }

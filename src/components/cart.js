@@ -317,10 +317,13 @@ export default class Cart extends Component {
    * Remove all lineItems in the cart
    */
   empty() {
-    return this.model.clearLineItems().then(() => {
+    const lineItemIds = this.model.lineItems ? this.model.lineItems.map((item) => item.id) : [];
+
+    return this.props.client.removeLineItems(this.model.id, lineItemIds).then((checkout) => {
+      this.model = checkout;
       this.view.render();
       this.toggles.forEach((toggle) => toggle.view.render());
-      return;
+      return checkout;
     });
   }
 
