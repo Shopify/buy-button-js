@@ -1,12 +1,14 @@
 import Updater from '../updater';
+import normalizeConfig from '../utils/normalize-config';
 
 const MAX_WIDTH = '950px';
 
 export default class ProductUpdater extends Updater {
   updateConfig(config) {
-    if (config.storefrontId || config.storefrontVariantId) {
-      this.component.id = config.storefrontId || this.component.storefrontId;
-      this.component.defaultStorefrontVariantId = config.storefrontVariantId || this.component.defaultStorefrontVariantId;
+    const newConfig = normalizeConfig(config);
+    if (newConfig.storefrontId || newConfig.storefrontVariantId) {
+      this.component.storefrontId = newConfig.storefrontId || this.component.storefrontId;
+      this.component.defaultStorefrontVariantId = newConfig.storefrontVariantId || this.component.defaultStorefrontVariantId;
       this.component.init();
       return;
     }

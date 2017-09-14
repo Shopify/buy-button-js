@@ -5,6 +5,7 @@ import Template from '../template';
 import Checkout from './checkout';
 import windowUtils from '../utils/window-utils';
 import formatMoney from '../utils/money';
+import normalizeConfig from '../utils/normalize-config';
 import ProductView from '../views/product';
 import ProductUpdater from '../updaters/product';
 
@@ -52,16 +53,6 @@ function whitelistedProperties(selectorStyles) {
   }, {});
 }
 
-function normalizeId(type, config, databaseKey, storefrontKey) {
-  if (config[storefrontKey]) {
-    return config[storefrontKey];
-  } else if (config[databaseKey]) {
-    return btoa(`gid://shopify/${type}/${config[databaseKey]}`);
-  } else {
-    return null;
-  }
-}
-
 /**
  * Renders and fetches data for product embed.
  * @extends Component.
@@ -75,8 +66,8 @@ export default class Product extends Component {
    * @param {Object} props - data and utilities passed down from UI instance.
    */
   constructor(config, props) {
-    config.storefrontId = normalizeId('Product', config, 'id', 'storefrontId');
-    config.storefrontVariantId = normalizeId('ProductVariant', config, 'variantId', 'storefrontVariantId');
+    // eslint-disable-next-line no-param-reassign
+    config = normalizeConfig(config);
 
     super(config, props);
     this.typeKey = 'product';

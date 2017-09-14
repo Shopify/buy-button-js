@@ -1,6 +1,7 @@
 const testProduct = {
   title: 'test',
   id: 123,
+  storefrontId: 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0LzEyMw==',
   images: [
     {
       id: 1,
@@ -39,7 +40,7 @@ const testProduct = {
   ],
   variants: [
     {
-      id: 12345,
+      id: 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0NQ==',
       productId: 123,
       price: '123.00',
       title: 'sloth / small',
@@ -60,7 +61,7 @@ const testProduct = {
       ]
     },
     {
-      id: 12346,
+      id: 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0Ng==',
       productId: 123,
       price: '1.00',
       title: 'shark / small',
@@ -81,7 +82,7 @@ const testProduct = {
       ]
     },
     {
-      id: 12347,
+      id: 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0Nw==',
       productId: 123,
       price: '999.99',
       title: 'shark / large',
@@ -102,7 +103,7 @@ const testProduct = {
       ]
     },
     {
-      id: 12348,
+      id: 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0OA==',
       productId: 123,
       price: '0.00',
       title: 'cat / small',
