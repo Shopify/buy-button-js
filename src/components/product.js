@@ -52,11 +52,11 @@ function whitelistedProperties(selectorStyles) {
   }, {});
 }
 
-function normalizeProductId(config) {
-  if (config.storefrontId) {
-    return config.storefrontId;
-  } else if (config.id) {
-    return btoa(`gid://shopify/Product/${config.id}`);
+function normalizeId(type, config, databaseKey, storefrontKey) {
+  if (config[storefrontKey]) {
+    return config[storefrontKey];
+  } else if (config[databaseKey]) {
+    return btoa(`gid://shopify/${type}/${config[databaseKey]}`);
   } else {
     return null;
   }
@@ -75,10 +75,12 @@ export default class Product extends Component {
    * @param {Object} props - data and utilities passed down from UI instance.
    */
   constructor(config, props) {
-    config.storefrontId = normalizeProductId(config);
+    config.storefrontId = normalizeId('Product', config, 'id', 'storefrontId');
+    config.storefrontVariantId = normalizeId('ProductVariant', config, 'variantId', 'storefrontVariantId');
+
     super(config, props);
     this.typeKey = 'product';
-    this.defaultVariantId = config.variantId;
+    this.defaultStorefrontVariantId = config.storefrontVariantId;
     this.cachedImage = null;
     this.childTemplate = new Template(this.config.option.templates, this.config.option.contents, this.config.option.order);
     this.cart = null;
@@ -725,11 +727,10 @@ export default class Product extends Component {
    */
   setDefaultVariant(model) {
     let selectedVariant;
-
-    if (this.defaultVariantId) {
-      selectedVariant = model.variants.find((variant) => variant.id === this.defaultVariantId);
+    if (this.defaultStorefrontVariantId) {
+      selectedVariant = model.variants.find((variant) => variant.id === this.defaultStorefrontVariantId);
     } else {
-      this.defaultVariantId = model.variants[0].id;
+      this.defaultStorefrontVariantId = model.variants[0].id;
       selectedVariant = model.variants[0];
       this.selectedImage = model.images[0];
     }

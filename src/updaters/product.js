@@ -4,9 +4,9 @@ const MAX_WIDTH = '950px';
 
 export default class ProductUpdater extends Updater {
   updateConfig(config) {
-    if (config.id || config.variantId) {
-      this.component.id = config.id || this.component.id;
-      this.component.defaultVariantId = config.variantId || this.component.defaultVariantId;
+    if (config.storefrontId || config.storefrontVariantId) {
+      this.component.id = config.storefrontId || this.component.storefrontId;
+      this.component.defaultStorefrontVariantId = config.storefrontVariantId || this.component.defaultStorefrontVariantId;
       this.component.init();
       return;
     }
