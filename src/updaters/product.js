@@ -41,11 +41,11 @@ export default class ProductUpdater extends Updater {
       this.component.view.iframe.removeClass(this.component.classes.product.vertical);
       this.component.view.iframe.removeClass(this.component.classes.product.horizontal);
       this.component.view.iframe.addClass(this.component.classes.product[layout]);
-      this.component.view.resizeUntilLoaded();
+      this.component.view.resize();
     }
     [...this.component.view.wrapper.querySelectorAll('img')].forEach((img) => {
       img.addEventListener('load', () => {
-        this.component.view.resizeUntilLoaded();
+        this.component.view.resize();
       });
     });
     super.updateConfig(config);

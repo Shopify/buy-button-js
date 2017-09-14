@@ -128,13 +128,20 @@ export default class Product extends Component {
     if (!(this.selectedVariant || this.options.contents.imgWithCarousel)) {
       return null;
     }
-    const imageSize = parseInt(this.options.width, 10) || 480;
+
+    let imageSize;
+    if (this.options.width && this.options.width.slice(-1) === '%') {
+      imageSize = 1000;
+    } else {
+      imageSize = parseInt(this.options.width, 10) || 480;
+    }
+
     let src;
     let id;
 
     const imageOptions = {
       maxWidth: imageSize,
-      maxHeight: imageSize,
+      maxHeight: imageSize * 1.5,
     };
 
     if (this.selectedImage) {
@@ -203,6 +210,7 @@ export default class Product extends Component {
         id: image.id,
         src: image.src,
         carouselSrc: ShopifyBuy.Image.Helpers.imageForSize(image, {maxWidth: 100, maxHeight: 100}),
+        isSelected: image.id === this.currentImage.id,
       };
     });
   }
