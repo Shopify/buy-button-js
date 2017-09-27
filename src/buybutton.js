@@ -1,4 +1,4 @@
-import ShopifyBuy, {Config} from 'shopify-buy';
+import ShopifyBuy from 'shopify-buy';
 import UI from './ui';
 import productTemplates from './templates/product';
 import 'whatwg-fetch';
@@ -10,7 +10,6 @@ import 'core-js/modules/es6.object.assign';
 import 'core-js/modules/es7.object.values';
 
 window.ShopifyBuy = window.ShopifyBuy || ShopifyBuy;
-window.Config = window.Config || Config;
 
 ShopifyBuy.UI = window.ShopifyBuy.UI || {
   domains: {},

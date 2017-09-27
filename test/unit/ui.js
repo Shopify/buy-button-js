@@ -15,11 +15,11 @@ describe('ui class', () => {
   };
 
   beforeEach(() => {
-    config = new Config({
+    config = {
       domain: 'buckets-o-stuff.myshopify.com',
       storefrontAccessToken: 123,
-    });
-    client = new ShopifyBuy(config);
+    };
+    client = ShopifyBuy.buildClient(config);
     ui = new UI(client, {});
     script = document.createElement('script');
     script.setAttribute('data-shopify-buy-ui', true);
