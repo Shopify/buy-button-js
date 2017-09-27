@@ -107,7 +107,7 @@ describe('Product class', () => {
     describe('if variant exists for selected options', () => {
       it('returns true', () => {
         return product.init(testProductCopy).then(() => {
-          product.selectedVariant = { id: 12345 };
+          product.selectedVariant = { id: 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0NQ==' };
           assert.isOk(product.variantExists);
         });
       });
@@ -202,7 +202,7 @@ describe('Product class', () => {
     describe('if variant is not in stock', () => {
       it('returns "out of stock"', () => {
         product.selectedVariant = {
-          id: 12345,
+          id: 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0NQ==',
           available: false,
         }
         assert.equal(product.buttonText, product.options.text.outOfStock);
@@ -430,7 +430,7 @@ describe('Product class', () => {
     });
   });
 
-  describe('when updating ID or variant ID', () => {
+  describe('when updating ID, storefront ID, variant ID, or storefront variant ID', () => {
     let initSpy;
 
     beforeEach(() => {
@@ -438,21 +438,33 @@ describe('Product class', () => {
     });
 
     it('calls init if ID updated', () => {
-      product.updateConfig({id: 7777});
+      product.updateConfig({id: 123});
       assert.calledOnce(initSpy);
-      assert.equal(product.id, 7777);
+      assert.equal(product.storefrontId, 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0LzEyMw==');
+    });
+
+    it('calls init if storefront ID updated', () => {
+      product.updateConfig({storefrontId: 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0LzEyMw=='});
+      assert.calledOnce(initSpy);
+      assert.equal(product.storefrontId, 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0LzEyMw==');
     });
 
     it('calls init if variant ID updated', () => {
       product.updateConfig({variantId: 7777});
       assert.calledOnce(initSpy);
-      assert.equal(product.defaultVariantId, 7777);
+      assert.equal(product.defaultStorefrontVariantId, 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC83Nzc3');
+    });
+
+    it('calls init if storefront variant ID updated', () => {
+      product.updateConfig({storefrontVariantId: 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC83Nzc3'});
+      assert.calledOnce(initSpy);
+      assert.equal(product.defaultStorefrontVariantId, 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC83Nzc3');
     });
   });
 
   describe('setDefaultVariant', () => {
-    it('sets selectedVariant to product.defalutVariantId', () => {
-      product.defaultVariantId = 12347;
+    it('sets selectedVariant\'s id to product.defaultVariantId', () => {
+      product.defaultStorefrontVariantId = 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0Nw==';
       const model = product.setDefaultVariant(testProduct);
       assert.equal(product.selectedOptions.Print, 'shark');
       assert.equal(product.selectedOptions.Size, 'large');
@@ -473,7 +485,7 @@ describe('Product class', () => {
     describe('when variant is out of stock', () => {
       it('returns out of stock text', () => {
         product.selectedVariant = {
-          id: 12345,
+          id: 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0NQ==',
           available: false,
         };
         assert.equal(product.buttonText, product.options.text.outOfStock);
@@ -482,7 +494,7 @@ describe('Product class', () => {
     describe('when variant is available', () => {
       it('returns button text', () => {
         product.selectedVariant = {
-          id: 12345,
+          id: 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0NQ==',
           available: true,
         };
         assert.equal(product.buttonText, product.options.text.button);
