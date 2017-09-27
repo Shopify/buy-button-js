@@ -1,4 +1,3 @@
-import ShopifyBuy from 'shopify-buy';
 import merge from '../utils/merge';
 import Component from '../component';
 import Template from '../template';
@@ -139,10 +138,10 @@ export default class Product extends Component {
 
     if (this.selectedImage) {
       id = this.selectedImage.id;
-      src = ShopifyBuy.Image.Helpers.imageForSize(this.selectedImage, imageOptions);
+      src = this.props.client.image.helpers.imageForSize(this.selectedImage, imageOptions);
     } else {
       id = this.selectedVariant.image.id;
-      src = ShopifyBuy.Image.Helpers.imageForSize(this.selectedVariant.image, imageOptions);
+      src = this.props.client.image.helpers.imageForSize(this.selectedVariant.image, imageOptions);
     }
     return {id, src};
   }
@@ -202,7 +201,7 @@ export default class Product extends Component {
       return {
         id: image.id,
         src: image.src,
-        carouselSrc: ShopifyBuy.Image.Helpers.imageForSize(image, {maxWidth: 100, maxHeight: 100}),
+        carouselSrc: this.props.client.image.helpers.imageForSize(image, {maxWidth: 100, maxHeight: 100}),
         isSelected: image.id === this.currentImage.id,
       };
     });
@@ -454,7 +453,7 @@ export default class Product extends Component {
     return {
       channel: 'buy_button',
       referrer: encodeURIComponent(windowUtils.location()),
-      variant: this.selectedVariant.id,
+      variant: atob(this.selectedVariant.id).split('/')[4],
     };
   }
 
@@ -536,9 +535,9 @@ export default class Product extends Component {
    */
   sdkFetch() {
     if (this.storefrontId) {
-      return this.props.client.fetchProduct(this.storefrontId);
+      return this.props.client.product.fetch(this.storefrontId);
     } else if (this.handle) {
-      return this.props.client.fetchProductByHandle(this.handle).then((product) => product);
+      return this.props.client.product.fetchByHandle(this.handle).then((product) => product);
     }
     return Promise.reject(new Error('SDK Fetch Failed'));
   }
@@ -692,7 +691,7 @@ export default class Product extends Component {
 
     if (updatedOption) {
       this.selectedOptions[updatedOption.name] = value;
-      this.selectedVariant = ShopifyBuy.Product.Helpers.variantForOptions(this.model, this.selectedOptions);
+      this.selectedVariant = this.props.client.product.helpers.variantForOptions(this.model, this.selectedOptions);
     }
 
     if (this.variantExists) {

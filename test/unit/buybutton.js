@@ -1,17 +1,19 @@
 import ShopifyBuy from '../../src/buybutton';
 import UI from '../../src/ui';
+import shopFixture from '../fixtures/shop-info';
 
 describe('ShopifyBuy.UI', () => {
-  const config = new Config({
+  const config = {
     domain: 'embeds.myshopify.com',
     storefrontAccessToken: 'fake-access-token-12345',
-  });
+  };
   let client;
   let ui;
 
   beforeEach(() => {
-     client = new ShopifyBuy(config);
-     ui = ShopifyBuy.UI.init(client);
+    client = ShopifyBuy.buildClient(config);
+    sinon.stub(client.shop, 'fetchInfo').returns(Promise.resolve(shopFixture));
+    ui = ShopifyBuy.UI.init(client);
   });
 
   afterEach(() => {
