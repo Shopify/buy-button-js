@@ -43,7 +43,7 @@ Will watch for changes and run test suite.
 To run docs locally, install jekyll:
 
 ```
-gem intsall jekyll
+gem install jekyll
 ```
 
 ```
