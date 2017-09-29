@@ -15,7 +15,7 @@ ShopifyBuy.UI = window.ShopifyBuy.UI || {
   domains: {},
 
   init(client, integrations = {}, styleOverrides) {
-    const domain = client.fetchShopInfo().then((res) => {
+    const domain = client.shop.fetchInfo().then((res) => {
       return res.attrs.primaryDomain.attrs.host.value;
     });
     if (!this.domains[domain]) {

@@ -1,5 +1,6 @@
 import ShopifyBuy from '../../src/buybutton';
 import UI from '../../src/ui';
+import shopFixture from '../fixtures/shop-info';
 
 describe('ShopifyBuy.UI', () => {
   const config = {
@@ -10,8 +11,9 @@ describe('ShopifyBuy.UI', () => {
   let ui;
 
   beforeEach(() => {
-     client = ShopifyBuy.buildClient(config);
-     ui = ShopifyBuy.UI.init(client);
+    client = ShopifyBuy.buildClient(config);
+    sinon.stub(client.shop, 'fetchInfo').returns(Promise.resolve(shopFixture));
+    ui = ShopifyBuy.UI.init(client);
   });
 
   afterEach(() => {

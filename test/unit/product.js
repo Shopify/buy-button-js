@@ -1,4 +1,3 @@
-import componentDefaults from '../../src/defaults/components';
 import Product from '../../src/components/product';
 import Cart from '../../src/components/cart';
 import Modal from '../../src/components/modal';
@@ -6,6 +5,9 @@ import Template from '../../src/template';
 import Component from '../../src/component';
 import testProduct from '../fixtures/product-fixture';
 import windowUtils from '../../src/utils/window-utils';
+import ShopifyBuy from '../../src/buybutton';
+import shopFixture from '../fixtures/shop-info';
+import productFixture from '../fixtures/product-fixture';
 
 const rootImageURI = 'https://cdn.shopify.com/s/';
 
@@ -25,29 +27,33 @@ const config = {
   }
 }
 
-const props = {
-  client: {
-    config: {
-      domain: 'test.myshopify.com'
-    }
-  },
-  browserFeatures: {
-    transition: true,
-    animation: true,
-    transform: true,
-  },
-  createCart: function () {return Promise.resolve(new Cart(config))},
-}
-
-props.createModal = function () {return new Modal(config, props)}
 
 let product;
 let testProductCopy;
 let configCopy;
 
 describe('Product class', () => {
+  let props;
   beforeEach(() => {
-    configCopy = Object.assign({}, config)
+    props = {
+      client: ShopifyBuy.buildClient({
+        domain: 'test.myshopify.com',
+        storefrontAccessToken: 123
+      }),
+      browserFeatures: {
+        transition: true,
+        animation: true,
+        transform: true,
+      },
+      createCart: function () {return Promise.resolve(new Cart(config))},
+      createModal: function () {
+        return new Modal(config, props);
+      },
+      closeModal: function() {}
+    };
+    sinon.stub(props.client.shop, 'fetchInfo').returns(Promise.resolve(shopFixture));
+    sinon.stub(props.client.product, 'fetch').returns(Promise.resolve(productFixture));
+    configCopy = Object.assign({}, config);
     configCopy.node = document.createElement('div');
     configCopy.node.setAttribute('id', 'fixture');
     document.body.appendChild(configCopy.node);
@@ -349,44 +355,51 @@ describe('Product class', () => {
   describe('sdkFetch', () => {
     describe('when passed a product ID', () => {
       let idProduct;
+      let productFetchStub;
 
       beforeEach(() => {
         idProduct = new Product({
           storefrontId: 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0LzEyMzQ1',
           options: configCopy.options,
         }, {
-          client: {
-            fetchProduct: sinon.spy(),
-          }
+          client: ShopifyBuy.buildClient({
+            domain: 'test.myshopify.com',
+            storefrontAccessToken: 123
+          })
         });
+        productFetchStub = sinon.stub(idProduct.props.client.product, 'fetch').returns(Promise.resolve({}));
       });
 
       it('calls fetchProduct with product storefront id', () => {
         idProduct.sdkFetch();
-        assert.calledWith(idProduct.props.client.fetchProduct, 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0LzEyMzQ1');
+        assert.calledWith(productFetchStub, 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0LzEyMzQ1');
       });
     });
 
     describe('when passed a product handle', () => {
       let handleProduct;
+      let productFetchByHandleStub;
 
       beforeEach(() => {
         handleProduct = new Product({
           handle: 'hat',
           options: configCopy.options,
         }, {
-          client: {
-            fetchProductByHandle: sinon.stub().returns(Promise.resolve([{}])),
-          }
+          client: ShopifyBuy.buildClient({
+            domain: 'test.myshopify.com',
+            storefrontAccessToken: 123
+          })
         });
+        productFetchByHandleStub = sinon.stub(handleProduct.props.client.product, 'fetchByHandle').returns(Promise.resolve({}));
       });
 
       it('calls fetchProductByHandle with product handle', () => {
         handleProduct.sdkFetch()
-        assert.calledWith(handleProduct.props.client.fetchProductByHandle, 'hat');
+        assert.calledWith(productFetchByHandleStub, 'hat');
       });
     });
   });
+
   describe('updateConfig', () => {
     const newConfig = {
       options: {
@@ -406,7 +419,7 @@ describe('Product class', () => {
       assert.calledWith(cartUpdateConfigSpy, newConfig);
     });
 
-    it.skip('calls updateConfig on modal if modal exists', () => {
+    it('calls updateConfig on modal if modal exists', () => {
       const modalProduct = new Product({
         node: configCopy.node,
         options: Object.assign({}, configCopy.options, {
@@ -416,16 +429,19 @@ describe('Product class', () => {
         }),
       }, props);
       return modalProduct.init(testProductCopy).then(() => {
-        modalProduct.openModal().then(() => {
-          modalProduct.cart = {
-            updateConfig: sinon.spy()
-          }
-          modalProduct.modal.updateConfig = sinon.spy();
-          modalProduct.updateConfig(newConfig);
-          assert.calledWith(modalProduct.modal.updateConfig, sinon.match.object);
-          assert.equal(modalProduct.modal.config.product.layout, 'vertical');
-          assert.calledWith(superSpy, newConfig);
-        });
+        return modalProduct.openModal();
+      }).then(() => {
+        const cartUpdateConfigSpy = sinon.spy();
+        modalProduct.cart = {
+          updateConfig: cartUpdateConfigSpy
+        }
+        modalProduct.modal.updateConfig = sinon.spy();
+        modalProduct.updateConfig(newConfig);
+        assert.calledWith(modalProduct.modal.updateConfig, sinon.match.object);
+        assert.equal(modalProduct.modal.config.product.layout, 'vertical');
+        assert.calledWith(cartUpdateConfigSpy, newConfig);
+      }).then(() => {
+        modalProduct.modal.close();
       });
     });
   });
@@ -450,15 +466,15 @@ describe('Product class', () => {
     });
 
     it('calls init if variant ID updated', () => {
-      product.updateConfig({variantId: 7777});
+      product.updateConfig({variantId: 12347});
       assert.calledOnce(initSpy);
-      assert.equal(product.defaultStorefrontVariantId, 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC83Nzc3');
+      assert.equal(product.defaultStorefrontVariantId, 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0Nw==');
     });
 
     it('calls init if storefront variant ID updated', () => {
-      product.updateConfig({storefrontVariantId: 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC83Nzc3'});
+      product.updateConfig({storefrontVariantId: 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0Ng=='});
       assert.calledOnce(initSpy);
-      assert.equal(product.defaultStorefrontVariantId, 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC83Nzc3');
+      assert.equal(product.defaultStorefrontVariantId, 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0Ng==');
     });
   });
 
@@ -501,6 +517,7 @@ describe('Product class', () => {
       });
     });
   });
+
   describe('wrapTemplate', () => {
     beforeEach(() => {
       return product.init(testProductCopy);
@@ -558,41 +575,13 @@ describe('Product class', () => {
     });
   });
 
-  describe('get modalProductConfig', () => {
-    it('returns an object with whitelisted styles', () => {
-      product.config.product.styles = {
-        button: {
-          'background': 'red',
-          'margin-top': '100px',
-          ':hover': {
-            'background': 'red',
-          }
-        }
-      }
-
-      const expectedStyles = Object.assign({}, product.config.modalProduct.styles, {
-        button: {
-          'background': 'red',
-          ':hover': {
-            'background': 'red',
-          }
-        }
-      });
-
-      assert.deepEqual(product.modalProductConfig, Object.assign({}, product.config.modalProduct, {
-        layout: 'horizontal',
-        styles: expectedStyles,
-      }));
-    });
-  });
-
   describe('onlineStore methods', () => {
     let windowStub;
-    const expectedQs = '?channel=buy_button&referrer=http%3A%2F%2Ftest.com&variant=123&';
+    const expectedQs = '?channel=buy_button&referrer=http%3A%2F%2Ftest.com&variant=12345&';
 
     beforeEach(() => {
       windowStub = sinon.stub(windowUtils, 'location').returns('http://test.com');
-      product.selectedVariant = {id: 123}
+      product.selectedVariant = {id: 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0NQ=='}
     });
 
     afterEach(() => {
@@ -604,7 +593,7 @@ describe('Product class', () => {
         assert.deepEqual(product.onlineStoreParams, {
           channel: 'buy_button',
           referrer: 'http%3A%2F%2Ftest.com',
-          variant: 123,
+          variant: '12345',
         });
       });
       describe('get onlineStoreQueryString', () => {

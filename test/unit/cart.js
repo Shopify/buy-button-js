@@ -6,20 +6,17 @@ import Template from '../../src/template';
 import defaults from '../../src/defaults/components';
 import CartUpdater from '../../src/updaters/cart';
 import CartView from '../../src/views/cart';
+import ShopifyBuy from '../../src/buybutton';
 
 let cart;
-let fakeClient = {
-  fetchCheckout: () => {},
-  fetchRecentCart: () => {},
-  updateLineItems: () => {},
-  addLineItems: () => {},
-  fetchShopInfo: () => {}
-}
 
 describe('Cart class', () => {
   beforeEach(() => {
     cart = new Cart({}, {
-      client: fakeClient,
+      client: ShopifyBuy.buildClient({
+        domain: 'test.myshopify.com',
+        storefrontAccessToken: 123
+      }),
       browserFeatures: {
         transition: true,
         animation: true,
@@ -84,7 +81,7 @@ describe('Cart class', () => {
   describe('fetchData()', () => {
     it('calls fetchRecentCart on client', () => {
       localStorage.setItem('checkoutId', 12345)
-      const fetchCart = sinon.stub(cart.props.client, 'fetchCheckout').returns(Promise.resolve({id: 12345, lineItems: []}));
+      const fetchCart = sinon.stub(cart.props.client.checkout, 'fetch').returns(Promise.resolve({id: 12345, lineItems: []}));
 
       return cart.fetchData().then((data) => {
         assert.deepEqual(data, {id: 12345, lineItems: []});
@@ -97,7 +94,7 @@ describe('Cart class', () => {
   describe('fetchMoneyFormat()', () => {
     it('calls fetchShopInfo on client', () => {
       localStorage.setItem('checkoutId', 12345)
-      const fetchMoneyFormat = sinon.stub(cart.props.client, 'fetchShopInfo').returns(Promise.resolve({ moneyFormat: '₿{{amount}}'}));
+      const fetchMoneyFormat = sinon.stub(cart.props.client.shop, 'fetchInfo').returns(Promise.resolve({ moneyFormat: '₿{{amount}}'}));
 
       return cart.fetchMoneyFormat().then((data) => {
         assert.deepEqual(data, '₿{{amount}}');
@@ -135,7 +132,7 @@ describe('Cart class', () => {
       cart.model = {
         id: 123456,
       }
-      updateLineItemsStub = sinon.stub(cart.props.client, 'updateLineItems').returns(Promise.resolve({lineItems: [{id: 123, quantity: 5}]}))
+      updateLineItemsStub = sinon.stub(cart.props.client.checkout, 'updateLineItems').returns(Promise.resolve({lineItems: [{id: 123, quantity: 5}]}))
       cart.view.render = sinon.spy();
       cart.toggles[0].view.render = sinon.spy();
     });
@@ -157,7 +154,7 @@ describe('Cart class', () => {
         id: 123456,
       }
       cart.view.setFocus = sinon.spy();
-      const addLineItemsStub = sinon.stub(cart.props.client, 'addLineItems').returns(Promise.resolve({lineItems: [{id: 123, quantity: 1}]}));
+      const addLineItemsStub = sinon.stub(cart.props.client.checkout, 'addLineItems').returns(Promise.resolve({lineItems: [{id: 123, quantity: 1}]}));
       const render = sinon.stub(cart.view, 'render');
       const toggleRender = sinon.stub(cart.toggles[0].view, 'render');
 
@@ -181,14 +178,12 @@ describe('Cart class', () => {
 
   describe('empty', () => {
     it('empties and rerenders the cart', () => {
-      cart.props.client = {
-        removeLineItems: sinon.stub().returns(Promise.resolve()),
-      };
+      const removeLineItemsStub = sinon.stub(cart.props.client.checkout, 'removeLineItems').returns(Promise.resolve());
       cart.view.render = sinon.spy();
       cart.toggles[0].view.render = sinon.spy();
 
       return cart.empty().then(() => {
-        assert.calledOnce(cart.props.client.removeLineItems);
+        assert.calledOnce(removeLineItemsStub);
         assert.calledOnce(cart.view.render);
         assert.calledOnce(cart.toggles[0].view.render);
       });

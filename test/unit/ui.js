@@ -2,6 +2,7 @@ import ShopifyBuy from '../../src/buybutton';
 import UI from '../../src/ui';
 import Product from '../../src/components/product';
 import Cart from '../../src/components/cart';
+import shopFixture from '../fixtures/shop-info';
 
 describe('ui class', () => {
   let ui;
@@ -20,6 +21,7 @@ describe('ui class', () => {
       storefrontAccessToken: 123,
     };
     client = ShopifyBuy.buildClient(config);
+    sinon.stub(client.shop, 'fetchInfo').returns(Promise.resolve(shopFixture));
     ui = new UI(client, {});
     script = document.createElement('script');
     script.setAttribute('data-shopify-buy-ui', true);
