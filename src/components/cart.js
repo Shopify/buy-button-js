@@ -1,4 +1,3 @@
-import ShopifyBuy from 'shopify-buy';
 import merge from '../utils/merge';
 import Component from '../component';
 import CartToggle from './toggle';
@@ -127,7 +126,7 @@ export default class Cart extends Component {
       maxHeight: imageSize,
     };
     if (lineItem.variant.image) {
-      return ShopifyBuy.Image.Helpers.imageForSize(lineItem.variant.image, imageOptions);
+      return this.props.client.image.helpers.imageForSize(lineItem.variant.image, imageOptions);
     } else {
       return NO_IMG_URL;
     }
@@ -140,13 +139,13 @@ export default class Cart extends Component {
   fetchData() {
     const checkoutId = localStorage.getItem('checkoutId');
     if (checkoutId) {
-      return this.props.client.fetchCheckout(checkoutId).then((checkout) => {
+      return this.props.client.checkout.fetch(checkoutId).then((checkout) => {
         this.model = checkout;
         this.updateCache(this.model.lineItems);
         return checkout;
       });
     } else {
-      return this.props.client.createCheckout().then((checkout) => {
+      return this.props.client.checkout.create().then((checkout) => {
         localStorage.setItem('checkoutId', checkout.id);
         this.model = checkout;
         return checkout;
@@ -156,7 +155,7 @@ export default class Cart extends Component {
   }
 
   fetchMoneyFormat() {
-    return this.props.client.fetchShopInfo().then((res) => {
+    return this.props.client.shop.fetchInfo().then((res) => {
       return res.moneyFormat;
     });
   }
@@ -279,7 +278,7 @@ export default class Cart extends Component {
     this._userEvent('updateItemQuantity');
     const lineItem = {id, quantity};
     this.updateCacheItem(id, quantity);
-    return this.props.client.updateLineItems(this.model.id, [lineItem]).then((checkout) => {
+    return this.props.client.checkout.updateLineItems(this.model.id, [lineItem]).then((checkout) => {
       this.model = checkout;
       this.updateCache(this.model.lineItems);
       this.toggles.forEach((toggle) => toggle.view.render());
@@ -303,7 +302,7 @@ export default class Cart extends Component {
     }
     this.open();
     const lineItem = {variantId: variant.id, quantity};
-    return this.props.client.addLineItems(this.model.id, [lineItem]).then((checkout) => {
+    return this.props.client.checkout.addLineItems(this.model.id, [lineItem]).then((checkout) => {
       this.model = checkout;
       this.updateCache(this.model.lineItems);
       this.view.render();
@@ -319,7 +318,7 @@ export default class Cart extends Component {
   empty() {
     const lineItemIds = this.model.lineItems ? this.model.lineItems.map((item) => item.id) : [];
 
-    return this.props.client.removeLineItems(this.model.id, lineItemIds).then((checkout) => {
+    return this.props.client.checkout.removeLineItems(this.model.id, lineItemIds).then((checkout) => {
       this.model = checkout;
       this.view.render();
       this.toggles.forEach((toggle) => toggle.view.render());

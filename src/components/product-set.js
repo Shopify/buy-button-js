@@ -68,17 +68,6 @@ export default class ProductSet extends Component {
     return this._paginationTemplate;
   }
 
-  get fetchQuery() {
-
-    /* eslint-disable camelcase */
-    return {
-      limit: 30,
-      page: 1,
-    };
-
-    /* eslint-enable camelcase */
-  }
-
   /**
    * get info about collection or set to be sent to tracker
    * @return {Object|Array}
@@ -128,21 +117,31 @@ export default class ProductSet extends Component {
    * @return {Promise} promise resolving to collection data.
    */
   sdkFetch() {
-    let method;
+    let promise;
 
     if (this.id) {
-      method = this.props.client.fetchCollectionWithProducts(this.id);
+      if (Array.isArray(this.id)) {
+        promise = this.props.client.product.fetchMultiple(this.id);
+      } else {
+        promise = this.props.client.collection.fetchWithProducts(this.id);
+      }
     } else if (this.handle) {
-      method = this.props.client.fetchCollectionByHandle(this.handle).then((collection) => {
+      promise = this.props.client.collection.fetchByHandle(this.handle).then((collection) => {
         this.id = collection.id;
-        return this.props.client.fetchCollectionWithProducts(this.id);
+        return this.props.client.collection.fetchWithProducts(this.id);
       });
     }
-    return method.then((collection) => {
-      return collection.products;
-    });
+    return promise.then((collectionOrProducts) => {
+      let products;
 
-    /* eslint-enable camelcase */
+      if (Array.isArray(collectionOrProducts)) {
+        products = collectionOrProducts;
+      } else {
+        products = collectionOrProducts.products;
+      }
+
+      return products;
+    });
   }
 
   /**

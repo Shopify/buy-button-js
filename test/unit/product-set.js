@@ -3,9 +3,10 @@ import Component from '../../src/component';
 import Updater from '../../src/updater';
 import Product from '../../src/components/product';
 import testProduct from '../fixtures/product-fixture';
+import ShopifyBuy from '../../src/buybutton';
 
 const config = {
-  id: '12345',
+  id: 'Z2lkOi8vc2hvcGlmeS9Db2xsZWN0aW9uLzEyMzQ1',
   options: {
     product: {
       templates: {
@@ -18,20 +19,28 @@ const config = {
 const fakeProduct = testProduct;
 
 describe('ProductSet class', () => {
+  let client;
   let set;
 
   beforeEach(() => {
+    client = ShopifyBuy.buildClient({
+      domain: 'test.myshopify.com',
+      storefrontAccessToken: 123
+    });
     config.node = document.createElement('div');
     config.node.setAttribute('id', 'fixture');
     document.body.appendChild(config.node);
     set = new ProductSet(config, {
-      client: {
-        fetchCollectionWithProducts: sinon.stub().returns(Promise.resolve({products:[{title: 'vapehat'}, {title: 'vapeshoe'}]})),
-      },
+      client,
       createCart: () => Promise.resolve(),
       destroyComponent: () => Promise.resolve()
     });
-    set.props.client.fetchQueryProducts = () => Promise.resolve([{title: 'vapehat'}, {title: 'vapeshoe'}]);
+    sinon.stub(set.props.client.collection, 'fetchWithProducts').returns(Promise.resolve({
+      products: [
+        {title: 'vapehat'},
+        {title: 'vapeshoe'}
+      ]
+    }));
   });
 
   afterEach(() => {
@@ -53,74 +62,89 @@ describe('ProductSet class', () => {
   describe('sdkFetch', () => {
     describe('when passed a collection ID', () => {
       let collection;
+      let fetchWithProductsStub;
 
       beforeEach(() => {
+        client = ShopifyBuy.buildClient({
+          domain: 'test.myshopify.com',
+          storefrontAccessToken: 123
+        });
         collection = new ProductSet({
           id: 1234,
           options: config.options,
         }, {
-          client: {
-            fetchCollectionWithProducts: sinon.stub().returns(Promise.resolve({})),
-          },
+          client,
           createCart: () => Promise.resolve()
         });
+        fetchWithProductsStub = sinon.stub(collection.props.client.collection, 'fetchWithProducts').returns(Promise.resolve({}));
       });
 
-      it('calls fetchCollectionWithProducts with collection id', () => {
+      it('calls collection.fetchWithProducts with collection id', () => {
         const result = collection.sdkFetch();
         assert.ok(result.then);
-        assert.calledWith(collection.props.client.fetchCollectionWithProducts);
+        assert.calledWith(fetchWithProductsStub);
       });
     });
 
     describe('when passed a collection handle', () => {
       let collection;
+      let fetchWithProductsStub;
+      let fetchByHandleStub;
 
       beforeEach(() => {
+        client = ShopifyBuy.buildClient({
+          domain: 'test.myshopify.com',
+          storefrontAccessToken: 123
+        });
         collection = new ProductSet({
           handle: 'hats',
           options: config.options,
         }, {
-          client: {
-            fetchCollectionWithProducts: sinon.stub().returns(Promise.resolve({})),
-            fetchCollectionByHandle: sinon.stub().returns(Promise.resolve({id: 2345}))
-          },
+          client,
           createCart: () => Promise.resolve()
         });
+        fetchWithProductsStub = sinon.stub(collection.props.client.collection, 'fetchWithProducts').returns(Promise.resolve({}));
+        fetchByHandleStub = sinon.stub(collection.props.client.collection, 'fetchByHandle').returns(Promise.resolve({id: 2345}));
       });
 
-      it('calls fetchQueryProducts with collection id', () => {
+      it('calls fetchByHandle and fetchWithProducts with collection id', () => {
         return collection.sdkFetch().then(() => {
-          assert.calledWith(collection.props.client.fetchCollectionByHandle, 'hats');
-          assert.calledWith(collection.props.client.fetchCollectionWithProducts, 2345);
+          assert.calledWith(fetchByHandleStub, 'hats');
+          assert.calledWith(fetchWithProductsStub, 2345);
         });
       });
     });
 
-    describe.skip('when passed an array of product IDs', () => {
+    describe('when passed an array of product IDs', () => {
       let collection;
+      let fetchMultipleStub;
+      let ids;
 
       beforeEach(() => {
+        ids = [1234, 2345];
+        client = ShopifyBuy.buildClient({
+          domain: 'test.myshopify.com',
+          storefrontAccessToken: 123
+        });
         collection = new ProductSet({
-          id: [1234, 2345],
+          id: ids,
           options: config.options,
         }, {
-          client: {
-            fetchQueryProducts: sinon.stub().returns(Promise.resolve([]))
-          },
+          client,
           createCart: () => Promise.resolve()
         });
+        fetchMultipleStub = sinon.stub(client.product, 'fetchMultiple').returns(Promise.resolve({}));
       });
 
-      it('calls fetchQueryProducts with collection id', () => {
+      it('calls fetchMultiple with an array of ids', () => {
         const result = collection.sdkFetch();
         assert.ok(result.then);
-        assert.calledWith(collection.props.client.fetchQueryProducts, {product_ids: [1234, 2345], page: 1, limit: 30});
+        assert.calledWith(fetchMultipleStub, ids);
       });
     });
   });
 
-  describe.skip('renderProducts', () => {
+  describe('renderProducts', () => {
     let initSpy;
 
     beforeEach(() => {
