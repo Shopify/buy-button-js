@@ -24,3 +24,4 @@ import './unit/merge';
 import './unit/money';
 import './unit/updater';
 import './unit/view';
+import './unit/normalize-config';

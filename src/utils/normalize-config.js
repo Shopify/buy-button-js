@@ -1,20 +1,29 @@
-export function simpleNormalizeId(type, databaseKey) {
+function normalizeId(type, databaseKey) {
   return btoa(`gid://shopify/${type}/${databaseKey}`);
 }
 
-export function getNormalizedIdFromConfig(type, config, databaseKey, storefrontKey) {
-  if (config[storefrontKey]) {
-    return config[storefrontKey];
-  } else if (config[databaseKey]) {
-    return simpleNormalizeId(type, config[databaseKey]);
+function getNormalizedIdFromConfig(type, config, databaseKey, storefrontKey) {
+  const denormalizedValue = config[databaseKey];
+  const normalizedValue = config[storefrontKey];
+
+  if (normalizedValue) {
+    return normalizedValue;
+  } else if (denormalizedValue) {
+    if (Array.isArray(denormalizedValue)) {
+      return denormalizedValue.map((value) => {
+        return normalizeId(type, value);
+      });
+    } else {
+      return normalizeId(type, denormalizedValue);
+    }
   } else {
     return null;
   }
 }
 
-function normalizeConfig(config) {
+function normalizeConfig(config, baseResourceType = 'Product') {
   if (config.id || config.storefrontId) {
-    config.storefrontId = getNormalizedIdFromConfig('Product', config, 'id', 'storefrontId');
+    config.storefrontId = getNormalizedIdFromConfig(baseResourceType, config, 'id', 'storefrontId');
   }
 
   if (config.variantId || config.storefrontVariantId) {

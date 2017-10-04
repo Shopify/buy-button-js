@@ -49,6 +49,23 @@ describe('ProductSet class', () => {
     config.node = null;
   });
 
+  it('converts database collection id to storefrontId', () => {
+    const id = 12345
+    const collection = new ProductSet({id}, {});
+
+    assert.equal(collection.storefrontId, btoa(`gid://shopify/Collection/${id}`))
+  }),
+
+  it('converts a list of database product ids to storefrontId', () => {
+    const id = [12345, 34567];
+    const collection = new ProductSet({id}, {});
+
+    assert.deepEqual(collection.storefrontId, [
+      btoa(`gid://shopify/Product/${id[0]}`),
+      btoa(`gid://shopify/Product/${id[1]}`),
+    ]);
+  }),
+
   describe('fetchData', () => {
     it('returns product data', () => {
       return set.fetchData().then((data) => {
@@ -63,26 +80,49 @@ describe('ProductSet class', () => {
     describe('when passed a collection ID', () => {
       let collection;
       let fetchWithProductsStub;
+      const id = 12345;
+      const storefrontId = btoa(`gid://shopify/Collection/${id}`);
+      let productSetOpts;
 
       beforeEach(() => {
         client = ShopifyBuy.buildClient({
           domain: 'test.myshopify.com',
           storefrontAccessToken: 123
         });
-        collection = new ProductSet({
-          id: 1234,
-          options: config.options,
-        }, {
+        productSetOpts = {
           client,
           createCart: () => Promise.resolve()
-        });
-        fetchWithProductsStub = sinon.stub(collection.props.client.collection, 'fetchWithProducts').returns(Promise.resolve({}));
+        };
       });
 
-      it('calls collection.fetchWithProducts with collection id', () => {
+      it('calls collection.fetchWithProducts with collection storefrontId when passed a storefrontId', () => {
+        collection = new ProductSet({
+          storefrontId,
+          options: config.options,
+        }, productSetOpts);
+        fetchWithProductsStub = sinon.stub(
+          collection.props.client.collection,
+          'fetchWithProducts'
+        ).returns(Promise.resolve([]));
+
         const result = collection.sdkFetch();
         assert.ok(result.then);
-        assert.calledWith(fetchWithProductsStub);
+        assert.calledWith(fetchWithProductsStub, storefrontId);
+      });
+
+      it('calls collection.fetchWithProducts with collection storefrontId when passed a database id', () => {
+        collection = new ProductSet({
+          id,
+          options: config.options,
+        }, productSetOpts);
+        fetchWithProductsStub = sinon.stub(
+          collection.props.client.collection,
+          'fetchWithProducts'
+        ).returns(Promise.resolve({}));
+
+        const result = collection.sdkFetch();
+        assert.ok(result.then);
+        assert.calledWith(fetchWithProductsStub, storefrontId);
       });
     });
 
@@ -104,42 +144,57 @@ describe('ProductSet class', () => {
           createCart: () => Promise.resolve()
         });
         fetchWithProductsStub = sinon.stub(collection.props.client.collection, 'fetchWithProducts').returns(Promise.resolve({}));
-        fetchByHandleStub = sinon.stub(collection.props.client.collection, 'fetchByHandle').returns(Promise.resolve({id: 2345}));
+        fetchByHandleStub = sinon.stub(collection.props.client.collection, 'fetchByHandle').returns(Promise.resolve({id: 'an-id'}));
       });
 
       it('calls fetchByHandle and fetchWithProducts with collection id', () => {
         return collection.sdkFetch().then(() => {
           assert.calledWith(fetchByHandleStub, 'hats');
-          assert.calledWith(fetchWithProductsStub, 2345);
+          assert.calledWith(fetchWithProductsStub, 'an-id');
         });
       });
     });
 
-    describe('when passed an array of product IDs', () => {
+    describe('when passed an array of database product IDs', () => {
       let collection;
       let fetchMultipleStub;
-      let ids;
+      let productSetOpts;
+      const id = [1234, 2345];
+      const storefrontId = [
+        btoa(`gid://shopify/Product/${id[0]}`),
+        btoa(`gid://shopify/Product/${id[1]}`),
+      ];
 
       beforeEach(() => {
-        ids = [1234, 2345];
         client = ShopifyBuy.buildClient({
           domain: 'test.myshopify.com',
           storefrontAccessToken: 123
         });
-        collection = new ProductSet({
-          id: ids,
-          options: config.options,
-        }, {
+        productSetOpts = {
           client,
           createCart: () => Promise.resolve()
-        });
+        };
         fetchMultipleStub = sinon.stub(client.product, 'fetchMultiple').returns(Promise.resolve({}));
       });
 
-      it('calls fetchMultiple with an array of ids', () => {
+      it('calls fetchMultiple with an array of storefront ids when passed database ids', () => {
+        collection = new ProductSet({
+          id,
+          options: config.options,
+        }, productSetOpts);
         const result = collection.sdkFetch();
         assert.ok(result.then);
-        assert.calledWith(fetchMultipleStub, ids);
+        assert.calledWith(fetchMultipleStub, storefrontId);
+      });
+
+      it('calls fetchMultiple with an array of storefront ids when passed storefront ids', () => {
+        collection = new ProductSet({
+          storefrontId,
+          options: config.options,
+        }, productSetOpts);
+        const result = collection.sdkFetch();
+        assert.ok(result.then);
+        assert.calledWith(fetchMultipleStub, storefrontId);
       });
     });
   });
