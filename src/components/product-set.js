@@ -4,6 +4,7 @@ import Product from './product';
 import Template from '../template';
 import ProductSetUpdater from '../updaters/product-set';
 import ProductSetView from '../views/product-set';
+import normalizeConfig from '../utils/normalize-config';
 
 function isArray(arg) {
   return Object.prototype.toString.call(arg) === '[object Array]';
@@ -22,6 +23,14 @@ export default class ProductSet extends Component {
    * @param {Object} props - data and utilities passed down from UI instance.
    */
   constructor(config, props) {
+    if (Array.isArray(config.id)) {
+      // eslint-disable-next-line no-param-reassign
+      config = normalizeConfig(config);
+    } else {
+      // eslint-disable-next-line no-param-reassign
+      config = normalizeConfig(config, 'Collection');
+    }
+
     super(config, props);
     this.typeKey = 'productSet';
     this.products = [];
@@ -119,18 +128,19 @@ export default class ProductSet extends Component {
   sdkFetch() {
     let promise;
 
-    if (this.id) {
-      if (Array.isArray(this.id)) {
-        promise = this.props.client.product.fetchMultiple(this.id);
+    if (this.storefrontId) {
+      if (Array.isArray(this.storefrontId)) {
+        promise = this.props.client.product.fetchMultiple(this.storefrontId);
       } else {
-        promise = this.props.client.collection.fetchWithProducts(this.id);
+        promise = this.props.client.collection.fetchWithProducts(this.storefrontId);
       }
     } else if (this.handle) {
       promise = this.props.client.collection.fetchByHandle(this.handle).then((collection) => {
-        this.id = collection.id;
-        return this.props.client.collection.fetchWithProducts(this.id);
+        this.storefrontId = collection.id;
+        return this.props.client.collection.fetchWithProducts(this.storefrontId);
       });
     }
+
     return promise.then((collectionOrProducts) => {
       let products;
 
