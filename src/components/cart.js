@@ -1,3 +1,4 @@
+import ShopifyBuy from 'shopify-buy';
 import merge from '../utils/merge';
 import Component from '../component';
 import CartToggle from './toggle';
@@ -26,6 +27,8 @@ export default class Cart extends Component {
     this.childTemplate = new Template(this.config.lineItem.templates, this.config.lineItem.contents, this.config.lineItem.order);
     this.node = config.node || document.body.appendChild(document.createElement('div'));
     this.isVisible = this.options.startOpen;
+    this.lineItemCache = [];
+    this.moneyFormat = this.globalConfig.moneyFormat;
     this.checkout = new Checkout(this.config);
     const toggles = this.globalConfig.toggles || [{
       node: this.node.parentNode.insertBefore(document.createElement('div'), this.node),
@@ -73,12 +76,12 @@ export default class Cart extends Component {
    * @return {String} HTML
    */
   get lineItemsHtml() {
-    return this.model.lineItems.reduce((acc, lineItem) => {
-      const data = merge(lineItem, this.options.viewData);
+    return this.lineItemCache.reduce((acc, lineItem) => {
+      const data = Object.assign({}, lineItem, this.options.viewData);
       data.classes = this.classes;
       data.lineItemImage = this.imageForLineItem(data);
-      data.variantTitle = data.variant_title === 'Default Title' ? '' : data.variant_title;
-      data.formattedPrice = formatMoney(data.line_price, this.globalConfig.moneyFormat);
+      data.variantTitle = data.variant.title === 'Default Title' ? '' : data.variant.title;
+      data.formattedPrice = formatMoney(data.variant.price * data.quantity, this.moneyFormat);
       return acc + this.childTemplate.render({data}, (output) => `<div id="${lineItem.id}" class=${this.classes.lineItem.lineItem}>${output}</div>`);
     }, '');
   }
@@ -102,7 +105,7 @@ export default class Cart extends Component {
    * @return {String}
    */
   get formattedTotal() {
-    return formatMoney(this.model.subtotal, this.globalConfig.moneyFormat);
+    return formatMoney(this.model.subtotalPrice, this.moneyFormat);
   }
 
   /**
@@ -118,10 +121,16 @@ export default class Cart extends Component {
   }
 
   imageForLineItem(lineItem) {
-    if (!lineItem.imageVariants) {
-      return lineItem.image;
+    const imageSize = 180;
+    const imageOptions = {
+      maxWidth: imageSize,
+      maxHeight: imageSize,
+    };
+    if (lineItem.variant.image) {
+      return ShopifyBuy.Image.Helpers.imageForSize(lineItem.variant.image, imageOptions);
+    } else {
+      return NO_IMG_URL;
     }
-    return lineItem.imageVariants.filter((image) => image.name === 'compact')[0] || {src: NO_IMG_URL};
   }
 
   /**
@@ -129,7 +138,27 @@ export default class Cart extends Component {
    * @return {Promise} promise resolving to cart instance.
    */
   fetchData() {
-    return this.props.client.fetchRecentCart();
+    const checkoutId = localStorage.getItem('checkoutId');
+    if (checkoutId) {
+      return this.props.client.fetchCheckout(checkoutId).then((checkout) => {
+        this.model = checkout;
+        this.updateCache(this.model.lineItems);
+        return checkout;
+      });
+    } else {
+      return this.props.client.createCheckout().then((checkout) => {
+        localStorage.setItem('checkoutId', checkout.id);
+        this.model = checkout;
+        return checkout;
+      });
+    }
+    // return this.props.client.fetchRecentCart();
+  }
+
+  fetchMoneyFormat() {
+    return this.props.client.fetchShopInfo().then((res) => {
+      return res.moneyFormat;
+    });
   }
 
   /**
@@ -139,6 +168,11 @@ export default class Cart extends Component {
    * @return {Promise} promise resolving to instance.
    */
   init(data) {
+    if (!this.config.moneyFormat) {
+      this.fetchMoneyFormat().then((moneyFormat) => {
+        this.moneyFormat = moneyFormat;
+      });
+    }
     return super.init(data)
       .then((cart) => {
         return this.toggles.map((toggle) => {
@@ -190,7 +224,7 @@ export default class Cart extends Component {
   }
 
   onCheckout() {
-    this.checkout.open(this.model.checkoutUrl);
+    this.checkout.open(this.model.webUrl);
   }
 
   /**
@@ -200,9 +234,40 @@ export default class Cart extends Component {
    */
   setQuantity(target, fn) {
     const id = target.getAttribute('data-line-item-id');
-    const item = this.model.lineItems.filter((lineItem) => lineItem.id === id)[0];
+    const item = this.model.lineItems.find((lineItem) => lineItem.id === id);
     const newQty = fn(item.quantity);
     return this.props.tracker.trackMethod(this.updateItem.bind(this), 'Update Cart', this.cartItemTrackingInfo(item, newQty))(id, newQty);
+  }
+
+  /**
+   * set cache using line items.
+   * @param {Array} lineItems - array of GraphModel line item objects.
+   */
+  updateCache(lineItems) {
+    const cachedLineItems = this.lineItemCache.reduce((acc, item) => {
+      acc[item.id] = item;
+
+      return acc;
+    }, {});
+
+    this.lineItemCache = lineItems.map((item) => {
+      return Object.assign({}, cachedLineItems[item.id], item);
+    });
+    return this.lineItemCache;
+  }
+
+  /**
+   * update cached line item.
+   * @param {Number} id - lineItem id.
+   * @param {Number} qty - quantity for line item.
+   */
+  updateCacheItem(lineItemId, quantity) {
+    if (this.lineItemCache.length === 0) { return; }
+    const lineItem = this.lineItemCache.find((item) => {
+      return lineItemId === item.id;
+    });
+    lineItem.quantity = quantity;
+    this.view.render();
   }
 
   /**
@@ -210,17 +275,20 @@ export default class Cart extends Component {
    * @param {Number} id - lineItem id.
    * @param {Number} qty - quantity for line item.
    */
-  updateItem(id, qty) {
+  updateItem(id, quantity) {
     this._userEvent('updateItemQuantity');
-    return this.model.updateLineItem(id, qty).then((cart) => {
-      this.model = cart;
+    const lineItem = {id, quantity};
+    this.updateCacheItem(id, quantity);
+    return this.props.client.updateLineItems(this.model.id, [lineItem]).then((checkout) => {
+      this.model = checkout;
+      this.updateCache(this.model.lineItems);
       this.toggles.forEach((toggle) => toggle.view.render());
-      if (qty > 0) {
+      if (quantity > 0) {
         this.view.render();
       } else {
         this.view.animateRemoveNode(id);
       }
-      return cart;
+      return checkout;
     });
   }
 
@@ -234,11 +302,14 @@ export default class Cart extends Component {
       return null;
     }
     this.open();
-    return this.model.createLineItemsFromVariants({variant, quantity}).then((cart) => {
+    const lineItem = {variantId: variant.id, quantity};
+    return this.props.client.addLineItems(this.model.id, [lineItem]).then((checkout) => {
+      this.model = checkout;
+      this.updateCache(this.model.lineItems);
       this.view.render();
       this.toggles.forEach((toggle) => toggle.view.render());
       this.view.setFocus();
-      return cart;
+      return checkout;
     });
   }
 

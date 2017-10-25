@@ -23,6 +23,11 @@ export default class UI {
    */
   constructor(client, integrations = {}, styleOverrides = '') {
     this.client = client;
+    // this.config = config;
+    this.config = {};
+    this.config.domain = client.fetchShopInfo().then((res) => {
+      return res.attrs.primaryDomain.attrs.host.value;
+    });
     this.iframeComponents = [];
     this.components = {
       product: [],
@@ -40,7 +45,7 @@ export default class UI {
       toggle: CartToggle,
     };
     this.errorReporter = integrations.errorReporter;
-    this.tracker = new Tracker(integrations.tracker, this.client.config);
+    this.tracker = new Tracker(integrations.tracker, this.config);
     this.styleOverrides = styleOverrides;
     this.tracker.trackPageview();
     this.activeEl = null;
@@ -326,4 +331,3 @@ export default class UI {
     });
   }
 }
-

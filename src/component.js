@@ -23,6 +23,7 @@ export default class Component {
    */
   constructor(config, props) {
     this.id = config.id;
+    this.storefrontId = config.storefrontId;
     this.handle = config.handle;
     this.node = config.node;
     this.globalConfig = {

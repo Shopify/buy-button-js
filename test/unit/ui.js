@@ -3,22 +3,23 @@ import UI from '../../src/ui';
 import Product from '../../src/components/product';
 import Cart from '../../src/components/cart';
 
-const client = ShopifyBuy.buildClient({
-  domain: 'buckets-o-stuff.myshopify.com',
-  apiKey: 123,
-  appId: 6
-});
-
-const productConfig = {
-  id: 123,
-  options: {}
-}
-
 describe('ui class', () => {
   let ui;
   let script;
 
+  let client;
+  let config;
+  const productConfig = {
+    id: 123,
+    options: {}
+  };
+
   beforeEach(() => {
+    config = new Config({
+      domain: 'buckets-o-stuff.myshopify.com',
+      storefrontAccessToken: 123,
+    });
+    client = new ShopifyBuy(config);
     ui = new UI(client, {});
     script = document.createElement('script');
     script.setAttribute('data-shopify-buy-ui', true);

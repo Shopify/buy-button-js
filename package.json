@@ -1,6 +1,6 @@
 {
   "name": "@shopify/buy-button-js",
-  "version": "0.4.13",
+  "version": "0.4.14",
   "description": "BuyButton.js allows merchants to build Shopify interfaces into any website",
   "main": "lib/buybutton.cjs.js",
   "repository": "git@github.com:Shopify/buy-button-js.git",
@@ -38,9 +38,8 @@
   "devDependencies": {
     "@shopify/js-uploader": "git+ssh://git@github.com/Shopify/js-uploader.git",
     "aws-sdk": "2.6.8",
-    "babel": "6.5.2",
-    "babel-cli": "6.11.4",
-    "babel-core": "6.10.4",
+    "babel-cli": "6.24.1",
+    "babel-core": "6.25.0",
     "babel-plugin-check-es2015-constants": "6.8.0",
     "babel-plugin-external-helpers": "6.8.0",
     "babel-plugin-transform-es2015-arrow-functions": "6.8.0",
@@ -61,6 +60,7 @@
     "babel-plugin-transform-es2015-typeof-symbol": "6.8.0",
     "babelify": "7.3.0",
     "chai": "3.5.0",
+    "core-js": "2.4.1",
     "eslint": "3.3.1",
     "eslint-plugin-shopify": "13.0",
     "fetch-pretender": "1.5.0",
@@ -72,6 +72,10 @@
     "postcss-cssnext": "2.9.0",
     "postcss-import": "9.0.0",
     "pretender": "1.1.0",
+    "rollup": "0.45.2",
+    "rollup-plugin-babel": "2.7.1",
+    "rollup-plugin-commonjs": "8.0.2",
+    "rollup-plugin-node-resolve": "3.0.0",
     "sinon": "1.17.5",
     "testem": "1.9.1",
     "watch": "0.19.1",
@@ -79,22 +83,16 @@
     "wdio-dot-reporter": "0.0.6",
     "wdio-junit-reporter": "0.1.0",
     "wdio-mocha-framework": "^0.4.0",
-    "webdriverio": "4.2.8"
+    "webdriverio": "4.2.8",
+    "whatwg-fetch": "2.0.3"
   },
   "dependencies": {
-    "babel-plugin-external-helpers": "6.8.0",
-    "babel-plugin-transform-object-assign": "6.8.0",
-    "babel-plugin-transform-runtime": "6.12.0",
     "babel-runtime": "6.11.6",
     "browserify": "13.1.0",
     "morphdom": "1.4.6",
     "mustache": "2.2.1",
     "node-sass": "3.8.0",
-    "rollup": "0.34.1",
-    "rollup-plugin-babel": "2.6.1",
-    "rollup-plugin-commonjs": "3.3.1",
-    "rollup-plugin-node-resolve": "1.7.1",
-    "shopify-buy": "0.6.2",
+    "shopify-buy": "1.0.0-alpha.10",
     "uglify-js": "2.7.0"
   }
 }
