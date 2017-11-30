@@ -201,9 +201,11 @@ describe('ProductSet class', () => {
 
   describe('renderProducts', () => {
     let initSpy;
+    let showPaginationStub;
 
     beforeEach(() => {
       initSpy = sinon.spy(Product.prototype, 'init');
+      showPaginationStub = sinon.stub(set, 'showPagination').returns(Promise.resolve());
       set.view.render();
     });
 
@@ -257,22 +259,28 @@ describe('ProductSet class', () => {
     let sdkFetchSpy;
     let renderChildStub;
     let resizeSpy;
-    const newCollection = [{title: 'vapebelt'}, {title: 'vapeglasses'}];
+    let fetchNextPageSpy;
+
+    const nextPageData = {
+      model: [
+        {title: 'vapebelt'},
+        {title: 'vapeglasses'},
+      ],
+    };
 
     beforeEach(() => {
       set.id = 1234;
-      sdkFetchSpy = sinon.stub(set, 'sdkFetch').returns(Promise.resolve(newCollection));
+      set.model.products = [{title: 'product1'}, {title: 'product2'}];
       renderChildStub = sinon.stub(set.view, 'renderChild');
       resizeSpy = sinon.stub(set.view, 'resize');
+      fetchNextPageSpy = sinon.stub(set.props.client, 'fetchNextPage').returns(Promise.resolve(nextPageData));
     });
 
-    it('sets nextModel and rerenders pagintaiton button', () => {
+    it('sets nextModel and rerenders pagination button', () => {
       return set.showPagination().then(() => {
-        assert.deepEqual(set.nextModel, {products: newCollection});
-        assert.calledWith(sdkFetchSpy, {page: 2});
+        assert.deepEqual(set.nextModel, {products: nextPageData.model});
         assert.calledWith(renderChildStub, set.classes.productSet.paginationButton, set.paginationTemplate);
       });
     });
   });
 });
-
