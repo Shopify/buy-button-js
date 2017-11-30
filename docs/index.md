@@ -5,6 +5,8 @@ layout: default
 
 The Shopify Buy Button JS library is a highly customizable UI library for adding ecommerce functionality to any website. It allows you to easily create interactive UI components such as product listings and shopping carts with minimal configuration, while exposing powerful customization options. It uses the [JS Buy SDK](http://shopify.github.io/js-buy-sdk/) to connect to your Shopify store, giving you access to your products and collections.
 
+> Note: For questions, suggestions and feeback, please <a href="https://github.com/Shopify/buy-button-js/issues" target="_blank">create an issue on the Github repo</a>.
+
 Using BuyButton.js, you can add the following components to your website:
 
 * Product listings and "Buy Now" buttons
