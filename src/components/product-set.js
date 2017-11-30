@@ -140,16 +140,13 @@ export default class ProductSet extends Component {
         return this.props.client.collection.fetchWithProducts(this.storefrontId);
       });
     }
-
     return promise.then((collectionOrProducts) => {
       let products;
-
       if (Array.isArray(collectionOrProducts)) {
         products = collectionOrProducts;
       } else {
         products = collectionOrProducts.products;
       }
-
       return products;
     });
   }
@@ -171,12 +168,12 @@ export default class ProductSet extends Component {
   }
 
   /**
-   * make request to SDK for current page + 1 to determine if next page exists. Render button if next page exists.
+   * make request to SDK for next page. Render button if products on next page exist.
    * @return {Promise} promise resolving when button is rendered or not.
    */
   showPagination() {
-    return this.sdkFetch({page: this.page + 1}).then((data) => {
-      this.nextModel = {products: data};
+    return this.props.client.fetchNextPage(this.model.products).then((data) => {
+      this.nextModel = {products: data.model};
       this.view.renderChild(this.classes.productSet.paginationButton, this.paginationTemplate);
       this.view.resize();
       return;
@@ -188,7 +185,6 @@ export default class ProductSet extends Component {
    */
   nextPage() {
     this.model = this.nextModel;
-    this.page = this.page + 1;
     this._userEvent('loadNextPage');
     this.renderProducts();
   }
