@@ -23,7 +23,6 @@ export default class UI {
    */
   constructor(client, integrations = {}, styleOverrides = '') {
     this.client = client;
-    // this.config = config;
     this.config = {};
     this.config.domain = client.shop.fetchInfo().then((res) => {
       return res.attrs.primaryDomain.attrs.host.value;
