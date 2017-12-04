@@ -117,6 +117,9 @@ export default class Product extends Component {
    * @return {Object} image object.
    */
   get image() {
+    const DEFAULT_IMAGE_SIZE = 480;
+    const MODAL_IMAGE_SIZE = 550;
+
     if (!(this.selectedVariant || this.options.contents.imgWithCarousel)) {
       return null;
     }
@@ -125,25 +128,33 @@ export default class Product extends Component {
     if (this.options.width && this.options.width.slice(-1) === '%') {
       imageSize = 1000;
     } else {
-      imageSize = parseInt(this.options.width, 10) || 480;
+      imageSize = parseInt(this.options.width, 10) || DEFAULT_IMAGE_SIZE;
     }
 
-    let src;
     let id;
+    let src;
+    let srcLarge;
 
     const imageOptions = {
       maxWidth: imageSize,
       maxHeight: imageSize * 1.5,
     };
 
+    const imageOptionsLarge = {
+      maxWidth: MODAL_IMAGE_SIZE,
+      maxHeight: MODAL_IMAGE_SIZE * 1.5,
+    };
+
     if (this.selectedImage) {
       id = this.selectedImage.id;
       src = this.props.client.image.helpers.imageForSize(this.selectedImage, imageOptions);
+      srcLarge = this.props.client.image.helpers.imageForSize(this.selectedImage, imageOptionsLarge);
     } else {
       id = this.selectedVariant.image.id;
       src = this.props.client.image.helpers.imageForSize(this.selectedVariant.image, imageOptions);
+      srcLarge = this.props.client.image.helpers.imageForSize(this.selectedVariant.image, imageOptionsLarge);
     }
-    return {id, src};
+    return {id, src, srcLarge};
   }
 
   /**
