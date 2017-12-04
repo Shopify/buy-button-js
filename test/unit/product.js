@@ -640,7 +640,7 @@ describe('Product class', () => {
       });
 
       it('returns true', () => {
-        product.cachedImage = rootImageURI + 'image-one_240x360.jpg'
+        product.cachedImage = rootImageURI + 'image-one_240x360.jpg';
         assert.notOk(product.shouldUpdateImage);
       });
     });
@@ -655,6 +655,11 @@ describe('Product class', () => {
       it('returns 480x720 default image', () => {
         product.config.product.width = undefined;
         assert.equal(product.image.src, rootImageURI + 'image-one_480x720.jpg');
+      });
+
+      it('returns a srcLarge image option', () => {
+        product.config.product.width = undefined;
+        assert.equal(product.image.srcLarge, rootImageURI + 'image-one_550x825.jpg');
       });
     });
 

@@ -9,9 +9,8 @@
     <script src="tmp/buybutton.dev.js"></script>
     <script data-shopify-buy-ui>
       var client = ShopifyBuy.buildClient({
-        apiKey: '',
         domain: '', // ex 'storename.myshopify.com'
-        appId: '6'
+        storefrontAccessToken: '' // previously 'apiKey', now deprecated
       });
 
       var ui = ShopifyBuy.UI.init(client);
