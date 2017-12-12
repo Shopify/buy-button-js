@@ -108,6 +108,23 @@ describe('View class', () => {
       assert.calledWith(onStub, 'click', '.btn', sinon.match.func);
       assert.calledWith(view.wrapper.addEventListener, 'click', sinon.match.func);
     });
+
+    it('bind events if eventsBound is false', () => {
+      view.wrapper = {
+        addEventListener: sinon.spy()
+      }
+      view.delegateEvents();
+      assert.called(view.wrapper.addEventListener);
+    });
+
+    it('prevents rebinding if events already bound', () => {
+      view.wrapper = {
+        addEventListener: sinon.spy()
+      }
+      view.eventsBound = true;
+      view.delegateEvents();
+      assert.notCalled(view.wrapper.addEventListener);
+    });
   });
 
   describe('append()', () => {

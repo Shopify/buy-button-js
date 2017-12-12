@@ -4,6 +4,7 @@ import Template from '../template';
 import Checkout from './checkout';
 import windowUtils from '../utils/window-utils';
 import formatMoney from '../utils/money';
+import normalizeConfig from '../utils/normalize-config';
 import ProductView from '../views/product';
 import ProductUpdater from '../updaters/product';
 
@@ -64,26 +65,23 @@ export default class Product extends Component {
    * @param {Object} props - data and utilities passed down from UI instance.
    */
   constructor(config, props) {
+    // eslint-disable-next-line no-param-reassign
+    config = normalizeConfig(config);
+
     super(config, props);
     this.typeKey = 'product';
-    this.defaultVariantId = config.variantId;
+    this.defaultStorefrontVariantId = config.storefrontVariantId;
     this.cachedImage = null;
     this.childTemplate = new Template(this.config.option.templates, this.config.option.contents, this.config.option.order);
     this.cart = null;
     this.modal = null;
     this.imgStyle = '';
     this.selectedQuantity = 1;
+    this.selectedVariant = {};
+    this.selectedOptions = {};
+    this.selectedImage = null;
     this.updater = new ProductUpdater(this);
     this.view = new ProductView(this);
-    this.selectedImage = null;
-  }
-
-  /**
-   * determines if product requries a cart component based on buttonDestination.
-   * @return {Boolean}
-   */
-  get shouldCreateCart() {
-    return this.options.buttonDestination !== 'checkout' && this.config.modalProduct.buttonDestination !== 'checkout';
   }
 
   /**
@@ -91,7 +89,7 @@ export default class Product extends Component {
    * @return {Boolean}
    */
   get shouldUpdateImage() {
-    return !this.cachedImage || (this.image && this.image.src && this.image.src !== this.cachedImage.src);
+    return !this.cachedImage || (this.image && this.image.src !== this.cachedImage);
   }
 
   /**
@@ -111,36 +109,44 @@ export default class Product extends Component {
    * @return {Object} image object.
    */
   get image() {
-    if (!this.model.selectedVariant || !this.model.selectedVariant.image || !this.model.selectedVariant.image.variants.length) {
+    const DEFAULT_IMAGE_SIZE = 480;
+    const MODAL_IMAGE_SIZE = 550;
+
+    if (!(this.selectedVariant || this.options.contents.imgWithCarousel)) {
       return null;
     }
-    const availableSizes = this.model.selectedVariant.image.variants;
 
-    let imageSize = 'grande';
-
-    if (this.options.width && this.options.layout === 'vertical') {
-      imageSize = availableSizes.filter((image) => {
-        const containerWidth = parseInt(this.options.width, 10);
-        return parseInt(image.dimension, 10) >= containerWidth * 1.5;
-      })[0].name;
+    let imageSize;
+    if (this.options.width && this.options.width.slice(-1) === '%') {
+      imageSize = 1000;
+    } else {
+      imageSize = parseInt(this.options.width, 10) || DEFAULT_IMAGE_SIZE;
     }
 
-    if (this.options.imageSize) {
-      imageSize = this.options.imageSize;
-    }
+    let id;
+    let src;
+    let srcLarge;
 
-    let sourceImage = this.model.selectedVariant.image;
+    const imageOptions = {
+      maxWidth: imageSize,
+      maxHeight: imageSize * 1.5,
+    };
+
+    const imageOptionsLarge = {
+      maxWidth: MODAL_IMAGE_SIZE,
+      maxHeight: MODAL_IMAGE_SIZE * 1.5,
+    };
+
     if (this.selectedImage) {
-      sourceImage = this.model.images.filter((image) => {
-        return image.id === this.selectedImage.id;
-      })[0];
+      id = this.selectedImage.id;
+      src = this.props.client.image.helpers.imageForSize(this.selectedImage, imageOptions);
+      srcLarge = this.props.client.image.helpers.imageForSize(this.selectedImage, imageOptionsLarge);
+    } else {
+      id = this.selectedVariant.image.id;
+      src = this.props.client.image.helpers.imageForSize(this.selectedVariant.image, imageOptions);
+      srcLarge = this.props.client.image.helpers.imageForSize(this.selectedVariant.image, imageOptionsLarge);
     }
-
-    return Object.assign({}, sourceImage.variants.filter((image) => {
-      return image.name === imageSize;
-    })[0], {
-      id: sourceImage.id,
-    });
+    return {id, src, srcLarge};
   }
 
   /**
@@ -148,10 +154,10 @@ export default class Product extends Component {
    * @return {String}
    */
   get formattedPrice() {
-    if (!this.model.selectedVariant) {
+    if (!this.selectedVariant) {
       return '';
     }
-    return formatMoney(this.model.selectedVariant.price, this.globalConfig.moneyFormat);
+    return formatMoney(this.selectedVariant.price, this.globalConfig.moneyFormat);
   }
 
   /**
@@ -159,10 +165,10 @@ export default class Product extends Component {
    * @return {String}
    */
   get formattedCompareAtPrice() {
-    if (!this.model.selectedVariant) {
+    if (!this.selectedVariant) {
       return '';
     }
-    return formatMoney(this.model.selectedVariant.compareAtPrice, this.globalConfig.moneyFormat);
+    return formatMoney(this.selectedVariant.compareAtPrice, this.globalConfig.moneyFormat);
   }
 
   /**
@@ -170,17 +176,17 @@ export default class Product extends Component {
    * @return {Object} viewData object.
    */
   get viewData() {
-    const image = Object.assign({}, this.currentImage);
-    return merge(this.model, this.options.viewData, {
+    return Object.assign({}, this.model, this.options.viewData, {
       classes: this.classes,
       contents: this.options.contents,
       text: this.options.text,
       optionsHtml: this.optionsHtml,
       decoratedOptions: this.decoratedOptions,
-      currentImage: image,
+      currentImage: this.currentImage,
       buttonClass: this.buttonClass,
       hasVariants: this.hasVariants,
       buttonDisabled: !this.buttonEnabled,
+      selectedVariant: this.selectedVariant,
       selectedQuantity: this.selectedQuantity,
       buttonText: this.buttonText,
       imgStyle: this.imgStyle,
@@ -195,10 +201,12 @@ export default class Product extends Component {
 
   get carouselImages() {
     return this.model.images.map((image) => {
-      return Object.assign({}, image, {
+      return {
+        id: image.id,
+        src: image.src,
+        carouselSrc: this.props.client.image.helpers.imageForSize(image, {maxWidth: 100, maxHeight: 100}),
         isSelected: image.id === this.currentImage.id,
-        carouselSrc: image.variants[3].src,
-      });
+      };
     });
   }
 
@@ -230,11 +238,17 @@ export default class Product extends Component {
   }
 
   get variantExists() {
-    return Boolean(this.model.selectedVariant);
+    return this.model.variants.some((variant) => {
+      if (this.selectedVariant) {
+        return variant.id === this.selectedVariant.id;
+      } else {
+        return false;
+      }
+    });
   }
 
   get variantInStock() {
-    return this.variantExists && this.model.selectedVariant.available;
+    return this.variantExists && this.selectedVariant.available;
   }
 
   get hasVariants() {
@@ -254,7 +268,7 @@ export default class Product extends Component {
   }
 
   get priceClass() {
-    return this.model.selectedVariant && this.model.selectedVariant.compareAtPrice ? this.classes.product.loweredPrice : '';
+    return this.selectedVariant && this.selectedVariant.compareAtPrice ? this.classes.product.loweredPrice : '';
   }
 
   get isButton() {
@@ -303,11 +317,11 @@ export default class Product extends Component {
     if (!this.options.contents.options) {
       return '';
     }
+
     return this.decoratedOptions.reduce((acc, option) => {
       const data = merge(option, this.options.viewData);
       data.classes = this.classes;
       data.onlyOption = (this.model.options.length === 1);
-
       return acc + this.childTemplate.render({data});
     }, '');
   }
@@ -331,21 +345,6 @@ export default class Product extends Component {
       return betterVariant;
     });
     return this.variantArrayMemo;
-  }
-
-  /**
-   * get selected values for options
-   * @return {Object} object with option names as keys
-   */
-  get selections() {
-    const selections = {};
-
-    this.model.selections.forEach((selection, index) => {
-      const option = this.model.options[index];
-      selections[option.name] = selection;
-    });
-
-    return selections;
   }
 
   /**
@@ -382,15 +381,15 @@ export default class Product extends Component {
    * @return {Array}
    */
   get decoratedOptions() {
-    const selections = this.selections;
     return this.model.options.map((option) => {
       return {
         name: option.name,
         values: option.values.map((value) => {
           return {
-            name: value,
-            selected: value === option.selected,
-            disabled: !this.optionValueCanBeSelected(selections, option.name, value),
+            name: value.value,
+            selected: Object.values(this.selectedOptions).some((selectedOption) => {
+              return selectedOption === value.value;
+            }),
           };
         }),
       };
@@ -402,15 +401,16 @@ export default class Product extends Component {
    * @return {Object}
    */
   get trackingInfo() {
-    if (!this.model.selectedVariant) {
+    if (this.selectedVariant) {
+      return {
+        id: this.id,
+        name: this.selectedVariant.productTitle,
+        sku: null,
+        price: this.selectedVariant.price,
+      };
+    } else {
       return {};
     }
-    return {
-      id: this.id,
-      name: this.model.selectedVariant.productTitle,
-      sku: null,
-      price: this.model.selectedVariant.price,
-    };
   }
 
   /**
@@ -418,7 +418,7 @@ export default class Product extends Component {
    * @return {Object}
    */
   get selectedVariantTrackingInfo() {
-    const variant = this.model.selectedVariant;
+    const variant = this.selectedVariant;
     return {
       id: variant.id,
       name: variant.productTitle,
@@ -456,7 +456,7 @@ export default class Product extends Component {
     return {
       channel: 'buy_button',
       referrer: encodeURIComponent(windowUtils.location()),
-      variant: this.model.selectedVariant.id,
+      variant: atob(this.selectedVariant.id).split('/')[4],
     };
   }
 
@@ -475,8 +475,7 @@ export default class Product extends Component {
    * @return {String}
    */
   get onlineStoreURL() {
-    const identifier = this.handle ? this.handle : this.id;
-    return `https://${this.props.client.config.domain}/products/${identifier}${this.onlineStoreQueryString}`;
+    return `${this.model.onlineStoreUrl}${this.onlineStoreQueryString}`;
   }
 
   /**
@@ -515,11 +514,7 @@ export default class Product extends Component {
       options: this.config,
     });
 
-    if (this.shouldCreateCart) {
-      return this.props.createCart(cartConfig);
-    } else {
-      return Promise.resolve(null);
-    }
+    return this.props.createCart(cartConfig);
   }
 
   /**
@@ -538,10 +533,10 @@ export default class Product extends Component {
    * @return {Promise} promise resolving to model data.
    */
   sdkFetch() {
-    if (this.id) {
-      return this.props.client.fetchProduct(this.id);
+    if (this.storefrontId) {
+      return this.props.client.product.fetch(this.storefrontId);
     } else if (this.handle) {
-      return this.props.client.fetchQueryProducts({handle: this.handle}).then((products) => products[0]);
+      return this.props.client.product.fetchByHandle(this.handle).then((product) => product);
     }
     return Promise.reject(new Error('SDK Fetch Failed'));
   }
@@ -554,7 +549,8 @@ export default class Product extends Component {
   fetchData() {
     return this.sdkFetch().then((model) => {
       if (model) {
-        model.selectedQuantity = 0;
+        this.storefrontId = model.id;
+        this.handle = model.handle;
         return model;
       }
       throw new Error('Not Found');
@@ -568,7 +564,7 @@ export default class Product extends Component {
     } else if (this.options.buttonDestination === 'cart') {
       this.props.closeModal();
       this._userEvent('addVariantToCart');
-      this.props.tracker.trackMethod(this.cart.addVariantToCart.bind(this), 'Update Cart', this.selectedVariantTrackingInfo)(this.model.selectedVariant, this.model.selectedQuantity);
+      this.props.tracker.trackMethod(this.cart.addVariantToCart.bind(this), 'Update Cart', this.selectedVariantTrackingInfo)(this.selectedVariant, this.model.selectedQuantity);
       if (this.iframe) {
         this.props.setActiveEl(target);
       }
@@ -579,7 +575,19 @@ export default class Product extends Component {
       this.openOnlineStore();
     } else {
       this._userEvent('openCheckout');
-      new Checkout(this.config).open(this.model.selectedVariant.checkoutUrl(this.selectedQuantity));
+      let checkoutWindow;
+
+      if (this.config.cart.popup) {
+        const params = (new Checkout(this.config)).params;
+        checkoutWindow = window.open(null, 'checkout', params);
+      } else {
+        checkoutWindow = window;
+      }
+
+      this.cart.addVariantToCart(this.selectedVariant, this.model.selectedQuantity, false).then((cart) => {
+        this.cart.close();
+        checkoutWindow.location = cart.webUrl;
+      });
     }
   }
 
@@ -593,7 +601,6 @@ export default class Product extends Component {
     const target = evt.target;
     const value = target.options[target.selectedIndex].value;
     const name = target.getAttribute('name');
-    this.selectedImage = null;
     this.updateVariant(name, value);
   }
 
@@ -615,20 +622,21 @@ export default class Product extends Component {
     evt.preventDefault();
     const selectedImageId = target.getAttribute('data-image-id');
     const imageList = this.model.images;
-    const foundImage = imageList.filter((image) => {
-      return image.id === parseInt(selectedImageId, 10);
-    })[0];
+    const foundImage = imageList.find((image) => {
+      return image.id === selectedImageId;
+    });
 
     if (foundImage) {
       this.selectedImage = foundImage;
       this.cachedImage = foundImage;
     }
+
     this.view.render();
   }
 
   nextIndex(currentIndex, offset) {
     const nextIndex = currentIndex + offset;
-    if (nextIndex > this.model.images.length) {
+    if (nextIndex >= this.model.images.length) {
       return 0;
     }
     if (nextIndex < 0) {
@@ -690,10 +698,24 @@ export default class Product extends Component {
    * @return {Object} updated option object.
    */
   updateVariant(optionName, value) {
-    const updatedOption = this.model.options.filter((option) => option.name === optionName)[0];
-    updatedOption.selected = value;
+    const updatedOption = this.model.options.find((option) => option.name === optionName);
+
+    if (updatedOption) {
+      this.selectedOptions[updatedOption.name] = value;
+      this.selectedVariant = this.props.client.product.helpers.variantForOptions(this.model, this.selectedOptions);
+    }
+
     if (this.variantExists) {
-      this.cachedImage = this.model.selectedVariantImage;
+      this.cachedImage = this.selectedVariant.image;
+      if (this.selectedVariant.image) {
+        this.selectedImage = null;
+      } else {
+        this.selectedImage = this.model.images[0]; // get cached image
+      }
+    } else {
+      this.selectedImage = this.model.images.find((image) => {
+        return image.id === this.cachedImage.id;
+      });
     }
     this.view.render();
     this._userEvent('updateVariant');
@@ -705,17 +727,22 @@ export default class Product extends Component {
    * @param {Object} model - model to be modified.
    */
   setDefaultVariant(model) {
-    if (!this.defaultVariantId) {
-      return model;
+    let selectedVariant;
+    if (this.defaultStorefrontVariantId) {
+      selectedVariant = model.variants.find((variant) => variant.id === this.defaultStorefrontVariantId);
+    } else {
+      this.defaultStorefrontVariantId = model.variants[0].id;
+      selectedVariant = model.variants[0];
+      this.selectedImage = model.images[0];
     }
 
-    const selectedVariant = model.variants.filter((variant) => variant.id === this.defaultVariantId)[0];
     if (selectedVariant) {
-      model.options.forEach((option) => {
-        option.selected = selectedVariant.optionValues.filter((optionValue) => optionValue.name === option.name)[0].value;
-      });
+      this.selectedOptions = selectedVariant.selectedOptions.reduce((acc, option) => {
+        acc[option.name] = option.value;
+        return acc;
+      }, {});
+      this.selectedVariant = selectedVariant;
     } else {
-
       // eslint-disable-next-line
       console.error('invalid variant ID');
     }

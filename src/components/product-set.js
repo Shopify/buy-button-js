@@ -4,6 +4,7 @@ import Product from './product';
 import Template from '../template';
 import ProductSetUpdater from '../updaters/product-set';
 import ProductSetView from '../views/product-set';
+import normalizeConfig from '../utils/normalize-config';
 
 function isArray(arg) {
   return Object.prototype.toString.call(arg) === '[object Array]';
@@ -22,6 +23,14 @@ export default class ProductSet extends Component {
    * @param {Object} props - data and utilities passed down from UI instance.
    */
   constructor(config, props) {
+    if (Array.isArray(config.id)) {
+      // eslint-disable-next-line no-param-reassign
+      config = normalizeConfig(config);
+    } else {
+      // eslint-disable-next-line no-param-reassign
+      config = normalizeConfig(config, 'Collection');
+    }
+
     super(config, props);
     this.typeKey = 'productSet';
     this.products = [];
@@ -66,17 +75,6 @@ export default class ProductSet extends Component {
   get paginationTemplate() {
     this._paginationTemplate = this._paginationTemplate || new Template({pagination: this.options.templates.pagination}, {pagination: true}, ['pagination']);
     return this._paginationTemplate;
-  }
-
-  get fetchQuery() {
-
-    /* eslint-disable camelcase */
-    return {
-      limit: 30,
-      page: 1,
-    };
-
-    /* eslint-enable camelcase */
   }
 
   /**
@@ -127,33 +125,30 @@ export default class ProductSet extends Component {
    * @param {Object} options - query options for request
    * @return {Promise} promise resolving to collection data.
    */
-  sdkFetch(options = {}) {
+  sdkFetch() {
+    let promise;
 
-    /* eslint-disable camelcase */
-    const queryOptions = Object.assign({}, this.fetchQuery, options);
-    let method;
-    if (this.id) {
-      let queryKey;
-      if (isArray(this.id)) {
-        queryKey = 'product_ids';
+    if (this.storefrontId) {
+      if (Array.isArray(this.storefrontId)) {
+        promise = this.props.client.product.fetchMultiple(this.storefrontId);
       } else {
-        queryKey = 'collection_id';
-        queryOptions.sort_by = 'collection-default';
+        promise = this.props.client.collection.fetchWithProducts(this.storefrontId);
       }
-      method = this.props.client.fetchQueryProducts(Object.assign({}, queryOptions, {[queryKey]: this.id}));
     } else if (this.handle) {
-      method = this.props.client.fetchQueryCollections({handle: this.handle}).then((collections) => {
-        if (collections.length) {
-          const collection = collections[0];
-          this.id = collection.attrs.collection_id;
-          return this.sdkFetch(options);
-        }
-        return Promise.resolve([]);
+      promise = this.props.client.collection.fetchByHandle(this.handle).then((collection) => {
+        this.storefrontId = collection.id;
+        return this.props.client.collection.fetchWithProducts(this.storefrontId);
       });
     }
-    return method;
-
-    /* eslint-enable camelcase */
+    return promise.then((collectionOrProducts) => {
+      let products;
+      if (Array.isArray(collectionOrProducts)) {
+        products = collectionOrProducts;
+      } else {
+        products = collectionOrProducts.products;
+      }
+      return products;
+    });
   }
 
   /**
@@ -173,12 +168,12 @@ export default class ProductSet extends Component {
   }
 
   /**
-   * make request to SDK for current page + 1 to determine if next page exists. Render button if next page exists.
+   * make request to SDK for next page. Render button if products on next page exist.
    * @return {Promise} promise resolving when button is rendered or not.
    */
   showPagination() {
-    return this.sdkFetch({page: this.page + 1}).then((data) => {
-      this.nextModel = {products: data};
+    return this.props.client.fetchNextPage(this.model.products).then((data) => {
+      this.nextModel = {products: data.model};
       this.view.renderChild(this.classes.productSet.paginationButton, this.paginationTemplate);
       this.view.resize();
       return;
@@ -190,7 +185,6 @@ export default class ProductSet extends Component {
    */
   nextPage() {
     this.model = this.nextModel;
-    this.page = this.page + 1;
     this._userEvent('loadNextPage');
     this.renderProducts();
   }

@@ -13,6 +13,7 @@ export default class View {
     this.iframe = null;
     this.node = this.component.node;
     this.template = new Template(this.component.options.templates, this.component.options.contents, this.component.options.order);
+    this.eventsBound = false;
   }
 
   init() {
@@ -53,7 +54,12 @@ export default class View {
    * delegates DOM events to event listeners.
    */
   delegateEvents() {
+    if (this.eventsBound) {
+      return;
+    }
+
     this.closeComponentsOnEsc();
+
     Object.keys(this.component.DOMEvents).forEach((key) => {
       const [, eventName, selectorString] = key.match(delegateEventSplitter);
       if (selectorString) {
@@ -72,6 +78,8 @@ export default class View {
         this.reloadIframe();
       };
     }
+
+    this.eventsBound = true;
   }
 
   reloadIframe() {
@@ -264,6 +272,7 @@ export default class View {
   }
 
   _on(eventName, selector, fn) {
+
     this.wrapper.addEventListener(eventName, (evt) => {
       const possibleTargets = Array.prototype.slice.call(this.wrapper.querySelectorAll(selector));
       const target = evt.target;

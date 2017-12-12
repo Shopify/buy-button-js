@@ -17,10 +17,18 @@
   display: inline-block;
   vertical-align: top;
 
+  & + & {
+    margin-top: var(--gutter);
+  }
+
   @media(min-width: 601px) {
     width: calc(25% - 20px);
     margin-left: var(--gutter-collection);
     margin-bottom: 50px;
+
+    & + & {
+      margin-top: 0;
+    }
   }
 }
 

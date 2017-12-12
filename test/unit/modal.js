@@ -1,36 +1,43 @@
 import Modal from '../../src/components/modal';
-import Iframe from '../../src/iframe';
 import Product from '../../src/components/product';
 import testProduct from '../fixtures/product-fixture';
+import ShopifyBuy from '../../src/buybutton';
+import shopFixture from '../fixtures/shop-info';
 
-const config = {
-  options: {
-    product: {
-      iframe: false,
-      templates: {
-        button: '<button id="button" class="button">Fake button</button>'
+describe('Modal class', () => {
+  const config = {
+    options: {
+      product: {
+        iframe: false,
+        templates: {
+          button: '<button id="button" class="button">Fake button</button>'
+        }
       }
     }
   }
-}
 
-const props = {
-  client: {},
-  createCart: function () {return Promise.resolve()},
-  closeModal: function () {return Promise.resolve()},
-  browserFeatures: {
-    transition: true,
-    animation: true,
-    transform: true,
-  }
-}
+  let props;
 
-const fakeProduct = testProduct;
+  const fakeProduct = testProduct;
 
-describe('Modal class', () => {
   let modal;
 
   beforeEach(() => {
+    props = {
+      client: ShopifyBuy.buildClient({
+        domain: 'test.myshopify.com',
+        storefrontAccessToken: 123
+      }),
+      createCart: function () {return Promise.resolve()},
+      closeModal: function () {return Promise.resolve()},
+      browserFeatures: {
+        transition: true,
+        animation: true,
+        transform: true,
+      }
+    };
+    sinon.stub(props.client.product, 'fetch').returns(Promise.resolve(testProduct));
+    sinon.stub(props.client.shop, 'fetchInfo').returns(Promise.resolve(shopFixture));
     modal = new Modal(config, props);
   });
 

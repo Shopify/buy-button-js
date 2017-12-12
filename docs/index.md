@@ -19,7 +19,7 @@ This tool is intended for use by developers who are familiar with JavaScript and
 
 | Internet Explorer     | Chrome, Edge, Firefox     | Safari   | Opera   | iOS   | Android   |
 | :-------------------- | :------------------------ | :------- | :------ | :---- | :-------- |
-| 9+                   | (Current - 1) or Current  | 5.1+     | 12.1x, (Current - 1) or Current | 6.1+ | 2.3, 4.0+
+| 10+                   | (Current - 1) or Current  | 5.1+     | 12.1x, (Current - 1) or Current | 6.1+ | 2.3, 4.0+
 
 ## Including the library
 
@@ -33,9 +33,8 @@ A Shop Client will allow you to connect to the Shopify API so that you can retri
 
 ```js
 var client = ShopifyBuy.buildClient({
-  apiKey: 'your-api-key',
   domain: 'my-shop.myshopify.com',
-  appId: '6'
+  storefrontAccessToken: 'your-storefront-access-token', // previously apiKey, now deprecated
 });
 ```
 

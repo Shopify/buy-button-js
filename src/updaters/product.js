@@ -1,12 +1,14 @@
 import Updater from '../updater';
+import normalizeConfig from '../utils/normalize-config';
 
 const MAX_WIDTH = '950px';
 
 export default class ProductUpdater extends Updater {
   updateConfig(config) {
-    if (config.id || config.variantId) {
-      this.component.id = config.id || this.component.id;
-      this.component.defaultVariantId = config.variantId || this.component.defaultVariantId;
+    const newConfig = normalizeConfig(config);
+    if (newConfig.storefrontId || newConfig.storefrontVariantId) {
+      this.component.storefrontId = newConfig.storefrontId || this.component.storefrontId;
+      this.component.defaultStorefrontVariantId = newConfig.storefrontVariantId || this.component.defaultStorefrontVariantId;
       this.component.init();
       return;
     }
@@ -41,11 +43,11 @@ export default class ProductUpdater extends Updater {
       this.component.view.iframe.removeClass(this.component.classes.product.vertical);
       this.component.view.iframe.removeClass(this.component.classes.product.horizontal);
       this.component.view.iframe.addClass(this.component.classes.product[layout]);
-      this.component.view.resizeUntilLoaded();
+      this.component.view.resize();
     }
     [...this.component.view.wrapper.querySelectorAll('img')].forEach((img) => {
       img.addEventListener('load', () => {
-        this.component.view.resizeUntilLoaded();
+        this.component.view.resize();
       });
     });
     super.updateConfig(config);

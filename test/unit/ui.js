@@ -2,23 +2,26 @@ import ShopifyBuy from '../../src/buybutton';
 import UI from '../../src/ui';
 import Product from '../../src/components/product';
 import Cart from '../../src/components/cart';
-
-const client = ShopifyBuy.buildClient({
-  domain: 'buckets-o-stuff.myshopify.com',
-  apiKey: 123,
-  appId: 6
-});
-
-const productConfig = {
-  id: 123,
-  options: {}
-}
+import shopFixture from '../fixtures/shop-info';
 
 describe('ui class', () => {
   let ui;
   let script;
 
+  let client;
+  let config;
+  const productConfig = {
+    id: 123,
+    options: {}
+  };
+
   beforeEach(() => {
+    config = {
+      domain: 'buckets-o-stuff.myshopify.com',
+      storefrontAccessToken: 123,
+    };
+    client = ShopifyBuy.buildClient(config);
+    sinon.stub(client.shop, 'fetchInfo').returns(Promise.resolve(shopFixture));
     ui = new UI(client, {});
     script = document.createElement('script');
     script.setAttribute('data-shopify-buy-ui', true);

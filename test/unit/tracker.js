@@ -29,7 +29,7 @@ describe('Tracker', () => {
     describe('with an async method', () => {
       it('calls passed method and tracks it', () => {
         let spy = sinon.stub().returns(Promise.resolve());
-        tracker.trackMethod(spy, 'TEST_EVENT', {test: true})('argument').then(() => {
+        return tracker.trackMethod(spy, 'TEST_EVENT', {test: true})('argument').then(() => {
           assert.calledWith(spy, 'argument');
           assert.calledWith(tracker.callLib, 'TEST_EVENT', {test: true});
           return Promise.resolve();
