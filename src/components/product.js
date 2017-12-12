@@ -85,14 +85,6 @@ export default class Product extends Component {
   }
 
   /**
-   * determines if product requries a cart component based on buttonDestination.
-   * @return {Boolean}
-   */
-  get shouldCreateCart() {
-    return this.options.buttonDestination !== 'checkout' && this.config.modalProduct.buttonDestination !== 'checkout';
-  }
-
-  /**
    * determines when image src should be updated
    * @return {Boolean}
    */
@@ -522,11 +514,7 @@ export default class Product extends Component {
       options: this.config,
     });
 
-    if (this.shouldCreateCart) {
-      return this.props.createCart(cartConfig);
-    } else {
-      return Promise.resolve(null);
-    }
+    return this.props.createCart(cartConfig);
   }
 
   /**
@@ -587,7 +575,19 @@ export default class Product extends Component {
       this.openOnlineStore();
     } else {
       this._userEvent('openCheckout');
-      new Checkout(this.config).open(this.selectedVariant.checkoutUrl(this.selectedQuantity));
+      let checkoutWindow;
+
+      if (this.config.cart.popup) {
+        const params = (new Checkout(this.config)).params;
+        checkoutWindow = window.open(null, 'checkout', params);
+      } else {
+        checkoutWindow = window;
+      }
+
+      this.cart.addVariantToCart(this.selectedVariant, this.model.selectedQuantity, false).then((cart) => {
+        this.cart.close();
+        checkoutWindow.location = cart.webUrl;
+      });
     }
   }
 

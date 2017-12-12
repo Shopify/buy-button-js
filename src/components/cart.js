@@ -296,11 +296,13 @@ export default class Cart extends Component {
    * @param {Object} variant - variant object.
    * @param {Number} [quantity=1] - quantity to be added.
    */
-  addVariantToCart(variant, quantity = 1) {
+  addVariantToCart(variant, quantity = 1, openCart = true) {
     if (quantity <= 0) {
       return null;
     }
-    this.open();
+    if (openCart) {
+      this.open();
+    }
     const lineItem = {variantId: variant.id, quantity};
     return this.props.client.checkout.addLineItems(this.model.id, [lineItem]).then((checkout) => {
       this.model = checkout;
