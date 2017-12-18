@@ -92,7 +92,7 @@
     "morphdom": "1.4.6",
     "mustache": "2.2.1",
     "node-sass": "3.8.0",
-    "shopify-buy": "1.0.0",
+    "shopify-buy": "1.0.2",
     "uglify-js": "2.7.0"
   }
 }
