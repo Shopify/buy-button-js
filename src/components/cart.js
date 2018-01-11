@@ -275,9 +275,9 @@ export default class Cart extends Component {
    * @param {Number} qty - quantity for line item.
    */
   updateItem(id, quantity) {
-    this._userEvent('updateItemQuantity');
     const lineItem = {id, quantity};
     this.updateCacheItem(id, quantity);
+    this._userEvent('updateItemQuantity');
     return this.props.client.checkout.updateLineItems(this.model.id, [lineItem]).then((checkout) => {
       this.model = checkout;
       this.updateCache(this.model.lineItems);
