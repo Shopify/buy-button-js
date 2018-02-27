@@ -91,6 +91,21 @@ describe('Cart class', () => {
     });
   });
 
+  describe('fetchData()', () => {
+    it('calls createCart on client if localStorage is invalid', () => {
+      localStorage.setItem('checkoutId', 1);
+      const fetchCart = sinon.stub(cart.props.client.checkout, 'fetch').returns(Promise.reject({errors: [{ message: 'rejected.' }]}));
+      const createCheckout = sinon.stub(cart.props.client.checkout, 'create').returns(Promise.resolve({id: 12345, lineItems: []}));
+
+      return cart.fetchData().then((data) => {
+        assert.deepEqual(data, {id: 12345, lineItems: []});
+        assert.calledOnce(fetchCart);
+        assert.calledOnce(createCheckout);
+        assert.equal(localStorage.getItem('checkoutId'), 12345);
+      });
+    });
+  });
+
   describe('fetchMoneyFormat()', () => {
     it('calls fetchShopInfo on client', () => {
       localStorage.setItem('checkoutId', 12345)

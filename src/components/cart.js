@@ -133,6 +133,18 @@ export default class Cart extends Component {
   }
 
   /**
+   * creates a cart instance
+   * @return {Promise} promise resolving to cart instance
+   */
+  createCheckout() {
+    return this.props.client.checkout.create().then((checkout) => {
+      localStorage.setItem('checkoutId', checkout.id);
+      this.model = checkout;
+      return checkout;
+    });
+  }
+
+  /**
    * get model data either by calling client.createCart or loading from localStorage.
    * @return {Promise} promise resolving to cart instance.
    */
@@ -143,15 +155,10 @@ export default class Cart extends Component {
         this.model = checkout;
         this.updateCache(this.model.lineItems);
         return checkout;
-      });
+      }).catch(() => { return this.createCheckout(); });
     } else {
-      return this.props.client.checkout.create().then((checkout) => {
-        localStorage.setItem('checkoutId', checkout.id);
-        this.model = checkout;
-        return checkout;
-      });
+      return this.createCheckout();
     }
-    // return this.props.client.fetchRecentCart();
   }
 
   fetchMoneyFormat() {
