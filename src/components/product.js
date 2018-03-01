@@ -533,7 +533,9 @@ export default class Product extends Component {
    * @return {Promise} promise resolving to model data.
    */
   sdkFetch() {
-    if (this.storefrontId) {
+    if (this.storefrontId && Array.isArray(this.storefrontId)) {
+      return this.props.client.product.fetch(this.storefrontId[0]);
+    } else if (this.storefrontId) {
       return this.props.client.product.fetch(this.storefrontId);
     } else if (this.handle) {
       return this.props.client.product.fetchByHandle(this.handle).then((product) => product);
