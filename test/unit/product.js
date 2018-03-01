@@ -374,6 +374,12 @@ describe('Product class', () => {
         idProduct.sdkFetch();
         assert.calledWith(productFetchStub, 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0LzEyMzQ1');
       });
+
+      it('calls fetchProduct with product storefront id if storefront id is passed in as an array', () => {
+        idProduct.storefrontId = [idProduct.storefrontId];
+        idProduct.sdkFetch();
+        assert.calledWith(productFetchStub, 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0LzEyMzQ1');
+      });
     });
 
     describe('when passed a product handle', () => {
