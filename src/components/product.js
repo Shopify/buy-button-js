@@ -20,6 +20,8 @@ function isMedia(key) {
   return key.charAt(0) === '@';
 }
 
+const NO_IMG_URL = 'https://sdks.shopifycdn.com/buy-button/latest/no-image.jpg';
+
 const ENTER_KEY = 13;
 
 const propertiesWhitelist = [
@@ -141,6 +143,14 @@ export default class Product extends Component {
       id = this.selectedImage.id;
       src = this.props.client.image.helpers.imageForSize(this.selectedImage, imageOptions);
       srcLarge = this.props.client.image.helpers.imageForSize(this.selectedImage, imageOptionsLarge);
+    } else if (this.selectedVariant.image == null && this.model.images[0] == null) {
+      id = null;
+      src = NO_IMG_URL;
+      srcLarge = NO_IMG_URL;
+    } else if (this.selectedVariant.image == null) {
+      id = this.model.images[0].id;
+      src = this.model.images[0].src;
+      srcLarge = this.props.client.image.helpers.imageForSize(this.model.images[0], imageOptionsLarge);
     } else {
       id = this.selectedVariant.image.id;
       src = this.props.client.image.helpers.imageForSize(this.selectedVariant.image, imageOptions);

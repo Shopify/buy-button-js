@@ -10,6 +10,7 @@ import shopFixture from '../fixtures/shop-info';
 import productFixture from '../fixtures/product-fixture';
 
 const rootImageURI = 'https://cdn.shopify.com/s/';
+const NO_IMG_URL = 'https://sdks.shopifycdn.com/buy-button/latest/no-image.jpg';
 
 const config = {
   id: 123,
@@ -666,6 +667,26 @@ describe('Product class', () => {
       it('returns a srcLarge image option', () => {
         product.config.product.width = undefined;
         assert.equal(product.image.srcLarge, rootImageURI + 'image-one_550x825.jpg');
+      });
+    });
+
+    describe('if selected variant doesn\'t have an image', () => {
+      beforeEach(() => {
+        testProductCopy.variants[0].image = null;
+        return product.init(testProductCopy).then(() => {
+          product.selectedImage = null;
+          product.defaultStorefrontVariantId = 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0Nw==';
+          return Promise.resolve();
+        });
+      });
+
+      it('returns the default product image', () => {
+        assert.equal(product.image.src, rootImageURI + 'image-one.jpg');
+      });
+
+      it('returns the NO_IMG_URL product image', () => {
+        product.model.images = [];
+        assert.equal(product.image.src, NO_IMG_URL);
       });
     });
 
