@@ -1,5 +1,5 @@
 import Product from '../../src/components/product';
-import Cart from '../../src/components/cart';
+import Cart, { NO_IMG_URL as noImageUrl } from '../../src/components/cart';
 import Modal from '../../src/components/modal';
 import Template from '../../src/template';
 import Component from '../../src/component';
@@ -666,6 +666,26 @@ describe('Product class', () => {
       it('returns a srcLarge image option', () => {
         product.config.product.width = undefined;
         assert.equal(product.image.srcLarge, rootImageURI + 'image-one_550x825.jpg');
+      });
+    });
+
+    describe('if selected variant doesn\'t have an image', () => {
+      beforeEach(() => {
+        testProductCopy.variants[0].image = null;
+        return product.init(testProductCopy).then(() => {
+          product.selectedImage = null;
+          product.defaultStorefrontVariantId = 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0Nw==';
+          return Promise.resolve();
+        });
+      });
+
+      it('returns the default product image', () => {
+        assert.equal(product.image.src, rootImageURI + 'image-one.jpg');
+      });
+
+      it('returns the NO_IMG_URL product image', () => {
+        product.model.images = [];
+        assert.equal(product.image.src, noImageUrl);
       });
     });
 
