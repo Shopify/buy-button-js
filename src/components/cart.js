@@ -7,7 +7,7 @@ import formatMoney from '../utils/money';
 import CartView from '../views/cart';
 import CartUpdater from '../updaters/cart';
 
-const NO_IMG_URL = '//sdks.shopifycdn.com/buy-button/latest/no-image.jpg';
+export const NO_IMG_URL = '//sdks.shopifycdn.com/buy-button/latest/no-image.jpg';
 
 /**
  * Renders and cart embed.

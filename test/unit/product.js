@@ -1,5 +1,5 @@
 import Product from '../../src/components/product';
-import Cart from '../../src/components/cart';
+import Cart, { NO_IMG_URL as noImageUrl } from '../../src/components/cart';
 import Modal from '../../src/components/modal';
 import Template from '../../src/template';
 import Component from '../../src/component';
@@ -10,7 +10,6 @@ import shopFixture from '../fixtures/shop-info';
 import productFixture from '../fixtures/product-fixture';
 
 const rootImageURI = 'https://cdn.shopify.com/s/';
-const NO_IMG_URL = 'https://sdks.shopifycdn.com/buy-button/latest/no-image.jpg';
 
 const config = {
   id: 123,
@@ -686,7 +685,7 @@ describe('Product class', () => {
 
       it('returns the NO_IMG_URL product image', () => {
         product.model.images = [];
-        assert.equal(product.image.src, NO_IMG_URL);
+        assert.equal(product.image.src, noImageUrl);
       });
     });
 
