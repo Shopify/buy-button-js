@@ -295,6 +295,20 @@ describe('Product class', () => {
         assert.deepEqual(product.decoratedOptions, expectedArray);
       });
     });
+
+    it('it does not return options with multiple selected values in the same option name', () => {
+      expectedArray[0].values.push({name: 'something', selected: true});
+      expectedArray[0].values[0].selected = false;
+      expectedArray[1].values.push({name: 'something', selected: false});
+
+      return product.init(testProductCopy).then(() => {
+        product.model.options[0].values.push({value: 'something'});
+        product.model.options[1].values.push({value: 'something'});
+
+        product.updateVariant('Print', 'something');
+        assert.deepEqual(product.decoratedOptions, expectedArray);
+      });
+    });
   });
 
   describe('get viewData', () => {
