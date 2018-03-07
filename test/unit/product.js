@@ -697,9 +697,11 @@ describe('Product class', () => {
         assert.equal(product.image.src, rootImageURI + 'image-one.jpg');
       });
 
-      it('returns the NO_IMG_URL product image', () => {
-        product.model.images = [];
-        assert.equal(product.image.src, noImageUrl);
+      describe('if select variant and the product don\'t have an image', () => {
+        it('returns null image', () => {
+          product.model.images = [];
+          assert.equal(product.image.src, '');
+        });
       });
     });
 

@@ -7,7 +7,6 @@ import formatMoney from '../utils/money';
 import normalizeConfig from '../utils/normalize-config';
 import ProductView from '../views/product';
 import ProductUpdater from '../updaters/product';
-import {NO_IMG_URL as noImageUrl} from './cart';
 
 function isFunction(obj) {
   return Boolean(obj && obj.constructor && obj.call && obj.apply);
@@ -144,8 +143,8 @@ export default class Product extends Component {
       srcLarge = this.props.client.image.helpers.imageForSize(this.selectedImage, imageOptionsLarge);
     } else if (this.selectedVariant.image == null && this.model.images[0] == null) {
       id = null;
-      src = noImageUrl;
-      srcLarge = noImageUrl;
+      src = '';
+      srcLarge = '';
     } else if (this.selectedVariant.image == null) {
       id = this.model.images[0].id;
       src = this.model.images[0].src;
