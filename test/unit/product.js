@@ -697,8 +697,8 @@ describe('Product class', () => {
         assert.equal(product.image.src, rootImageURI + 'image-one.jpg');
       });
 
-      describe('if select variant and the product don\'t have an image', () => {
-        it('returns null image', () => {
+      describe('if selected variant and its product don\'t have an image', () => {
+        it('returns no image', () => {
           product.model.images = [];
           assert.equal(product.image.src, '');
         });
