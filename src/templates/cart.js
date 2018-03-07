@@ -12,8 +12,8 @@ const cartTemplates = {
               </div>`,
   footer: `{{^data.isEmpty}}
             <div class="{{data.classes.cart.footer}}" data-element="cart.footer">
-              <p class="{{data.classes.cart.subtotalText}}" data-element="cart.total">{{data.text.total}}</p>
-              <p class="{{data.classes.cart.subtotal}}" data-element="cart.subtotal">{{data.formattedTotal}}</p>
+              <p class="{{data.classes.cart.subtotalText}}" data-element="cart.total">{{{data.text.total}}}</p>
+              <p class="{{data.classes.cart.subtotal}}" data-element="cart.subtotal">{{{data.formattedTotal}}}</p>
               <p class="{{data.classes.cart.notice}}" data-element="cart.notice">{{data.text.notice}}</p>
               <button class="{{data.classes.cart.button}}" type="button" data-element="cart.button">{{data.text.button}}</button>
             </div>
