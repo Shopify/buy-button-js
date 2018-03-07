@@ -20,6 +20,8 @@ export default class ProductView extends View {
     const productContents = this.component.config.product.contents;
     if (!(productContents.img || productContents.imgWithCarousel)) { return; }
     const image = this.wrapper.getElementsByClassName(this.component.classes.product.img)[0];
+    if (!image) { return; }
+
     image.addEventListener('load', () => {
       this.resize();
     });
