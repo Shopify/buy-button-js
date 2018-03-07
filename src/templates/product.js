@@ -40,7 +40,7 @@ const productTemplate = {
             {{#data.selectedVariant.compareAtPrice}}<span class="{{data.classes.product.compareAt}}" data-element="product.compareAt">{{data.formattedCompareAtPrice}}</span>{{/data.selectedVariant.compareAtPrice}}
             {{/data.selectedVariant}}
           </div>`,
-  description: '<div class="{{data.classes.product.description}}" data-element="product.description">{{{data.description}}}</div>',
+  description: '<div class="{{data.classes.product.description}}" data-element="product.description">{{{data.descriptionHtml}}}</div>',
   button: buttonTemplate,
   quantity: quantityTemplate,
   buttonWithQuantity: `<div class="{{data.classes.product.buttonWithQuantity}}" data-element="product.buttonWithQuantity">${quantityTemplate}${buttonTemplate}</div>`,
