@@ -396,9 +396,7 @@ export default class Product extends Component {
         values: option.values.map((value) => {
           return {
             name: value.value,
-            selected: Object.values(this.selectedOptions).some((selectedOption) => {
-              return selectedOption === value.value;
-            }),
+            selected: this.selectedOptions[option.name] === value.value,
           };
         }),
       };
