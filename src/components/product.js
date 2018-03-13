@@ -428,7 +428,7 @@ export default class Product extends Component {
     return {
       id: variant.id,
       name: variant.productTitle,
-      quantity: this.model.selectedQuantity,
+      quantity: this.selectedQuantity,
       sku: null,
       price: variant.price,
     };
@@ -572,7 +572,7 @@ export default class Product extends Component {
     } else if (this.options.buttonDestination === 'cart') {
       this.props.closeModal();
       this._userEvent('addVariantToCart');
-      this.props.tracker.trackMethod(this.cart.addVariantToCart.bind(this), 'Update Cart', this.selectedVariantTrackingInfo)(this.selectedVariant, this.model.selectedQuantity);
+      this.props.tracker.trackMethod(this.cart.addVariantToCart.bind(this), 'Update Cart', this.selectedVariantTrackingInfo)(this.selectedVariant, this.selectedQuantity);
       if (this.iframe) {
         this.props.setActiveEl(target);
       }
@@ -592,7 +592,7 @@ export default class Product extends Component {
         checkoutWindow = window;
       }
 
-      this.cart.addVariantToCart(this.selectedVariant, this.model.selectedQuantity, false).then((cart) => {
+      this.cart.addVariantToCart(this.selectedVariant, this.selectedQuantity, false).then((cart) => {
         this.cart.close();
         checkoutWindow.location = cart.webUrl;
       });
