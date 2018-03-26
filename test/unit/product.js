@@ -505,6 +505,13 @@ describe('Product class', () => {
       assert.equal(product.selectedOptions.Print, 'shark');
       assert.equal(product.selectedOptions.Size, 'large');
     });
+
+    it('falls back to first variantId if invalid variantId was provided', () => {
+      product.defaultStorefrontVariantId = 'this is an invalid variant id';
+      const model = product.setDefaultVariant(testProduct);
+      assert.equal(product.selectedOptions.Print, 'sloth');
+      assert.equal(product.selectedOptions.Size, 'small');
+    });
   });
 
   describe('get buttonText', () => {
