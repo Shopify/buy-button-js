@@ -45,7 +45,24 @@ describe('Product class', () => {
         animation: true,
         transform: true,
       },
-      createCart: function () {return Promise.resolve(new Cart(config))},
+      tracker: {
+        trackMethod: (fn) => {
+          return function () {
+            fn(...arguments);
+          }
+        }
+      },
+      createCart: function () {
+        return Promise.resolve(new Cart(config, {
+          tracker: {
+            trackMethod: (fn) => {
+              return function () {
+                fn(...arguments);
+              }
+            }
+          }
+        }))
+      },
       createModal: function () {
         return new Modal(config, props);
       },
@@ -747,6 +764,36 @@ describe('Product class', () => {
       assert.equal(product.image.src, rootImageURI + 'image-four_280x420.jpg');
       product.onCarouselChange(1);
       assert.equal(product.image.src, rootImageURI + 'image-one_280x420.jpg');
+    });
+  });
+
+  describe('onButtonClick', () => {
+    beforeEach(() => {
+      return product.init(testProductCopy).then((product) => {
+        product.cart.model.lineItems = [];
+        product.cart.props.client = product.props.client;
+        return Promise.resolve();
+      });
+    });
+
+    it('add variant to cart is called with the right quantity of selected variant', () => {
+      product.selectedQuantity = 1111;
+      const addToCart = sinon.stub(product.cart, 'addVariantToCart');
+      const evt = new Event('click shopify-buy__btn--parent');
+      const target = 'shopify-buy__btn--parent';
+
+      product.onButtonClick(evt, target);
+
+      assert.calledOnce(addToCart);
+      assert.calledWith(addToCart, {
+        available: true,
+        id: "Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0NQ==",
+        image: null,
+        price: "123.00",
+        productId: 123,
+        selectedOptions: [{ name: "Print", value: "sloth" }, { name: "Size", value: "small" }],
+        title: "sloth / small"
+      }, 1111);
     });
   });
 });
