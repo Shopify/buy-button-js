@@ -6,4 +6,3 @@ deploy:
   override:
     - ejson decrypt -o config.json config.ejson
     - npm run deploy
-    - npm publish
