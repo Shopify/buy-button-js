@@ -744,16 +744,14 @@ export default class Product extends Component {
       this.selectedImage = model.images[0];
     }
 
-    if (selectedVariant) {
-      this.selectedOptions = selectedVariant.selectedOptions.reduce((acc, option) => {
-        acc[option.name] = option.value;
-        return acc;
-      }, {});
-      this.selectedVariant = selectedVariant;
-    } else {
-      // eslint-disable-next-line
-      console.error('invalid variant ID');
+    if (!selectedVariant) {
+      selectedVariant = model.variants[0];
     }
+    this.selectedOptions = selectedVariant.selectedOptions.reduce((acc, option) => {
+      acc[option.name] = option.value;
+      return acc;
+    }, {});
+    this.selectedVariant = selectedVariant;
     return model;
   }
 }
