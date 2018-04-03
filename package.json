@@ -5,7 +5,8 @@
   "main": "lib/buybutton.umd.js",
   "repository": "git@github.com:Shopify/buy-button-js.git",
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "@shopify:registry" : "https://registry.npmjs.org/"
   },
   "scripts": {
     "start": "rm -rf tmp && mkdir tmp && yarn run src:watch & yarn run styles:watch & yarn run serve",
