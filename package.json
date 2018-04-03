@@ -1,12 +1,12 @@
 {
   "name": "@shopify/buy-button-js",
-  "version": "0.6.5",
+  "version": "0.6.6",
   "description": "BuyButton.js allows merchants to build Shopify interfaces into any website",
   "main": "lib/buybutton.umd.js",
   "repository": "git@github.com:Shopify/buy-button-js.git",
   "publishConfig": {
     "access": "public",
-    "@shopify:registry" : "https://registry.npmjs.org/"
+    "@shopify:registry": "https://registry.npmjs.org/"
   },
   "scripts": {
     "start": "rm -rf tmp && mkdir tmp && yarn run src:watch & yarn run styles:watch & yarn run serve",
