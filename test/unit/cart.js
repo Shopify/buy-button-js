@@ -78,6 +78,49 @@ describe('Cart class', () => {
     });
   });
 
+  describe('imageForLineItem', () => {
+    beforeEach(() => {
+      cart.lineItem = {
+        id: 123,
+        title: 'Line Item',
+        variant_title: 'Line Item title',
+        line_price: 20,
+        quantity: 1,
+        variant: {
+          image: { src: 'cdn.shopify.com/variant_image.jpg'},
+          product: {
+            images: [{ src: 'cdn.shopify.com/product_image.jpg'}],
+          },
+        },
+      }
+    });
+
+    it('returns the first product image if variant has no image', () => {
+      cart.lineItem.variant.image = null;
+      const clientReturn = sinon.stub(cart.props.client.image.helpers, 'imageForSize').returns('cdn.shopify.com/product_image.jpg');
+      const productImage = cart.lineItem.variant.product.images[0];
+      const sourceReturned = cart.imageForLineItem(cart.lineItem);
+
+      assert.calledOnce(clientReturn);
+      assert.calledWith(clientReturn, productImage);
+      assert.equal(productImage.src, sourceReturned);
+    });
+
+    it('returns the variant image if it exists', () => {
+      const clientReturn = sinon.stub(cart.props.client.image.helpers, 'imageForSize').returns('cdn.shopify.com/variant_image.jpg');
+      const variantImage = cart.lineItem.variant.image;
+      const sourceReturned = cart.imageForLineItem(cart.lineItem);
+
+      assert.calledOnce(clientReturn);
+      assert.calledWith(clientReturn, variantImage);
+      assert.equal(variantImage.src, sourceReturned);
+    });
+
+    afterEach(() => {
+      cart.props.client.image.helpers.imageForSize.restore();
+    });
+  });
+
   describe('fetchData()', () => {
     it('calls fetchRecentCart on client', () => {
       localStorage.setItem('checkoutId', 12345)
