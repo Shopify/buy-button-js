@@ -323,9 +323,7 @@ export default class UI {
         data = {};
       }
       if (data.syncCart || (data.current_checkout_page && data.current_checkout_page === '/checkout/thank_you')) {
-        this.components.cart.forEach((cart) => {
-          cart.empty();
-        });
+        location.reload();
       }
     });
   }
