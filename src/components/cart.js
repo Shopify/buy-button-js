@@ -155,6 +155,9 @@ export default class Cart extends Component {
     if (checkoutId) {
       return this.props.client.checkout.fetch(checkoutId).then((checkout) => {
         this.model = checkout;
+        if (checkout.completedAt) {
+          return this.createCheckout();
+        }
         this.updateCache(this.model.lineItems);
         return checkout;
       }).catch(() => { return this.createCheckout(); });

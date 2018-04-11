@@ -132,9 +132,7 @@ describe('Cart class', () => {
         fetchCart.restore();
       });
     });
-  });
 
-  describe('fetchData()', () => {
     it('calls createCart on client if localStorage is invalid', () => {
       localStorage.setItem('checkoutId', 1);
       const fetchCart = sinon.stub(cart.props.client.checkout, 'fetch').returns(Promise.reject({errors: [{ message: 'rejected.' }]}));
@@ -145,6 +143,20 @@ describe('Cart class', () => {
         assert.calledOnce(fetchCart);
         assert.calledOnce(createCheckout);
         assert.equal(localStorage.getItem('checkoutId'), 12345);
+      });
+    });
+
+    it('calls createCart on client if checkout is completed', () => {
+      const checkout = {id: 1111, lineItems: []};
+      localStorage.setItem('checkoutId', 123);
+      const fetchCart = sinon.stub(cart.props.client.checkout, 'fetch').returns(Promise.resolve({ completedAt: "04-12-2018", lineItems: []}));
+      const createCheckout = sinon.stub(cart.props.client.checkout, 'create').returns(Promise.resolve(checkout));
+
+      return cart.fetchData().then((data) => {
+        assert.deepEqual(data, checkout);
+        assert.calledOnce(fetchCart);
+        assert.calledOnce(createCheckout);
+        assert.equal(localStorage.getItem('checkoutId'), checkout.id);
       });
     });
   });
