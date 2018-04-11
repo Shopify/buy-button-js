@@ -127,8 +127,6 @@ export default class Cart extends Component {
     };
     if (lineItem.variant.image) {
       return this.props.client.image.helpers.imageForSize(lineItem.variant.image, imageOptions);
-    } else if (lineItem.variant.product.images[0]) {
-      return this.props.client.image.helpers.imageForSize(lineItem.variant.product.images[0], imageOptions);
     } else {
       return NO_IMG_URL;
     }
