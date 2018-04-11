@@ -88,22 +88,8 @@ describe('Cart class', () => {
         quantity: 1,
         variant: {
           image: { src: 'cdn.shopify.com/variant_image.jpg'},
-          product: {
-            images: [{ src: 'cdn.shopify.com/product_image.jpg'}],
-          },
         },
       }
-    });
-
-    it('returns the first product image if variant has no image', () => {
-      cart.lineItem.variant.image = null;
-      const clientReturn = sinon.stub(cart.props.client.image.helpers, 'imageForSize').returns('cdn.shopify.com/product_image.jpg');
-      const productImage = cart.lineItem.variant.product.images[0];
-      const sourceReturned = cart.imageForLineItem(cart.lineItem);
-
-      assert.calledOnce(clientReturn);
-      assert.calledWith(clientReturn, productImage);
-      assert.equal(productImage.src, sourceReturned);
     });
 
     it('returns the variant image if it exists', () => {
