@@ -109,7 +109,7 @@ describe('Cart class', () => {
 
   describe('fetchData()', () => {
     it('calls fetchRecentCart on client', () => {
-      localStorage.setItem('checkoutId', 12345)
+      localStorage.setItem(cart.localStorageCheckoutKey, 12345)
       const fetchCart = sinon.stub(cart.props.client.checkout, 'fetch').returns(Promise.resolve({id: 12345, lineItems: []}));
 
       return cart.fetchData().then((data) => {
@@ -120,7 +120,7 @@ describe('Cart class', () => {
     });
 
     it('calls createCart on client if localStorage is invalid', () => {
-      localStorage.setItem('checkoutId', 1);
+      localStorage.setItem(cart.localStorageCheckoutKey, 1);
       const fetchCart = sinon.stub(cart.props.client.checkout, 'fetch').returns(Promise.reject({errors: [{ message: 'rejected.' }]}));
       const createCheckout = sinon.stub(cart.props.client.checkout, 'create').returns(Promise.resolve({id: 12345, lineItems: []}));
 
@@ -128,13 +128,13 @@ describe('Cart class', () => {
         assert.deepEqual(data, {id: 12345, lineItems: []});
         assert.calledOnce(fetchCart);
         assert.calledOnce(createCheckout);
-        assert.equal(localStorage.getItem('checkoutId'), 12345);
+        assert.equal(localStorage.getItem(cart.localStorageCheckoutKey), 12345);
       });
     });
 
     it('calls createCart on client if checkout is completed', () => {
       const checkout = {id: 1111, lineItems: []};
-      localStorage.setItem('checkoutId', 123);
+      localStorage.setItem(cart.localStorageCheckoutKey, 123);
       const fetchCart = sinon.stub(cart.props.client.checkout, 'fetch').returns(Promise.resolve({ completedAt: "04-12-2018", lineItems: []}));
       const createCheckout = sinon.stub(cart.props.client.checkout, 'create').returns(Promise.resolve(checkout));
 
@@ -142,14 +142,14 @@ describe('Cart class', () => {
         assert.deepEqual(data, checkout);
         assert.calledOnce(fetchCart);
         assert.calledOnce(createCheckout);
-        assert.equal(localStorage.getItem('checkoutId'), checkout.id);
+        assert.equal(localStorage.getItem(cart.localStorageCheckoutKey), checkout.id);
       });
     });
   });
 
   describe('fetchMoneyFormat()', () => {
     it('calls fetchShopInfo on client', () => {
-      localStorage.setItem('checkoutId', 12345)
+      localStorage.setItem(cart.localStorageCheckoutKey, 12345)
       const fetchMoneyFormat = sinon.stub(cart.props.client.shop, 'fetchInfo').returns(Promise.resolve({ moneyFormat: '₿{{amount}}'}));
 
       return cart.fetchMoneyFormat().then((data) => {
