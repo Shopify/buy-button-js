@@ -15,13 +15,13 @@ ShopifyBuy.UI = window.ShopifyBuy.UI || {
   domains: {},
 
   init(client, integrations = {}, styleOverrides) {
-    const domain = client.shop.fetchInfo().then((res) => {
-      return res.attrs.primaryDomain.attrs.host.value;
-    });
-    if (!this.domains[domain]) {
-      this.domains[domain] = new UI(client, integrations, styleOverrides);
+    const uniqueClientKey = `${client.config.domain}.${client.config.storefrontAccessToken}`;
+
+    if (!this.domains[uniqueClientKey]) {
+      this.domains[uniqueClientKey] = new UI(client, integrations, styleOverrides);
     }
-    return this.domains[domain];
+
+    return this.domains[uniqueClientKey];
   },
 
   adapterHelpers: {

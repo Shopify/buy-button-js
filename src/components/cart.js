@@ -119,6 +119,10 @@ export default class Cart extends Component {
     return this.isVisible ? 'is-active' : '';
   }
 
+  get localStorageCheckoutKey() {
+    return `${this.props.client.config.storefrontAccessToken}.${this.props.client.config.domain}.checkoutId`;
+  }
+
   imageForLineItem(lineItem) {
     const imageSize = 180;
     const imageOptions = {
@@ -138,7 +142,8 @@ export default class Cart extends Component {
    */
   createCheckout() {
     return this.props.client.checkout.create().then((checkout) => {
-      localStorage.setItem('checkoutId', checkout.id);
+
+      localStorage.setItem(this.localStorageCheckoutKey, checkout.id);
       this.model = checkout;
       return checkout;
     });
@@ -149,7 +154,7 @@ export default class Cart extends Component {
    * @return {Promise} promise resolving to cart instance.
    */
   fetchData() {
-    const checkoutId = localStorage.getItem('checkoutId');
+    const checkoutId = localStorage.getItem(this.localStorageCheckoutKey);
     if (checkoutId) {
       return this.props.client.checkout.fetch(checkoutId).then((checkout) => {
         this.model = checkout;
