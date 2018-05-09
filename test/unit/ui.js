@@ -33,6 +33,16 @@ describe('ui class', () => {
     document.body.removeChild(script);
   });
 
+  describe('constructor', () => {
+    it('uses the client.config.domain instead of making a network call', () => {
+      const shopInfo = sinon.spy(client.shop.fetchInfo);
+      client.config.domain = 'test-domain.myshopify.com';
+      ui = new UI(client, {});
+      assert.equal(ui.config.domain, client.config.domain);
+      assert(shopInfo.notCalled);
+    });
+  });
+
   describe('createCart', () => {
 
     let initStub;
