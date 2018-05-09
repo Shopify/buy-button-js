@@ -24,9 +24,7 @@ export default class UI {
   constructor(client, integrations = {}, styleOverrides = '') {
     this.client = client;
     this.config = {};
-    this.config.domain = client.shop.fetchInfo().then((res) => {
-      return res.attrs.primaryDomain.attrs.host.value;
-    });
+    this.config.domain = this.client.config.domain;
     this.iframeComponents = [];
     this.components = {
       product: [],
