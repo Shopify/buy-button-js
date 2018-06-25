@@ -7,6 +7,7 @@ legacy.html
 /src/styles/host/main.js
 selenium-standalone.jar
 WDIO.*.xml
+.travis.yml
 test-output.xml
 lint-output.xml
 /errorShots
