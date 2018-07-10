@@ -504,6 +504,9 @@ export default class Product extends Component {
       return super.init.call(this, data).then((model) => {
         if (model) {
           this.view.render();
+          if (this.view.iframe) {
+            this.view.iframe.loadScript();
+          }
         }
         return model;
       });

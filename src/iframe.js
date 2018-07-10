@@ -108,6 +108,13 @@ export default class iframe {
     });
   }
 
+  loadScript() {
+    const script = this.document.createElement("script");
+    script.type = 'text/javascript';
+    script.src = 'https://payment-sheet.myshopify.io/latest/spb.js';
+    this.document.body.appendChild(script);
+  }
+
   loadFonts() {
     if (!this.googleFonts || !this.googleFonts.length) {
       return Promise.resolve(true);
