@@ -108,10 +108,13 @@ export default class iframe {
     });
   }
 
-  loadScript() {
+  loadScript(variantId) {
     const script = this.document.createElement("script");
     script.type = 'text/javascript';
     script.src = 'https://payment-sheet.myshopify.io/latest/spb.js';
+    script.onload = () => {
+      this.el.contentWindow.Shopify.PaymentButton.init({ variantId });
+    }
     this.document.body.appendChild(script);
   }
 

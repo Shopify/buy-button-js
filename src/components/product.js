@@ -505,7 +505,7 @@ export default class Product extends Component {
         if (model) {
           this.view.render();
           if (this.view.iframe) {
-            this.view.iframe.loadScript();
+            this.view.iframe.loadScript(model.selectedVariant.id);
           }
         }
         return model;
@@ -738,6 +738,7 @@ export default class Product extends Component {
    * @param {Object} model - model to be modified.
    */
   setDefaultVariant(model) {
+    console.log('setting default variant')
     let selectedVariant;
     if (this.defaultStorefrontVariantId) {
       selectedVariant = model.variants.find((variant) => variant.id === this.defaultStorefrontVariantId);
@@ -755,6 +756,7 @@ export default class Product extends Component {
       return acc;
     }, {});
     this.selectedVariant = selectedVariant;
+
     return model;
   }
 }
