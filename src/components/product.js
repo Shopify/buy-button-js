@@ -592,9 +592,11 @@ export default class Product extends Component {
         checkoutWindow = window;
       }
 
-      this.cart.addVariantToCart(this.selectedVariant, this.selectedQuantity, false).then((cart) => {
-        this.cart.close();
-        checkoutWindow.location = cart.webUrl;
+      this.cart.empty().then(() => {
+        this.cart.addVariantToCart(this.selectedVariant, this.selectedQuantity, false).then((cart) => {
+          this.cart.close();
+          checkoutWindow.location = cart.webUrl;
+        });
       });
     }
   }
