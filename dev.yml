@@ -2,6 +2,7 @@
 name: buy-button-js
 
 up:
+  - railgun
   - node:
       version: v8.1.4
       yarn: true

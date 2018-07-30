@@ -1,0 +1,18 @@
+# https://dev-accel.shopify.io/dev/railgun/Railgun-Config
+name: buy-button-js
+
+vm:
+  image:      /opt/dev/misc/railgun-images/default
+  ip_address: 192.168.64.200
+  memory:     2G
+  cores:      2
+
+volumes:
+  root: 2G
+
+services:
+  - nginx
+
+hostnames:
+  - buy-button-js.myshopify.io: { proxy_to_host_port: 8080 }
+
