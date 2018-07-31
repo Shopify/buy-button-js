@@ -802,5 +802,31 @@ describe('Product class', () => {
         title: "sloth / small"
       }, 1111);
     });
+
+    it('empty cart and add variant to cart are called when destination is checkout', async () => {
+      product.config.product.buttonDestination = 'checkout';
+      product.config.cart.popup = true;
+      sinon.stub(product.cart, 'close');
+      sinon.stub(window, 'open').returns({location: ''});
+      
+      const emptyCart = sinon.stub(product.cart, 'empty').returns(Promise.resolve());
+      const addToCart = sinon.stub(product.cart, 'addVariantToCart').returns(Promise.resolve({webUrl: 'test'}));
+      const evt = new Event('click shopify-buy__btn--parent');
+      const target = 'shopify-buy__btn--parent';
+
+      await product.onButtonClick(evt, target);
+
+      assert.calledOnce(emptyCart);
+      assert.calledOnce(addToCart);
+      assert.calledWith(addToCart, {
+        available: true,
+        id: "Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0NQ==",
+        image: null,
+        price: "123.00",
+        productId: 123,
+        selectedOptions: [{ name: "Print", value: "sloth" }, { name: "Size", value: "small" }],
+        title: "sloth / small"
+      }, 1, false);
+    });
   });
 });
