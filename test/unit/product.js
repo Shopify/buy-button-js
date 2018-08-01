@@ -803,30 +803,53 @@ describe('Product class', () => {
       }, 1111);
     });
 
-    it('empty cart and add variant to cart are called when destination is checkout', async () => {
+    it('empty cart and add variant to cart are called when destination is checkout', () => {
       product.config.product.buttonDestination = 'checkout';
-      product.config.cart.popup = true;
-      sinon.stub(product.cart, 'close');
-      sinon.stub(window, 'open').returns({location: ''});
-      
-      const emptyCart = sinon.stub(product.cart, 'empty').returns(Promise.resolve());
-      const addToCart = sinon.stub(product.cart, 'addVariantToCart').returns(Promise.resolve({webUrl: 'test'}));
+
+      const closeCart = sinon.stub(product.cart, 'close');
+      const openWindow = sinon.stub(window, 'open').returns({location: ''});
+
+      let emptyCart;
+      const emptyCartPromise = new Promise((resolve) => {
+        emptyCart = sinon.stub(product.cart, 'empty', () => {
+          resolve();
+          return Promise.resolve();
+        });
+      });
+
+      let addToCart;
+      const addToCartPromise = new Promise((resolve) => {
+        addToCart = sinon.stub(product.cart, 'addVariantToCart', () => {
+          resolve();
+          return Promise.resolve({webUrl: ''});
+        });
+      });
+
       const evt = new Event('click shopify-buy__btn--parent');
       const target = 'shopify-buy__btn--parent';
 
-      await product.onButtonClick(evt, target);
+      Promise.all([emptyCartPromise, addToCartPromise]).then(() => {
+        assert.calledOnce(openWindow);
+        assert.calledOnce(emptyCart);
+        assert.calledOnce(addToCart);
+        assert.calledWith(addToCart, {
+          available: true,
+          id: "Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0NQ==",
+          image: null,
+          price: "123.00",
+          productId: 123,
+          selectedOptions: [{ name: "Print", value: "sloth" }, { name: "Size", value: "small" }],
+          title: "sloth / small"
+        }, 1, false);
+        assert.calledOnce(closeCart);
 
-      assert.calledOnce(emptyCart);
-      assert.calledOnce(addToCart);
-      assert.calledWith(addToCart, {
-        available: true,
-        id: "Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0NQ==",
-        image: null,
-        price: "123.00",
-        productId: 123,
-        selectedOptions: [{ name: "Print", value: "sloth" }, { name: "Size", value: "small" }],
-        title: "sloth / small"
-      }, 1, false);
+        closeCart.restore();
+        openWindow.restore();
+        emptyCart.restore();
+        addToCart.restore();
+      });
+
+      product.onButtonClick(evt, target);
     });
   });
 });
