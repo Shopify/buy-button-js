@@ -94,17 +94,32 @@ export default class iframe {
     Object.keys(iframeAttrs).forEach((key) => this.el.setAttribute(key, iframeAttrs[key]));
     this.el.setAttribute('name', config.name);
     this.styleTag = null;
+    this.scripts = config.scripts;
   }
 
   load() {
-    return new Promise((resolve) => {
-      this.el.onload = () => {
-        return this.loadFonts().then(() => {
-          this.appendStyleTag();
-          return resolve();
-        });
-      };
+    const onload = new Promise((resolve) => {
       this.parent.appendChild(this.el);
+      this.el.onload = () => resolve();
+    });
+
+    return Promise.all([onload, this.loadExtraScripts(), this.loadFonts()])
+      .then(() => {
+        this.appendStyleTag();
+      });
+  }
+
+  loadExtraScripts() {
+    if (this.scripts.length === 0) { return Promise.resolve(true); }
+
+    return new Promise((resolve) => {
+      this.scripts.forEach((script) => {
+        const node = document.createElement('script');
+        node.src = script;
+        document.head.appendChild(node);
+      });
+
+      return resolve();
     });
   }
 

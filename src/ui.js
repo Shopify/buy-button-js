@@ -3,6 +3,7 @@ import Modal from './components/modal';
 import ProductSet from './components/product-set';
 import Cart from './components/cart';
 import CartToggle from './components/toggle';
+import DynamicCheckout from './components/dynamic-checkout';
 import Tracker from './utils/track';
 import hostStyles from './styles/host/host';
 import conditionalStyles from './styles/host/conditional';
@@ -33,6 +34,7 @@ export default class UI {
       productSet: [],
       modal: [],
       toggle: [],
+      dynamicCheckout: [],
     };
     this.componentTypes = {
       product: Product,
@@ -40,6 +42,7 @@ export default class UI {
       collection: ProductSet,
       productSet: ProductSet,
       toggle: CartToggle,
+      dynamicCheckout: DynamicCheckout,
     };
     this.errorReporter = integrations.errorReporter;
     this.tracker = new Tracker(integrations.tracker, this.config);

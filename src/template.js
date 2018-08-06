@@ -18,7 +18,8 @@ export default class Template {
   }
 
   render(data, cb) {
-    const output = Mustache.render(this.masterTemplate, data);
+    const mt = this.masterTemplate;
+    const output = Mustache.render(mt, data);
     if (!cb) {
       return output;
     }

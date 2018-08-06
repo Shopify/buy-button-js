@@ -78,6 +78,10 @@ export default class Component {
     return this.options.events || {};
   }
 
+  get scripts() {
+    return [];
+  }
+
   /**
    * get classes for component and any components it contains as determined by manifest.
    * @return {Object} class keys and names.
@@ -206,6 +210,7 @@ export default class Component {
       logger.info(`EVENT: ${methodName} (${this.typeKey})`);
     }
     if (isFunction(this.events[methodName])) {
+      console.log('enters here')
       this.events[methodName].call(this, this);
     }
   }
