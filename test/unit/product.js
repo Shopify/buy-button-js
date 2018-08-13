@@ -802,5 +802,47 @@ describe('Product class', () => {
         title: "sloth / small"
       }, 1111);
     });
+
+    it('create checkout and add line items are called when destination is checkout', () => {
+      product.config.product.buttonDestination = 'checkout';
+
+      const openWindow = sinon.stub(window, 'open').returns({location: ''});
+      const checkoutMock = {id: 1, webUrl: ''};
+
+      let createCheckout;
+      const createCheckoutPromise = new Promise((resolve) => {
+        createCheckout = sinon.stub(product.props.client.checkout, 'create', () => {
+          resolve();
+          return Promise.resolve(checkoutMock);
+        });
+      });
+
+      let addLineItems;
+      const addLineItemsPromise = new Promise((resolve) => {
+        addLineItems = sinon.stub(product.props.client.checkout, 'addLineItems', () => {
+          resolve();
+          return Promise.resolve(checkoutMock);
+        });
+      });
+
+      const evt = new Event('click shopify-buy__btn--parent');
+      const target = 'shopify-buy__btn--parent';
+
+      Promise.all([createCheckoutPromise, addLineItemsPromise]).then(() => {
+        assert.calledOnce(openWindow);
+        assert.calledOnce(createCheckout);
+        assert.calledOnce(addLineItems);
+        assert.calledWith(addLineItems, checkoutMock.id, [{
+          variantId: "Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0NQ==",
+          quantity: 1,
+        }]);
+
+        openWindow.restore();
+        createCheckout.restore();
+        addLineItems.restore();
+      });
+
+      product.onButtonClick(evt, target);
+    });
   });
 });
