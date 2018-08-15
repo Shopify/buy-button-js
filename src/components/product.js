@@ -412,7 +412,7 @@ export default class Product extends Component {
     };
 
     if (this.selectedVariant) {
-      return Object.assign({}, info, {
+      Object.assign(info, {
         id: this.id,
         name: this.selectedVariant.productTitle,
         sku: null,
