@@ -413,9 +413,12 @@ export default class Product extends Component {
         name: this.selectedVariant.productTitle,
         sku: null,
         price: this.selectedVariant.price,
+        destination: this.options.buttonDestination,
       };
     } else {
-      return {};
+      return {
+        destination: this.options.buttonDestination,
+      };
     }
   }
 
@@ -583,6 +586,7 @@ export default class Product extends Component {
       this.openOnlineStore();
     } else {
       this._userEvent('openCheckout');
+      this.props.tracker.track('Direct Checkout', {});
       let checkoutWindow;
 
       if (this.config.cart.popup) {
