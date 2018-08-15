@@ -407,19 +407,20 @@ export default class Product extends Component {
    * @return {Object}
    */
   get trackingInfo() {
+    const info = {
+      destination: this.options.buttonDestination,
+    };
+
     if (this.selectedVariant) {
-      return {
+      return Object.assign({}, info, {
         id: this.id,
         name: this.selectedVariant.productTitle,
         sku: null,
         price: this.selectedVariant.price,
-        destination: this.options.buttonDestination,
-      };
-    } else {
-      return {
-        destination: this.options.buttonDestination,
-      };
+      });
     }
+
+    return info;
   }
 
   /**
