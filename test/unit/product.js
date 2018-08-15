@@ -50,7 +50,10 @@ describe('Product class', () => {
           return function () {
             fn(...arguments);
           }
-        }
+        },
+        track: (eventName, properties) => {
+          return;
+        },
       },
       createCart: function () {
         return Promise.resolve(new Cart(config, {
