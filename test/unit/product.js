@@ -804,7 +804,9 @@ describe('Product class', () => {
     });
 
     it('create checkout and add line items are called when destination is checkout', () => {
+      const selectedQuantity = 2;
       product.config.product.buttonDestination = 'checkout';
+      product.selectedQuantity = selectedQuantity;
 
       const openWindow = sinon.stub(window, 'open').returns({location: ''});
       const checkoutMock = {id: 1, webUrl: ''};
@@ -834,7 +836,7 @@ describe('Product class', () => {
         assert.calledOnce(addLineItems);
         assert.calledWith(addLineItems, checkoutMock.id, [{
           variantId: "Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0NQ==",
-          quantity: 1,
+          quantity: selectedQuantity,
         }]);
 
         openWindow.restore();
