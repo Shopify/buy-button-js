@@ -407,16 +407,20 @@ export default class Product extends Component {
    * @return {Object}
    */
   get trackingInfo() {
+    const info = {
+      destination: this.options.buttonDestination,
+    };
+
     if (this.selectedVariant) {
-      return {
+      Object.assign(info, {
         id: this.id,
         name: this.selectedVariant.productTitle,
         sku: null,
         price: this.selectedVariant.price,
-      };
-    } else {
-      return {};
+      });
     }
+
+    return info;
   }
 
   /**
@@ -583,6 +587,7 @@ export default class Product extends Component {
       this.openOnlineStore();
     } else {
       this._userEvent('openCheckout');
+      this.props.tracker.track('Direct Checkout', {});
       let checkoutWindow;
 
       if (this.config.cart.popup) {

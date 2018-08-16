@@ -50,7 +50,8 @@ describe('Product class', () => {
           return function () {
             fn(...arguments);
           }
-        }
+        },
+        track: sinon.stub(),
       },
       createCart: function () {
         return Promise.resolve(new Cart(config, {
@@ -843,6 +844,8 @@ describe('Product class', () => {
       });
 
       product.onButtonClick(evt, target);
+
+      assert.calledWith(product.props.tracker.track, 'Direct Checkout', {})
     });
   });
 });
