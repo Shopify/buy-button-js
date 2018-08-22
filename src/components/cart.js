@@ -182,7 +182,7 @@ export default class Cart extends Component {
    * @return {Promise} promise resolving to instance.
    */
   init(data) {
-    if (!this.config.moneyFormat) {
+    if (!this.moneyFormat) {
       this.fetchMoneyFormat().then((moneyFormat) => {
         this.moneyFormat = moneyFormat;
       });
