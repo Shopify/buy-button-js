@@ -592,7 +592,7 @@ export default class Product extends Component {
 
       if (this.config.cart.popup) {
         const params = (new Checkout(this.config)).params;
-        checkoutWindow = window.open(null, 'checkout', params);
+        checkoutWindow = window.open('', 'checkout', params);
       } else {
         checkoutWindow = window;
       }
