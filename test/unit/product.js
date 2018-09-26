@@ -850,4 +850,19 @@ describe('Product class', () => {
       assert.calledWith(product.props.tracker.track, 'Direct Checkout', {})
     });
   });
+
+  describe('get view.outerHeight', () => {
+    beforeEach(() => {
+      return product.init(testProductCopy).then((product) => {
+        product.cart.model.lineItems = [];
+        product.cart.props.client = product.props.client;
+        return Promise.resolve();
+      });
+    });
+
+    it('returns the wrapper\'s client height in px', () => {
+      const wrapperHeight = product.view.wrapper.clientHeight;
+      assert.equal(product.view.outerHeight, `${wrapperHeight}px`);
+    });
+  });
 });
