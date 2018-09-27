@@ -244,8 +244,13 @@ describe('View class', () => {
         id: 1234,
       }, {browserFeatures: {}});
       view = new View(component);
-      resizeX = sinon.stub(view, '_resizeX');
-      resizeY = sinon.stub(view, '_resizeY');
+      resizeX = sinon.spy(view, '_resizeX');
+      resizeY = sinon.spy(view, '_resizeY');
+    });
+
+    afterEach(() => {
+      resizeX.restore();
+      resizeY.restore();
     });
 
     it('does nothing if no iframe or no wrapper', () => {
@@ -257,6 +262,49 @@ describe('View class', () => {
       view.wrapper = null;
       assert.notCalled(resizeX);
       assert.notCalled(resizeY);
+    });
+
+    it('resizes iframe width when shouldResizeX is true', () => {
+      const iframe = document.createElement('iframe');
+      const iframeWidth = 100;
+      view = Object.defineProperty(view, 'shouldResizeX', {
+        value: true,
+        writable: false,
+      });
+      view.wrapper = document.createElement('div');
+      view.iframe = {
+        el: iframe,
+        document: {
+          body: {
+            clientWidth: iframeWidth,
+          },
+        },
+      };
+      view.resize();
+      assert.called(resizeX);
+      assert.notCalled(resizeY);
+      assert.equal(iframe.style.width, `${iframeWidth}px`);
+    });
+
+    it('resizes iframe height when shouldResizeY is true', () => {
+      const iframe = document.createElement('iframe');
+      const iframeHeight = '50px';
+      view = Object.defineProperty(view, 'shouldResizeY', {
+        value: true,
+        writable: false,
+      });
+      view = Object.defineProperty(view, 'outerHeight', {
+        value: iframeHeight,
+        writable: false,
+      });
+      view.wrapper = document.createElement('div');
+      view.iframe = {
+        el: iframe,
+      };
+      view.resize();
+      assert.called(resizeY);
+      assert.notCalled(resizeX);
+      assert.equal(iframe.style.height, iframeHeight);
     });
   });
 
