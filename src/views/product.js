@@ -13,6 +13,10 @@ export default class ProductView extends View {
     return true;
   }
 
+  get outerHeight() {
+    return `${this.wrapper.clientHeight}px`;
+  }
+
   /**
    * add event listener which triggers resize when the product image is loaded.
    */
