@@ -1,4 +1,5 @@
 import Product from '../../src/components/product';
+import Checkout from '../../src/components/checkout';
 import Cart, { NO_IMG_URL as noImageUrl } from '../../src/components/cart';
 import Modal from '../../src/components/modal';
 import Template from '../../src/template';
@@ -828,12 +829,17 @@ describe('Product class', () => {
         });
       });
 
+      const checkout = new Checkout(product.config);
+
       const evt = new Event('click shopify-buy__btn--parent');
       const target = 'shopify-buy__btn--parent';
 
       Promise.all([createCheckoutPromise, addLineItemsPromise]).then(() => {
         assert.calledOnce(openWindow);
+        assert.calledWith(openWindow, '', 'checkout', checkout.params);
+        
         assert.calledOnce(createCheckout);
+        
         assert.calledOnce(addLineItems);
         assert.calledWith(addLineItems, checkoutMock.id, [{
           variantId: "Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0NQ==",
