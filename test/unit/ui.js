@@ -21,7 +21,7 @@ describe('ui class', () => {
       storefrontAccessToken: 123,
     };
     client = ShopifyBuy.buildClient(config);
-    sinon.stub(client.shop, 'fetchInfo').returns(Promise.resolve(shopFixture));
+    sinon.stub(client.shop, 'fetchInfo').resolves(shopFixture);
     ui = new UI(client, {});
     script = document.createElement('script');
     script.setAttribute('data-shopify-buy-ui', true);
@@ -48,9 +48,7 @@ describe('ui class', () => {
     let initStub;
 
     beforeEach(() => {
-      initStub = sinon.stub(Cart.prototype, 'init', () => {
-        return Promise.resolve();
-      });
+      initStub = sinon.stub(Cart.prototype, 'init').resolves();
     });
 
     afterEach(() => {
@@ -81,9 +79,7 @@ describe('ui class', () => {
     let trackStub;
 
     beforeEach(() => {
-      initStub = sinon.stub(Product.prototype, 'init', () => {
-        return Promise.resolve();
-      });
+      initStub = sinon.stub(Product.prototype, 'init').resolves();
       trackStub = sinon.stub(ui, 'trackComponent');
     });
 
