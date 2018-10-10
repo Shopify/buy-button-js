@@ -146,6 +146,36 @@ describe('Cart class', () => {
         assert.equal(localStorage.getItem(cart.localStorageCheckoutKey), checkout.id);
       });
     });
+
+    it('calls sanitizeCheckout then updateCache with the new checkout', () => {
+      localStorage.setItem(cart.localStorageCheckoutKey, 123);
+      
+      const checkout = {id: 1111, lineItems: [
+        {id: 1112, variant: null},
+        {id: 1113, variant: {id: 1114}},
+        {id: 1115, variant: null},
+      ]};
+      const sanitizedCheckout = {id: 1111, lineItems: [
+        {id: 1113, variant: {id: 1114}},
+      ]};
+      
+      const fetchCart = sinon.stub(cart.props.client.checkout, 'fetch').resolves(checkout);
+      const sanitizeCheckout = sinon.stub(cart, 'sanitizeCheckout').resolves(sanitizedCheckout);
+      const updateCache = sinon.stub(cart, 'updateCache').resolves();
+
+      return cart.fetchData().then((data) => {
+        assert.deepEqual(data, sanitizedCheckout);
+        assert.calledOnce(fetchCart);
+        assert.calledOnce(sanitizeCheckout);
+        assert.calledOnce(updateCache);
+        assert.calledWith(sanitizeCheckout, checkout);
+        assert.calledWith(updateCache, sanitizedCheckout.lineItems);
+
+        fetchCart.restore();
+        sanitizeCheckout.restore();
+        updateCache.restore();
+      });
+    });
   });
 
   describe('fetchMoneyFormat()', () => {
@@ -157,6 +187,28 @@ describe('Cart class', () => {
         assert.deepEqual(data, '₿{{amount}}');
         assert.calledOnce(fetchMoneyFormat);
         fetchMoneyFormat.restore();
+      });
+    });
+  });
+
+  describe('sanitizeCheckout()', () => {
+    it('calls removeLineItems for all line items with deleted variants', () => {
+      const checkout = {id: 1111, lineItems: [
+        {id: 1112, variant: null},
+        {id: 1113, variant: {id: 1114}},
+        {id: 1115, variant: null},
+      ]};
+      const sanitizedCheckout = {id: 1111, lineItems: [
+        {id: 1113, variant: {id: 1114}},
+      ]};
+      const removeLineItems = sinon.stub(cart.props.client.checkout, 'removeLineItems').resolves(sanitizedCheckout);
+      
+      return cart.sanitizeCheckout(checkout).then((data) => {
+        assert.deepEqual(data, sanitizedCheckout);
+        assert.calledOnce(removeLineItems);
+        assert.calledWith(removeLineItems, 1111, [1112, 1115]);
+
+        removeLineItems.restore();
       });
     });
   });
