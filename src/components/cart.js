@@ -161,12 +161,25 @@ export default class Cart extends Component {
         if (checkout.completedAt) {
           return this.createCheckout();
         }
-        this.updateCache(this.model.lineItems);
-        return checkout;
+        return this.sanitizeCheckout(checkout).then((newCheckout) => {
+          this.updateCache(newCheckout.lineItems);
+          return newCheckout;
+        });
       }).catch(() => { return this.createCheckout(); });
     } else {
       return this.createCheckout();
     }
+  }
+
+  sanitizeCheckout(checkout) {
+    const lineItemsToDelete = checkout.lineItems.filter((item) => !item.variant);
+    if (!lineItemsToDelete.length) {
+      return Promise.resolve(checkout);
+    }
+    const lineItemIds = lineItemsToDelete.map((item) => item.id);
+    return this.props.client.checkout.removeLineItems(checkout.id, lineItemIds).then((newCheckout) => {
+      return newCheckout;
+    });
   }
 
   fetchMoneyFormat() {
