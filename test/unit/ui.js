@@ -141,14 +141,6 @@ describe('ui class', () => {
       });
     });
 
-    it('passes config to constructor', () => {
-      productConfig.node = null;
-      return ui.createComponent('product', productConfig).then(() => {
-        assert.equal(null, ui.components.product[0].config.node);
-        ui.destroyComponent('product', ui.components.product[0].model.id);
-      });
-    });
-
     it('binds escape key on iframe if it exists', () => {
       productConfig.iframe = true;
       const escSpy = sinon.stub(UI.prototype, '_bindEsc');
@@ -167,20 +159,21 @@ describe('ui class', () => {
       const errorInitStub = sinon.stub(Product.prototype, 'init').returns(Promise.reject({errors: [{message: 'rejected.'}]}));
       ui = new UI(client, integrations);
 
-      ui.createComponent('product', productConfig).then(() => {
+      return ui.createComponent('product', productConfig).then(() => {
         assert.throws(ui.createComponent, Error);
         assert.calledOnce(integrations.errorReporter.notifyException);
         errorInitStub.restore();
-        ui.destroyComponent('product', ui.components.product[0].model.id);
+        ui.components.product = []; // parentNode does not exist on product.node so .destroyComponent does not work here
       });
     });
 
     it('grabs node from _queryEntryNode if no node is passed in from config', () => {
-      const queryEntryNodeSpy = sinon.spy(UI.prototype, '_queryEntryNode');
+      const queryEntryNodeSpy = sinon.stub(UI.prototype, '_queryEntryNode').returns('testNode');
       productConfig.node = null;
 
       return ui.createComponent('product', productConfig).then(() => {
         assert.calledOnce(queryEntryNodeSpy);
+        assert.equal(productConfig.node, 'testNode');
         queryEntryNodeSpy.restore();
       });
     });
@@ -226,14 +219,8 @@ describe('ui class', () => {
         trackingInfo: 'test',
       };
 
-      ui.trackComponent('product', component);
-      assert.calledWith(trackComponentStub, 'product');
-      ui.trackComponent('cart', component);
-      assert.calledWith(trackComponentStub, 'cart');
-      ui.trackComponent('modal', component);
-      assert.calledWith(trackComponentStub, 'modal');
-      ui.trackComponent('toggle', component);
-      assert.calledWith(trackComponentStub, 'toggle');
+      ui.trackComponent('testType', component);
+      assert.calledWith(trackComponentStub, 'testType');
     });
   });
 
@@ -292,7 +279,6 @@ describe('ui class', () => {
         ui.toggleCart(false);
         assert.calledOnce(restoreFocusSpy);
         restoreFocusSpy.restore();
-
       });
     });
   });
