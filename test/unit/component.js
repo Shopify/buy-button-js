@@ -1,17 +1,18 @@
-import ShopifyBuy from '../../src/buybutton';
 import Component from '../../src/component';
 import View from '../../src/view';
-import componentDefaults from '../../src/defaults/components';
+import Updater from '../../src/updater';
+import * as logNotFound from '../../src/utils/log-not-found';
+
 
 describe('Component class', () => {
 
   describe('constructor', () => {
     it('stores id, node, and handle on instance', () => {
-      let node = document.createElement('div');
-      let component = new Component({
+      const node = document.createElement('div');
+      const component = new Component({
         id: 1234,
         handle: 'lol',
-        node: node,
+        node,
       });
 
       assert.equal(component.id, 1234);
@@ -20,28 +21,35 @@ describe('Component class', () => {
     });
 
     it('sets globalConfig based on passed in config', () => {
-      let component = new Component({
-        id: 1234
+      const component = new Component({
+        id: 1234,
       });
       assert.equal(component.globalConfig.moneyFormat, '${{amount}}');
     });
 
     it('instantiates a view', () => {
-      let component = new Component({
-        id: 1234
+      const component = new Component({
+        id: 1234,
       });
       assert.instanceOf(component.view, View);
     });
+
+    it('instantiates an updater', () => {
+      const component = new Component({
+        id: 1234,
+      });
+      assert.instanceOf(component.updater, Updater);
+    })
 
     it('merges configuration options with defaults', () => {
       const config = {
         options: {
           product: {
             buttonDestination: 'modal',
-          }
-        }
-      }
-      let component = new Component(config);
+          },
+        },
+      };
+      const component = new Component(config);
       assert.equal(component.config.product.buttonDestination, 'modal', 'configuration options override defaults');
       assert.equal(component.config.cart.iframe, true, 'defaults are merged into configuration');
     });
@@ -58,7 +66,7 @@ describe('Component class', () => {
 
   describe('get options()', () => {
     it('returns options for component by typeKey', () => {
-      let component = new Component({id: 1234});
+      const component = new Component({id: 1234});
       component.typeKey = 'product';
       assert.equal(component.options.buttonDestination, 'cart');
     });
@@ -66,17 +74,17 @@ describe('Component class', () => {
 
   describe('get styles()', () => {
     it('returns styles for each component in manifest', () => {
-      let component = new Component({
+      const component = new Component({
         id: 1234,
         options: {
           product: {
             styles: {
               button: {
                 color: 'red',
-              }
-            }
-          }
-        }
+              },
+            },
+          },
+        },
       });
       component.typeKey = 'product';
       assert.deepEqual(component.styles, {product: {button: {color: 'red'}}});
@@ -86,7 +94,7 @@ describe('Component class', () => {
 
   describe('get classes()', () => {
     it('returns classes for each component in manifest', () => {
-      let component = new Component({id: 1234});
+      const component = new Component({id: 1234});
       component.typeKey = 'product';
       assert.equal(component.classes.product.product, 'shopify-buy__product');
       assert.equal(component.classes.option.option, 'shopify-buy__option-select');
@@ -95,7 +103,7 @@ describe('Component class', () => {
 
   describe('get selectors()', () => {
     it('returns classes formatted as css selectors for each component in manifest', () => {
-      let component = new Component({id: 1234});
+      const component = new Component({id: 1234});
       component.typeKey = 'product';
       assert.equal(component.selectors.product.product, '.shopify-buy__product');
       assert.equal(component.selectors.option.option, '.shopify-buy__option-select');
@@ -107,14 +115,14 @@ describe('Component class', () => {
       const config = {
         options: {
           product: {
-            googleFonts: ['lol']
+            googleFonts: ['lol'],
           },
           option: {
-            googleFonts: ['bar']
-          }
-        }
-      }
-      let component = new Component(config);
+            googleFonts: ['bar'],
+          },
+        },
+      };
+      const component = new Component(config);
       component.typeKey = 'product';
       assert.deepEqual(component.googleFonts, ['lol', 'bar']);
     });
@@ -122,7 +130,7 @@ describe('Component class', () => {
 
   describe('get viewData()', () => {
     it('returns model and some other properties', () => {
-      let component = new Component({id: 1234});
+      const component = new Component({id: 1234});
       component.typeKey = 'product';
       component.model = {test: 'lol'};
       assert.equal(component.viewData.test, 'lol');
@@ -132,14 +140,14 @@ describe('Component class', () => {
 
   describe('init()', () => {
     it('assigns model and initializes view', () => {
-      let component = new Component({id: 1234}, {
+      const component = new Component({id: 1234}, {
         browserFeatures: {},
       });
       component.view = {
         init: sinon.stub().returns(Promise.resolve()),
         render: sinon.spy(),
         delegateEvents: sinon.spy(),
-      }
+      };
       component.typeKey = 'product';
       return component.init({
         lol: 'yes',
@@ -150,18 +158,38 @@ describe('Component class', () => {
         assert.calledOnce(component.view.init);
       });
     });
+
+    it('catches any error from setupModel', () => {
+      const errorSetupModelStub = sinon.stub(Component.prototype, 'setupModel').returns(Promise.reject({message: ['Not Found']}));
+      const logNotFoundStub = sinon.stub(logNotFound, 'default');
+      const component = new Component({id: 1234}, {
+        browserFeatures: {},
+      });
+      component.view = {
+        init: sinon.stub().returns(Promise.resolve()),
+        render: sinon.spy(),
+        delegateEvents: sinon.spy(),
+      };
+      component.typeKey = 'product';
+      
+      return component.init({lol: 'yes'}).catch(() => {
+        assert.throws(component.init, Error);
+        assert.calledOnce(logNotFoundStub);
+        errorSetupModelStub.restore();
+      });
+    });
   });
 
   describe('setupModel()', () => {
     it('returns passed data', () => {
-      let component = new Component({id: 1234});
+      const component = new Component({id: 1234});
       return component.setupModel({test: 'lol'}).then((model) => {
         assert.deepEqual(model, {test: 'lol'});
       });
     });
 
     it('calls fetchData if not passed data', () => {
-      let component = new Component({id: 1234});
+      const component = new Component({id: 1234});
       component.fetchData = sinon.stub().returns(Promise.resolve({test: 'lol'}));
       return component.setupModel().then((model) => {
         assert.deepEqual(model, {test: 'lol'});
@@ -171,7 +199,7 @@ describe('Component class', () => {
 
   describe('updateConfig()', () => {
     it('delegates to updater', () => {
-      let component = new Component({id: 1234});
+      const component = new Component({id: 1234});
       component.updater.updateConfig = sinon.spy();
       component.updateConfig({test: 'lol'});
       assert.calledWith(component.updater.updateConfig, {test: 'lol'});
@@ -180,7 +208,7 @@ describe('Component class', () => {
 
   describe('destroy()', () => {
     it('delegates to view', () => {
-      let component = new Component({id: 1234});
+      const component = new Component({id: 1234});
       component.view.destroy = sinon.spy();
       component.destroy();
       assert.calledOnce(component.view.destroy);
