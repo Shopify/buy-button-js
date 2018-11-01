@@ -2,11 +2,12 @@ import View from '../../src/view';
 import Component from '../../src/component';
 import Template from '../../src/template';
 import Iframe from '../../src/iframe';
+import * as elementClass from '../../src/utils/element-class';
 
 describe('View class', () => {
   describe('constructor', () => {
-    let component = new Component({id: 1234});
-    let view = new View(component);
+    const component = new Component({id: 1234});
+    const view = new View(component);
 
     it('stores component to instance', () => {
       assert.equal(view.component, component);
@@ -41,7 +42,7 @@ describe('View class', () => {
       component.config.product.iframe = true;
       const loadStub = sinon.stub(Iframe.prototype, 'load').returns(Promise.resolve());
       const addClassSpy = sinon.spy(Iframe.prototype, 'addClass');
-      return view.init().then((iframe) => {
+      return view.init().then(() => {
         assert.instanceOf(view.iframe, Iframe);
         assert.equal(component.node.className, ' shopify-buy-frame shopify-buy-frame--product');
         assert.calledOnce(loadStub);
@@ -75,6 +76,7 @@ describe('View class', () => {
       assert.calledOnce(view._createWrapper);
       assert.calledOnce(view.resize);
       assert.calledWith(view.updateNode, div, '<div>LOL</div>');
+      tmplRender.restore();
     });
   });
 
@@ -89,21 +91,31 @@ describe('View class', () => {
         options: {
           product: {
             DOMEvents: {
-              'click .btn': function () {return true},
-              'click': function () {return true},
-            }
-          }
-        }
+              'click .btn'() { return true; },
+              click() { return true; },
+            },
+          },
+        },
       }, {browserFeatures: {}});
       view = new View(component);
       component.typeKey = 'product';
     });
 
+    it('calls closeComponentsOnEsc', () => {
+      const closeComponentsOnEscStub = sinon.stub(view, 'closeComponentsOnEsc');
+      view.wrapper = {
+        addEventListener: sinon.spy(),
+      };
+      view.delegateEvents();
+      assert.calledOnce(closeComponentsOnEscStub);
+      closeComponentsOnEscStub.restore();
+    });
+
     it('calls _on for each DOM event', () => {
       const onStub = sinon.stub(view, '_on');
       view.wrapper = {
-        addEventListener: sinon.spy()
-      }
+        addEventListener: sinon.spy(),
+      };
       view.delegateEvents();
       assert.calledWith(onStub, 'click', '.btn', sinon.match.func);
       assert.calledWith(view.wrapper.addEventListener, 'click', sinon.match.func);
@@ -111,19 +123,59 @@ describe('View class', () => {
 
     it('bind events if eventsBound is false', () => {
       view.wrapper = {
-        addEventListener: sinon.spy()
-      }
+        addEventListener: sinon.spy(),
+      };
       view.delegateEvents();
       assert.called(view.wrapper.addEventListener);
     });
 
     it('prevents rebinding if events already bound', () => {
       view.wrapper = {
-        addEventListener: sinon.spy()
-      }
+        addEventListener: sinon.spy(),
+      };
       view.eventsBound = true;
       view.delegateEvents();
       assert.notCalled(view.wrapper.addEventListener);
+    });
+
+    it('sets iframe.el.onload to reloadIframe() if iframe already exists', () => {
+      const reloadIframeStub = sinon.stub(view, 'reloadIframe');
+      const closeComponentsOnEscStub = sinon.stub(view, 'closeComponentsOnEsc');
+      view.wrapper = {
+        addEventListener: sinon.spy(),
+      };
+      view.iframe = {el: {}};
+
+      view.delegateEvents();
+      view.iframe.el.onload();
+      assert.calledOnce(reloadIframeStub);
+      reloadIframeStub.restore();
+      closeComponentsOnEscStub.restore();
+    });
+  });
+
+  describe('reloadIframe()', () => {
+    let component;
+    let view;
+
+    beforeEach(() => {
+      component = new Component({
+        id: 1234,
+        node: document.createElement('div'),
+      }, {browserFeatures: {}});
+      view = new View(component);
+      component.typeKey = 'product';
+    });
+
+    it('removes iframe and calls component.init', () => {
+      view.iframe = {el: 'test'};
+      view.wrapper = {};
+      const removeChildStub = sinon.stub(view.node, 'removeChild');
+      const initStub = sinon.stub(view.component, 'init');
+
+      view.reloadIframe();
+      assert.calledWith(removeChildStub, 'test');
+      assert.calledOnce(initStub);
     });
   });
 
@@ -144,10 +196,10 @@ describe('View class', () => {
       view.iframe = {
         document: {
           body: {
-            appendChild: sinon.spy()
-          }
-        }
-      }
+            appendChild: sinon.spy(),
+          },
+        },
+      };
       view.append(div);
       assert.calledWith(view.iframe.document.body.appendChild, div);
     });
@@ -161,6 +213,62 @@ describe('View class', () => {
     });
   });
 
+  describe('addClass()', () => {
+    let component;
+    let view;
+
+    beforeEach(() => {
+      component = new Component({
+        id: 1234,
+        node: document.createElement('div'),
+      }, {browserFeatures: {}});
+      view = new View(component);
+      component.typeKey = 'product';
+    });
+
+    it('adds class to iframe if iframe exists', () => {
+      view.iframe = {addClass: sinon.spy()};
+      view.addClass('test-class');
+      assert.calledWith(view.iframe.addClass, 'test-class');
+    });
+
+    it('calls addClassToElement if iframe does not exist', () => {
+      const addClassToElementStub = sinon.stub(elementClass, 'addClassToElement');
+
+      view.addClass('test-class');
+      assert.calledWith(addClassToElementStub, 'test-class');
+      addClassToElementStub.restore();
+    });
+  });
+
+  describe('removeClass()', () => {
+    let component;
+    let view;
+
+    beforeEach(() => {
+      component = new Component({
+        id: 1234,
+        node: document.createElement('div'),
+      }, {browserFeatures: {}});
+      view = new View(component);
+      component.typeKey = 'product';
+    });
+
+    it('removes class from iframe if iframe exists', () => {
+      view.iframe = {removeClass: sinon.spy()};
+      view.removeClass('test-class');
+      assert.calledWith(view.iframe.removeClass, 'test-class');
+    });
+
+    it('calls removeClassToElement if iframe does not exist', () => {
+      const removeClassFromElementStub = sinon.stub(elementClass, 'removeClassFromElement');
+
+      view.removeClass('test-class');
+      assert.calledWith(removeClassFromElementStub, 'test-class');
+      removeClassFromElementStub.restore();
+    });
+  });
+
   describe('destroy()', () => {
     it('removes node from parent', () => {
       const component = new Component({
@@ -169,9 +277,9 @@ describe('View class', () => {
       const view = new View(component);
       view.node = {
         parentNode: {
-          removeChild: sinon.spy()
-        }
-      }
+          removeChild: sinon.spy(),
+        },
+      };
       view.destroy();
       assert.calledOnce(view.node.parentNode.removeChild);
     });
@@ -185,15 +293,15 @@ describe('View class', () => {
           product: {
             viewData: {
               title: 'lol',
-            }
-          }
-        }
+            },
+          },
+        },
       }, {browserFeatures: {}});
       component.typeKey = 'product';
       const view = new View(component);
       const template = {
         render: sinon.stub().returns('<h1>BUY MY BUTTONS lol</h1>')
-      }
+      };
       view.updateNode = sinon.spy();
       view.wrapper = document.createElement('div');
       const childNode = document.createElement('div');
@@ -223,11 +331,11 @@ describe('View class', () => {
 
   describe('wrapTemplate()', () => {
     it('puts strings in a div', () => {
-    const component = new Component({
-      id: 1234,
-    }, {browserFeatures: {}});
-    component.typeKey = 'product';
-    const view = new View(component);
+      const component = new Component({
+        id: 1234,
+      }, {browserFeatures: {}});
+      component.typeKey = 'product';
+      const view = new View(component);
       const string = view.wrapTemplate('test');
       assert.equal(string, '<div class="shopify-buy__product">test</div>');
     });
@@ -305,6 +413,24 @@ describe('View class', () => {
       assert.called(resizeY);
       assert.notCalled(resizeX);
       assert.equal(iframe.style.height, iframeHeight);
+    });
+  });
+
+  describe('setFocus()', () => {
+    it('focuses first focusable element in wrapper', () => {
+      const component = new Component({
+        id: 1234,
+        node: document.createElement('div'),
+      }, {browserFeatures: {}});
+      const view = new View(component);
+      component.typeKey = 'product';
+      view.wrapper = document.createElement('div');
+      view.wrapper.append(document.createElement('a'));
+      view.wrapper.append(document.createElement('button'));
+      const focusSpy = sinon.spy(view.wrapper.firstElementChild, 'focus');
+      view.setFocus();
+      assert.calledOnce(focusSpy);
+      focusSpy.restore();
     });
   });
 
