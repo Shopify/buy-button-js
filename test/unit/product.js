@@ -815,7 +815,7 @@ describe('Product class', () => {
 
       let createCheckout;
       const createCheckoutPromise = new Promise((resolve) => {
-        createCheckout = sinon.stub(product.props.client.checkout, 'create', () => {
+        createCheckout = sinon.stub(product.props.client.checkout, 'create').callsFake(() => {
           resolve();
           return Promise.resolve(checkoutMock);
         });
@@ -823,7 +823,7 @@ describe('Product class', () => {
 
       let addLineItems;
       const addLineItemsPromise = new Promise((resolve) => {
-        addLineItems = sinon.stub(product.props.client.checkout, 'addLineItems', () => {
+        addLineItems = sinon.stub(product.props.client.checkout, 'addLineItems').callsFake(() => {
           resolve();
           return Promise.resolve(checkoutMock);
         });
@@ -834,12 +834,13 @@ describe('Product class', () => {
       const evt = new Event('click shopify-buy__btn--parent');
       const target = 'shopify-buy__btn--parent';
 
-      Promise.all([createCheckoutPromise, addLineItemsPromise]).then(() => {
+
+      product.onButtonClick(evt, target);
+      return Promise.all([createCheckoutPromise, addLineItemsPromise]).then(() => {
         assert.calledOnce(openWindow);
         assert.calledWith(openWindow, '', 'checkout', checkout.params);
-        
+
         assert.calledOnce(createCheckout);
-        
         assert.calledOnce(addLineItems);
         assert.calledWith(addLineItems, checkoutMock.id, [{
           variantId: "Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0NQ==",
@@ -849,11 +850,8 @@ describe('Product class', () => {
         openWindow.restore();
         createCheckout.restore();
         addLineItems.restore();
+        assert.calledWith(product.props.tracker.track, 'Direct Checkout', {});
       });
-
-      product.onButtonClick(evt, target);
-
-      assert.calledWith(product.props.tracker.track, 'Direct Checkout', {})
     });
   });
 
