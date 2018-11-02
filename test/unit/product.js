@@ -480,7 +480,7 @@ describe('Product class', () => {
         assert.equal(modalProduct.modal.config.product.layout, 'vertical');
         assert.calledWith(cartUpdateConfigSpy, newConfig);
       }).then(() => {
-        modalProduct.modal.close();
+        modalProduct.modal.destroy();
       });
     });
   });
