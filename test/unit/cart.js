@@ -303,7 +303,7 @@ describe('Cart class', () => {
     let fetchMoneyFormatStub;
     beforeEach(() => {
       superInitStub = sinon.stub(Component.prototype, 'init').resolves({model: {lineItems: [{id: 123, quantity: 5}]}});
-      fetchMoneyFormatStub = sinon.stub(cart, 'fetchMoneyFormat').returns(Promise.resolve('test'));
+      fetchMoneyFormatStub = sinon.stub(cart, 'fetchMoneyFormat').resolves();
     });
 
     afterEach(() => {
