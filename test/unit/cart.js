@@ -29,7 +29,6 @@ describe('Cart class', () => {
           }
         }
       },
-      fetchMoneyFormat: function () { return Promise.resolve('test') }
     });
   });
   afterEach(() => {
@@ -300,23 +299,29 @@ describe('Cart class', () => {
   });
 
   describe('init', () => {
+    let superInitStub;
+    let fetchMoneyFormatStub;
+    beforeEach(() => {
+      superInitStub = sinon.stub(Component.prototype, 'init').resolves({model: {lineItems: [{id: 123, quantity: 5}]}});
+      fetchMoneyFormatStub = sinon.stub(cart, 'fetchMoneyFormat').resolves();
+    });
+
+    afterEach(() => {
+      superInitStub.restore();
+      fetchMoneyFormatStub.restore();
+    });
+
     it('calls fetchMoneyFormat when moneyFormat has not been set', () => {
       cart.moneyFormat = null;
-      const fetchMoneyFormatStub = sinon.stub(cart.props, 'fetchMoneyFormat').returns(Promise.resolve());
-
-      cart.init().then(() => {
+      return cart.init().then(() => {
         assert.calledOnce(fetchMoneyFormatStub);
-        fetchMoneyFormatStub.restore();
       });
     });
 
     it('does not call fetchMoneyFormat when moneyFormat has been set', () => {
       cart.moneyFormat = '₿{{amount}}';
-      const fetchMoneyFormatStub = sinon.stub(cart.props, 'fetchMoneyFormat').returns(Promise.resolve());
-
-      cart.init().then(() => {
+      return cart.init().then(() => {
         assert.notCalled(fetchMoneyFormatStub);
-        fetchMoneyFormatStub.restore();
       });
     });
   });
