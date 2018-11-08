@@ -1,8 +1,8 @@
 import Iframe from '../../src/iframe';
 import * as elementClass from '../../src/utils/element-class';
+import conditionalStyles from '../../src/styles/embeds/conditional';
 
 const defaultCSS = '* { box-sizing: border-box; }';
-const customCSS = '@media (max-width: 100px) { .product { background: blue; }  } .product:hover .btn { background: orange; } .btn:hover { color: green; } .btn { color: red; }';
 const configObject = {
   classes: {
     product: {
@@ -425,12 +425,84 @@ describe('Iframe class', () => {
     });
 
     describe('getters', () => {
+      describe('width', () => {
+        it('returns max width of parent', () => {
+          iframe.parent.style['max-width'] = '60px';
+          assert.equal(iframe.width, '60px');
+        });
+      });
+
+      describe('document', () => {
+        it('returns element\'s content window\'s document if the content window body exists', () => {
+          iframe.el = {
+            contentWindow: {document: {body: {}}},
+            document: {body: {}},
+            contentDocument: {body: {}},
+          };
+          assert.equal(iframe.document, iframe.el.contentWindow.document);
+        });
+
+        it('returns element\'s document if the document body exists', () => {
+          iframe.el = {
+            contentWindow: null,
+            document: {body: {}},
+            contentDocument: {body: {}},
+          };
+          assert.equal(iframe.document, iframe.el.document);
+        });
+
+        it('returns element\'s content document if the content document body exists', () => {
+          iframe.el = {
+            contentWindow: null,
+            document: null,
+            contentDocument: {body: {}},
+          };
+          assert.equal(iframe.document, iframe.el.contentDocument);
+        });
+
+        it('returns undefined if there is no content window document body, document body, or content document body', () => {
+          iframe.el = {
+            contentWindow: null,
+            document: null,
+            contentDocument: null,
+          };
+          assert.isUndefined(iframe.document);
+        });
+      });
+
+      describe('conditionalCSS', () => {
+        it('returns empty string if browser features include transition, transform, and animation', () => {
+          iframe.browserFeatures = {
+            transition: true,
+            transform: true,
+            animation: true,
+          };
+          assert.equal(iframe.conditionalCSS, '');
+        });
+
+        it('returns conditionalStyles if browser features does not include transition', () => {
+          iframe.browserFeatures.transition = false;
+          assert.equal(iframe.conditionalCSS, conditionalStyles);
+        });
+
+        it('returns conditionalStyles if browser features does not include transform', () => {
+          iframe.browserFeatures.transform = false;
+          assert.equal(iframe.conditionalCSS, conditionalStyles);
+        });
+
+        it('returns conditionalStyles if browser features does not include animation', () => {
+          iframe.browserFeatures.animation = false;
+          assert.equal(iframe.conditionalCSS, conditionalStyles);
+        });
+      });
+
       describe('css', () => {
         it('returns properly formatted CSS', () => {
-          return iframe.load().then(() => {
-            assert.include(iframe.css, defaultCSS, 'css is formatted correctly');
-            assert.include(iframe.css, customCSS, 'appends custom css');
-          });
+          const expectedCSS = iframe.css;
+          const customCSS = '@media (max-width: 100px) { .product { background: blue; }  } .product:hover .btn { background: orange; } .btn:hover { color: green; } .btn { color: red; }';
+          assert.include(expectedCSS, iframe.stylesheet);
+          assert.include(expectedCSS, iframe.conditionalCSS);
+          assert.include(expectedCSS, customCSS);
         });
       });
     });
