@@ -1,7 +1,8 @@
 import Iframe from '../../src/iframe';
+import * as elementClass from '../../src/utils/element-class';
 
 const defaultCSS = '* { box-sizing: border-box; }';
-// const customCSS = '@media (max-width: 100px) { .product { background: blue; }  } .product:hover .btn { background: orange; } .btn:hover { color: green; } .btn { color: red; }';
+const customCSS = '@media (max-width: 100px) { .product { background: blue; }  } .product:hover .btn { background: orange; } .btn:hover { color: green; } .btn { color: red; }';
 const configObject = {
   classes: {
     product: {
@@ -240,29 +241,198 @@ describe('Iframe class', () => {
       });
     });
 
-    // describe('loadFontScript', () => {
-    //   let scriptTags;
-    //   beforeEach(() => {
-    //     scriptTags = document.head.getElementsByTagName('script').length;
-    //     iframe.googleFonts = ['Lato'];
-    //     return iframe.load();
-    //   });
+    describe('loadFontScript()', () => {
+      let createElementSpy;
+      let appendChildStub;
+      let setTimeoutStub;
 
-    //   it('appends a script tag', () => {
-    //     const newScriptTags = document.head.getElementsByTagName('script');
-    //     assert.equal(newScriptTags.length, scriptTags + 1);
-    //   });
-    // });
+      beforeEach(() => {
+        createElementSpy = sinon.spy(document, 'createElement');
+        appendChildStub = sinon.stub(document.head, 'appendChild');
+        setTimeoutStub = sinon.stub(window, 'setTimeout').callsFake((...args) => {
+          return args[0]();
+        });
+        iframe.googleFonts = ['Lato'];
+      });
 
-    // describe('getters', () => {
-    //   describe('css', () => {
-    //     it('returns properly formatted CSS', () => {
-    //       return iframe.load().then(() => {
-    //         assert.include(iframe.css, defaultCSS, 'css is formatted correctly');
-    //         assert.include(iframe.css, customCSS, 'appends custom css');
-    //       });
-    //     });
-    //   });
-    // });
+      afterEach(() => {
+        createElementSpy.restore();
+        appendChildStub.restore();
+        setTimeoutStub.restore();
+      });
+
+      it('does not create a font script if web font already exists', async () => {
+        window.WebFont = {};
+        await iframe.loadFontScript();
+        assert.notCalled(createElementSpy);
+        window.WebFont = null;
+      });
+
+      it('creates a script element, attaches web font, then appends it to document head', async () => {
+        const webfontScript = 'https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js';
+        await iframe.loadFontScript();
+        assert.calledOnce(createElementSpy);
+        assert.calledWith(createElementSpy, 'script');
+        assert.calledOnce(appendChildStub);
+        assert.calledWith(appendChildStub, createElementSpy.returnValues[0]);
+        assert.equal(createElementSpy.returnValues[0].src, webfontScript);
+      });
+
+      it('times out after half a second if font script did not load', async () => {
+        const response = await iframe.loadFontScript();
+        assert.calledOnce(setTimeoutStub);
+        assert.equal(setTimeoutStub.getCall(0).args[1], 500);
+        assert.isUndefined(response);
+      });
+    });
+
+    describe('setWidth()', () => {
+      it('sets max width of parent to width param', () => {
+        iframe.setWidth('200px');
+        assert.equal(iframe.parent.style['max-width'], '200px');
+      });
+    });
+
+    describe('addClass()', () => {
+      it('adds className param to parent element', () => {
+        const addClassToElementStub = sinon.stub(elementClass, 'addClassToElement');
+        iframe.addClass('class-name');
+        assert.calledOnce(addClassToElementStub);
+        assert.calledWith(addClassToElementStub, 'class-name', iframe.parent);
+        addClassToElementStub.restore();
+      });
+    });
+
+    describe('removeClass()', () => {
+      it('removes className param from parent element', () => {
+        const removeClassFromElementStub = sinon.stub(elementClass, 'removeClassFromElement');
+        iframe.removeClass('class-name');
+        assert.calledOnce(removeClassFromElementStub);
+        assert.calledWith(removeClassFromElementStub, 'class-name', iframe.parent);
+        removeClassFromElementStub.restore();
+      });
+    });
+
+    describe('setName()', () => {
+      it('sets name attribute of element to name param', () => {
+        iframe.setName('iframe-name');
+        assert.equal(iframe.el.getAttribute('name'), 'iframe-name');
+      });
+    });
+
+    describe('updateStyles()', () => {
+      let loadFontsStub;
+      const customStyles = {height: '20px'};
+      const googleFonts = ['OpenSans'];
+
+      beforeEach(() => {
+        loadFontsStub = sinon.stub(iframe, 'loadFonts').resolves();
+        iframe.styleTag = document.createElement('style');
+        iframe = Object.defineProperty(iframe, 'css', {
+          value: 'width: 20px',
+        });
+      });
+
+      afterEach(() => {
+        loadFontsStub.restore();
+      });
+
+      it('sets iframe\'s google fonts to google fonts param', () => {
+        iframe.updateStyles(customStyles, googleFonts);
+        assert.equal(iframe.googleFonts, googleFonts);
+      });
+
+      it('loads fonts', () => {
+        iframe.updateStyles(customStyles, googleFonts);
+        assert.calledOnce(loadFontsStub);
+      });
+
+      it('sets custom styles hash to custom styles params and inner html to element\'s css', async () => {
+        await iframe.updateStyles(customStyles, googleFonts);
+        assert.equal(iframe.customStylesHash, customStyles);
+        assert.equal(iframe.styleTag.innerHTML, iframe.css);
+      });
+    });
+
+    describe('appendStyleTag()', () => {
+      let headAppendChildSpy;
+      let styleTagAppendChildStub;
+      let createElementStub;
+      let createTextNodeStub;
+      let styleTag;
+      let textNode;
+
+      beforeEach(() => {
+        iframe = Object.defineProperty(iframe, 'css', {
+          value: 'width: 20px',
+        });
+        styleTag = document.createElement('style');
+        textNode = document.createTextNode(iframe.css);
+        styleTagAppendChildStub = sinon.stub(styleTag, 'appendChild');
+        headAppendChildSpy = sinon.spy();
+        createElementStub = sinon.stub().returns(styleTag);
+        createTextNodeStub = sinon.stub().returns(textNode);
+        iframe = Object.defineProperty(iframe, 'document', {
+          writable: true,
+          value: {
+            createElement: createElementStub,
+            createTextNode: createTextNodeStub,
+            head: {
+              appendChild: headAppendChildSpy,
+            },
+          },
+        });
+      });
+
+      afterEach(() => {
+        styleTagAppendChildStub.restore();
+      });
+
+      it('does not create a style tag if document head does not exist', () => {
+        iframe.document.head = null;
+        iframe.styleTag = null;
+        iframe.appendStyleTag();
+        assert.equal(iframe.styleTag, null);
+      });
+
+      it('creates a style tag and appends it to document head if document head exists', () => {
+        iframe.appendStyleTag();
+        assert.equal(iframe.styleTag, styleTag);
+        assert.calledOnce(createElementStub);
+        assert.calledWith(createElementStub, 'style');
+        assert.calledOnce(headAppendChildSpy);
+        assert.calledWith(headAppendChildSpy, iframe.styleTag);
+      });
+
+      it('sets the css text in the style tag\'s stylesheet to the iframe\'s css if the stylesheet exists', () => {
+        styleTag.styleSheet = {};
+        createElementStub = sinon.stub().returns(styleTag);
+        iframe.document.createElement = createElementStub;
+        iframe.appendStyleTag();
+        assert.equal(iframe.styleTag.styleSheet.cssText, iframe.css);
+      });
+
+      it('appends a css text node to style tag if the stylesheet does not exist', () => {
+        styleTag.styleSheet = null;
+        createElementStub = sinon.stub().returns(styleTag);
+        iframe.document.createElement = createElementStub;
+        iframe.appendStyleTag();
+        assert.calledOnce(styleTagAppendChildStub);
+        assert.calledWith(styleTagAppendChildStub, textNode);
+        assert.calledOnce(createTextNodeStub);
+        assert.calledWith(createTextNodeStub, iframe.css);
+      });
+    });
+
+    describe('getters', () => {
+      describe('css', () => {
+        it('returns properly formatted CSS', () => {
+          return iframe.load().then(() => {
+            assert.include(iframe.css, defaultCSS, 'css is formatted correctly');
+            assert.include(iframe.css, customCSS, 'appends custom css');
+          });
+        });
+      });
+    });
   });
 });
