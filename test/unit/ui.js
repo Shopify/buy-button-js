@@ -212,5 +212,92 @@ describe('ui class', () => {
         assert.calledOnce(testCart.destroy);
       });
     });
+
+    describe('cart methods', () => {
+      describe('createCart', () => {
+        let initStub;
+
+        beforeEach(() => {
+          initStub = sinon.stub(Cart.prototype, 'init').resolves();
+        });
+
+        afterEach(() => {
+          initStub.restore();
+        });
+
+        describe('when no cart exists', () => {
+          it('creates a new cart', () => {
+            return ui.createCart({options: {}}).then(() => {
+              assert.equal(1, ui.components.cart.length, 'cart array has 1 item');
+              assert.instanceOf(ui.components.cart[0], Cart);
+              assert.calledOnce(initStub);
+              ui.destroyComponent('cart', ui.components.cart[0].model.id);
+            });
+          });
+        });
+
+        describe('when a cart exists', () => {
+          it('does not create a second cart', () => {
+            return ui.createCart({options: {}}).then(() => ui.createCart({options: {}})).then(() => {
+              assert.equal(1, ui.components.cart.length, 'cart array has 1 item');
+              assert.calledOnce(initStub); // checks it was called once and not twice
+              ui.destroyComponent('cart', ui.components.cart[0].model.id);
+            });
+          });
+        });
+      });
+
+      describe('closeCart', () => {
+        it('calls cart.close for every visible cart and calls restoreFocus after each close', () => {
+          const closeSpy1 = sinon.spy();
+          const restoreFocusSpy = sinon.spy(UI.prototype, 'restoreFocus');
+          ui.components.cart = [
+            {isVisible: true, close: closeSpy},
+            {isVisible: true, close: closeSpy},
+            {isVisible: false, close: closeSpy},
+          ];
+          ui.closeCart();
+          assert.callCount(closeSpy, 2);
+          assert.callCount(restoreFocusSpy, 2);
+          restoreFocusSpy.restore();
+        });
+      });
+
+      describe('openCart', () => {
+        it('calls cart.open for every cart', () => {
+          const openSpy = sinon.spy();
+          ui.components.cart = [
+            {isVisible: true, open: openSpy},
+            {isVisible: true, open: openSpy},
+            {isVisible: false, open: openSpy},
+          ];
+          ui.openCart();
+          assert.callCount(openSpy, 3);
+        });
+      });
+
+      describe('toggleCart', () => {
+        it('calls cart.toggleVisilbity for every cart', () => {
+          const toggleSpy = sinon.spy();
+          ui.components.cart = [
+            {toggleVisibility: toggleSpy},
+            {toggleVisibility: toggleSpy},
+            {toggleVisibility: toggleSpy},
+          ];
+          ui.toggleCart(true);
+          assert.callCount(toggleSpy, 3);
+        });
+
+        it('calls restoreFocus if cart is not visible', () => {
+          const restoreFocusSpy = sinon.spy(UI.prototype, 'restoreFocus');
+          ui.components.cart = [];
+          ui.toggleCart(true);
+          assert.notCalled(restoreFocusSpy);
+          ui.toggleCart(false);
+          assert.calledOnce(restoreFocusSpy);
+          restoreFocusSpy.restore();
+        });
+      });
+    });
   });
 });
