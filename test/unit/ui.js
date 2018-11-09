@@ -8,23 +8,21 @@ import CartToggle from '../../src/components/toggle';
 import shopFixture from '../fixtures/shop-info';
 
 const DATA_ATTRIBUTE = 'data-shopify-buy-ui';
+const config = {
+  domain: 'buckets-o-stuff.myshopify.com',
+  storefrontAccessToken: 123,
+};
 
 describe('ui class', () => {
   let ui;
   let script;
-
   let client;
   let integrations;
-  let config;
 
   beforeEach(() => {
     integrations = {
       errorReporter: {notifyException: sinon.spy()},
       tracker: 'test',
-    };
-    config = {
-      domain: 'buckets-o-stuff.myshopify.com',
-      storefrontAccessToken: 123,
     };
     client = ShopifyBuy.buildClient(config);
     client.config.domain = 'test-domain.myshopify.com';
@@ -39,31 +37,33 @@ describe('ui class', () => {
   });
 
   describe('constructor', () => {
-    let resizeSpy;
-    let hostClickSpy;
-    let escSpy;
-    let postMessageSpy;
-    let appendStyleTagSpy;
+    let resizeStub;
+    let hostClickStub;
+    let escStub;
+    let postMessageStub;
+    let trackPageviewStub;
+    let appendStyleTagStub;
 
     beforeEach(() => {
-      resizeSpy = sinon.spy(UI.prototype, '_bindResize');
-      hostClickSpy = sinon.spy(UI.prototype, '_bindHostClick');
-      escSpy = sinon.spy(UI.prototype, '_bindEsc');
-      postMessageSpy = sinon.spy(UI.prototype, '_bindPostMessage');
-      appendStyleTagSpy = sinon.spy(UI.prototype, '_appendStyleTag');
+      resizeStub = sinon.stub(UI.prototype, '_bindResize');
+      hostClickStub = sinon.stub(UI.prototype, '_bindHostClick');
+      escStub = sinon.stub(UI.prototype, '_bindEsc');
+      postMessageStub = sinon.stub(UI.prototype, '_bindPostMessage');
+      trackPageviewStub = sinon.stub(Tracker.prototype, 'trackPageview');
+      appendStyleTagStub = sinon.stub(UI.prototype, '_appendStyleTag');
       ui = new UI(client, integrations, 'test');
     });
 
     afterEach(() => {
-      ui = null;
-      resizeSpy.restore();
-      hostClickSpy.restore();
-      escSpy.restore();
-      postMessageSpy.restore();
-      appendStyleTagSpy.restore();
+      resizeStub.restore();
+      hostClickStub.restore();
+      escStub.restore();
+      postMessageStub.restore();
+      trackPageviewStub.restore();
+      appendStyleTagStub.restore();
     });
 
-    it('sets client and domain from passed in client and client.config.domain', () => {
+    it('sets client and domain from client and client.config.domain params', () => {
       assert.equal(ui.client, client);
       assert.equal(ui.config.domain, client.config.domain);
     });
@@ -72,8 +72,8 @@ describe('ui class', () => {
       assert.deepEqual(ui.iframeComponents, []);
     });
 
-    it('creates an empty components object holding product, cart, collection, productSet, modal, and toggle', () => {
-      const emptyComponentsObj = {
+    it('creates a components object holding empty arrays for product, cart, collection, productSet, modal, and toggle', () => {
+      const expectedComponentsObj = {
         product: [],
         cart: [],
         collection: [],
@@ -81,10 +81,10 @@ describe('ui class', () => {
         modal: [],
         toggle: [],
       };
-      assert.deepEqual(ui.components, emptyComponentsObj);
+      assert.deepEqual(ui.components, expectedComponentsObj);
     });
 
-    it('creates component types object for product, cart, collection, productSet, modal, toggle', () => {
+    it('creates a componentTypes object for product, cart, collection, productSet, modal, toggle', () => {
       const componentTypes = {
         product: Product,
         cart: Cart,
@@ -95,7 +95,7 @@ describe('ui class', () => {
       assert.deepEqual(ui.componentTypes, componentTypes);
     });
 
-    it('sets an error reporter from integrations props', () => {
+    it('sets an errorReporter from integrations param', () => {
       assert.equal(ui.errorReporter, integrations.errorReporter);
     });
 
@@ -107,29 +107,29 @@ describe('ui class', () => {
       assert.equal(ui.styleOverrides, 'test');
     });
 
+    it('calls tracker\'s trackPageview', () => {
+      assert.calledOnce(trackPageviewStub);
+    });
+
     it('sets active element to null', () => {
       assert.equal(ui.activeEl, null);
     });
 
     it('calls _appendStyleTag', () => {
-      assert.calledOnce(appendStyleTagSpy);
+      assert.calledOnce(appendStyleTagStub);
     });
 
     it('sets up event bindings', () => {
-      assert.calledOnce(resizeSpy);
-      assert.calledOnce(hostClickSpy);
-      assert.calledWith(escSpy, window);
-      assert.calledOnce(postMessageSpy);
+      assert.calledOnce(resizeStub);
+      assert.calledOnce(hostClickStub);
+      assert.calledWith(escStub, window);
+      assert.calledOnce(postMessageStub);
     });
   });
 
   describe('prototype methods', () => {
     beforeEach(() => {
       ui = new UI(client, integrations);
-    });
-
-    afterEach(() => {
-      ui = null;
     });
 
     describe('createCart', () => {
