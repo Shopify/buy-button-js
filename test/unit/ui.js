@@ -55,6 +55,7 @@ describe('ui class', () => {
     });
 
     afterEach(() => {
+      ui = null;
       resizeSpy.restore();
       hostClickSpy.restore();
       escSpy.restore();
@@ -125,6 +126,10 @@ describe('ui class', () => {
   describe('prototype methods', () => {
     beforeEach(() => {
       ui = new UI(client, integrations);
+    });
+
+    afterEach(() => {
+      ui = null;
     });
 
     describe('createCart', () => {
