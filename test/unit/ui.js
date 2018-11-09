@@ -111,7 +111,7 @@ describe('ui class', () => {
       assert.calledOnce(trackPageviewStub);
     });
 
-    it('sets active element to null', () => {
+    it('sets activeEl to null', () => {
       assert.equal(ui.activeEl, null);
     });
 
@@ -119,9 +119,10 @@ describe('ui class', () => {
       assert.calledOnce(appendStyleTagStub);
     });
 
-    it('sets up event bindings', () => {
+    it('cals private event bindings methods', () => {
       assert.calledOnce(resizeStub);
       assert.calledOnce(hostClickStub);
+      assert.calledOnce(escStub);
       assert.calledWith(escStub, window);
       assert.calledOnce(postMessageStub);
     });
