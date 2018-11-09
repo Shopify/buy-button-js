@@ -119,7 +119,7 @@ describe('ui class', () => {
       assert.calledOnce(appendStyleTagStub);
     });
 
-    it('cals private event bindings methods', () => {
+    it('calls private event binding methods', () => {
       assert.calledOnce(resizeStub);
       assert.calledOnce(hostClickStub);
       assert.calledOnce(escStub);
