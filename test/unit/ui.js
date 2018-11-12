@@ -196,13 +196,12 @@ describe('ui class', () => {
         });
 
         describe('when no cart exists', () => {
-          it('creates a new cart', () => {
-            return ui.createCart({options: {}}).then(() => {
-              assert.equal(1, ui.components.cart.length);
-              assert.instanceOf(ui.components.cart[0], Cart);
-              assert.calledOnce(initStub);
-              ui.destroyComponent('cart', ui.components.cart[0].model.id);
-            });
+          it('creates a new cart', async () => {
+            await ui.createCart({options: {}});
+            assert.equal(1, ui.components.cart.length);
+            assert.instanceOf(ui.components.cart[0], Cart);
+            assert.calledOnce(initStub);
+            ui.destroyComponent('cart', ui.components.cart[0].model.id);
           });
         });
 
