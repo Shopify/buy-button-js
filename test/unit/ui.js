@@ -132,8 +132,20 @@ describe('ui class', () => {
   });
 
   describe('prototype methods', () => {
+    let appendChildStub;
+
     beforeEach(() => {
       ui = new UI(client, integrations);
+      appendChildStub = sinon.stub(document.body, 'appendChild').returns({
+        parentNode: {
+          insertBefore: sinon.spy(),
+          removeChild: sinon.spy(),
+        },
+      });
+    });
+
+    afterEach(() => {
+      appendChildStub.restore();
     });
 
     describe('component methods', () => {
@@ -277,21 +289,13 @@ describe('ui class', () => {
     describe('cart methods', () => {
       describe('createCart()', () => {
         let initStub;
-        let appendChildStub;
 
         beforeEach(() => {
           initStub = sinon.stub(Cart.prototype, 'init').resolves('test');
-          appendChildStub = sinon.stub(document.body, 'appendChild').returns({
-            parentNode: {
-              insertBefore: sinon.spy(),
-              removeChild: sinon.spy(),
-            },
-          });
         });
 
         afterEach(() => {
           initStub.restore();
-          appendChildStub.restore();
         });
 
         describe('when no cart exists', () => {
@@ -421,6 +425,105 @@ describe('ui class', () => {
           assert.calledOnce(restoreFocusSpy);
           restoreFocusSpy.restore();
         });
+      });
+    });
+
+    describe('modal methods', () => {
+      describe('createModal()', () => {
+        it('creates and returns a new modal if one does not already exist', () => {
+          const modal = ui.createModal({options: {}});
+          assert.equal(1, ui.components.modal.length);
+          assert.instanceOf(ui.components.modal[0], Modal);
+          assert.instanceOf(modal, Modal);
+        });
+
+        it('does not create a modal and returns first modal if it already exists', () => {
+          ui.components.modal = [{options: {}}];
+          const modal = ui.createModal({options: {}});
+          assert.equal(1, ui.components.modal.length);
+          assert.equal(modal, ui.components.modal[0]);
+        });
+      });
+
+      describe('closeModal()', () => {
+        let restoreFocusStub;
+
+        beforeEach(() => {
+          restoreFocusStub = sinon.stub(UI.prototype, 'restoreFocus');
+        });
+
+        afterEach(() => {
+          restoreFocusStub.restore();
+        });
+
+        it('closes every modal then restores focus once all is done', () => {
+          const closeSpy1 = sinon.spy();
+          const closeSpy2 = sinon.spy();
+          const closeSpy3 = sinon.spy();
+          ui.components.modal = [
+            {close: closeSpy1},
+            {close: closeSpy2},
+            {close: closeSpy3},
+          ];
+
+          ui.closeModal();
+          assert.calledOnce(closeSpy1);
+          assert.calledOnce(closeSpy2);
+          assert.calledOnce(closeSpy3);
+          assert.calledOnce(restoreFocusStub);
+        });
+
+        it('does not restore focus if there are no modals', () => {
+          ui.components.modal = [];
+          ui.closeModal();
+          assert.notCalled(restoreFocusStub);
+        });
+      });
+    });
+
+    describe('setActiveEl()', () => {
+      it('sets activeEl to element param', () => {
+        ui.setActiveEl('test');
+        assert.equal(ui.activeEl, 'test');
+      });
+    });
+
+    describe('restoreFocus()', () => {
+      let focusSpy;
+
+      beforeEach(() => {
+        focusSpy = sinon.spy();
+        ui.activeEl = {focus: focusSpy};
+        ui = Object.defineProperty(ui, 'modalOpen', {
+          writable: true,
+        });
+        ui = Object.defineProperty(ui, 'cartOpen', {
+          writable: true,
+        });
+      });
+
+      it('focuses on activeEl if activeEl exists and both modal and cart are closed', () => {
+        ui.modalOpen = false;
+        ui.cartOpen = false;
+
+        ui.restoreFocus();
+        assert.calledOnce(focusSpy);
+      });
+
+      it('does not focus on activeEl if modal is open', () => {
+        ui.modalOpen = true;
+        ui.cartOpen = false;
+
+        ui.restoreFocus();
+        assert.notCalled(focusSpy);
+      });
+
+      it('does not focus on activeEl if cart is open', () => {
+        ui.modalOpen = false;
+        ui.cartOpen = true;
+
+        ui.restoreFocus();
+        assert.notCalled(focusSpy);
       });
     });
   });
