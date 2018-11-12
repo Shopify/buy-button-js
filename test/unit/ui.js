@@ -184,15 +184,23 @@ describe('ui class', () => {
     });
 
     describe('cart methods', () => {
-      describe('createCart', () => {
+      describe('createCart()', () => {
         let initStub;
+        let appendChildStub;
 
         beforeEach(() => {
-          initStub = sinon.stub(Cart.prototype, 'init').resolves();
+          initStub = sinon.stub(Cart.prototype, 'init').resolves('test');
+          appendChildStub = sinon.stub(document.body, 'appendChild').returns({
+            parentNode: {
+              insertBefore: sinon.spy(),
+              removeChild: sinon.spy(),
+            },
+          });
         });
 
         afterEach(() => {
           initStub.restore();
+          appendChildStub.restore();
         });
 
         describe('when no cart exists', () => {
@@ -201,7 +209,11 @@ describe('ui class', () => {
             assert.equal(1, ui.components.cart.length);
             assert.instanceOf(ui.components.cart[0], Cart);
             assert.calledOnce(initStub);
-            ui.destroyComponent('cart', ui.components.cart[0].model.id);
+          });
+
+          it('returns the init value', async () => {
+            const response = await ui.createCart({options: {}});
+            assert.equal(response, 'test');
           });
         });
 
@@ -247,8 +259,8 @@ describe('ui class', () => {
         });
       });
 
-      describe('closeCart', () => {
-        it('calls cart.close for every visible cart and calls restoreFocus after each close', () => {
+      describe('closeCart()', () => {
+        it('closes every visible cart and restores focus after each close', () => {
           const closeSpy1 = sinon.spy();
           const closeSpy2 = sinon.spy();
           const closeSpy3 = sinon.spy();
@@ -267,8 +279,8 @@ describe('ui class', () => {
         });
       });
 
-      describe('openCart', () => {
-        it('calls cart.open for every cart', () => {
+      describe('openCart()', () => {
+        it('opens every cart', () => {
           const openSpy1 = sinon.spy();
           const openSpy2 = sinon.spy();
           const openSpy3 = sinon.spy();
@@ -288,8 +300,8 @@ describe('ui class', () => {
         });
       });
 
-      describe('toggleCart', () => {
-        it('calls cart.toggleVisilbity for every cart', () => {
+      describe('toggleCart()', () => {
+        it('toggles visibility of every cart to visibility param', () => {
           const toggleSpy1 = sinon.spy();
           const toggleSpy2 = sinon.spy();
           const toggleSpy3 = sinon.spy();
@@ -310,7 +322,7 @@ describe('ui class', () => {
           assert.calledWith(toggleSpy3, true);
         });
 
-        it('calls restoreFocus only if visibility param is false', () => {
+        it('restores focus only if visibility param is false', () => {
           const restoreFocusSpy = sinon.spy(UI.prototype, 'restoreFocus');
           ui.toggleCart(true);
           assert.notCalled(restoreFocusSpy);
