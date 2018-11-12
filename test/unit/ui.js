@@ -1,6 +1,7 @@
 import ShopifyBuy from '../../src/buybutton';
 import UI from '../../src/ui';
 import Product from '../../src/components/product';
+import Modal from '../../src/components/modal';
 import Tracker from '../../src/utils/track';
 import ProductSet from '../../src/components/product-set';
 import Cart from '../../src/components/cart';
@@ -18,10 +19,12 @@ describe('ui class', () => {
   let script;
   let client;
   let integrations;
+  let notifyExceptionSpy;
 
   beforeEach(() => {
+    notifyExceptionSpy = sinon.spy();
     integrations = {
-      errorReporter: {notifyException: sinon.spy()},
+      errorReporter: {notifyException: notifyExceptionSpy},
       tracker: 'test',
     };
     client = ShopifyBuy.buildClient(config);
@@ -107,7 +110,7 @@ describe('ui class', () => {
       assert.equal(ui.styleOverrides, 'test');
     });
 
-    it('calls tracker\'s trackPageview', () => {
+    it('calls tracker.trackPageview()', () => {
       assert.calledOnce(trackPageviewStub);
     });
 
@@ -115,7 +118,7 @@ describe('ui class', () => {
       assert.equal(ui.activeEl, null);
     });
 
-    it('calls _appendStyleTag', () => {
+    it('calls _appendStyleTag()', () => {
       assert.calledOnce(appendStyleTagStub);
     });
 
@@ -133,53 +136,141 @@ describe('ui class', () => {
       ui = new UI(client, integrations);
     });
 
-    describe('createComponent', () => {
-      let initStub;
-      let trackStub;
-      let productConfig;
-
-      beforeEach(() => {
-        productConfig = {
+    describe('component methods', () => {
+      describe('createComponent()', () => {
+        const productConfig = {
           id: 123,
           options: {},
+          node: 'test',
         };
-        initStub = sinon.stub(Product.prototype, 'init').resolves();
-        trackStub = sinon.stub(ui, 'trackComponent');
-      });
 
-      afterEach(() => {
-        initStub.restore();
-        trackStub.restore();
-      });
+        describe('successful component initialization', () => {
+          let initStub;
+          let trackStub;
+          let queryEntryNodeStub;
 
-      it('creates new component of type', () => {
-        return ui.createComponent('product', productConfig).then(() => {
-          assert.equal(1, ui.components.product.length);
-          ui.destroyComponent('product', ui.components.product[0].model.id);
+          beforeEach(() => {
+            initStub = sinon.stub(Product.prototype, 'init').resolves();
+            trackStub = sinon.stub(ui, 'trackComponent');
+            queryEntryNodeStub = sinon.stub(UI.prototype, '_queryEntryNode').returns('testNode');
+          });
+
+          afterEach(() => {
+            initStub.restore();
+            trackStub.restore();
+            queryEntryNodeStub.restore();
+          });
+
+          it('creates new component of type with tracker attached', async () => {
+            await ui.createComponent('product', productConfig);
+            assert.equal(1, ui.components.product.length);
+            assert.instanceOf(ui.components.product[0], Product);
+            assert.calledOnce(initStub);
+            assert.calledOnce(trackStub);
+            assert.equal(trackStub.getCall(0).args[0], 'product');
+            assert.instanceOf(trackStub.getCall(0).args[1], Product);
+          });
+
+          it('grabs node from _queryEntryNode() if no node is passed in from config', async () => {
+            productConfig.node = null;
+
+            await ui.createComponent('product', productConfig);
+            assert.calledOnce(queryEntryNodeStub);
+            assert.equal(productConfig.node, 'testNode');
+          });
+
+          it('returns the component', async () => {
+            const response = await ui.createComponent('product', productConfig);
+            assert.instanceOf(response, Product);
+          });
+        });
+
+        describe('unsuccessful component initialization', () => {
+          let errorInitStub;
+          let consoleErrorStub;
+          const error = {errors: [{message: 'rejected.'}]};
+
+          beforeEach(() => {
+            errorInitStub = sinon.stub(Product.prototype, 'init').rejects(error);
+            consoleErrorStub = sinon.stub(console, 'error');
+          });
+
+          afterEach(() => {
+            errorInitStub.restore();
+            consoleErrorStub.restore();
+          });
+
+          it('catches any error from initialization and notifies errorReporter if it exists', async () => {
+            await ui.createComponent('product', productConfig);
+            assert.throws(ui.createComponent, Error);
+            assert.calledOnce(notifyExceptionSpy);
+            assert.calledWith(notifyExceptionSpy, error);
+          });
+
+          it('errors out the console with the error', async () => {
+            await ui.createComponent('product', productConfig);
+            assert.throws(ui.createComponent, Error);
+            assert.calledOnce(consoleErrorStub);
+            assert.calledWith(consoleErrorStub, error);
+          });
         });
       });
 
-      it('passes config to constructor', () => {
-        productConfig.node = null;
-        return ui.createComponent('product', productConfig).then(() => {
-          assert.equal(null, ui.components.product[0].config.node);
-          ui.destroyComponent('product', ui.components.product[0].model.id);
+      describe('destroyComponent()', () => {
+        let destroySpy;
+        let testCart;
+
+        beforeEach(() => {
+          destroySpy = sinon.spy();
+          testCart = {
+            model: {
+              id: 123,
+            },
+            destroy: destroySpy,
+          };
+        });
+
+        it('destroys component and removes component from components array if the id param matches with the component model\'s id', () => {
+          ui.components.cart.push(testCart);
+          assert.equal(ui.components.cart[0].model.id, 123);
+          ui.destroyComponent('cart', 123);
+          assert.equal(0, ui.components.cart.length);
+          assert.calledOnce(destroySpy);
         });
       });
-    });
 
-    describe('destroyComponent', () => {
-      it('removes component and calls its destroy method', () => {
-        const testCart = {
-          model: {
-            id: 123,
-          },
-          destroy: sinon.spy(),
-        };
-        ui.components.cart.push(testCart);
-        ui.destroyComponent('cart', 123);
-        assert.equal(0, ui.components.cart.length);
-        assert.calledOnce(testCart.destroy);
+      describe('trackComponent()', () => {
+        let trackComponentStub;
+
+        beforeEach(() => {
+          trackComponentStub = sinon.stub(Tracker.prototype, 'trackComponent');
+        });
+
+        afterEach(() => {
+          trackComponentStub.restore();
+        });
+
+        it('tracks each product in set if the component is a productSet', () => {
+          const productSet = {
+            trackingInfo: [1, 2, 3],
+          };
+
+          ui.trackComponent('productSet', productSet);
+          assert.callCount(trackComponentStub, 3);
+          assert.calledWith(trackComponentStub.getCall(0), 'product', 1);
+          assert.calledWith(trackComponentStub.getCall(1), 'product', 2);
+          assert.calledWith(trackComponentStub.getCall(2), 'product', 3);
+        });
+
+        it('tracks component with the given component type if the component is not a productSet', () => {
+          const component = {
+            trackingInfo: 'test',
+          };
+
+          ui.trackComponent('testType', component);
+          assert.calledOnce(trackComponentStub);
+          assert.calledWith(trackComponentStub, 'testType', 'test');
+        });
       });
     });
 
