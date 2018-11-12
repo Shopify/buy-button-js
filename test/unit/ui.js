@@ -6,6 +6,9 @@ import Tracker from '../../src/utils/track';
 import ProductSet from '../../src/components/product-set';
 import Cart from '../../src/components/cart';
 import CartToggle from '../../src/components/toggle';
+import * as browserFeatures from '../../src/utils/detect-features';
+import hostStyles from '../../src/styles/host/host';
+import conditionalStyles from '../../src/styles/host/conditional';
 import shopFixture from '../fixtures/shop-info';
 
 const DATA_ATTRIBUTE = 'data-shopify-buy-ui';
@@ -524,6 +527,167 @@ describe('ui class', () => {
 
         ui.restoreFocus();
         assert.notCalled(focusSpy);
+      });
+    });
+
+    describe('getters', () => {
+      describe('modalOpen', () => {
+        it('returns true if at least one modal is visible', () => {
+          ui.components.modal = [
+            {isVisible: false},
+            {isVisible: false},
+            {isVisible: true},
+          ];
+          assert.equal(ui.modalOpen, true);
+        });
+
+        it('returns false if all modals are not visible', () => {
+          ui.components.modal = [
+            {isVisible: false},
+            {isVisible: false},
+            {isVisible: false},
+          ];
+          assert.equal(ui.modalOpen, false);
+        });
+      });
+
+      describe('cartOpen', () => {
+        it('returns true if at least one cart is visible', () => {
+          ui.components.cart = [
+            {isVisible: false},
+            {isVisible: false},
+            {isVisible: true},
+          ];
+          assert.equal(ui.cartOpen, true);
+        });
+
+        it('returns false if all carts are not visible', () => {
+          ui.components.cart = [
+            {isVisible: false},
+            {isVisible: false},
+            {isVisible: false},
+          ];
+          assert.equal(ui.cartOpen, false);
+        });
+      });
+
+      describe('componentProps', () => {
+        it('contains the client', () => {
+          assert.equal(ui.componentProps.client, ui.client);
+        });
+
+        it('contains createCart()', () => {
+          const createCartStub = sinon.stub(ui, 'createCart');
+          ui.componentProps.createCart();
+          assert.calledOnce(createCartStub);
+          createCartStub.restore();
+        });
+
+        it('contains closeCart()', () => {
+          const closeCartStub = sinon.stub(ui, 'closeCart');
+          ui.componentProps.closeCart();
+          assert.calledOnce(closeCartStub);
+          closeCartStub.restore();
+        });
+
+        it('contains toggleCart()', () => {
+          const toggleCartStub = sinon.stub(ui, 'toggleCart');
+          ui.componentProps.toggleCart();
+          assert.calledOnce(toggleCartStub);
+          toggleCartStub.restore();
+        });
+
+        it('contains createModal()', () => {
+          const createModalStub = sinon.stub(ui, 'createModal');
+          ui.componentProps.createModal();
+          assert.calledOnce(createModalStub);
+          createModalStub.restore();
+        });
+
+        it('contains closeModal()', () => {
+          const closeModalStub = sinon.stub(ui, 'closeModal');
+          ui.componentProps.closeModal();
+          assert.calledOnce(closeModalStub);
+          closeModalStub.restore();
+        });
+
+        it('contains setActiveEl()', () => {
+          const setActiveElStub = sinon.stub(ui, 'setActiveEl');
+          ui.componentProps.setActiveEl();
+          assert.calledOnce(setActiveElStub);
+          setActiveElStub.restore();
+        });
+
+        it('contains destroyComponent()', () => {
+          const destroyComponentStub = sinon.stub(ui, 'destroyComponent');
+          ui.componentProps.destroyComponent();
+          assert.calledOnce(destroyComponentStub);
+          destroyComponentStub.restore();
+        });
+
+        it('contains tracker', () => {
+          assert.equal(ui.componentProps.tracker, ui.tracker);
+        });
+
+        it('contains error reporter', () => {
+          assert.equal(ui.componentProps.errorReporter, ui.errorReporter);
+        });
+
+        it('contains browser features', () => {
+          assert.equal(ui.componentProps.browserFeatures, browserFeatures.default);
+        });
+      });
+
+      describe('styleText', () => {
+        let browserFeaturesStub;
+
+        afterEach(() => {
+          browserFeaturesStub.restore();
+        });
+
+        it('returns string of CSS with host styles and style overrides if browser features include transition, transform, and animation', () => {
+          browserFeaturesStub = sinon.stub(browserFeatures, 'default').value({
+            transition: true,
+            transform: true,
+            animation: true,
+          });
+          assert.equal(ui.styleText, hostStyles + ui.styleOverrides);
+        });
+
+        describe('missing browser features', () => {
+          let expectedString;
+
+          beforeEach(() => {
+            expectedString = hostStyles + conditionalStyles + ui.styleOverrides;
+          });
+
+          it('returns string of CSS with host styles, conditional styles, and style overrides if browser features does not have transition', () => {
+            browserFeaturesStub = sinon.stub(browserFeatures, 'default').value({
+              transition: false,
+              transform: true,
+              animation: true,
+            });
+            assert.equal(ui.styleText, expectedString);
+          });
+
+          it('returns string of CSS with host styles, conditional styles, and style overrides if browser features does not have transform', () => {
+            browserFeaturesStub = sinon.stub(browserFeatures, 'default').value({
+              transition: true,
+              transform: false,
+              animation: true,
+            });
+            assert.equal(ui.styleText, expectedString);
+          });
+
+          it('returns string of CSS with host styles, conditional styles, and style overrides if browser features does not have animation', () => {
+            browserFeaturesStub = sinon.stub(browserFeatures, 'default').value({
+              transition: true,
+              transform: true,
+              animation: false,
+            });
+            assert.equal(ui.styleText, expectedString);
+          });
+        });
       });
     });
   });
