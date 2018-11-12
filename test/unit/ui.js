@@ -133,36 +133,6 @@ describe('ui class', () => {
       ui = new UI(client, integrations);
     });
 
-    describe('createCart', () => {
-      let initStub;
-
-      beforeEach(() => {
-        initStub = sinon.stub(Cart.prototype, 'init').resolves();
-      });
-
-      afterEach(() => {
-        initStub.restore();
-      });
-
-      describe('when no cart exists', () => {
-        it('creates a new cart', () => {
-          return ui.createCart({options: {}}).then(() => {
-            assert.equal(1, ui.components.cart.length, 'cart array has 1 item');
-            ui.destroyComponent('cart', ui.components.cart[0].model.id);
-          });
-        });
-      });
-
-      describe('when a cart exists', () => {
-        it('does not create a second cart', () => {
-          return ui.createCart({options: {}}).then(() => ui.createCart({options: {}})).then(() => {
-            assert.equal(1, ui.components.cart.length, 'cart array has 1 item');
-            ui.destroyComponent('cart', ui.components.cart[0].model.id);
-          });
-        });
-      });
-    });
-
     describe('createComponent', () => {
       let initStub;
       let trackStub;
@@ -210,6 +180,156 @@ describe('ui class', () => {
         ui.destroyComponent('cart', 123);
         assert.equal(0, ui.components.cart.length);
         assert.calledOnce(testCart.destroy);
+      });
+    });
+
+    describe('cart methods', () => {
+      describe('createCart()', () => {
+        let initStub;
+        let appendChildStub;
+
+        beforeEach(() => {
+          initStub = sinon.stub(Cart.prototype, 'init').resolves('test');
+          appendChildStub = sinon.stub(document.body, 'appendChild').returns({
+            parentNode: {
+              insertBefore: sinon.spy(),
+              removeChild: sinon.spy(),
+            },
+          });
+        });
+
+        afterEach(() => {
+          initStub.restore();
+          appendChildStub.restore();
+        });
+
+        describe('when no cart exists', () => {
+          it('creates a new cart', async () => {
+            await ui.createCart({options: {}});
+            assert.equal(1, ui.components.cart.length);
+            assert.instanceOf(ui.components.cart[0], Cart);
+            assert.calledOnce(initStub);
+          });
+
+          it('returns the init value', async () => {
+            const response = await ui.createCart({options: {}});
+            assert.equal(response, 'test');
+          });
+        });
+
+        describe('when a cart exists', () => {
+          let createTogglesStub;
+
+          beforeEach(() => {
+            createTogglesStub = sinon.stub().resolves();
+            ui.components.cart = [{
+              toggles: [1, 2],
+              createToggles: createTogglesStub,
+            }];
+          });
+
+          it('does not create a second cart', async () => {
+            await ui.createCart({options: {}});
+            assert.equal(1, ui.components.cart.length);
+            assert.notCalled(initStub);
+          });
+
+          it('creates toggles for the first cart if the first cart has less toggles than the config', async () => {
+            const createCartConfig = {toggles: [1, 2, 3]};
+            await ui.createCart(createCartConfig);
+            assert.calledOnce(createTogglesStub);
+            assert.calledWith(createTogglesStub, createCartConfig);
+          });
+
+          it('does not create toggles for the first cart if the first cart has an equal amount of toggles to the config', async () => {
+            await ui.createCart({toggles: [1, 2]});
+            assert.notCalled(createTogglesStub);
+          });
+
+          it('does not create toggles for the first cart if the first cart has more toggles than the config', async () => {
+            await ui.createCart({toggles: [1]});
+            assert.notCalled(createTogglesStub);
+          });
+
+          it('returns the first cart', async () => {
+            const createCartConfig = {toggles: [1, 2, 3]};
+            const response = await ui.createCart(createCartConfig);
+            assert.equal(response, ui.components.cart[0]);
+          });
+        });
+      });
+
+      describe('closeCart()', () => {
+        it('closes every visible cart and restores focus after each close', () => {
+          const closeSpy1 = sinon.spy();
+          const closeSpy2 = sinon.spy();
+          const closeSpy3 = sinon.spy();
+          const restoreFocusSpy = sinon.spy(UI.prototype, 'restoreFocus');
+          ui.components.cart = [
+            {isVisible: true, close: closeSpy1},
+            {isVisible: true, close: closeSpy2},
+            {isVisible: false, close: closeSpy3},
+          ];
+          ui.closeCart();
+          assert.calledOnce(closeSpy1);
+          assert.calledOnce(closeSpy2);
+          assert.notCalled(closeSpy3);
+          assert.callCount(restoreFocusSpy, 2);
+          restoreFocusSpy.restore();
+        });
+      });
+
+      describe('openCart()', () => {
+        it('opens every cart', () => {
+          const openSpy1 = sinon.spy();
+          const openSpy2 = sinon.spy();
+          const openSpy3 = sinon.spy();
+          const openSpy4 = sinon.spy();
+
+          ui.components.cart = [
+            {isVisible: true, open: openSpy1},
+            {isVisible: true, open: openSpy2},
+            {isVisible: false, open: openSpy3},
+            {isVisible: false, open: openSpy4},
+          ];
+          ui.openCart();
+          assert.calledOnce(openSpy1);
+          assert.calledOnce(openSpy2);
+          assert.calledOnce(openSpy3);
+          assert.calledOnce(openSpy4);
+        });
+      });
+
+      describe('toggleCart()', () => {
+        it('toggles visibility of every cart to visibility param', () => {
+          const toggleSpy1 = sinon.spy();
+          const toggleSpy2 = sinon.spy();
+          const toggleSpy3 = sinon.spy();
+          ui.components.cart = [
+            {toggleVisibility: toggleSpy1},
+            {toggleVisibility: toggleSpy2},
+            {toggleVisibility: toggleSpy3},
+          ];
+          ui.toggleCart(true);
+
+          assert.calledOnce(toggleSpy1);
+          assert.calledWith(toggleSpy1, true);
+
+          assert.calledOnce(toggleSpy2);
+          assert.calledWith(toggleSpy2, true);
+
+          assert.calledOnce(toggleSpy3);
+          assert.calledWith(toggleSpy3, true);
+        });
+
+        it('restores focus only if visibility param is false', () => {
+          const restoreFocusSpy = sinon.spy(UI.prototype, 'restoreFocus');
+          ui.toggleCart(true);
+          assert.notCalled(restoreFocusSpy);
+          ui.toggleCart(false);
+          assert.calledOnce(restoreFocusSpy);
+          restoreFocusSpy.restore();
+        });
       });
     });
   });
