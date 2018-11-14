@@ -135,20 +135,8 @@ describe('ui class', () => {
   });
 
   describe('prototype methods', () => {
-    let appendChildStub;
-
     beforeEach(() => {
       ui = new UI(client, integrations);
-      appendChildStub = sinon.stub(document.body, 'appendChild').returns({
-        parentNode: {
-          insertBefore: sinon.spy(),
-          removeChild: sinon.spy(),
-        },
-      });
-    });
-
-    afterEach(() => {
-      appendChildStub.restore();
     });
 
     describe('component methods', () => {
@@ -174,6 +162,7 @@ describe('ui class', () => {
             initStub.restore();
             trackStub.restore();
             queryEntryNodeStub.restore();
+            ui.components.product = [];
           });
 
           it('creates new component of type with tracker attached', async () => {
@@ -292,13 +281,21 @@ describe('ui class', () => {
     describe('cart methods', () => {
       describe('createCart()', () => {
         let initStub;
+        let appendChildStub;
 
         beforeEach(() => {
           initStub = sinon.stub(Cart.prototype, 'init').resolves('test');
+          appendChildStub = sinon.stub(document.body, 'appendChild').returns({
+            parentNode: {
+              insertBefore: sinon.spy(),
+              removeChild: sinon.spy(),
+            },
+          });
         });
 
         afterEach(() => {
           initStub.restore();
+          appendChildStub.restore();
         });
 
         describe('when no cart exists', () => {
@@ -432,6 +429,21 @@ describe('ui class', () => {
     });
 
     describe('modal methods', () => {
+      let appendChildStub;
+
+      beforeEach(() => {
+        appendChildStub = sinon.stub(document.body, 'appendChild').returns({
+          parentNode: {
+            insertBefore: sinon.spy(),
+            removeChild: sinon.spy(),
+          },
+        });
+      });
+
+      afterEach(() => {
+        appendChildStub.restore();
+      });
+
       describe('createModal()', () => {
         it('creates and returns a new modal if one does not already exist', () => {
           const modal = ui.createModal({options: {}});
