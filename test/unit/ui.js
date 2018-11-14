@@ -7,6 +7,7 @@ import ProductSet from '../../src/components/product-set';
 import Cart from '../../src/components/cart';
 import CartToggle from '../../src/components/toggle';
 import * as browserFeatures from '../../src/utils/detect-features';
+import * as throttle from '../../src/utils/throttle';
 import hostStyles from '../../src/styles/host/host';
 import conditionalStyles from '../../src/styles/host/conditional';
 import shopFixture from '../fixtures/shop-info';
@@ -67,6 +68,7 @@ describe('ui class', () => {
       postMessageStub.restore();
       trackPageviewStub.restore();
       appendStyleTagStub.restore();
+      ui = null;
     });
 
     it('sets client and domain from client and client.config.domain params', () => {
@@ -155,7 +157,7 @@ describe('ui class', () => {
           beforeEach(() => {
             initStub = sinon.stub(Product.prototype, 'init').resolves();
             trackStub = sinon.stub(ui, 'trackComponent');
-            queryEntryNodeStub = sinon.stub(UI.prototype, '_queryEntryNode').returns('testNode');
+            queryEntryNodeStub = sinon.stub(ui, '_queryEntryNode').returns('testNode');
           });
 
           afterEach(() => {
@@ -279,6 +281,10 @@ describe('ui class', () => {
     });
 
     describe('cart methods', () => {
+      afterEach(() => {
+        ui.components.cart = [];
+      });
+
       describe('createCart()', () => {
         let initStub;
         let appendChildStub;
@@ -359,7 +365,7 @@ describe('ui class', () => {
           const closeSpy1 = sinon.spy();
           const closeSpy2 = sinon.spy();
           const closeSpy3 = sinon.spy();
-          const restoreFocusSpy = sinon.spy(UI.prototype, 'restoreFocus');
+          const restoreFocusStub = sinon.stub(ui, 'restoreFocus');
           ui.components.cart = [
             {isVisible: true, close: closeSpy1},
             {isVisible: true, close: closeSpy2},
@@ -369,8 +375,8 @@ describe('ui class', () => {
           assert.calledOnce(closeSpy1);
           assert.calledOnce(closeSpy2);
           assert.notCalled(closeSpy3);
-          assert.callCount(restoreFocusSpy, 2);
-          restoreFocusSpy.restore();
+          assert.callCount(restoreFocusStub, 2);
+          restoreFocusStub.restore();
         });
       });
 
@@ -418,33 +424,37 @@ describe('ui class', () => {
         });
 
         it('restores focus only if visibility param is false', () => {
-          const restoreFocusSpy = sinon.spy(UI.prototype, 'restoreFocus');
+          const restoreFocusStub = sinon.stub(ui, 'restoreFocus');
           ui.toggleCart(true);
-          assert.notCalled(restoreFocusSpy);
+          assert.notCalled(restoreFocusStub);
           ui.toggleCart(false);
-          assert.calledOnce(restoreFocusSpy);
-          restoreFocusSpy.restore();
+          assert.calledOnce(restoreFocusStub);
+          restoreFocusStub.restore();
         });
       });
     });
 
     describe('modal methods', () => {
-      let appendChildStub;
-
-      beforeEach(() => {
-        appendChildStub = sinon.stub(document.body, 'appendChild').returns({
-          parentNode: {
-            insertBefore: sinon.spy(),
-            removeChild: sinon.spy(),
-          },
-        });
-      });
-
       afterEach(() => {
-        appendChildStub.restore();
+        ui.components.modal = [];
       });
 
       describe('createModal()', () => {
+        let appendChildStub;
+
+        beforeEach(() => {
+          appendChildStub = sinon.stub(document.body, 'appendChild').returns({
+            parentNode: {
+              insertBefore: sinon.spy(),
+              removeChild: sinon.spy(),
+            },
+          });
+        });
+
+        afterEach(() => {
+          appendChildStub.restore();
+        });
+
         it('creates and returns a new modal if one does not already exist', () => {
           const modal = ui.createModal({options: {}});
           assert.equal(1, ui.components.modal.length);
@@ -464,7 +474,7 @@ describe('ui class', () => {
         let restoreFocusStub;
 
         beforeEach(() => {
-          restoreFocusStub = sinon.stub(UI.prototype, 'restoreFocus');
+          restoreFocusStub = sinon.stub(ui, 'restoreFocus');
         });
 
         afterEach(() => {
@@ -544,6 +554,10 @@ describe('ui class', () => {
 
     describe('getters', () => {
       describe('modalOpen', () => {
+        afterEach(() => {
+          ui.components.modal = [];
+        });
+
         it('returns true if at least one modal is visible', () => {
           ui.components.modal = [
             {isVisible: false},
@@ -564,6 +578,10 @@ describe('ui class', () => {
       });
 
       describe('cartOpen', () => {
+        afterEach(() => {
+          ui.components.cart = [];
+        });
+
         it('returns true if at least one cart is visible', () => {
           ui.components.cart = [
             {isVisible: false},
@@ -698,6 +716,298 @@ describe('ui class', () => {
               animation: false,
             });
             assert.equal(ui.styleText, expectedString);
+          });
+        });
+      });
+    });
+
+    describe('"private" methods', () => {
+      describe('_queryEntryNode', () => {
+        let appendToBodyStub;
+        let createElementStub;
+        const div = document.createElement('div');
+
+        beforeEach(() => {
+          appendToBodyStub = sinon.stub(ui, '_appendToBody');
+          createElementStub = sinon.stub(document, 'createElement').returns(div);
+        });
+
+        afterEach(() => {
+          appendToBodyStub.restore();
+          createElementStub.restore();
+        });
+
+        it('sets entry to data-shopify-buy-ui script if entry does not exist', () => {
+          ui.entry = null;
+          ui._queryEntryNode();
+          assert.equal(ui.entry, script);
+        });
+
+        it('appends to body if the entry\'s parent node is head', () => {
+          ui.entry = {
+            parentNode: {
+              tagName: 'HEAD',
+            },
+          };
+          ui._queryEntryNode();
+          assert.calledOnce(appendToBodyStub);
+          assert.calledWith(appendToBodyStub, div);
+        });
+
+        it('appends to body if the entry\'s parent node is HTML', () => {
+          ui.entry = {
+            parentNode: {
+              tagName: 'HTML',
+            },
+          };
+          ui._queryEntryNode();
+          assert.calledOnce(appendToBodyStub);
+          assert.calledWith(appendToBodyStub, div);
+        });
+
+        it('appends to body if there is no entry', () => {
+          const querySelectorAllStub = sinon.stub(window.document, 'querySelectorAll').returns([null]);
+          ui.entry = null;
+          ui._queryEntryNode();
+          assert.calledOnce(appendToBodyStub);
+          assert.calledWith(appendToBodyStub, div);
+          querySelectorAllStub.restore();
+        });
+
+        it('appends to body, removes attribute from entry then calls insertBefore on parentNode if entry\'s parent node is not head or html', () => {
+          const insertBeforeSpy = sinon.spy();
+          const removeAttributeSpy = sinon.spy();
+          ui.entry = {
+            parentNode: {
+              tagName: 'not HEAD or HTML',
+              insertBefore: insertBeforeSpy,
+            },
+            removeAttribute: removeAttributeSpy,
+          };
+
+          ui._queryEntryNode();
+          assert.calledOnce(removeAttributeSpy);
+          assert.calledWith(removeAttributeSpy, DATA_ATTRIBUTE);
+          assert.calledOnce(insertBeforeSpy);
+          assert.calledWith(insertBeforeSpy, div, ui.entry);
+        });
+
+        it('returns the created div', () => {
+          assert.equal(ui._queryEntryNode(), div);
+        });
+      });
+
+      describe('_appendToBody', () => {
+        it('appends element to body', () => {
+          const appendChildStub = sinon.stub(document.body, 'appendChild');
+          const pElement = document.createElement('P');
+          ui._appendToBody(pElement);
+          assert.calledOnce(appendChildStub);
+          assert.calledWith(appendChildStub, pElement);
+          appendChildStub.restore();
+        });
+      });
+
+      describe('_appendStyleTag', () => {
+        let styleTag;
+        let styleTagAppendChildSpy;
+
+        beforeEach(() => {
+          styleTagAppendChildSpy = sinon.spy();
+          styleTag = {
+            appendChild: styleTagAppendChildSpy,
+          };
+        });
+
+        it('appends styletag to document head', () => {
+          const createElementStub = sinon.stub(document, 'createElement').returns(styleTag);
+          const headAppendChildStub = sinon.stub(document.head, 'appendChild');
+
+          ui._appendStyleTag();
+          assert.calledOnce(headAppendChildStub);
+          assert.calledWith(headAppendChildStub, styleTag);
+          headAppendChildStub.restore();
+          createElementStub.restore();
+        });
+
+        it('sets styleTag\'s cssText to styleText if styleSheet exists in styleTag', () => {
+          styleTag.styleSheet = {cssText: {}};
+          const createElementStub = sinon.stub(document, 'createElement').returns(styleTag);
+          const headAppendChildStub = sinon.stub(document.head, 'appendChild');
+          ui._appendStyleTag();
+
+          assert.calledOnce(headAppendChildStub);
+          assert.equal(headAppendChildStub.getCall(0).args[0].styleSheet.cssText, ui.styleText);
+          headAppendChildStub.restore();
+          createElementStub.restore();
+        });
+
+        it('appends text node to style tag if stylesheet does not exist', () => {
+          const createElementStub = sinon.stub(document, 'createElement').returns(styleTag);
+          const headAppendChildStub = sinon.stub(document.head, 'appendChild');
+          const createTextNode = sinon.stub(document, 'createTextNode').returnsArg(0);
+          ui._appendStyleTag();
+          assert.calledOnce(styleTagAppendChildSpy);
+          assert.calledWith(styleTagAppendChildSpy, ui.styleText);
+          headAppendChildStub.restore();
+          createElementStub.restore();
+          createTextNode.restore();
+        });
+      });
+
+      // event bindings were called in the constructor so these just need to dispatch the event
+      describe('event bindings', () => {
+        describe('_bindHostClick', () => {
+          let closeCartStub;
+          let initStub;
+          let event;
+
+          beforeEach(() => {
+            closeCartStub = sinon.stub(ui, 'closeCart');
+            initStub = sinon.stub(Cart.prototype, 'init').resolves();
+            event = new Event('click', {bubbles: true});
+          });
+
+          afterEach(() => {
+            closeCartStub.restore();
+            initStub.restore();
+          });
+
+          it('does nothing if cart is clicked', () => {
+            const node = document.createElement('div');
+            ui.components.cart = [{node}];
+            ui.components.cart[0].node.dispatchEvent(event);
+            assert.notCalled(closeCartStub);
+          });
+
+          it('does nothing if cart does not exist', () => {
+            ui.components.cart = [];
+            document.dispatchEvent(event);
+            assert.equal(ui.components.cart.length, 0);
+            assert.notCalled(closeCartStub);
+          });
+
+          it('closes cart if it exists and a click happened outside of the cart', () => {
+            const node = document.createElement('div');
+            ui.components.cart = [{node}];
+            document.dispatchEvent(event);
+            assert.calledOnce(closeCartStub);
+          });
+        });
+
+        describe('_bindResize', () => {
+          it('throttles with resize and safeResize params', () => {
+            const throttleStub = sinon.stub(throttle, 'default');
+            ui._bindResize();
+            assert.calledWith(throttleStub, 'resize', 'safeResize');
+            throttleStub.restore();
+          });
+
+          describe('on safeResize event', () => {
+            let event;
+
+            beforeEach(() => {
+              event = new Event('safeResize');
+            });
+
+            it('resizes view for each collection on safeResize', () => {
+              const resizeSpy1 = sinon.spy();
+              const resizeSpy2 = sinon.spy();
+
+              ui.components.collection = [
+                {view: {resize: resizeSpy1}},
+                {view: {resize: resizeSpy2}},
+              ];
+
+              window.dispatchEvent(event);
+              assert.calledOnce(resizeSpy1);
+              assert.calledOnce(resizeSpy2);
+              ui.components.collection = [];
+            });
+
+            it('resizes view for each productSet', () => {
+              const resizeSpy1 = sinon.spy();
+              const resizeSpy2 = sinon.spy();
+              const resizeSpy3 = sinon.spy();
+              ui.components.productSet = [
+                {view: {resize: resizeSpy1}},
+                {view: {resize: resizeSpy2}},
+                {view: {resize: resizeSpy3}},
+              ];
+
+              window.dispatchEvent(event);
+              assert.calledOnce(resizeSpy1);
+              assert.calledOnce(resizeSpy2);
+              assert.calledOnce(resizeSpy3);
+              ui.components.productSet = [];
+            });
+
+            it('resizes view for each product', () => {
+              const resizeSpy1 = sinon.spy();
+              const resizeSpy2 = sinon.spy();
+              ui.components.product = [
+                {view: {resize: resizeSpy1}},
+                {view: {resize: resizeSpy2}},
+              ];
+
+              window.dispatchEvent(event);
+              assert.calledOnce(resizeSpy1);
+              assert.calledOnce(resizeSpy2);
+              ui.components.product = [];
+            });
+          });
+        });
+
+        describe('_bindEsc', () => {
+          let closeModalStub;
+          let closeCartStub;
+          let event;
+
+          beforeEach(() => {
+            closeModalStub = sinon.stub(ui, 'closeModal');
+            closeCartStub = sinon.stub(ui, 'closeCart');
+            event = new Event('keydown', {bubbles: true});
+          });
+
+          afterEach(() => {
+            closeModalStub.restore();
+            closeCartStub.restore();
+          });
+
+          it('closes modal and cart if escape key is pressed', () => {
+            event.keyCode = 27; // escape key
+            window.dispatchEvent(event);
+            assert.calledOnce(closeModalStub);
+            assert.calledOnce(closeCartStub);
+          });
+
+          it('does nothing if escape key was not pressed', () => {
+            event.keyCode = 99999;
+            window.dispatchEvent(event);
+
+            assert.notCalled(closeModalStub);
+            assert.notCalled(closeCartStub);
+          });
+        });
+
+        describe('_bindPostMessage', () => {
+          let event;
+          let parseStub;
+
+          beforeEach(() => {
+            parseStub = sinon.stub(JSON, 'parse').returns({});
+            event = new Event('message');
+            event.data = 'test';
+          });
+
+          afterEach(() => {
+            parseStub.restore();
+          });
+
+          it('parses data from message', () => {
+            window.dispatchEvent(event);
+            // called once is not tested because the stub is on the global JSON instance rather than the class instance
+            assert.calledWith(parseStub, 'test');
           });
         });
       });
