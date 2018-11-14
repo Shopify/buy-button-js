@@ -1,19 +1,19 @@
 import Component from '../../src/component';
 import View from '../../src/view';
 import Updater from '../../src/updater';
-import componentDefaults from '../../src/defaults/components';
-
+import * as componentDefaults from '../../src/defaults/components';
+import defaultMoneyFormat from '../../src/defaults/money-format';
 
 describe('Component class', () => {
   describe('constructor', () => {
     let component;
+    let componentDefaultsStub;
     const config = {
       id: 'id',
       handle: 'handle',
       storefrontId: 'sfid',
       debug: 'debug',
       cartNode: 'cartNode',
-      moneyFormat: '${{amount}}',
       modalNode: 'modalNode',
       toggles: 'toggles',
       node: document.createElement('div'),
@@ -24,9 +24,15 @@ describe('Component class', () => {
       },
     };
     const props = 'props';
+    const componentDefault = 'default';
 
     beforeEach(() => {
+      componentDefaultsStub = sinon.stub(componentDefaults, 'default').value({componentDefault});
       component = new Component(config, props);
+    });
+
+    afterEach(() => {
+      componentDefaultsStub.restore();
     });
 
     it('sets id, storeFrontId, node, and handle on instance', () => {
@@ -40,11 +46,17 @@ describe('Component class', () => {
       const expectedObj = {
         debug: config.debug,
         cartNode: config.cartNode,
-        moneyFormat: config.moneyFormat,
+        moneyFormat: decodeURIComponent(defaultMoneyFormat),
         modalNode: config.modalNode,
         toggles: config.toggles,
       };
       assert.deepEqual(component.globalConfig, expectedObj);
+    });
+
+    it('sets moneyFormat to decoded moneyFormat from config if it exists', () => {
+      config.moneyFormat = encodeURIComponent('$${{amount}}');
+      component = new Component(config);
+      assert.equal(component.globalConfig.moneyFormat, decodeURIComponent('$${{amount}}'));
     });
 
     it('instantiates a view', () => {
@@ -57,7 +69,7 @@ describe('Component class', () => {
 
     it('sets config from merging config.options with componentDefaults', () => {
       assert.equal(component.config.product.buttonDestination, config.options.product.buttonDestination);
-      assert.deepEqual(component.config.cart, componentDefaults.cart);
+      assert.equal(component.config.componentDefault, componentDefault);
     });
 
     it('sets props from props passed in', () => {
