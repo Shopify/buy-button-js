@@ -158,6 +158,39 @@ export default class Product extends Component {
   }
 
   /**
+   * get image for selected variant and size based on provided width and height
+   * @return {Object} image object.
+   */
+  imageForSize(width, height) {
+    if (!(this.selectedVariant || this.options.contents.imgWithCarousel)) {
+      return null;
+    }
+
+    let id;
+    let src;
+
+    const imageOptions = {
+      maxWidth: width,
+      maxHeight: height,
+    };
+
+    if (this.selectedImage) {
+      id = this.selectedImage.id;
+      src = this.props.client.image.helpers.imageForSize(this.selectedImage, imageOptions);
+    } else if (this.selectedVariant.image == null && this.model.images[0] == null) {
+      id = null;
+      src = '';
+    } else if (this.selectedVariant.image == null) {
+      id = this.model.images[0].id;
+      src = this.props.client.image.helpers.imageForSize(this.model.images[0], imageOptions);
+    } else {
+      id = this.selectedVariant.image.id;
+      src = this.props.client.image.helpers.imageForSize(this.selectedVariant.image, imageOptions);
+    }
+    return {id, src};
+  }
+
+  /**
    * get formatted cart subtotal based on moneyFormat
    * @return {String}
    */

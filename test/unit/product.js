@@ -758,6 +758,19 @@ describe('Product class', () => {
     });
   });
 
+  describe('get custom image size'), () => {
+    describe('default', () => {
+      beforeEach(() => {
+        return product.init(testProductCopy);
+      });
+
+      it('returns custom image size', () => {
+        product.config.product.width = undefined;
+        assert.equal(product.imageForSize(10, 10).src, rootImageURI + 'image-one_10x10.jpg');
+      });
+    });
+  };
+
   describe('onCarouselChange', () => {
     beforeEach(() => {
       return product.init(testProductCopy).then(() => {
