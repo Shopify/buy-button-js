@@ -1,46 +1,83 @@
 import Component from '../../src/component';
 import View from '../../src/view';
+import Updater from '../../src/updater';
+import * as componentDefaults from '../../src/defaults/components';
+import defaultMoneyFormat from '../../src/defaults/money-format';
 
 describe('Component class', () => {
   describe('constructor', () => {
-    it('stores id, node, and handle on instance', () => {
-      const node = document.createElement('div');
-      const component = new Component({
-        id: 1234,
-        handle: 'lol',
-        node,
-      });
+    let component;
+    let componentDefaultsStub;
+    const config = {
+      id: 'id',
+      handle: 'handle',
+      storefrontId: 'sfid',
+      debug: 'debug',
+      cartNode: 'cartNode',
+      modalNode: 'modalNode',
+      toggles: 'toggles',
+      node: document.createElement('div'),
+      options: {
+        product: {
+          buttonDestination: 'modal',
+        },
+      },
+    };
+    const props = 'props';
+    const componentDefault = 'default';
 
-      assert.equal(component.id, 1234);
-      assert.equal(component.handle, 'lol');
-      assert.equal(component.node, node);
+    beforeEach(() => {
+      componentDefaultsStub = sinon.stub(componentDefaults, 'default').value({componentDefault});
+      component = new Component(config, props);
+    });
+
+    afterEach(() => {
+      componentDefaultsStub.restore();
+    });
+
+    it('sets id, storeFrontId, node, and handle on instance', () => {
+      assert.equal(component.id, config.id);
+      assert.equal(component.handle, config.handle);
+      assert.equal(component.storefrontId, config.storefrontId);
+      assert.equal(component.node, config.node);
     });
 
     it('sets globalConfig based on passed in config', () => {
-      const component = new Component({
-        id: 1234,
-      });
-      assert.equal(component.globalConfig.moneyFormat, '${{amount}}');
+      const expectedObj = {
+        debug: config.debug,
+        cartNode: config.cartNode,
+        moneyFormat: decodeURIComponent(defaultMoneyFormat),
+        modalNode: config.modalNode,
+        toggles: config.toggles,
+      };
+      assert.deepEqual(component.globalConfig, expectedObj);
+    });
+
+    it('sets moneyFormat to decoded moneyFormat from config if it exists', () => {
+      config.moneyFormat = encodeURIComponent('$${{amount}}');
+      component = new Component(config);
+      assert.equal(component.globalConfig.moneyFormat, decodeURIComponent('$${{amount}}'));
     });
 
     it('instantiates a view', () => {
-      const component = new Component({
-        id: 1234,
-      });
       assert.instanceOf(component.view, View);
     });
 
-    it('merges configuration options with defaults', () => {
-      const config = {
-        options: {
-          product: {
-            buttonDestination: 'modal',
-          },
-        },
-      };
-      const component = new Component(config);
-      assert.equal(component.config.product.buttonDestination, 'modal', 'configuration options override defaults');
-      assert.equal(component.config.cart.iframe, true, 'defaults are merged into configuration');
+    it('instantiates an updater', () => {
+      assert.instanceOf(component.updater, Updater);
+    });
+
+    it('sets config from merging config.options with componentDefaults', () => {
+      assert.equal(component.config.product.buttonDestination, config.options.product.buttonDestination);
+      assert.equal(component.config.componentDefault, componentDefault);
+    });
+
+    it('sets props from props passed in', () => {
+      assert.equal(component.props, props);
+    });
+
+    it('instantiates an empty model object', () => {
+      assert.deepEqual(component.model, {});
     });
   });
 
