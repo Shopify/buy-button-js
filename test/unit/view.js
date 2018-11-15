@@ -5,67 +5,110 @@ import Iframe from '../../src/iframe';
 
 describe('View class', () => {
   describe('constructor', () => {
-    const component = new Component({id: 1234});
-    const view = new View(component);
+    let component;
+    let view;
+
+    beforeEach(() => {
+      component = new Component({
+        id: 1234,
+        node: document.createElement('div'),
+      });
+      view = new View(component);
+    });
 
     it('stores component to instance', () => {
       assert.equal(view.component, component);
     });
 
+    it('sets iframe to null', () => {
+      assert.equal(view.iframe, null);
+    });
+
+    it('sets node to component\'s node', () => {
+      assert.equal(view.node, component.node);
+    });
+
     it('creates a template instance', () => {
       assert.instanceOf(view.template, Template);
+    });
+
+    it('sets eventBound to false', () => {
+      assert.equal(view.eventsBound, false);
     });
   });
 
   describe('prototype methods', () => {
+    let component;
+    let view;
+
+    beforeEach(() => {
+      component = new Component({
+        id: 1234,
+        node: document.createElement('div'),
+      }, {browserFeatures: {}});
+      view = new View(component);
+      component.typeKey = 'product';
+    });
+
     describe('init()', () => {
-      let component;
-      let view;
+      let loadStub;
+      let addClassStub;
+      const loadRes = 'done';
 
       beforeEach(() => {
-        component = new Component({
-          id: 1234,
-          node: document.createElement('div'),
-        }, {browserFeatures: {}});
-        view = new View(component);
-        component.typeKey = 'product';
-      });
-
-      it('returns a promise if iframe option is false', () => {
-        component.config.product.iframe = false;
-        return view.init().then((iframe) => {
-          assert.isNull(iframe);
+        loadStub = sinon.stub(Iframe.prototype, 'load').resolves(loadRes);
+        addClassStub = sinon.stub(Iframe.prototype, 'addClass');
+        component = Object.defineProperty(component, 'options', {
+          writable: true,
+          value: {
+            iframe: true,
+            manifest: ['product', 'option'],
+          },
         });
       });
 
-      it('loads an Iframe', () => {
-        component.config.product.iframe = true;
-        const loadStub = sinon.stub(Iframe.prototype, 'load').returns(Promise.resolve());
-        const addClassSpy = sinon.spy(Iframe.prototype, 'addClass');
-        return view.init().then(() => {
-          assert.instanceOf(view.iframe, Iframe);
-          assert.equal(component.node.className, ' shopify-buy-frame shopify-buy-frame--product');
-          assert.calledOnce(loadStub);
-          assert.calledWith(addClassSpy, '');
-          loadStub.restore();
-          addClassSpy.restore();
-        });
+      afterEach(() => {
+        loadStub.restore();
+        addClassStub.restore();
+      });
+
+      it('returns a promise if iframe option is false', async () => {
+        component.options.iframe = false;
+        const iframe = await view.init();
+        assert.isNull(iframe);
+      });
+
+      it('returns the iframe if it already exists', async () => {
+        view.iframe = 'iframe';
+        const iframe = await view.init();
+        assert.equal(iframe, view.iframe);
+      });
+
+      it('creates and loads an Iframe', async () => {
+        await view.init();
+        assert.instanceOf(view.iframe, Iframe);
+        assert.calledOnce(loadStub);
+      });
+
+      it('returns the response of iframe\'s load()', async () => {
+        const response = await view.init();
+        assert.equal(response, loadRes);
+      });
+
+      it('adds view\'s className to iframe', async () => {
+        await view.init();
+        assert.calledOnce(addClassStub);
+        assert.calledWith(addClassStub, view.className);
+      });
+
+      it('adds class name dependent on typeKey to component node', async () => {
+        component.typeKey = 'typeKey';
+        await view.init();
+        assert.equal(component.node.className, ' shopify-buy-frame shopify-buy-frame--typeKey');
       });
     });
 
     describe('render()', () => {
-      let component;
-      let view;
-
-      beforeEach(() => {
-        component = new Component({
-          id: 1234,
-          node: document.createElement('div'),
-        }, {browserFeatures: {}});
-        view = new View(component);
-        component.typeKey = 'product';
-      });
-
       it('creates div and updates html', () => {
         const div = document.createElement('div');
         const tmplRender = sinon.stub(view.template, 'render').returns('<div>LOL</div>');
@@ -81,9 +124,6 @@ describe('View class', () => {
     });
 
     describe('delegateEvents()', () => {
-      let component;
-      let view;
-
       beforeEach(() => {
         component = new Component({
           id: 1234,
@@ -130,17 +170,6 @@ describe('View class', () => {
     });
 
     describe('append()', () => {
-      let component;
-      let view;
-
-      beforeEach(() => {
-        component = new Component({
-          id: 1234,
-          node: document.createElement('div'),
-        }, {browserFeatures: {}});
-        view = new View(component);
-      });
-
       it('appends to document if iframe', () => {
         const div = document.createElement('div');
         view.iframe = {
@@ -165,10 +194,6 @@ describe('View class', () => {
 
     describe('destroy()', () => {
       it('removes node from parent', () => {
-        const component = new Component({
-          id: 1234,
-        }, {browserFeatures: {}});
-        const view = new View(component);
         view.node = {
           parentNode: {
             removeChild: sinon.spy(),
@@ -209,11 +234,6 @@ describe('View class', () => {
     });
 
     describe('updateNode()', () => {
-      const component = new Component({
-        id: 1234,
-      }, {browserFeatures: {}});
-      const view = new View(component);
-
       it('updates contents of node', () => {
         const div = document.createElement('div');
         div.innerHTML = '<h1>OLD TEXT</h1>';
@@ -225,27 +245,16 @@ describe('View class', () => {
 
     describe('wrapTemplate()', () => {
       it('puts strings in a div', () => {
-        const component = new Component({
-          id: 1234,
-        }, {browserFeatures: {}});
-        component.typeKey = 'product';
-        const view = new View(component);
         const string = view.wrapTemplate('test');
         assert.equal(string, '<div class="shopify-buy__product">test</div>');
       });
     });
 
     describe('resize()', () => {
-      let component;
-      let view;
       let resizeX;
       let resizeY;
 
       beforeEach(() => {
-        component = new Component({
-          id: 1234,
-        }, {browserFeatures: {}});
-        view = new View(component);
         resizeX = sinon.spy(view, '_resizeX');
         resizeY = sinon.spy(view, '_resizeY');
       });
@@ -312,8 +321,6 @@ describe('View class', () => {
 
     describe('animateRemoveNode()', () => {
       let node;
-      let view;
-      let component;
 
       beforeEach(() => {
         component = new Component({
@@ -347,10 +354,6 @@ describe('View class', () => {
 
     describe('removeNode()', () => {
       it('removes node and calls render', () => {
-        const component = new Component({
-          id: 1234,
-        });
-        const view = new View(component);
         const div = document.createElement('div');
         div.setAttribute('id', 123);
         document.body.appendChild(div);
