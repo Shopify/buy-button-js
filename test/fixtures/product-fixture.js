@@ -4,39 +4,39 @@ const testProduct = {
   storefrontId: 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0LzEyMw==',
   images: [
     {
-      id: 1,
-      src: 'https://cdn.shopify.com/s/image-one.jpg',
+      id: '1',
+      src: 'https://cdn.shopify.com/s/files/1/0014/8583/2214/products/image-one.jpg',
     },
     {
-      id: 2,
-      src: 'https://cdn.shopify.com/s/image-two.jpg',
+      id: '2',
+      src: 'https://cdn.shopify.com/s/files/1/0014/8583/2214/products/image-two.jpeg',
     },
     {
-      id: 3,
-      src: 'https://cdn.shopify.com/s/image-three.jpg',
+      id: '3',
+      src: 'https://cdn.shopify.com/s/files/1/0014/8583/2214/products/image-three.jpg',
     },
     {
-      id: 4,
-      src: 'https://cdn.shopify.com/s/image-four.jpg',
+      id: '4',
+      src: 'https://cdn.shopify.com/s/files/1/0014/8583/2214/products/image-four.jpeg',
     },
   ],
   options: [
     {
       name: 'Print',
       values: [
-        { value: 'sloth' },
-        { value: 'shark' },
-        { value: 'cat' },
-      ]
+        {value: 'sloth'},
+        {value: 'shark'},
+        {value: 'cat'},
+      ],
     },
     {
       name: 'Size',
       selected: 'small',
       values: [
-        { value: 'small' },
-        { value: 'large' }
-      ]
-    }
+        {value: 'small'},
+        {value: 'large'},
+      ],
+    },
   ],
   variants: [
     {
@@ -47,18 +47,18 @@ const testProduct = {
       available: true,
       image: {
         id: 100,
-        src: "https://cdn.shopify.com/s/image-one.jpg"
+        src: 'https://cdn.shopify.com/s/files/1/0014/8583/2214/products/image-one.jpg',
       },
       selectedOptions: [
         {
           name: 'Print',
-          value: 'sloth'
+          value: 'sloth',
         },
         {
           name: 'Size',
-          value: 'small'
-        }
-      ]
+          value: 'small',
+        },
+      ],
     },
     {
       id: 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0Ng==',
@@ -68,18 +68,18 @@ const testProduct = {
       available: true,
       image: {
         id: 200,
-        src: "https://cdn.shopify.com/s/image-two.jpg"
+        src: 'https://cdn.shopify.com/s/files/1/0014/8583/2214/products/image-two.jpeg',
       },
       selectedOptions: [
         {
           name: 'Print',
-          value: 'shark'
+          value: 'shark',
         },
         {
           name: 'Size',
-          value: 'small'
-        }
-      ]
+          value: 'small',
+        },
+      ],
     },
     {
       id: 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0Nw==',
@@ -89,18 +89,18 @@ const testProduct = {
       available: true,
       image: {
         id: 300,
-        src: "https://cdn.shopify.com/s/image-three.jpg"
+        src: 'https://cdn.shopify.com/s/files/1/0014/8583/2214/products/image-three.jpg',
       },
       selectedOptions: [
         {
           name: 'Print',
-          value: 'shark'
+          value: 'shark',
         },
         {
           name: 'Size',
-          value: 'large'
-        }
-      ]
+          value: 'large',
+        },
+      ],
     },
     {
       id: 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0OA==',
@@ -111,15 +111,15 @@ const testProduct = {
       selectedOptions: [
         {
           name: 'Print',
-          value: 'cat'
+          value: 'cat',
         },
         {
           name: 'Size',
-          value: 'small'
-        }
-      ]
+          value: 'small',
+        },
+      ],
     },
-  ]
-}
+  ],
+};
 
 export default testProduct;
