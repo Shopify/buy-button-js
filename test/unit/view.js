@@ -117,13 +117,15 @@ describe('View class', () => {
       let resizeStub;
       let div;
       let htmlTemplate;
+      let wrapTemplateReturnVal;
 
       beforeEach(() => {
         div = document.createElement('div');
         htmlTemplate = '<div>test</div>';
+        wrapTemplateReturnVal = 'wrapped';
         userEventStub = sinon.stub(component, '_userEvent');
         templateRenderStub = sinon.stub(view.template, 'render').returns(htmlTemplate);
-        wrapTemplateStub = sinon.stub(view, 'wrapTemplate');
+        wrapTemplateStub = sinon.stub(view, 'wrapTemplate').returns(wrapTemplateReturnVal);
         createWrapperStub = sinon.stub(view, '_createWrapper').returns(div);
         updateNodeStub = sinon.stub(view, 'updateNode');
         resizeStub = sinon.stub(view, 'resize');
@@ -142,12 +144,13 @@ describe('View class', () => {
         view.render();
         assert.calledOnce(templateRenderStub);
         assert.deepEqual(templateRenderStub.getCall(0).args[0], {data: component.viewData});
-        templateRenderStub.getCall(0).args[1]('test');
+        const renderCb = templateRenderStub.getCall(0).args[1]('test');
         assert.calledOnce(wrapTemplateStub);
         assert.calledWith(wrapTemplateStub, 'test');
+        assert.equal(renderCb, wrapTemplateReturnVal);
       });
 
-      it('calls component\'s user event befor and after render', () => {
+      it('calls component\'s user event before and after render', () => {
         view.render();
         assert.calledTwice(userEventStub);
         assert.calledWith(userEventStub.getCall(0), 'beforeRender');
@@ -163,7 +166,7 @@ describe('View class', () => {
       });
 
       it('does not create a new wrapper if one already exists', () => {
-        view.wrapper = 'test';
+        view.wrapper = document.createElement('div');
         view.render();
         assert.notCalled(createWrapperStub);
       });
@@ -177,18 +180,24 @@ describe('View class', () => {
     });
 
     describe('delegateEvents()', () => {
+      let addEventListenerSpy;
+      let clickBtnSpy;
+      let clickSpy;
       let closeComponentsOnEscStub;
       let onStub;
 
       beforeEach(() => {
+        addEventListenerSpy = sinon.spy();
+        clickBtnSpy = sinon.spy();
+        clickSpy = sinon.spy();
         component = Object.defineProperty(component, 'DOMEvents', {
           value: {
-            'click .btn': sinon.spy(),
-            click: sinon.spy(),
+            'click .btn': clickBtnSpy,
+            click: clickSpy,
           },
         });
         view.wrapper = {
-          addEventListener: sinon.spy(),
+          addEventListener: addEventListenerSpy,
         };
         closeComponentsOnEscStub = sinon.stub(view, 'closeComponentsOnEsc');
         onStub = sinon.stub(view, '_on');
@@ -199,43 +208,55 @@ describe('View class', () => {
         onStub.restore();
       });
 
-      it('calls closeComponentsOnEsc', () => {
+      it('calls closeComponentsOnEsc()', () => {
         view.delegateEvents();
         assert.calledOnce(closeComponentsOnEscStub);
       });
 
       it('calls _on for each DOM event with a selector', () => {
+        const event = new Event('click');
+        const target = document.createElement('div');
         view.delegateEvents();
         assert.calledOnce(onStub);
         assert.calledWith(onStub, 'click', '.btn');
-        onStub.getCall(0).args[2]();
-        assert.calledOnce(component.DOMEvents['click .btn']);
+        onStub.getCall(0).args[2](event, target);
+        assert.calledOnce(clickBtnSpy);
+        assert.calledWith(clickBtnSpy, event, target);
       });
 
       it('adds event listener for DOM event without a selector', () => {
+        const event = new Event('click');
         view.delegateEvents();
-        assert.calledWith(view.wrapper.addEventListener, 'click');
-        view.wrapper.addEventListener.getCall(0).args[1]();
-        assert.calledOnce(component.DOMEvents.click);
+        assert.calledWith(addEventListenerSpy, 'click');
+        addEventListenerSpy.getCall(0).args[1](event);
+        assert.calledOnce(clickSpy);
+        assert.calledWith(clickSpy, event);
       });
 
-      it('bind events if eventsBound is false', () => {
+      it('binds events and sets eventsBound to true if eventsBound is false', () => {
+        view.eventsBound = false;
         view.delegateEvents();
-        assert.called(view.wrapper.addEventListener);
+        assert.called(closeComponentsOnEscStub);
+        assert.called(onStub);
+        assert.called(addEventListenerSpy);
+        assert.equal(view.eventsBound, true);
       });
 
       it('prevents rebinding if events are already bound', () => {
         view.eventsBound = true;
-        view.delegateEvents();
-        assert.notCalled(view.wrapper.addEventListener);
+        assert.notCalled(closeComponentsOnEscStub);
+        assert.notCalled(onStub);
+        assert.notCalled(addEventListenerSpy);
       });
 
-      it('sets iframe.el.onload to reloadIframe() if iframe already exists', () => {
+      it('sets iframe.el.onload to null and reloads iframe when iframe.el.onload is called if iframe already exists', () => {
         const reloadIframeStub = sinon.stub(view, 'reloadIframe');
         view.iframe = {el: {}};
 
         view.delegateEvents();
+        assert.instanceOf(view.iframe.el.onload, Function);
         view.iframe.el.onload();
+        assert.equal(view.iframe.el.onload, null);
         assert.calledOnce(reloadIframeStub);
         reloadIframeStub.restore();
       });
@@ -243,17 +264,18 @@ describe('View class', () => {
 
     describe('append()', () => {
       it('appends to document if iframe exists', () => {
+        const appendChildSpy = sinon.spy();
         const div = document.createElement('div');
         view.iframe = {
           document: {
             body: {
-              appendChild: sinon.spy(),
+              appendChild: appendChildSpy,
             },
           },
         };
         view.append(div);
-        assert.calledOnce(view.iframe.document.body.appendChild);
-        assert.calledWith(view.iframe.document.body.appendChild, div);
+        assert.calledOnce(appendChildSpy);
+        assert.calledWith(appendChildSpy, div);
       });
 
       it('appends to node if iframe does not exist', () => {
@@ -269,14 +291,15 @@ describe('View class', () => {
 
     describe('destroy()', () => {
       it('removes node from parent', () => {
+        const removeChildSpy = sinon.spy();
         view.node = {
           parentNode: {
-            removeChild: sinon.spy(),
+            removeChild: removeChildSpy,
           },
         };
         view.destroy();
-        assert.calledOnce(view.node.parentNode.removeChild);
-        assert.calledWith(view.node.parentNode.removeChild, view.node);
+        assert.calledOnce(removeChildSpy);
+        assert.calledWith(removeChildSpy, view.node);
       });
     });
 
@@ -284,19 +307,23 @@ describe('View class', () => {
       it('updates node with new node and html created from class name and template params', () => {
         const html = '<h1>test</h1>';
         const node = document.createElement('div');
+        const renderStub = sinon.stub().returns(html);
+        const querySelectorStub = sinon.stub().returns(node);
         const template = {
-          render: sinon.stub().returns(html),
+          render: renderStub,
         };
-        view.wrapper = {querySelector: sinon.stub().returns(node)};
+        view.wrapper = {
+          querySelector: querySelectorStub,
+        };
         const updateNodeStub = sinon.stub(view, 'updateNode');
 
         view.renderChild('class1 class2', template);
 
-        assert.calledOnce(view.wrapper.querySelector);
-        assert.calledWith(view.wrapper.querySelector, '.class1.class2');
+        assert.calledOnce(querySelectorStub);
+        assert.calledWith(querySelectorStub, '.class1.class2');
 
-        assert.calledOnce(template.render);
-        assert.deepEqual(template.render.getCall(0).args[0], {data: view.component.viewData});
+        assert.calledOnce(renderStub);
+        assert.deepEqual(renderStub.getCall(0).args[0], {data: view.component.viewData});
 
         assert.calledOnce(updateNodeStub);
         assert.calledWith(updateNodeStub, node, html);
