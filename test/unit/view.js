@@ -2,6 +2,7 @@ import View from '../../src/view';
 import Component from '../../src/component';
 import Template from '../../src/template';
 import Iframe from '../../src/iframe';
+import * as elementClass from '../../src/utils/element-class';
 
 describe('View class', () => {
   describe('constructor', () => {
@@ -262,6 +263,26 @@ describe('View class', () => {
       });
     });
 
+    describe('reloadIframe()', () => {
+      it('removes iframe and initializes component', () => {
+        const el = document.createElement('div');
+        view.iframe = {el};
+        view.wrapper = {};
+        const removeChildStub = sinon.stub(view.node, 'removeChild');
+        const initStub = sinon.stub(view.component, 'init');
+
+        view.reloadIframe();
+        assert.calledOnce(removeChildStub);
+        assert.calledWith(removeChildStub, el);
+        assert.isNull(view.wrapper);
+        assert.isNull(view.iframe);
+        assert.calledOnce(initStub);
+
+        removeChildStub.restore();
+        initStub.restore();
+      });
+    });
+
     describe('append()', () => {
       it('appends to document if iframe exists', () => {
         const appendChildSpy = sinon.spy();
@@ -286,6 +307,64 @@ describe('View class', () => {
         assert.calledOnce(appendChildStub);
         assert.calledWith(appendChildStub, div);
         appendChildStub.restore();
+      });
+    });
+
+    describe('addClass()', () => {
+      let addClassToElementStub;
+      let addClassSpy;
+
+      beforeEach(() => {
+        addClassSpy = sinon.spy();
+        view.iframe = {addClass: addClassSpy};
+        addClassToElementStub = sinon.stub(elementClass, 'addClassToElement');
+      });
+
+      afterEach(() => {
+        addClassToElementStub.restore();
+      });
+
+      it('adds class to iframe if iframe exists', () => {
+        view.addClass('test-class');
+        assert.calledOnce(addClassSpy);
+        assert.calledWith(addClassSpy, 'test-class');
+        assert.notCalled(addClassToElementStub);
+      });
+
+      it('adds class to element if iframe does not exist', () => {
+        view.iframe = null;
+        view.addClass('test-class');
+        assert.calledOnce(addClassToElementStub);
+        assert.calledWith(addClassToElementStub, 'test-class', view.component.node);
+      });
+    });
+
+    describe('removeClass()', () => {
+      let removeClassFromElementStub;
+      let removeClassSpy;
+
+      beforeEach(() => {
+        removeClassSpy = sinon.spy();
+        view.iframe = {removeClass: removeClassSpy};
+        removeClassFromElementStub = sinon.stub(elementClass, 'removeClassFromElement');
+      });
+
+      afterEach(() => {
+        removeClassFromElementStub.restore();
+      });
+
+      it('removes class from iframe if iframe exists', () => {
+        view.removeClass('test-class');
+        assert.calledOnce(removeClassSpy);
+        assert.calledWith(removeClassSpy, 'test-class');
+        assert.notCalled(removeClassFromElementStub);
+      });
+
+      it('removes class from element if iframe does not exist', () => {
+        view.iframe = null;
+        view.removeClass('test-class');
+        assert.calledOnce(removeClassFromElementStub);
+        assert.calledWith(removeClassFromElementStub, 'test-class', view.component.node);
       });
     });
 
@@ -354,116 +433,172 @@ describe('View class', () => {
     });
 
     describe('resize()', () => {
-      let resizeX;
-      let resizeY;
+      let resizeXStub;
+      let resizeYStub;
 
       beforeEach(() => {
-        resizeX = sinon.spy(view, '_resizeX');
-        resizeY = sinon.spy(view, '_resizeY');
+        resizeXStub = sinon.stub(view, '_resizeX');
+        resizeYStub = sinon.stub(view, '_resizeY');
       });
 
       afterEach(() => {
-        resizeX.restore();
-        resizeY.restore();
+        resizeXStub.restore();
+        resizeYStub.restore();
       });
 
-      it('does nothing if no iframe or no wrapper', () => {
+      it('does not resize if there is no iframe', () => {
         view.iframe = null;
+        view.wrapper = {};
         view.resize();
-        assert.notCalled(resizeX);
-        assert.notCalled(resizeY);
-        view.iframe = true;
-        view.wrapper = null;
-        assert.notCalled(resizeX);
-        assert.notCalled(resizeY);
+        assert.notCalled(resizeXStub);
+        assert.notCalled(resizeYStub);
       });
 
-      it('resizes iframe width when shouldResizeX is true', () => {
-        const iframe = document.createElement('iframe');
-        const iframeWidth = 100;
+      it('does not resize if there is no wrapper', () => {
+        view.iframe = {};
+        view.wrapper = null;
+        view.resize();
+        assert.notCalled(resizeXStub);
+        assert.notCalled(resizeYStub);
+      });
+
+      it('resizes iframe width if shouldResizeX is true', () => {
+        view.iframe = {};
+        view.wrapper = document.createElement('div');
         view = Object.defineProperty(view, 'shouldResizeX', {
           value: true,
-          writable: false,
         });
-        view.wrapper = document.createElement('div');
-        view.iframe = {
-          el: iframe,
-          document: {
-            body: {
-              clientWidth: iframeWidth,
-            },
-          },
-        };
         view.resize();
-        assert.called(resizeX);
-        assert.notCalled(resizeY);
-        assert.equal(iframe.style.width, `${iframeWidth}px`);
+        assert.calledOnce(resizeXStub);
+        assert.notCalled(resizeYStub);
       });
 
-      it('resizes iframe height when shouldResizeY is true', () => {
-        const iframe = document.createElement('iframe');
-        const iframeHeight = '50px';
+      it('resizes iframe height if shouldResizeY is true', () => {
+        view.iframe = {};
+        view.wrapper = document.createElement('div');
         view = Object.defineProperty(view, 'shouldResizeY', {
           value: true,
-          writable: false,
         });
-        view = Object.defineProperty(view, 'outerHeight', {
-          value: iframeHeight,
-          writable: false,
-        });
-        view.wrapper = document.createElement('div');
-        view.iframe = {
-          el: iframe,
-        };
         view.resize();
-        assert.called(resizeY);
-        assert.notCalled(resizeX);
-        assert.equal(iframe.style.height, iframeHeight);
+        assert.calledOnce(resizeYStub);
+        assert.notCalled(resizeXStub);
+      });
+    });
+
+    describe('setFocus()', () => {
+      it('focuses first focusable element in wrapper', () => {
+        view.wrapper = document.createElement('div');
+        view.wrapper.append(document.createElement('a'));
+        view.wrapper.append(document.createElement('button'));
+        const focusStub = sinon.stub(view.wrapper.firstElementChild, 'focus');
+        view.setFocus();
+        assert.calledOnce(focusStub);
+        focusStub.restore();
+      });
+    });
+
+    describe('closeComponentsOnEsc()', () => {
+      let event;
+      let closeModalSpy;
+      let closeCartSpy;
+
+      beforeEach(() => {
+        closeModalSpy = sinon.spy();
+        closeCartSpy = sinon.spy();
+        component.props = {
+          closeModal: closeModalSpy,
+          closeCart: closeCartSpy,
+        };
+        view = Object.defineProperty(view, 'document', {
+          value: document,
+        });
+        event = new Event('keydown');
+      });
+
+      it('does not add event listener if there is no iframe', () => {
+        view.iframe = null;
+        const addEventListenerStub = sinon.stub(view.document, 'addEventListener');
+        view.closeComponentsOnEsc();
+        assert.notCalled(addEventListenerStub);
+        addEventListenerStub.restore();
+      });
+
+      it('closes modal and cart when escape key is pressed', () => {
+        view.iframe = {};
+        event.keyCode = 27; // escape key
+
+        view.closeComponentsOnEsc();
+        view.document.dispatchEvent(event);
+        assert.calledOnce(closeModalSpy);
+        assert.calledOnce(closeCartSpy);
+      });
+
+      it('does not close modal or cart when any key except escape is pressed', () => {
+        view.iframe = {};
+        event.keyCode = 999;
+
+        view.closeComponentsOnEsc();
+        view.document.dispatchEvent(event);
+        assert.notCalled(closeModalSpy);
+        assert.notCalled(closeCartSpy);
       });
     });
 
     describe('animateRemoveNode()', () => {
       let node;
+      let removeNodeStub;
+      let event;
+      let addClassToElementStub;
 
       beforeEach(() => {
-        component = new Component({
-          id: 1234,
-          node: document.createElement('div'),
-        }, {browserFeatures: {animation: true}});
-        component.typeKey = 'product';
-        view = new View(component);
         node = document.createElement('div');
         node.setAttribute('id', 123);
         document.body.appendChild(node);
-        node.addEventListener = sinon.spy();
+        removeNodeStub = sinon.stub(view, 'removeNode');
+        addClassToElementStub = sinon.stub(elementClass, 'addClassToElement');
+        event = new Event('animationend');
       });
 
       afterEach(() => {
         document.body.removeChild(node);
+        removeNodeStub.restore();
+        addClassToElementStub.restore();
       });
 
-      it('adds event listener on animationend if browser supports it', () => {
+      it('adds is-hidden class to element', () => {
         view.animateRemoveNode(123);
-        assert.calledWith(node.addEventListener, 'animationend');
+        assert.calledOnce(addClassToElementStub);
+        assert.calledWith(addClassToElementStub, 'is-hidden', node);
+      });
+
+      it('removes node on animationend event if animation is supported and element has a parent node', () => {
+        view.component.props.browserFeatures.animation = true;
+        view.animateRemoveNode(123);
+        node.dispatchEvent(event);
+        assert.calledOnce(removeNodeStub);
+        assert.calledWith(removeNodeStub, node);
       });
 
       it('removes the node if animation is not supported', () => {
         component.props.browserFeatures.animation = false;
-        view.removeNode = sinon.spy();
         view.animateRemoveNode(123);
-        assert.calledOnce(view.removeNode);
+        assert.calledOnce(removeNodeStub);
+        assert.calledWith(removeNodeStub, node);
       });
     });
 
     describe('removeNode()', () => {
       it('removes node and calls render', () => {
-        const div = document.createElement('div');
-        div.setAttribute('id', 123);
-        document.body.appendChild(div);
-        view.render = sinon.spy();
-        view.removeNode(div);
-        assert.notOk(document.getElementById(123));
-        assert.calledOnce(view.render);
+        const removeChildSpy = sinon.spy();
+        const renderStub = sinon.stub(view, 'render');
+        const el = {
+          parentNode: {removeChild: removeChildSpy},
+        };
+        view.removeNode(el);
+        assert.calledOnce(removeChildSpy);
+        assert.calledWith(removeChildSpy, el);
+        assert.calledOnce(renderStub);
+        renderStub.restore();
       });
     });
   });
