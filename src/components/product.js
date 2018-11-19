@@ -126,6 +126,7 @@ export default class Product extends Component {
     let id;
     let src;
     let srcLarge;
+    let srcOriginal;
 
     const imageOptions = {
       maxWidth: imageSize,
@@ -141,20 +142,24 @@ export default class Product extends Component {
       id = this.selectedImage.id;
       src = this.props.client.image.helpers.imageForSize(this.selectedImage, imageOptions);
       srcLarge = this.props.client.image.helpers.imageForSize(this.selectedImage, imageOptionsLarge);
+      srcOriginal = this.selectedImage.src;
     } else if (this.selectedVariant.image == null && this.model.images[0] == null) {
       id = null;
       src = '';
       srcLarge = '';
+      srcOriginal = '';
     } else if (this.selectedVariant.image == null) {
       id = this.model.images[0].id;
       src = this.model.images[0].src;
       srcLarge = this.props.client.image.helpers.imageForSize(this.model.images[0], imageOptionsLarge);
+      srcOriginal = this.model.images[0].src;
     } else {
       id = this.selectedVariant.image.id;
       src = this.props.client.image.helpers.imageForSize(this.selectedVariant.image, imageOptions);
       srcLarge = this.props.client.image.helpers.imageForSize(this.selectedVariant.image, imageOptionsLarge);
+      srcOriginal = this.selectedVariant.image.src;
     }
-    return {id, src, srcLarge};
+    return {id, src, srcLarge, srcOriginal};
   }
 
   /**
