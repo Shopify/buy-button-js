@@ -707,6 +707,11 @@ describe('Product class', () => {
         product.config.product.width = undefined;
         assert.equal(product.image.srcLarge, rootImageURI + 'image-one_550x825.jpg');
       });
+
+      it('returns a srcOriginal image option', () => {
+        product.config.product.width = undefined;
+        assert.equal(product.image.srcOriginal, rootImageURI + 'image-one.jpg');
+      });
     });
 
     describe('if selected variant doesn\'t have an image', () => {
@@ -727,6 +732,8 @@ describe('Product class', () => {
         it('returns no image', () => {
           product.model.images = [];
           assert.equal(product.image.src, '');
+          assert.equal(product.image.srcLarge, '');
+          assert.equal(product.image.srcOriginal, '');
         });
       });
     });
@@ -738,6 +745,9 @@ describe('Product class', () => {
       });
       it('returns smallest image larger than explicit width', () => {
         assert.equal(product.image.src, rootImageURI + 'image-one_160x240.jpg');
+      });
+      it('returns the original image source', () => {
+        assert.equal(product.image.srcOriginal, rootImageURI + 'image-one.jpg')
       });
     });
 
@@ -755,6 +765,10 @@ describe('Product class', () => {
         product.config.product.width = '480px';
         assert.equal(product.image.src, rootImageURI + 'image-three_480x720.jpg');
       })
+      it('returns the original image source when width is set explicitly', () => {
+        product.config.product.width = '480px';
+        assert.equal(product.image.srcOriginal, rootImageURI + 'image-three.jpg')
+      });
     });
   });
 
