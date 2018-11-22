@@ -601,6 +601,238 @@ describe('View class', () => {
         renderStub.restore();
       });
     });
+
+    describe('getters', () => {
+      describe('outerHeight', () => {
+        let getPropertyValueSpy;
+
+        beforeEach(() => {
+          view.wrapper = document.createElement('div');
+          getPropertyValueSpy = sinon.spy(CSSStyleDeclaration.prototype, 'getPropertyValue');
+        });
+
+        afterEach(() => {
+          getPropertyValueSpy.restore();
+        });
+
+        it('returns wrapper height if there is no styling on wrapper', () => {
+          view.wrapper = {clientHeight: 10};
+          const getComputedStyleStub = sinon.stub(window, 'getComputedStyle').returns(null);
+          assert.equal(view.outerHeight, '10px');
+          getComputedStyleStub.restore();
+        });
+
+        it('returns the height of the wrapper set in style', () => {
+          const getComputedStyleStub = sinon.stub(window, 'getComputedStyle').returns(view.wrapper.style);
+          view.wrapper.style.height = '50px';
+          assert.equal(view.outerHeight, '50px');
+          getComputedStyleStub.restore();
+        });
+
+        it('returns wrapper\'s client height if height is not set in style', () => {
+          view.wrapper = {
+            clientHeight: 20,
+            style: {
+              height: '',
+              getPropertyValue: sinon.spy(),
+            },
+          };
+          const getComputedStyleStub = sinon.stub(window, 'getComputedStyle').returns(view.wrapper.style);
+          assert.equal(view.outerHeight, '20px');
+          getComputedStyleStub.restore();
+        });
+
+        it('calls getPropertyValue() twice if height is not set in style', () => {
+          const getComputedStyleStub = sinon.stub(window, 'getComputedStyle').returns(view.wrapper.style);
+          view.wrapper.style.height = '';
+          assert.equal(view.outerHeight, `${view.wrapper.clientHeight}px`);
+          assert.calledTwice(getPropertyValueSpy);
+          assert.calledWith(getPropertyValueSpy, 'height');
+          getComputedStyleStub.restore();
+        });
+
+        it('calls getPropertyValue() twice if height is set to 0px in style', () => {
+          const getComputedStyleStub = sinon.stub(window, 'getComputedStyle').returns(view.wrapper.style);
+          view.wrapper.style.height = '0px';
+          assert.equal(view.outerHeight, '0px');
+          assert.calledTwice(getPropertyValueSpy);
+          assert.calledWith(getPropertyValueSpy, 'height');
+          getComputedStyleStub.restore();
+        });
+
+        it('calls getPropertyValue() twice if height is set to auto in style', () => {
+          const getComputedStyleStub = sinon.stub(window, 'getComputedStyle').returns(view.wrapper.style);
+          view.wrapper.style.height = 'auto';
+          assert.equal(view.outerHeight, 'auto');
+          assert.calledTwice(getPropertyValueSpy);
+          assert.calledWith(getPropertyValueSpy, 'height');
+          getComputedStyleStub.restore();
+        });
+
+        it('calls getPropertyValue() once if height is set to a value in style', () => {
+          const getComputedStyleStub = sinon.stub(window, 'getComputedStyle').returns(view.wrapper.style);
+          view.wrapper.style.height = '30px';
+          assert.equal(view.outerHeight, '30px');
+          assert.calledOnce(getPropertyValueSpy);
+          assert.calledWith(getPropertyValueSpy, 'height');
+          getComputedStyleStub.restore();
+        });
+      });
+
+      describe('className', () => {
+        it('returns an empty string', () => {
+          assert.equal(view.className, '');
+        });
+      });
+
+      describe('shouldResizeX', () => {
+        it('returns false', () => {
+          assert.equal(view.shouldResizeX, false);
+        });
+      });
+
+      describe('shouldResizeY', () => {
+        it('returns false', () => {
+          assert.equal(view.shouldResizeY, false);
+        });
+      });
+
+      describe('document', () => {
+        it('returns iframe\'s document if iframe exists', () => {
+          view.iframe = {document: {}};
+          assert.equal(view.document, view.iframe.document);
+        });
+
+        it('returns window\'s document if iframe does not exist', () => {
+          view.iframe = null;
+          assert.equal(view.document, window.document);
+        });
+      });
+    });
+
+    describe('"private" methods', () => {
+      describe('_createWrapper()', () => {
+        let createElementStub;
+        let appendStub;
+        let mockWrapper;
+
+        beforeEach(() => {
+          mockWrapper = document.createElement('div');
+          createElementStub = sinon.stub(document, 'createElement').returns(mockWrapper);
+          appendStub = sinon.stub(view, 'append');
+        });
+
+        afterEach(() => {
+          createElementStub.restore();
+          appendStub.restore();
+        });
+
+        it('creates a wrapper and appends it to view', () => {
+          view._createWrapper();
+          assert.calledOnce(createElementStub);
+          assert.calledWith(createElementStub, 'div');
+          assert.calledOnce(appendStub);
+          assert.calledWith(appendStub, mockWrapper);
+        });
+
+        it('returns the newly created wrapper', () => {
+          assert.equal(view._createWrapper(), mockWrapper);
+        });
+
+        it('adds component type class to wrapper', () => {
+          component.typeKey = 'cart';
+          component = Object.defineProperty(component, 'classes', {
+            value: {
+              cart: {cart: 'class-name'},
+            },
+          });
+          assert.equal(view._createWrapper().className, 'class-name');
+        });
+      });
+
+      describe('_resizeX()', () => {
+        it('sets the iframe width to the body\'s client width', () => {
+          view.iframe = {el: {style: {}}};
+          view = Object.defineProperty(view, 'document', {
+            value: {
+              body: {clientWidth: 10},
+            },
+          });
+          view._resizeX();
+          assert.equal(view.iframe.el.style.width, '10px');
+        });
+      });
+
+      describe('_resizeY()', () => {
+        beforeEach(() => {
+          view.iframe = {el: {style: {}}};
+        });
+
+        it('sets the iframe height to param value', () => {
+          view._resizeY('20px');
+          assert.equal(view.iframe.el.style.height, '20px');
+        });
+
+        it('sets the iframe height to outer height if param is not passed in', () => {
+          view = Object.defineProperty(view, 'outerHeight', {
+            value: '30px',
+          });
+          view._resizeY();
+          assert.equal(view.iframe.el.style.height, '30px');
+        });
+      });
+
+      describe('_on()', () => {
+        describe('addEventListener tests', () => {
+          let addEventListenerSpy;
+
+          beforeEach(() => {
+            addEventListenerSpy = sinon.spy();
+            view.wrapper = {addEventListener: addEventListenerSpy};
+          });
+
+          it('calls addEventListener with eventName', () => {
+            view._on('test', '', '');
+            assert.calledOnce(addEventListenerSpy);
+            assert.calledWith(addEventListenerSpy, 'test');
+          });
+
+          it('executes event handler in capturing phase when event is blur', () => {
+            view._on('blur', '', '');
+            assert.calledOnce(addEventListenerSpy);
+            assert.calledWith(addEventListenerSpy, 'blur', sinon.match.any, true);
+          });
+        });
+
+        describe('event listener tests', () => {
+          let functionSpy;
+          let event;
+          let button;
+
+          beforeEach(() => {
+            functionSpy = sinon.spy();
+            event = new Event('click', {bubbles: true});
+            button = document.createElement('button');
+            button.className = 'btn';
+            view.wrapper = document.createElement('div');
+            view.wrapper.appendChild(button);
+          });
+
+          it('calls function on event if target matches selector', () => {
+            view._on('click', '.btn', functionSpy);
+            view.wrapper.firstChild.dispatchEvent(event);
+            assert.calledOnce(functionSpy);
+            assert.calledWith(functionSpy, event, button);
+          });
+
+          it('does not call function if target does not match selector', () => {
+            view._on('click', '.not-btn', functionSpy);
+            view.wrapper.firstChild.dispatchEvent(event);
+            assert.notCalled(functionSpy);
+          });
+        });
+      });
+    });
   });
 });
 
