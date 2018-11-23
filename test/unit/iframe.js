@@ -216,7 +216,7 @@ describe('Iframe class', () => {
         assert.isUndefined(response);
       });
 
-      it('times out after one second if web font exists and fontactive does not get called', async () => {
+      it('resolves after one second if web font exists and fontactive does not get called', async () => {
         const response = await iframe.loadFonts();
         assert.calledOnce(setTimeoutStub);
         assert.equal(setTimeoutStub.getCall(0).args[1], 1000);
@@ -278,7 +278,7 @@ describe('Iframe class', () => {
         assert.equal(createElementSpy.returnValues[0].src, webfontScript);
       });
 
-      it('times out after half a second if font script did not load', async () => {
+      it('resolves after half a second if font script did not load', async () => {
         const response = await iframe.loadFontScript();
         assert.calledOnce(setTimeoutStub);
         assert.equal(setTimeoutStub.getCall(0).args[1], 500);
