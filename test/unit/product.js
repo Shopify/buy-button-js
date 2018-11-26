@@ -32,8 +32,6 @@ let configCopy;
 
 describe('Product class', () => {
   let props;
-  let fetchInfoStub;
-  let fetchStub;
   let closeModalSpy;
 
   beforeEach(() => {
@@ -72,8 +70,8 @@ describe('Product class', () => {
       },
       closeModal: closeModalSpy,
     };
-    fetchInfoStub = sinon.stub(props.client.shop, 'fetchInfo').resolves(shopFixture);
-    fetchStub = sinon.stub(props.client.product, 'fetch').resolves(productFixture);
+    sinon.stub(props.client.shop, 'fetchInfo').resolves(shopFixture);
+    sinon.stub(props.client.product, 'fetch').resolves(productFixture);
     configCopy = Object.assign({}, config);
     configCopy.node = document.createElement('div');
     configCopy.node.setAttribute('id', 'fixture');
@@ -84,8 +82,6 @@ describe('Product class', () => {
 
   afterEach(() => {
     document.body.removeChild(configCopy.node);
-    fetchInfoStub.restore();
-    fetchStub.restore();
   });
 
   it('converts shopify product id to storefrontId', () => {
