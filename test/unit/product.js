@@ -34,8 +34,10 @@ describe('Product class', () => {
   let props;
   let fetchInfoStub;
   let fetchStub;
+  let closeModalSpy;
 
   beforeEach(() => {
+    closeModalSpy = sinon.spy();
     props = {
       client: ShopifyBuy.buildClient({
         domain: 'test.myshopify.com',
@@ -68,7 +70,7 @@ describe('Product class', () => {
       createModal() {
         return new Modal(config, props);
       },
-      closeModal: sinon.spy(),
+      closeModal: closeModalSpy,
     };
     fetchInfoStub = sinon.stub(props.client.shop, 'fetchInfo').resolves(shopFixture);
     fetchStub = sinon.stub(props.client.product, 'fetch').resolves(productFixture);
@@ -807,11 +809,12 @@ describe('Product class', () => {
         modalProduct.cart = {
           updateConfig: cartUpdateConfigSpy,
         };
-        modalProduct.modal.updateConfig = sinon.spy();
+        const modalUpdateConfigSpy = sinon.spy(modalProduct.modal, 'updateConfig');
         modalProduct.updateConfig(newConfig);
-        assert.calledWith(modalProduct.modal.updateConfig, sinon.match.object);
+        assert.calledWith(modalUpdateConfigSpy, sinon.match.object);
         assert.equal(modalProduct.modal.config.product.layout, 'vertical');
         assert.calledWith(cartUpdateConfigSpy, newConfig);
+        modalUpdateConfigSpy.restore();
         modalProduct.modal.destroy();
       });
 
