@@ -27,10 +27,8 @@ let configCopy;
 
 describe('Product Component class', () => {
   let props;
-  let closeModalSpy;
 
   beforeEach(() => {
-    closeModalSpy = sinon.spy();
     props = {
       client: ShopifyBuy.buildClient({
         domain: 'test.myshopify.com',
@@ -60,7 +58,7 @@ describe('Product Component class', () => {
           },
         }));
       },
-      closeModal: closeModalSpy,
+      closeModal() { return; },
     };
     sinon.stub(props.client.shop, 'fetchInfo').resolves(shopFixture);
     sinon.stub(props.client.product, 'fetch').resolves(productFixture);

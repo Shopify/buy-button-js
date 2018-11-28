@@ -12,33 +12,34 @@ const config = {
     },
   },
 };
+const props = {
+  client: ShopifyBuy.buildClient({
+    domain: 'test.myshopify.com',
+    storefrontAccessToken: 123,
+  }),
+  createCart() {
+    return Promise.resolve(new Cart(config, {
+      tracker: {
+        trackMethod: (fn) => {
+          return function(...params) {
+            fn(...params);
+          };
+        },
+      },
+    }));
+  },
+};
 let product;
 let testProductCopy;
 let configCopy;
 
 describe('Product View class', () => {
-  let props;
+  let fetchInfoStub;
+  let fetchStub;
 
   beforeEach(() => {
-    props = {
-      client: ShopifyBuy.buildClient({
-        domain: 'test.myshopify.com',
-        storefrontAccessToken: 123,
-      }),
-      createCart() {
-        return Promise.resolve(new Cart(config, {
-          tracker: {
-            trackMethod: (fn) => {
-              return function(...params) {
-                fn(...params);
-              };
-            },
-          },
-        }));
-      },
-    };
-    sinon.stub(props.client.shop, 'fetchInfo').resolves(shopFixture);
-    sinon.stub(props.client.product, 'fetch').resolves(productFixture);
+    fetchInfoStub = sinon.stub(props.client.shop, 'fetchInfo').resolves(shopFixture);
+    fetchStub = sinon.stub(props.client.product, 'fetch').resolves(productFixture);
     configCopy = Object.assign({}, config);
     configCopy.node = document.createElement('div');
     configCopy.node.setAttribute('id', 'fixture');
@@ -48,6 +49,8 @@ describe('Product View class', () => {
   });
 
   afterEach(() => {
+    fetchInfoStub.restore();
+    fetchStub.restore();
     document.body.removeChild(configCopy.node);
   });
 
