@@ -9,7 +9,7 @@ import ShopifyBuy from '../../src/buybutton';
 import shopFixture from '../fixtures/shop-info';
 import productFixture from '../fixtures/product-fixture';
 
-const rootImageURI = 'https://cdn.shopify.com/s/';
+const rootImageURI = 'https://cdn.shopify.com/s/files/1/0014/8583/2214/products/';
 
 const config = {
   id: 123,
@@ -256,11 +256,11 @@ describe('Product class', () => {
 
         it('sets selected image based on various offsets', () => {
           product.onCarouselChange(-1);
-          assert.equal(product.image.src, `${rootImageURI}image-four_280x420.jpg`);
+          assert.equal(product.image.src, `${rootImageURI}image-four_280x420.jpeg`);
           product.onCarouselChange(-1);
           assert.equal(product.image.src, `${rootImageURI}image-three_280x420.jpg`);
           product.onCarouselChange(1);
-          assert.equal(product.image.src, `${rootImageURI}image-four_280x420.jpg`);
+          assert.equal(product.image.src, `${rootImageURI}image-four_280x420.jpeg`);
           product.onCarouselChange(1);
           assert.equal(product.image.src, `${rootImageURI}image-one_280x420.jpg`);
         });
