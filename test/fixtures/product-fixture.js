@@ -5,19 +5,19 @@ const testProduct = {
   images: [
     {
       id: 1,
-      src: 'https://cdn.shopify.com/s/image-one.jpg',
+      src: 'https://cdn.shopify.com/s/files/1/0014/8583/2214/products/image-one.jpg',
     },
     {
       id: 2,
-      src: 'https://cdn.shopify.com/s/image-two.jpg',
+      src: 'https://cdn.shopify.com/s/files/1/0014/8583/2214/products/image-two.jpeg',
     },
     {
       id: 3,
-      src: 'https://cdn.shopify.com/s/image-three.jpg',
+      src: 'https://cdn.shopify.com/s/files/1/0014/8583/2214/products/image-three.jpg',
     },
     {
       id: 4,
-      src: 'https://cdn.shopify.com/s/image-four.jpg',
+      src: 'https://cdn.shopify.com/s/files/1/0014/8583/2214/products/image-four.jpeg',
     },
   ],
   options: [
@@ -47,7 +47,7 @@ const testProduct = {
       available: true,
       image: {
         id: 100,
-        src: "https://cdn.shopify.com/s/image-one.jpg"
+        src: 'https://cdn.shopify.com/s/files/1/0014/8583/2214/products/image-one.jpg',
       },
       selectedOptions: [
         {
@@ -68,7 +68,7 @@ const testProduct = {
       available: true,
       image: {
         id: 200,
-        src: "https://cdn.shopify.com/s/image-two.jpg"
+        src: 'https://cdn.shopify.com/s/files/1/0014/8583/2214/products/image-two.jpeg',
       },
       selectedOptions: [
         {
@@ -89,7 +89,7 @@ const testProduct = {
       available: true,
       image: {
         id: 300,
-        src: "https://cdn.shopify.com/s/image-three.jpg"
+        src: 'https://cdn.shopify.com/s/files/1/0014/8583/2214/products/image-three.jpg',
       },
       selectedOptions: [
         {
