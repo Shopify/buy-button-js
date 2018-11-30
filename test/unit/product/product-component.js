@@ -850,13 +850,6 @@ describe('Product Component class', () => {
             assert.calledWith(openWindowStub, '', 'checkout', checkout.params);
           });
 
-          it('sets checkoutWindow to current window if cart popup in config is false', async () => {
-            product.config.cart.popup = true;
-            product.onButtonClick(evt, target);
-            await Promise.all([createCheckoutPromise, addLineItemsPromise]);
-            assert.equal(window.location, checkoutMock.webUrl);
-          });
-
           it('create checkout and add line items are called when destination is checkout', async () => {
             const selectedQuantity = 2;
             product.selectedQuantity = selectedQuantity;
@@ -875,8 +868,15 @@ describe('Product Component class', () => {
       });
 
       describe('onCarouselChange()', () => {
+        let renderStub;
+
         beforeEach(async () => {
           await product.init(testProductCopy);
+          renderStub = sinon.stub(product.view, 'render');
+        });
+
+        afterEach(() => {
+          renderStub.restore();
         });
 
         it('sets selected image based on various offsets', () => {
@@ -889,43 +889,76 @@ describe('Product Component class', () => {
           product.onCarouselChange(1);
           assert.equal(product.image.src, `${rootImageURI}image-one_280x420.jpg`);
         });
+
+        it('renders the view', () => {
+          product.onCarouselChange(1);
+          assert.calledOnce(renderStub);
+        });
+
+        it('sets cached image to selected image', () => {
+          product.onCarouselChange(1);
+          assert.equal(product.cachedImage, product.selectedImage);
+        });
       });
 
       describe('openModal()', () => {
-        describe('if modal exists', () => {
-          let modalInitSpy;
+        let userEventStub;
+        let modalInitStub;
+        let createModalStub;
+        const modalMock = {};
 
+        beforeEach(() => {
+          modalInitStub = sinon.stub().returns(modalMock);
+          createModalStub = sinon.stub().returns({
+            init: modalInitStub,
+          });
+          userEventStub = sinon.stub(product, '_userEvent');
+          product.props.createModal = createModalStub;
+        });
+
+        afterEach(() => {
+          userEventStub.restore();
+        });
+
+        describe('if modal exists', () => {
           beforeEach(() => {
-            modalInitSpy = sinon.spy();
             product.modal = {
-              init: modalInitSpy,
+              init: modalInitStub,
             };
           });
 
           it('re-initializes modal with model', () => {
             product.openModal();
-            assert.calledWith(modalInitSpy, product.model);
+            assert.calledOnce(modalInitStub);
+            assert.calledWith(modalInitStub, product.model);
           });
         });
 
         describe('if modal does not exist', () => {
-          let initSpy;
-          let createModalStub;
-
           beforeEach(() => {
-            initSpy = sinon.spy();
-            createModalStub = sinon.stub().returns({
-              init: initSpy,
-            });
             product.modal = null;
-            product.props.createModal = createModalStub;
           });
 
           it('creates Modal and initializes modal with model', () => {
             product.openModal();
+            assert.calledOnce(createModalStub);
             assert.calledWith(createModalStub, sinon.match.object, product.props);
-            assert.calledWith(initSpy, product.model);
+            assert.calledOnce(modalInitStub);
+            assert.calledWith(modalInitStub, product.model);
           });
+        });
+
+        it('calls userEvent with openModal', () => {
+          product.modal = {
+            init: modalInitStub,
+          };
+          product.openModal();
+          assert.calledOnce(userEventStub);
+          assert.calledWith(userEventStub, 'openModal');
+        });
+
+        it('returns the init value', () => {
+          assert.equal(product.openModal(), modalMock);
         });
       });
 
