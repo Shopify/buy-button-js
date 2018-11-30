@@ -250,6 +250,63 @@ describe('Product Component class', () => {
         product = new Product(configCopy, props);
       });
 
+      describe('stopPropagation()', () => {
+        let event;
+        let stopImmediatePropagationSpy;
+
+        beforeEach(() => {
+          stopImmediatePropagationSpy = sinon.spy();
+          event = {
+            stopImmediatePropagation: stopImmediatePropagationSpy,
+          };
+        });
+
+        it('stops propagation of event if component is a button', () => {
+          product = Object.defineProperty(product, 'isButton', {
+            value: true,
+          });
+          product.stopPropagation(event);
+          assert.calledOnce(stopImmediatePropagationSpy);
+        });
+
+        it('does not stop propagation of event if component is not a button', () => {
+          product = Object.defineProperty(product, 'isButton', {
+            value: false,
+          });
+          product.stopPropagation(event);
+          assert.notCalled(stopImmediatePropagationSpy);
+        });
+      });
+
+      describe('openOnlineStore()', () => {
+        let userEventStub;
+        let windowOpenStub;
+
+        beforeEach(() => {
+          product = Object.defineProperty(product, 'onlineStoreURL', {
+            value: 'test.com',
+          });
+          userEventStub = sinon.stub(product, '_userEvent');
+          windowOpenStub = sinon.stub(window, 'open');
+          product.openOnlineStore();
+        });
+
+        afterEach(() => {
+          userEventStub.restore();
+          windowOpenStub.restore();
+        });
+
+        it('calls userEvent with openOnlineStore', () => {
+          assert.calledOnce(userEventStub);
+          assert.calledWith(userEventStub, 'openOnlineStore');
+        });
+
+        it('opens window with online store url', () => {
+          assert.calledOnce(windowOpenStub);
+          assert.calledWith(windowOpenStub, product.onlineStoreURL);
+        });
+      });
+
       describe('init()', () => {
         let createCartStub;
         let renderStub;
@@ -303,109 +360,6 @@ describe('Product Component class', () => {
           await product.init('test');
           assert.notCalled(renderStub);
           superInitStub.restore();
-        });
-      });
-
-      describe('updateVariant()', () => {
-        let renderStub;
-        let userEventStub;
-
-        beforeEach(async () => {
-          await product.init(testProductCopy);
-          renderStub = sinon.stub(product.view, 'render');
-          userEventStub = sinon.stub(product, '_userEvent');
-        });
-
-        afterEach(() => {
-          renderStub.restore();
-          userEventStub.restore();
-        });
-
-        it('updates selected variant', () => {
-          product.updateVariant('Size', 'large');
-          assert.equal(product.selectedOptions.Size, 'large');
-        });
-
-        it('does not update selected options or selected variant if option is not found in mdoel', () => {
-          product.selectedVariant = 'oldVariant';
-          product.updateVariant('fakeName', 'large');
-          assert.isUndefined(product.selectedOptions.fakeName);
-          assert.equal(product.selectedVariant, 'oldVariant');
-        });
-
-        it('sets selectedVariant to the variant with the selected options', () => {
-          const selectedVariant = {id: 'variant', selectedOptions: {}};
-          const variantForOptionsStub = sinon.stub(props.client.product.helpers, 'variantForOptions').returns(selectedVariant);
-          product.updateVariant('Size', 'large');
-          assert.equal(product.selectedVariant, selectedVariant);
-          variantForOptionsStub.restore();
-        });
-
-        describe('if variant exists', () => {
-          let variantForOptionsStub;
-
-          beforeEach(() => {
-            product = Object.defineProperty(product, 'variantExists', {
-              value: true,
-            });
-          });
-
-          afterEach(() => {
-            if (variantForOptionsStub.restore) {
-              variantForOptionsStub.restore();
-            }
-          });
-
-          it('caches image', () => {
-            variantForOptionsStub = sinon.stub(props.client.product.helpers, 'variantForOptions').returns({image: 'test-image'});
-            product.updateVariant('Size', 'large');
-            assert.equal(product.cachedImage, 'test-image');
-          });
-
-          it('sets the selected image to null if selected variant has an image', () => {
-            variantForOptionsStub = sinon.stub(props.client.product.helpers, 'variantForOptions').returns({image: 'test-image'});
-            product.updateVariant('Size', 'large');
-            assert.isNull(product.selectedImage);
-          });
-
-          it('sets the selected image to the first image in model if selected variant does not have an image', () => {
-            variantForOptionsStub = sinon.stub(props.client.product.helpers, 'variantForOptions').returns({});
-            product.updateVariant('Size', 'large');
-            assert.equal(product.selectedImage, product.model.images[0]);
-          });
-        });
-
-        it('sets selected image to the cached image in model if variant does not exist', () => {
-          product = Object.defineProperty(product, 'variantExists', {
-            value: false,
-          });
-          const expectedImage = {
-            id: 1,
-            src: `${rootImageURI}image-one.jpg`,
-          };
-          product.updateVariant('Size', 'large');
-          assert.deepEqual(product.selectedImage, expectedImage);
-        });
-
-        it('renders the view', () => {
-          product.updateVariant('Size', 'large');
-          assert.calledOnce(renderStub);
-        });
-
-        it('calls userEvent with updateVariant', () => {
-          product.updateVariant('Size', 'large');
-          assert.calledOnce(userEventStub);
-          assert.calledWith(userEventStub, 'updateVariant');
-        });
-
-        it('returns the updated option', () => {
-          const updatedOption = product.updateVariant('Size', 'large');
-          const expectedObj = {
-            name: 'Size',
-            selected: 'small',
-            values: [{value: 'small'}, {value: 'large'}],
-          };
-          assert.deepEqual(updatedOption, expectedObj);
         });
       });
 
@@ -591,8 +545,15 @@ describe('Product Component class', () => {
       });
 
       describe('onCarouselChange()', () => {
+        let renderStub;
+
         beforeEach(async () => {
           await product.init(testProductCopy);
+          renderStub = sinon.stub(product.view, 'render');
+        });
+
+        afterEach(() => {
+          renderStub.restore();
         });
 
         it('sets selected image based on various offsets', () => {
@@ -605,43 +566,179 @@ describe('Product Component class', () => {
           product.onCarouselChange(1);
           assert.equal(product.image.src, `${rootImageURI}image-one_280x420.jpg`);
         });
+
+        it('renders the view', () => {
+          product.onCarouselChange(1);
+          assert.calledOnce(renderStub);
+        });
+
+        it('sets cached image to selected image', () => {
+          product.onCarouselChange(1);
+          assert.equal(product.cachedImage, product.selectedImage);
+        });
       });
 
       describe('openModal()', () => {
-        describe('if modal exists', () => {
-          let modalInitSpy;
+        let userEventStub;
+        let modalInitStub;
+        let createModalStub;
+        const modalMock = {};
 
+        beforeEach(() => {
+          modalInitStub = sinon.stub().returns(modalMock);
+          createModalStub = sinon.stub().returns({
+            init: modalInitStub,
+          });
+          userEventStub = sinon.stub(product, '_userEvent');
+          product.props.createModal = createModalStub;
+        });
+
+        afterEach(() => {
+          userEventStub.restore();
+        });
+
+        describe('if modal exists', () => {
           beforeEach(() => {
-            modalInitSpy = sinon.spy();
             product.modal = {
-              init: modalInitSpy,
+              init: modalInitStub,
             };
           });
 
           it('re-initializes modal with model', () => {
             product.openModal();
-            assert.calledWith(modalInitSpy, product.model);
+            assert.calledOnce(modalInitStub);
+            assert.calledWith(modalInitStub, product.model);
           });
         });
 
         describe('if modal does not exist', () => {
-          let initSpy;
-          let createModalStub;
-
           beforeEach(() => {
-            initSpy = sinon.spy();
-            createModalStub = sinon.stub().returns({
-              init: initSpy,
-            });
             product.modal = null;
-            product.props.createModal = createModalStub;
           });
 
           it('creates Modal and initializes modal with model', () => {
             product.openModal();
+            assert.calledOnce(createModalStub);
             assert.calledWith(createModalStub, sinon.match.object, product.props);
-            assert.calledWith(initSpy, product.model);
+            assert.calledOnce(modalInitStub);
+            assert.calledWith(modalInitStub, product.model);
           });
+        });
+
+        it('calls userEvent with openModal', () => {
+          product.modal = {
+            init: modalInitStub,
+          };
+          product.openModal();
+          assert.calledOnce(userEventStub);
+          assert.calledWith(userEventStub, 'openModal');
+        });
+
+        it('returns the init value', () => {
+          assert.equal(product.openModal(), modalMock);
+        });
+      });
+
+      describe('updateVariant()', () => {
+        let renderStub;
+        let userEventStub;
+
+        beforeEach(async () => {
+          await product.init(testProductCopy);
+          renderStub = sinon.stub(product.view, 'render');
+          userEventStub = sinon.stub(product, '_userEvent');
+        });
+
+        afterEach(() => {
+          renderStub.restore();
+          userEventStub.restore();
+        });
+
+        it('updates selected variant', () => {
+          product.updateVariant('Size', 'large');
+          assert.equal(product.selectedOptions.Size, 'large');
+        });
+
+        it('does not update selected options or selected variant if option is not found in mdoel', () => {
+          product.selectedVariant = 'oldVariant';
+          product.updateVariant('fakeName', 'large');
+          assert.isUndefined(product.selectedOptions.fakeName);
+          assert.equal(product.selectedVariant, 'oldVariant');
+        });
+
+        it('sets selectedVariant to the variant with the selected options', () => {
+          const selectedVariant = {id: 'variant', selectedOptions: {}};
+          const variantForOptionsStub = sinon.stub(props.client.product.helpers, 'variantForOptions').returns(selectedVariant);
+          product.updateVariant('Size', 'large');
+          assert.equal(product.selectedVariant, selectedVariant);
+          variantForOptionsStub.restore();
+        });
+
+        describe('if variant exists', () => {
+          let variantForOptionsStub;
+
+          beforeEach(() => {
+            product = Object.defineProperty(product, 'variantExists', {
+              value: true,
+            });
+          });
+
+          afterEach(() => {
+            if (variantForOptionsStub.restore) {
+              variantForOptionsStub.restore();
+            }
+          });
+
+          it('caches image', () => {
+            variantForOptionsStub = sinon.stub(props.client.product.helpers, 'variantForOptions').returns({image: 'test-image'});
+            product.updateVariant('Size', 'large');
+            assert.equal(product.cachedImage, 'test-image');
+          });
+
+          it('sets the selected image to null if selected variant has an image', () => {
+            variantForOptionsStub = sinon.stub(props.client.product.helpers, 'variantForOptions').returns({image: 'test-image'});
+            product.updateVariant('Size', 'large');
+            assert.isNull(product.selectedImage);
+          });
+
+          it('sets the selected image to the first image in model if selected variant does not have an image', () => {
+            variantForOptionsStub = sinon.stub(props.client.product.helpers, 'variantForOptions').returns({});
+            product.updateVariant('Size', 'large');
+            assert.equal(product.selectedImage, product.model.images[0]);
+          });
+        });
+
+        it('sets selected image to the cached image in model if variant does not exist', () => {
+          product = Object.defineProperty(product, 'variantExists', {
+            value: false,
+          });
+          const expectedImage = {
+            id: 1,
+            src: `${rootImageURI}image-one.jpg`,
+          };
+          product.updateVariant('Size', 'large');
+          assert.deepEqual(product.selectedImage, expectedImage);
+        });
+
+        it('renders the view', () => {
+          product.updateVariant('Size', 'large');
+          assert.calledOnce(renderStub);
+        });
+
+        it('calls userEvent with updateVariant', () => {
+          product.updateVariant('Size', 'large');
+          assert.calledOnce(userEventStub);
+          assert.calledWith(userEventStub, 'updateVariant');
+        });
+
+        it('returns the updated option', () => {
+          const updatedOption = product.updateVariant('Size', 'large');
+          const expectedObj = {
+            name: 'Size',
+            selected: 'small',
+            values: [{value: 'small'}, {value: 'large'}],
+          };
+          assert.deepEqual(updatedOption, expectedObj);
         });
       });
 
@@ -658,6 +755,18 @@ describe('Product Component class', () => {
           product.setDefaultVariant(productFixture);
           assert.equal(product.selectedOptions.Print, 'sloth');
           assert.equal(product.selectedOptions.Size, 'small');
+        });
+
+        it('sets id, selected variant, and selected image to first in model if there is no default storefront variant id', () => {
+          product.defaultStorefrontVariantId = null;
+          product.setDefaultVariant(productFixture);
+          assert.equal(product.defaultStorefrontVariantId, productFixture.variants[0].id);
+          assert.equal(product.selectedVariant, productFixture.variants[0]);
+          assert.equal(product.selectedImage, productFixture.images[0]);
+        });
+
+        it('returns the param', () => {
+          assert.equal(product.setDefaultVariant(productFixture), productFixture);
         });
       });
 
