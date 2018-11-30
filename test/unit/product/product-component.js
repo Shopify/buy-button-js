@@ -32,7 +32,7 @@ describe('Product Component class', () => {
 
     beforeEach(() => {
       normalizeConfigStub = sinon.stub(normalizeConfig, 'default').callsFake((oldConfig) => {
-        oldConfig.normalized = true;
+        oldConfig.storefrontId = 'normalizedId';
         return oldConfig;
       });
       product = new Product(constructorConfig, props);
@@ -40,13 +40,12 @@ describe('Product Component class', () => {
 
     afterEach(() => {
       normalizeConfigStub.restore();
-      constructorConfig.normalized = null;
     });
 
     it('normalizes config', () => {
       assert.calledOnce(normalizeConfigStub);
       assert.calledWith(normalizeConfigStub, constructorConfig);
-      assert.isTrue(constructorConfig.normalized);
+      assert.equal(constructorConfig.storefrontId, 'normalizedId');
     });
 
     it('sets typeKey to product', () => {
@@ -172,14 +171,14 @@ describe('Product Component class', () => {
             productFetchStub.restore();
           });
 
-          it('calls fetchProduct with product storefront id', async () => {
+          it('calls fetchProduct with product storefront id if storefront id is passed in as an array', async () => {
+            idProduct.storefrontId = [idProduct.storefrontId];
             await idProduct.sdkFetch();
             assert.calledOnce(productFetchStub);
             assert.calledWith(productFetchStub, 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0LzEyMzQ1');
           });
 
-          it('calls fetchProduct with product storefront id if storefront id is passed in as an array', async () => {
-            idProduct.storefrontId = [idProduct.storefrontId];
+          it('calls fetchProduct with product storefront id', async () => {
             await idProduct.sdkFetch();
             assert.calledOnce(productFetchStub);
             assert.calledWith(productFetchStub, 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0LzEyMzQ1');
@@ -245,9 +244,14 @@ describe('Product Component class', () => {
       describe('init()', () => {
         let createCartStub;
         let renderStub;
+        const cartMock = {
+          node: {},
+          view: {},
+          template: {},
+        };
 
         beforeEach(() => {
-          createCartStub = sinon.stub(product.props, 'createCart').resolves('test');
+          createCartStub = sinon.stub(product.props, 'createCart').resolves(cartMock);
           renderStub = sinon.stub(product.view, 'render');
         });
 
@@ -258,9 +262,10 @@ describe('Product Component class', () => {
 
         describe('successful model', () => {
           let superInitStub;
+          const modelMock = {model: {}};
 
           beforeEach(async () => {
-            superInitStub = sinon.stub(Component.prototype, 'init').resolves({model: {}});
+            superInitStub = sinon.stub(Component.prototype, 'init').resolves(modelMock);
             await product.init('test');
           });
 
@@ -269,7 +274,7 @@ describe('Product Component class', () => {
           });
 
           it('creates a cart then initializes component', () => {
-            assert.equal(product.cart, 'test');
+            assert.equal(product.cart, cartMock);
             assert.calledOnce(createCartStub);
             assert.calledOnce(superInitStub);
             assert.calledWith(superInitStub, 'test');
@@ -277,6 +282,10 @@ describe('Product Component class', () => {
 
           it('renders view if model is returned from init', () => {
             assert.calledOnce(renderStub);
+          });
+
+          it('returns the model', async () => {
+            assert.equal(await product.init('test'), modelMock);
           });
         });
 
@@ -306,6 +315,13 @@ describe('Product Component class', () => {
         it('updates selected variant', () => {
           product.updateVariant('Size', 'large');
           assert.equal(product.selectedOptions.Size, 'large');
+        });
+
+        it('does not update selected options or selected variant if option is not found in mdoel', () => {
+          product.selectedVariant = 'oldVariant';
+          product.updateVariant('fakeName', 'large');
+          assert.isUndefined(product.selectedOptions.fakeName);
+          assert.equal(product.selectedVariant, 'oldVariant');
         });
 
         it('sets selectedVariant to the variant with the selected options', () => {
