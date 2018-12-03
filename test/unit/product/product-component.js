@@ -104,8 +104,20 @@ describe('Product Component class', () => {
     };
     let testProductCopy;
     let configCopy;
+    let trackSpy;
+    let trackMethodStub;
+    let closeModalSpy;
+    let setActiveElSpy;
 
     beforeEach(() => {
+      trackSpy = sinon.spy();
+      trackMethodStub = sinon.stub().callsFake((fn) => {
+        return function(...params) {
+          fn(...params);
+        };
+      });
+      closeModalSpy = sinon.spy();
+      setActiveElSpy = sinon.spy();
       props = {
         client: ShopifyBuy.buildClient({
           domain: 'test.myshopify.com',
@@ -117,12 +129,8 @@ describe('Product Component class', () => {
           transform: true,
         },
         tracker: {
-          trackMethod: (fn) => {
-            return function(...params) {
-              fn(...params);
-            };
-          },
-          track: sinon.stub(),
+          trackMethod: trackMethodStub,
+          track: trackSpy,
         },
         createCart() {
           return Promise.resolve(new Cart(config, {
@@ -135,7 +143,8 @@ describe('Product Component class', () => {
             },
           }));
         },
-        closeModal() { return; },
+        closeModal: closeModalSpy,
+        setActiveEl: setActiveElSpy,
       };
       configCopy = Object.assign({}, config);
       configCopy.node = document.createElement('div');
@@ -401,66 +410,183 @@ describe('Product Component class', () => {
       });
 
       describe('onButtonClick()', () => {
+        let stopPropagationStub;
+        let userEventStub;
+        const evt = new Event('click shopify-buy__btn--parent');
+        const target = 'shopify-buy__btn--parent';
+
         beforeEach(async () => {
           const newProduct = await product.init(testProductCopy);
           newProduct.cart.model.lineItems = [];
           newProduct.cart.props.client = newProduct.props.client;
+          stopPropagationStub = sinon.stub(Event.prototype, 'stopPropagation');
+          userEventStub = sinon.stub(product, '_userEvent');
         });
 
-        it('add variant to cart is called with the right quantity of selected variant', () => {
-          product.selectedQuantity = 1111;
-          const addToCartStub = sinon.stub(product.cart, 'addVariantToCart');
-          const evt = new Event('click shopify-buy__btn--parent');
-          const target = 'shopify-buy__btn--parent';
-
-          product.onButtonClick(evt, target);
-          assert.calledOnce(addToCartStub);
-          assert.calledWith(addToCartStub, product.selectedVariant, 1111);
-          addToCartStub.restore();
+        afterEach(() => {
+          stopPropagationStub.restore();
+          userEventStub.restore();
         });
 
-        it('create checkout and add line items are called when destination is checkout', async () => {
-          const selectedQuantity = 2;
-          product.config.product.buttonDestination = 'checkout';
-          product.selectedQuantity = selectedQuantity;
-          const openWindowStub = sinon.stub(window, 'open').returns({location: ''});
-          const checkoutMock = {id: 1, webUrl: ''};
-          let createCheckout;
-          const createCheckoutPromise = new Promise((resolve) => {
-            createCheckout = sinon.stub(product.props.client.checkout, 'create').callsFake(() => {
-              resolve();
-              return Promise.resolve(checkoutMock);
-            });
-          });
-
-          let addLineItems;
-          const addLineItemsPromise = new Promise((resolve) => {
-            addLineItems = sinon.stub(product.props.client.checkout, 'addLineItems').callsFake(() => {
-              resolve();
-              return Promise.resolve(checkoutMock);
-            });
-          });
-
-          const checkout = new Checkout(product.config);
-          const evt = new Event('click shopify-buy__btn--parent');
-          const target = 'shopify-buy__btn--parent';
-
+        it('stops propagation', () => {
+          product.config.product.buttonDestination = () => { return; };
           product.onButtonClick(evt, target);
-          await Promise.all([createCheckoutPromise, addLineItemsPromise]);
-          assert.calledOnce(openWindowStub);
-          assert.calledWith(openWindowStub, '', 'checkout', checkout.params);
+          assert.calledOnce(stopPropagationStub);
+        });
 
-          assert.calledOnce(createCheckout);
-          assert.calledOnce(addLineItems);
-          assert.calledWith(addLineItems, checkoutMock.id, [{
-            variantId: 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0NQ==',
-            quantity: selectedQuantity,
-          }]);
+        it('calls buttonDestination if it is a function', () => {
+          const buttonDestinationSpy = sinon.spy();
+          product.config.product.buttonDestination = buttonDestinationSpy;
+          product.onButtonClick(evt, target);
+          assert.calledOnce(buttonDestinationSpy);
+          assert.calledWith(buttonDestinationSpy, product);
+        });
 
-          openWindowStub.restore();
-          createCheckout.restore();
-          addLineItems.restore();
-          assert.calledWith(product.props.tracker.track, 'Direct Checkout', {});
+        describe('if button destination is cart', () => {
+          let addToCartStub;
+
+          beforeEach(() => {
+            product.config.product.buttonDestination = 'cart';
+            addToCartStub = sinon.stub(product.cart, 'addVariantToCart');
+          });
+
+          it('closes modal', () => {
+            product.onButtonClick(evt, target);
+            assert.calledOnce(closeModalSpy);
+          });
+
+          it('calls userEvent with addVariantToCart', () => {
+            product.onButtonClick(evt, target);
+            assert.calledOnce(userEventStub);
+            assert.calledWith(userEventStub, 'addVariantToCart');
+          });
+
+          it('tracks addVariantToCart', () => {
+            product.onButtonClick(evt, target);
+            assert.calledOnce(trackMethodStub);
+            assert.calledWith(trackMethodStub, sinon.match.func, 'Update Cart', product.selectedVariantTrackingInfo);
+            assert.calledOnce(addToCartStub);
+            trackMethodStub.getCall(0).args[0]();
+            assert.calledTwice(addToCartStub);
+          });
+
+          it('adds variant to cart with the right quantity of selected variant', () => {
+            product.selectedQuantity = 1111;
+
+            product.onButtonClick(evt, target);
+            assert.calledOnce(addToCartStub);
+            assert.calledWith(addToCartStub, product.selectedVariant, 1111);
+            addToCartStub.restore();
+          });
+
+          it('sets target to active el if iframe exists', () => {
+            product.iframe = {};
+            product.onButtonClick(evt, target);
+            assert.calledOnce(setActiveElSpy);
+            assert.calledWith(setActiveElSpy, target);
+          });
+        });
+
+        describe('if button destination is modal', () => {
+          let openModalStub;
+
+          beforeEach(() => {
+            product.config.product.buttonDestination = 'modal';
+            openModalStub = sinon.stub(product, 'openModal');
+            product.onButtonClick(evt, target);
+          });
+
+          afterEach(() => {
+            openModalStub.restore();
+          });
+
+          it('sets active element to target', () => {
+            assert.calledOnce(setActiveElSpy);
+            assert.calledWith(setActiveElSpy, target);
+          });
+
+          it('opens modal', () => {
+            assert.calledOnce(openModalStub);
+          });
+        });
+
+        it('opens online store if button destination is online store', () => {
+          const openOnlineStoreStub = sinon.stub(product, 'openOnlineStore');
+          product.config.product.buttonDestination = 'onlineStore';
+          product.onButtonClick(evt, target);
+          assert.calledOnce(openOnlineStoreStub);
+          openOnlineStoreStub.restore();
+        });
+
+        describe('if button destination is checkout', () => {
+          let createCheckoutStub;
+          let createCheckoutPromise;
+          let addLineItemsStub;
+          let addLineItemsPromise;
+          let openWindowStub;
+          const checkoutMock = {id: 1, webUrl: window.location};
+
+          beforeEach(() => {
+            product.config.product.buttonDestination = 'checkout';
+            createCheckoutPromise = new Promise((resolve) => {
+              createCheckoutStub = sinon.stub(product.props.client.checkout, 'create').callsFake(() => {
+                resolve();
+                return Promise.resolve(checkoutMock);
+              });
+            });
+            addLineItemsPromise = new Promise((resolve) => {
+              addLineItemsStub = sinon.stub(product.props.client.checkout, 'addLineItems').callsFake(() => {
+                resolve(checkoutMock);
+                return Promise.resolve(checkoutMock);
+              });
+            });
+            openWindowStub = sinon.stub(window, 'open').returns({location: ''});
+
+          });
+
+          afterEach(() => {
+            openWindowStub.restore();
+            createCheckoutStub.restore();
+            addLineItemsStub.restore();
+          });
+
+          it('calls userEvent with openCheckout', async () => {
+            product.onButtonClick(evt, target);
+            await Promise.all([createCheckoutPromise, addLineItemsPromise]);
+            assert.calledOnce(userEventStub);
+            assert.calledWith(userEventStub, 'openCheckout');
+          });
+
+          it('tracks Direct Checkout', async () => {
+            product.onButtonClick(evt, target);
+            await Promise.all([createCheckoutPromise, addLineItemsPromise]);
+            assert.calledOnce(trackSpy);
+            assert.calledWith(trackSpy, 'Direct Checkout', {});
+          });
+
+          it('opens checkout in a new window if cart popup in config is true', async () => {
+            product.config.cart.popup = true;
+            const checkout = new Checkout(product.config);
+            product.onButtonClick(evt, target);
+            await Promise.all([createCheckoutPromise, addLineItemsPromise]);
+            assert.calledOnce(openWindowStub);
+            assert.calledWith(openWindowStub, '', 'checkout', checkout.params);
+          });
+
+          it('creates checkout and adds line items', async () => {
+            const selectedQuantity = 2;
+            product.selectedQuantity = selectedQuantity;
+
+            product.onButtonClick(evt, target);
+            await Promise.all([createCheckoutPromise, addLineItemsPromise]);
+
+            assert.calledOnce(createCheckoutStub);
+            assert.calledOnce(addLineItemsStub);
+            assert.calledWith(addLineItemsStub, checkoutMock.id, [{
+              variantId: 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0NQ==',
+              quantity: selectedQuantity,
+            }]);
+          });
         });
       });
 
@@ -908,7 +1034,7 @@ describe('Product Component class', () => {
 
           beforeEach(() => {
             windowStub = sinon.stub(windowUtils, 'location').returns('http://test.com');
-            product.selectedVariant = {id: 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0NQ=='}
+            product.selectedVariant = {id: 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0NQ=='};
           });
 
           afterEach(() => {
