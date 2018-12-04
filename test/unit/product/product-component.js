@@ -546,25 +546,25 @@ describe('Product Component class', () => {
 
       describe('onCarouselChange()', () => {
         let renderStub;
+        let nextIndexStub;
 
         beforeEach(async () => {
           await product.init(testProductCopy);
           renderStub = sinon.stub(product.view, 'render');
+          nextIndexStub = sinon.stub(product, 'nextIndex').returns(1);
         });
 
         afterEach(() => {
           renderStub.restore();
+          nextIndexStub.restore();
         });
 
-        it('sets selected image based on various offsets', () => {
-          product.onCarouselChange(-1);
-          assert.equal(product.image.src, `${rootImageURI}image-four_280x420.jpeg`);
-          product.onCarouselChange(-1);
-          assert.equal(product.image.src, `${rootImageURI}image-three_280x420.jpg`);
-          product.onCarouselChange(1);
-          assert.equal(product.image.src, `${rootImageURI}image-four_280x420.jpeg`);
-          product.onCarouselChange(1);
-          assert.equal(product.image.src, `${rootImageURI}image-one_280x420.jpg`);
+        it('sets selected image based on offset determined by nextIndex()', () => {
+          assert.equal(product.selectedImage.id, 1);
+          product.onCarouselChange(3);
+          assert.calledOnce(nextIndexStub);
+          assert.calledWith(nextIndexStub, 0, 3);
+          assert.equal(product.selectedImage.id, 2);
         });
 
         it('renders the view', () => {
@@ -616,10 +616,40 @@ describe('Product Component class', () => {
             product.modal = null;
           });
 
-          it('creates Modal and initializes modal with model', () => {
+          it('creates a new modal with correct config', () => {
+            product.globalConfig = {
+              globalConfig: 'config',
+              modalNode: 'node',
+            };
+            product.config = {
+              config: 'config',
+              modal: {
+                modal: 'modal',
+              },
+            };
+            product = Object.defineProperty(product, 'modalProductConfig', {
+              value: {},
+            });
+            const expectedObj = {
+              globalConfig: product.globalConfig.globalConfig,
+              node: product.globalConfig.modalNode,
+              modalNode: product.globalConfig.modalNode,
+              options: {
+                config: product.config.config,
+                product: product.modalProductConfig,
+                modal: {
+                  modal: product.config.modal.modal,
+                  googleFonts: product.options.googleFonts,
+                },
+              },
+            };
             product.openModal();
             assert.calledOnce(createModalStub);
-            assert.calledWith(createModalStub, sinon.match.object, product.props);
+            assert.calledWith(createModalStub, expectedObj, product.props);
+          });
+
+          it('initializes the newly created modal using the product model', () => {
+            product.openModal();
             assert.calledOnce(modalInitStub);
             assert.calledWith(modalInitStub, product.model);
           });
@@ -654,24 +684,24 @@ describe('Product Component class', () => {
           userEventStub.restore();
         });
 
-        it('updates selected variant', () => {
+        it('updates selected option with the value of the updated option if found in model', () => {
           product.updateVariant('Size', 'large');
           assert.equal(product.selectedOptions.Size, 'large');
         });
 
-        it('does not update selected options or selected variant if option is not found in mdoel', () => {
-          product.selectedVariant = 'oldVariant';
-          product.updateVariant('fakeName', 'large');
-          assert.isUndefined(product.selectedOptions.fakeName);
-          assert.equal(product.selectedVariant, 'oldVariant');
-        });
-
-        it('sets selectedVariant to the variant with the selected options', () => {
+        it('sets selected variant to the variant with the selected options', () => {
           const selectedVariant = {id: 'variant', selectedOptions: {}};
           const variantForOptionsStub = sinon.stub(props.client.product.helpers, 'variantForOptions').returns(selectedVariant);
           product.updateVariant('Size', 'large');
           assert.equal(product.selectedVariant, selectedVariant);
           variantForOptionsStub.restore();
+        });
+
+        it('does not update selected options or selected variant if option is not found in model', () => {
+          product.selectedVariant = 'oldVariant';
+          product.updateVariant('fakeName', 'large');
+          assert.isUndefined(product.selectedOptions.fakeName);
+          assert.equal(product.selectedVariant, 'oldVariant');
         });
 
         describe('if variant exists', () => {
@@ -743,16 +773,18 @@ describe('Product Component class', () => {
       });
 
       describe('setDefaultVariant()', () => {
-        it('sets selectedVariant\'s id to product.defaultVariantId', () => {
-          product.defaultStorefrontVariantId = 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0Nw==';
+        it('sets selected variant and options to matching product.defaultVariantId', () => {
+          product.defaultStorefrontVariantId = productFixture.variants[1].id;
           product.setDefaultVariant(productFixture);
+          assert.equal(product.selectedVariant, productFixture.variants[1]);
           assert.equal(product.selectedOptions.Print, 'shark');
-          assert.equal(product.selectedOptions.Size, 'large');
+          assert.equal(product.selectedOptions.Size, 'small');
         });
 
-        it('falls back to first variantId if invalid variantId was provided', () => {
+        it('falls back to first variant and options if an invalid variantId was provided', () => {
           product.defaultStorefrontVariantId = 'this is an invalid variant id';
           product.setDefaultVariant(productFixture);
+          assert.equal(product.selectedVariant, productFixture.variants[0]);
           assert.equal(product.selectedOptions.Print, 'sloth');
           assert.equal(product.selectedOptions.Size, 'small');
         });
