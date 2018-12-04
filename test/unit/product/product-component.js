@@ -229,14 +229,9 @@ describe('Product Component class', () => {
     describe('init()', () => {
       let createCartStub;
       let renderStub;
-      const cartMock = {
-        node: {},
-        view: {},
-        template: {},
-      };
 
       beforeEach(() => {
-        createCartStub = sinon.stub(product.props, 'createCart').resolves(cartMock);
+        createCartStub = sinon.stub(product.props, 'createCart').resolves('test');
         renderStub = sinon.stub(product.view, 'render');
       });
 
@@ -247,10 +242,9 @@ describe('Product Component class', () => {
 
       describe('successful model', () => {
         let superInitStub;
-        const modelMock = {model: {}};
 
         beforeEach(async () => {
-          superInitStub = sinon.stub(Component.prototype, 'init').resolves(modelMock);
+          superInitStub = sinon.stub(Component.prototype, 'init').resolves({model: {}});
           await product.init('test');
         });
 
@@ -259,7 +253,7 @@ describe('Product Component class', () => {
         });
 
         it('creates a cart then initializes component', () => {
-          assert.equal(product.cart, cartMock);
+          assert.equal(product.cart, 'test');
           assert.calledOnce(createCartStub);
           assert.calledOnce(superInitStub);
           assert.calledWith(superInitStub, 'test');
@@ -268,10 +262,6 @@ describe('Product Component class', () => {
         it('renders view if model is returned from init', () => {
           assert.calledOnce(renderStub);
         });
-
-        it('returns the model', async () => {
-          assert.equal(await product.init('test'), modelMock);
-        });
       });
 
       it('does not render view if model is not returned from init', async () => {
@@ -279,6 +269,67 @@ describe('Product Component class', () => {
         await product.init('test');
         assert.notCalled(renderStub);
         superInitStub.restore();
+      });
+    });
+
+    describe('createCart()', () => {
+      let createCartStub;
+
+      beforeEach(() => {
+        createCartStub = sinon.stub(props, 'createCart').returns('cart');
+      });
+
+      afterEach(() => {
+        createCartStub.restore();
+      });
+
+      it('calls props createCart with correct config', () => {
+        product.globalConfig = {
+          globalConfig: 'globalConfig',
+        };
+        const expectedObj = {
+          globalConfig: product.globalConfig.globalConfig,
+          node: product.globalConfig.cartNode,
+          options: product.config,
+        };
+        product.createCart();
+        assert.calledOnce(createCartStub);
+        assert.calledWith(createCartStub, expectedObj);
+      });
+
+      it('returns props createCart return value', () => {
+        assert.equal(product.createCart(), 'cart');
+      });
+    });
+
+    describe('setupModel()', () => {
+      let superSetupModelStub;
+      let setDefaultVariantStub;
+      let modelMock;
+      let data;
+
+      beforeEach(() => {
+        data = {};
+        modelMock = {};
+        superSetupModelStub = sinon.stub(Component.prototype, 'setupModel').resolves(modelMock);
+        setDefaultVariantStub = sinon.stub(product, 'setDefaultVariant').resolves(productFixture);
+      });
+
+      afterEach(() => {
+        superSetupModelStub.restore();
+        setDefaultVariantStub.restore();
+      });
+
+      it('calls parents setupModel and sets default varint with returned model', async () => {
+        await product.setupModel(data);
+        assert.calledOnce(superSetupModelStub);
+        assert.calledWith(superSetupModelStub, data);
+        assert.calledOnce(setDefaultVariantStub);
+        assert.calledWith(setDefaultVariantStub, modelMock);
+      });
+
+      it('returns setDefaultVariant value', async () => {
+        assert.equal(await product.setupModel(data), productFixture);
       });
     });
 
@@ -361,11 +412,6 @@ describe('Product Component class', () => {
           addToCartStub = sinon.stub(product.cart, 'addVariantToCart');
         });
 
-        it('closes modal', () => {
-          product.onButtonClick(evt, target);
-          assert.calledOnce(closeModalSpy);
-        });
-
         it('calls userEvent with addVariantToCart', () => {
           product.onButtonClick(evt, target);
           assert.calledOnce(userEventStub);
@@ -407,10 +453,6 @@ describe('Product Component class', () => {
           product.onButtonClick(evt, target);
         });
 
-        afterEach(() => {
-          openModalStub.restore();
-        });
-
         it('sets active element to target', () => {
           assert.calledOnce(setActiveElSpy);
           assert.calledWith(setActiveElSpy, target);
@@ -430,24 +472,24 @@ describe('Product Component class', () => {
       });
 
       describe('if button destination is checkout', () => {
-        let createCheckoutStub;
+        let createCheckout;
         let createCheckoutPromise;
-        let addLineItemsStub;
+        let addLineItems;
         let addLineItemsPromise;
         let openWindowStub;
-        const checkoutMock = {id: 1, webUrl: window.location};
+        const checkoutMock = {id: 1, webUrl: 'testUrl'};
 
         beforeEach(() => {
           product.config.product.buttonDestination = 'checkout';
           createCheckoutPromise = new Promise((resolve) => {
-            createCheckoutStub = sinon.stub(product.props.client.checkout, 'create').callsFake(() => {
+            createCheckout = sinon.stub(product.props.client.checkout, 'create').callsFake(() => {
               resolve();
               return Promise.resolve(checkoutMock);
             });
           });
           addLineItemsPromise = new Promise((resolve) => {
-            addLineItemsStub = sinon.stub(product.props.client.checkout, 'addLineItems').callsFake(() => {
-              resolve(checkoutMock);
+            addLineItems = sinon.stub(product.props.client.checkout, 'addLineItems').callsFake(() => {
+              resolve();
               return Promise.resolve(checkoutMock);
             });
           });
@@ -457,8 +499,8 @@ describe('Product Component class', () => {
 
         afterEach(() => {
           openWindowStub.restore();
-          createCheckoutStub.restore();
-          addLineItemsStub.restore();
+          createCheckout.restore();
+          addLineItems.restore();
         });
 
         it('calls userEvent with openCheckout', async () => {
@@ -484,20 +526,120 @@ describe('Product Component class', () => {
           assert.calledWith(openWindowStub, '', 'checkout', checkout.params);
         });
 
-        it('creates checkout and adds line items', async () => {
+        it('create checkout and add line items are called when destination is checkout', async () => {
           const selectedQuantity = 2;
           product.selectedQuantity = selectedQuantity;
 
           product.onButtonClick(evt, target);
           await Promise.all([createCheckoutPromise, addLineItemsPromise]);
 
-          assert.calledOnce(createCheckoutStub);
-          assert.calledOnce(addLineItemsStub);
-          assert.calledWith(addLineItemsStub, checkoutMock.id, [{
+          assert.calledOnce(createCheckout);
+          assert.calledOnce(addLineItems);
+          assert.calledWith(addLineItems, checkoutMock.id, [{
             variantId: 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0NQ==',
             quantity: selectedQuantity,
           }]);
         });
+      });
+    });
+
+    describe('onBlockButtonKeyup()', () => {
+      let event;
+      let onButtonClickStub;
+      const target = {};
+
+      beforeEach(() => {
+        event = {};
+        onButtonClickStub = sinon.stub(product, 'onButtonClick');
+      });
+
+      afterEach(() => {
+        onButtonClickStub.restore();
+      });
+
+      it('calls onButtonClick if event keycode is the enter key', () => {
+        event.keyCode = 13; // enter key
+        product.onBlockButtonKeyup(event, target);
+        assert.calledOnce(onButtonClickStub);
+        assert.calledWith(onButtonClickStub, event, target);
+      });
+
+      it('does not call onButtonClick if event keycode is not the enter key', () => {
+        event.keyCode = 99;
+        product.onBlockButtonKeyup(event, target);
+        assert.notCalled(onButtonClickStub);
+      });
+    });
+
+    describe('onOptionSelect()', () => {
+      it('calls updateVariant with event target name and value', () => {
+        const updateVariantStub = sinon.stub(product, 'updateVariant');
+        const event = {
+          target: {
+            getAttribute(arg) {
+              return arg;
+            },
+            selectedIndex: 'index',
+            options: {
+              index: {
+                value: 'targetValue',
+              },
+            },
+          },
+        };
+        product.onOptionSelect(event);
+        assert.calledOnce(updateVariantStub);
+        assert.calledWith(updateVariantStub, 'name', 'targetValue');
+        updateVariantStub.restore();
+      });
+    });
+
+    describe('onQuantityBlur()', () => {
+      it('calls updateQuantity with function to parse target value', () => {
+        const target = {
+          value: '10',
+        };
+        const event = {};
+        const updateQuantityStub = sinon.stub(product, 'updateQuantity');
+        product.onQuantityBlur(event, target);
+        assert.calledOnce(updateQuantityStub);
+        const value = updateQuantityStub.getCall(0).args[0]();
+        assert.equal(value, 10);
+        updateQuantityStub.restore();
+      });
+    });
+
+    describe('onQuantityIncrement()', () => {
+      it('calls updateQuantity with function to add previous quantity with quantity param', () => {
+        const updateQuantityStub = sinon.stub(product, 'updateQuantity');
+        product.onQuantityIncrement(3);
+        assert.calledOnce(updateQuantityStub);
+        const value = updateQuantityStub.getCall(0).args[0](2);
+        assert.equal(value, 5);
+        updateQuantityStub.restore();
+      });
+    });
+
+    describe('closeCartOnBgClick()', () => {
+      let closeSpy;
+
+      beforeEach(() => {
+        closeSpy = sinon.spy();
+        product.cart = {
+          close: closeSpy,
+        };
+      });
+
+      it('closes cart if it is visible', () => {
+        product.cart.isVisible = true;
+        product.closeCartOnBgClick();
+        assert.calledOnce(closeSpy);
+      });
+
+      it('does not close cart if is not visible', () => {
+        product.cart.isVisible = false;
+        product.closeCartOnBgClick();
+        assert.notCalled(closeSpy);
       });
     });
 
@@ -695,280 +837,9 @@ describe('Product Component class', () => {
         });
       });
 
-      describe('onButtonClick()', () => {
-        let stopPropagationStub;
-        let userEventStub;
-        const evt = new Event('click shopify-buy__btn--parent');
-        const target = 'shopify-buy__btn--parent';
-
-        beforeEach(async () => {
-          const newProduct = await product.init(testProductCopy);
-          newProduct.cart.model.lineItems = [];
-          newProduct.cart.props.client = newProduct.props.client;
-          stopPropagationStub = sinon.stub(Event.prototype, 'stopPropagation');
-          userEventStub = sinon.stub(product, '_userEvent');
-        });
-
-        afterEach(() => {
-          stopPropagationStub.restore();
-          userEventStub.restore();
-        });
-
-        it('stops propagation', () => {
-          product.config.product.buttonDestination = () => { return; };
-          product.onButtonClick(evt, target);
-          assert.calledOnce(stopPropagationStub);
-        });
-
-        it('calls buttonDestination if it is a function', () => {
-          const buttonDestinationSpy = sinon.spy();
-          product.config.product.buttonDestination = buttonDestinationSpy;
-          product.onButtonClick(evt, target);
-          assert.calledOnce(buttonDestinationSpy);
-          assert.calledWith(buttonDestinationSpy, product);
-        });
-
-        describe('if button destination is cart', () => {
-          let addToCartStub;
-
-          beforeEach(() => {
-            product.config.product.buttonDestination = 'cart';
-            addToCartStub = sinon.stub(product.cart, 'addVariantToCart');
-          });
-
-          it('calls userEvent with addVariantToCart', () => {
-            product.onButtonClick(evt, target);
-            assert.calledOnce(userEventStub);
-            assert.calledWith(userEventStub, 'addVariantToCart');
-          });
-
-          it('tracks addVariantToCart', () => {
-            product.onButtonClick(evt, target);
-            assert.calledOnce(trackMethodStub);
-            assert.calledWith(trackMethodStub, sinon.match.func, 'Update Cart', product.selectedVariantTrackingInfo);
-            assert.calledOnce(addToCartStub);
-            trackMethodStub.getCall(0).args[0]();
-            assert.calledTwice(addToCartStub);
-          });
-
-          it('adds variant to cart with the right quantity of selected variant', () => {
-            product.selectedQuantity = 1111;
-
-            product.onButtonClick(evt, target);
-            assert.calledOnce(addToCartStub);
-            assert.calledWith(addToCartStub, product.selectedVariant, 1111);
-            addToCartStub.restore();
-          });
-
-          it('sets target to active el if iframe exists', () => {
-            product.iframe = {};
-            product.onButtonClick(evt, target);
-            assert.calledOnce(setActiveElSpy);
-            assert.calledWith(setActiveElSpy, target);
-          });
-        });
-
-        describe('if button destination is modal', () => {
-          let openModalStub;
-
-          beforeEach(() => {
-            product.config.product.buttonDestination = 'modal';
-            openModalStub = sinon.stub(product, 'openModal');
-            product.onButtonClick(evt, target);
-          });
-
-          it('sets active element to target', () => {
-            assert.calledOnce(setActiveElSpy);
-            assert.calledWith(setActiveElSpy, target);
-          });
-
-          it('opens modal', () => {
-            assert.calledOnce(openModalStub);
-          });
-        });
-
-        it('opens online store if button destination is online store', () => {
-          const openOnlineStoreStub = sinon.stub(product, 'openOnlineStore');
-          product.config.product.buttonDestination = 'onlineStore';
-          product.onButtonClick(evt, target);
-          assert.calledOnce(openOnlineStoreStub);
-          openOnlineStoreStub.restore();
-        });
-
-        describe('if button destination is checkout', () => {
-          let createCheckout;
-          let createCheckoutPromise;
-          let addLineItems;
-          let addLineItemsPromise;
-          let openWindowStub;
-          const checkoutMock = {id: 1, webUrl: 'testUrl'};
-
-          beforeEach(() => {
-            product.config.product.buttonDestination = 'checkout';
-            createCheckoutPromise = new Promise((resolve) => {
-              createCheckout = sinon.stub(product.props.client.checkout, 'create').callsFake(() => {
-                resolve();
-                return Promise.resolve(checkoutMock);
-              });
-            });
-            addLineItemsPromise = new Promise((resolve) => {
-              addLineItems = sinon.stub(product.props.client.checkout, 'addLineItems').callsFake(() => {
-                resolve();
-                return Promise.resolve(checkoutMock);
-              });
-            });
-            openWindowStub = sinon.stub(window, 'open').returns({location: ''});
-
-          });
-
-          afterEach(() => {
-            openWindowStub.restore();
-            createCheckout.restore();
-            addLineItems.restore();
-          });
-
-          it('calls userEvent with openCheckout', async () => {
-            product.onButtonClick(evt, target);
-            await Promise.all([createCheckoutPromise, addLineItemsPromise]);
-            assert.calledOnce(userEventStub);
-            assert.calledWith(userEventStub, 'openCheckout');
-          });
-
-          it('tracks Direct Checkout', async () => {
-            product.onButtonClick(evt, target);
-            await Promise.all([createCheckoutPromise, addLineItemsPromise]);
-            assert.calledOnce(trackSpy);
-            assert.calledWith(trackSpy, 'Direct Checkout', {});
-          });
-
-          it('opens checkout in a new window if cart popup in config is true', async () => {
-            product.config.cart.popup = true;
-            const checkout = new Checkout(product.config);
-            product.onButtonClick(evt, target);
-            await Promise.all([createCheckoutPromise, addLineItemsPromise]);
-            assert.calledOnce(openWindowStub);
-            assert.calledWith(openWindowStub, '', 'checkout', checkout.params);
-          });
-
-          it('create checkout and add line items are called when destination is checkout', async () => {
-            const selectedQuantity = 2;
-            product.selectedQuantity = selectedQuantity;
-
-            product.onButtonClick(evt, target);
-            await Promise.all([createCheckoutPromise, addLineItemsPromise]);
-
-            assert.calledOnce(createCheckout);
-            assert.calledOnce(addLineItems);
-            assert.calledWith(addLineItems, checkoutMock.id, [{
-              variantId: 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0NQ==',
-              quantity: selectedQuantity,
-            }]);
-          });
-        });
-      });
-
-      describe('onCarouselChange()', () => {
-        let renderStub;
-
-        beforeEach(async () => {
-          await product.init(testProductCopy);
-          renderStub = sinon.stub(product.view, 'render');
-        });
-
-        afterEach(() => {
-          renderStub.restore();
-        });
-
-        it('sets selected image based on various offsets', () => {
-          product.onCarouselChange(-1);
-          assert.equal(product.image.src, `${rootImageURI}image-four_280x420.jpeg`);
-          product.onCarouselChange(-1);
-          assert.equal(product.image.src, `${rootImageURI}image-three_280x420.jpg`);
-          product.onCarouselChange(1);
-          assert.equal(product.image.src, `${rootImageURI}image-four_280x420.jpeg`);
-          product.onCarouselChange(1);
-          assert.equal(product.image.src, `${rootImageURI}image-one_280x420.jpg`);
-        });
-
-        it('renders the view', () => {
-          product.onCarouselChange(1);
-          assert.calledOnce(renderStub);
-        });
-
-        it('sets cached image to selected image', () => {
-          product.onCarouselChange(1);
-          assert.equal(product.cachedImage, product.selectedImage);
-        });
-      });
-
-      describe('openModal()', () => {
-        let userEventStub;
-        let modalInitStub;
-        let createModalStub;
-        const modalMock = {};
-
-        beforeEach(() => {
-          modalInitStub = sinon.stub().returns(modalMock);
-          createModalStub = sinon.stub().returns({
-            init: modalInitStub,
-          });
-          userEventStub = sinon.stub(product, '_userEvent');
-          product.props.createModal = createModalStub;
-        });
-
-        afterEach(() => {
-          userEventStub.restore();
-        });
-
-        describe('if modal exists', () => {
-          beforeEach(() => {
-            product.modal = {
-              init: modalInitStub,
-            };
-          });
-
-          it('re-initializes modal with model', () => {
-            product.openModal();
-            assert.calledOnce(modalInitStub);
-            assert.calledWith(modalInitStub, product.model);
-          });
-        });
-
-        describe('if modal does not exist', () => {
-          beforeEach(() => {
-            product.modal = null;
-          });
-
-          it('creates Modal and initializes modal with model', () => {
-            product.openModal();
-            assert.calledOnce(createModalStub);
-            assert.calledWith(createModalStub, sinon.match.object, product.props);
-            assert.calledOnce(modalInitStub);
-            assert.calledWith(modalInitStub, product.model);
-          });
-        });
-
-        it('calls userEvent with openModal', () => {
-          product.modal = {
-            init: modalInitStub,
-          };
-          product.openModal();
-          assert.calledOnce(userEventStub);
-          assert.calledWith(userEventStub, 'openModal');
-        });
-
-        it('returns the init value', () => {
-          assert.equal(product.openModal(), modalMock);
-        });
-      });
-
-      describe('setDefaultVariant()', () => {
-        it('sets selected variant and options to matching product.defaultVariantId', () => {
-          product.defaultStorefrontVariantId = productFixture.variants[1].id;
-          product.setDefaultVariant(productFixture);
-          assert.equal(product.selectedVariant, productFixture.variants[1]);
-          assert.equal(product.selectedOptions.Print, 'shark');
-          assert.equal(product.selectedOptions.Size, 'small');
+      it('sets selected image to the cached image in model if variant does not exist', () => {
+        product = Object.defineProperty(product, 'variantExists', {
+          value: false,
         });
         const expectedImage = {
           id: 1,
@@ -1437,6 +1308,5 @@ describe('Product Component class', () => {
         });
       });
     });
-
   });
 });
