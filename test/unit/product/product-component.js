@@ -229,9 +229,14 @@ describe('Product Component class', () => {
     describe('init()', () => {
       let createCartStub;
       let renderStub;
+      const cartMock = {
+        node: {},
+        view: {},
+        template: {},
+      };
 
       beforeEach(() => {
-        createCartStub = sinon.stub(product.props, 'createCart').resolves('test');
+        createCartStub = sinon.stub(product.props, 'createCart').resolves(cartMock);
         renderStub = sinon.stub(product.view, 'render');
       });
 
@@ -242,9 +247,10 @@ describe('Product Component class', () => {
 
       describe('successful model', () => {
         let superInitStub;
+        const modelMock = {model: {}};
 
         beforeEach(async () => {
-          superInitStub = sinon.stub(Component.prototype, 'init').resolves({model: {}});
+          superInitStub = sinon.stub(Component.prototype, 'init').resolves(modelMock);
           await product.init('test');
         });
 
@@ -253,7 +259,7 @@ describe('Product Component class', () => {
         });
 
         it('creates a cart then initializes component', () => {
-          assert.equal(product.cart, 'test');
+          assert.equal(product.cart, cartMock);
           assert.calledOnce(createCartStub);
           assert.calledOnce(superInitStub);
           assert.calledWith(superInitStub, 'test');
@@ -261,6 +267,10 @@ describe('Product Component class', () => {
 
         it('renders view if model is returned from init', () => {
           assert.calledOnce(renderStub);
+        });
+
+        it('returns the model', async () => {
+          assert.equal(await product.init('test'), modelMock);
         });
       });
 
@@ -412,6 +422,11 @@ describe('Product Component class', () => {
           addToCartStub = sinon.stub(product.cart, 'addVariantToCart');
         });
 
+        it('closes modal', () => {
+          product.onButtonClick(evt, target);
+          assert.calledOnce(closeModalSpy);
+        });
+
         it('calls userEvent with addVariantToCart', () => {
           product.onButtonClick(evt, target);
           assert.calledOnce(userEventStub);
@@ -453,6 +468,10 @@ describe('Product Component class', () => {
           product.onButtonClick(evt, target);
         });
 
+        afterEach(() => {
+          openModalStub.restore();
+        });
+
         it('sets active element to target', () => {
           assert.calledOnce(setActiveElSpy);
           assert.calledWith(setActiveElSpy, target);
@@ -472,24 +491,24 @@ describe('Product Component class', () => {
       });
 
       describe('if button destination is checkout', () => {
-        let createCheckout;
+        let createCheckoutStub;
         let createCheckoutPromise;
-        let addLineItems;
+        let addLineItemsStub;
         let addLineItemsPromise;
         let openWindowStub;
-        const checkoutMock = {id: 1, webUrl: 'testUrl'};
+        const checkoutMock = {id: 1, webUrl: window.location};
 
         beforeEach(() => {
           product.config.product.buttonDestination = 'checkout';
           createCheckoutPromise = new Promise((resolve) => {
-            createCheckout = sinon.stub(product.props.client.checkout, 'create').callsFake(() => {
+            createCheckoutStub = sinon.stub(product.props.client.checkout, 'create').callsFake(() => {
               resolve();
               return Promise.resolve(checkoutMock);
             });
           });
           addLineItemsPromise = new Promise((resolve) => {
-            addLineItems = sinon.stub(product.props.client.checkout, 'addLineItems').callsFake(() => {
-              resolve();
+            addLineItemsStub = sinon.stub(product.props.client.checkout, 'addLineItems').callsFake(() => {
+              resolve(checkoutMock);
               return Promise.resolve(checkoutMock);
             });
           });
@@ -499,8 +518,8 @@ describe('Product Component class', () => {
 
         afterEach(() => {
           openWindowStub.restore();
-          createCheckout.restore();
-          addLineItems.restore();
+          createCheckoutStub.restore();
+          addLineItemsStub.restore();
         });
 
         it('calls userEvent with openCheckout', async () => {
@@ -526,16 +545,16 @@ describe('Product Component class', () => {
           assert.calledWith(openWindowStub, '', 'checkout', checkout.params);
         });
 
-        it('create checkout and add line items are called when destination is checkout', async () => {
+        it('creates checkout and adds line items', async () => {
           const selectedQuantity = 2;
           product.selectedQuantity = selectedQuantity;
 
           product.onButtonClick(evt, target);
           await Promise.all([createCheckoutPromise, addLineItemsPromise]);
 
-          assert.calledOnce(createCheckout);
-          assert.calledOnce(addLineItems);
-          assert.calledWith(addLineItems, checkoutMock.id, [{
+          assert.calledOnce(createCheckoutStub);
+          assert.calledOnce(addLineItemsStub);
+          assert.calledWith(addLineItemsStub, checkoutMock.id, [{
             variantId: 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0NQ==',
             quantity: selectedQuantity,
           }]);
