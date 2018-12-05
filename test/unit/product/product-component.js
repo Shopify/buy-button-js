@@ -319,8 +319,14 @@ describe('Product Component class', () => {
       let data;
 
       beforeEach(() => {
-        data = {};
-        modelMock = {};
+        data = {
+          id: '1',
+          title: 'hat',
+        };
+        modelMock = {
+          id: '2',
+          title: 'top',
+        };
         superSetupModelStub = sinon.stub(Component.prototype, 'setupModel').resolves(modelMock);
         setDefaultVariantStub = sinon.stub(product, 'setDefaultVariant').resolves(productFixture);
       });
