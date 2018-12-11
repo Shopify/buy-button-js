@@ -1239,7 +1239,7 @@ describe('Product Component class', () => {
         });
 
         it('returns true if variant exists in model', () => {
-          product.selectedVariant = {id: 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0NQ=='};
+          product.selectedVariant = {id: testProductCopy.variants[0].id};
           assert.isTrue(product.variantExists);
         });
 
