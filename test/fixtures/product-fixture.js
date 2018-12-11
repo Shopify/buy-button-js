@@ -4,19 +4,19 @@ const testProduct = {
   storefrontId: 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0LzEyMw==',
   images: [
     {
-      id: 1,
+      id: '1',
       src: 'https://cdn.shopify.com/s/files/1/0014/8583/2214/products/image-one.jpg',
     },
     {
-      id: 2,
+      id: '2',
       src: 'https://cdn.shopify.com/s/files/1/0014/8583/2214/products/image-two.jpeg',
     },
     {
-      id: 3,
+      id: '3',
       src: 'https://cdn.shopify.com/s/files/1/0014/8583/2214/products/image-three.jpg',
     },
     {
-      id: 4,
+      id: '4',
       src: 'https://cdn.shopify.com/s/files/1/0014/8583/2214/products/image-four.jpeg',
     },
   ],
