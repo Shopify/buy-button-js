@@ -960,14 +960,14 @@ describe('Product Component class', () => {
           await product.init(testProductCopy);
         });
 
-        it('sets cached image to product.image if image should update', async () => {
+        it('sets cached image to product.image if image should update', () => {
           product = Object.defineProperty(product, 'shouldUpateImage', {
             value: true,
           });
           assert.deepEqual(product.cachedImage, product.image);
         });
 
-        it('does not set cached image to product.image if image should not update', async () => {
+        it('does not set cached image to product.image if image should not update', () => {
           product = Object.defineProperty(product, 'shouldUpateImage', {
             value: false,
           });
@@ -977,7 +977,7 @@ describe('Product Component class', () => {
           assert.notDeepEqual(product.cachedImage, product.image);
         });
 
-        it('returns cached image', async () => {
+        it('returns cached image', () => {
           assert.equal(product.currentImage, product.cachedImage);
         });
       });
@@ -1238,17 +1238,17 @@ describe('Product Component class', () => {
           await product.init(testProductCopy);
         });
 
-        it('returns true if variant exists in model', async () => {
+        it('returns true if variant exists in model', () => {
           product.selectedVariant = {id: 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0NQ=='};
           assert.isTrue(product.variantExists);
         });
 
-        it('returns false if selected variant does not exist', async () => {
+        it('returns false if selected variant does not exist', () => {
           product.selectedVariant = null;
           assert.isFalse(product.variantExists);
         });
 
-        it('returns false if selected variant is not in model', async () => {
+        it('returns false if selected variant is not in model', () => {
           product.selectedVariant = {id: 'non-existent-id'};
           assert.isFalse(product.variantExists);
         });
@@ -1259,17 +1259,17 @@ describe('Product Component class', () => {
           await product.init(testProductCopy);
         });
 
-        it('returns true if there are multiple variants in model', async () => {
+        it('returns true if there are multiple variants in model', () => {
           product.model.variants = [{id: 123}, {id: 234}];
           assert.isTrue(product.hasVariants);
         });
 
-        it('returns false if there is one variant in model', async () => {
+        it('returns false if there is one variant in model', () => {
           product.model.variants = [{id: 123}];
           assert.isFalse(product.hasVariants);
         });
 
-        it('returns false if there is no variant in model', async () => {
+        it('returns false if there is no variant in model', () => {
           product.model.variants = [];
           assert.isFalse(product.hasVariants);
         });
