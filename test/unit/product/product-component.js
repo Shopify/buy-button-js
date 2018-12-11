@@ -628,8 +628,8 @@ describe('Product Component class', () => {
         const updateQuantityStub = sinon.stub(product, 'updateQuantity');
         product.onQuantityBlur(event, target);
         assert.calledOnce(updateQuantityStub);
-        const calculatedValue = updateQuantityStub.getCall(0).args[0]();
-        assert.equal(calculatedValue, 10);
+        const callbackValue = updateQuantityStub.getCall(0).args[0]();
+        assert.equal(callbackValue, 10);
         updateQuantityStub.restore();
       });
     });
@@ -639,8 +639,8 @@ describe('Product Component class', () => {
         const updateQuantityStub = sinon.stub(product, 'updateQuantity');
         product.onQuantityIncrement(3);
         assert.calledOnce(updateQuantityStub);
-        const calculatedValue = updateQuantityStub.getCall(0).args[0](2);
-        assert.equal(calculatedValue, 5);
+        const callbackValue = updateQuantityStub.getCall(0).args[0](2);
+        assert.equal(callbackValue, 5);
         updateQuantityStub.restore();
       });
     });
