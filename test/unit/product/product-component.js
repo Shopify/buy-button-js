@@ -928,52 +928,50 @@ describe('Product Component class', () => {
 
     describe('getters', () => {
       describe('shouldUpdateImage', () => {
-        describe('if no cached image', () => {
-          it('returns true', () => {
-            product.cachedImage = null;
-            assert.ok(product.shouldUpdateImage);
-          });
+        it('returns true if there is no cached image', () => {
+          product.cachedImage = null;
+          assert.isTrue(product.shouldUpdateImage);
         });
 
-        describe('if image and cached image are different', () => {
-          beforeEach(async () => {
-            product.config.product.width = '100px';
-            await product.init(testProductCopy);
-          });
-
-          it('returns true', () => {
-            product.cachedImage = 'bar.jpg';
-            assert.ok(product.shouldUpdateImage);
-          });
+        it('returns true if image and cached image are different', async () => {
+          product.config.product.width = '100px';
+          await product.init(testProductCopy);
+          product.cachedImage = 'bar.jpg';
+          assert.isTrue(product.shouldUpdateImage);
         });
 
-        describe('if image and cached image are same', () => {
-          beforeEach(async () => {
-            product.config.product.width = '240px';
-            await product.init(testProductCopy);
-          });
-
-          it('returns true', () => {
-            product.cachedImage = `${rootImageURI}image-one_240x360.jpg`;
-            assert.notOk(product.shouldUpdateImage);
-          });
+        it('returns false if image and cached image are the same', async () => {
+          product.config.product.width = '240px';
+          await product.init(testProductCopy);
+          product.cachedImage = `${rootImageURI}image-one_240x360.jpg`;
+          assert.isFalse(product.shouldUpdateImage);
         });
       });
 
+
       describe('currentImage', () => {
-        describe('if variant exists', () => {
-          it('returns selected image', async () => {
-            await product.init(testProductCopy);
-            assert.equal(product.currentImage.src, `${rootImageURI}image-one_280x420.jpg`);
+        it('sets cached image to product.image if image should update', async () => {
+          product = Object.defineProperty(product, 'shouldUpateImage', {
+            value: true,
           });
+          await product.init(testProductCopy);
+          assert.deepEqual(product.cachedImage, product.image);
         });
 
-        describe('if variant does not exist', () => {
-          it('returns cached image', async () => {
-            await product.init(testProductCopy);
-            product.selectedVariant = {};
-            assert.equal(product.currentImage.src, `${rootImageURI}image-one_280x420.jpg`);
+        it('does not set cached image to product.image if image should not update', async () => {
+          product = Object.defineProperty(product, 'shouldUpateImage', {
+            value: true,
           });
+          product.cachedImage = {
+            src: 'not-image-src',
+          };
+          await product.init(testProductCopy);
+          assert.notEqual(product.cachedImage, product.image);
+        });
+
+        it('returns cached image', async () => {
+          await product.init(testProductCopy);
+          assert.equal(product.currentImage, product.cachedImage);
         });
       });
 
@@ -1043,113 +1041,225 @@ describe('Product Component class', () => {
       });
 
       describe('viewData', () => {
-        it('returns supplemental view info', async () => {
+        beforeEach(async () => {
           await product.init(testProductCopy);
-          const viewData = product.viewData;
-          assert.equal(viewData.buttonText, 'ADD TO CART');
-          assert.ok(viewData.optionsHtml);
-          assert.equal(viewData.currentImage.src, `${rootImageURI}image-one_280x420.jpg`);
-          assert.ok(viewData.hasVariants);
-          assert.equal(viewData.test, 'test string');
+        });
+
+        it('returns an object merged with model', () => {
+          assert.equal(product.viewData.title, product.model.title);
+          assert.equal(product.viewData.id, product.model.id);
+          assert.equal(product.viewData.images, product.model.images);
+          assert.equal(product.viewData.options, product.model.options);
+          assert.equal(product.viewData.storeFrontId, product.model.storeFrontId);
+          assert.equal(product.viewData.variants, product.model.variants);
+        });
+
+        it('returns an object merged with option\'s viewData', () => {
+          assert.equal(product.viewData.test, product.options.viewData.test);
+        });
+
+        it('returns an object with classes', () => {
+          assert.deepEqual(product.viewData.classes, product.classes);
+        });
+
+        it('returns an object with contents', () => {
+          assert.deepEqual(product.viewData.contents, product.options.contents);
+        });
+
+        it('returns an object with text', () => {
+          assert.deepEqual(product.viewData.text, product.options.text);
+        });
+
+        it('returns an object with optionsHtml', () => {
+          assert.equal(product.viewData.optionsHtml, product.optionsHtml);
+        });
+
+        it('returns an object with decoratedOptions', () => {
+          assert.deepEqual(product.viewData.decoratedOptions, product.decoratedOptions);
+        });
+
+        it('returns an object with currentImage', () => {
+          assert.deepEqual(product.viewData.currentImage, product.currentImage);
+        });
+
+        it('returns an object with buttonClass', () => {
+          assert.equal(product.viewData.buttonClass, product.buttonClass);
+        });
+
+        it('returns an object with hasVariants', () => {
+          assert.equal(product.viewData.hasVariants, product.hasVariants);
+        });
+
+        it('returns an object with buttonDisabled', () => {
+          assert.equal(product.viewData.buttonDisabled, !product.buttonEnabled);
+        });
+
+        it('returns an object with selectedVariant', () => {
+          assert.equal(product.viewData.selectedVariant, product.selectedVariant);
+        });
+
+        it('returns an object with selectedQuantity', () => {
+          assert.equal(product.viewData.selectedQuantity, product.selectedQuantity);
+        });
+
+        it('returns an object with buttonText', () => {
+          assert.deepEqual(product.viewData.buttonText, product.buttonText);
+        });
+
+        it('returns an object with imgStyle', () => {
+          assert.equal(product.viewData.imgStyle, product.imgStyle);
+        });
+
+        it('returns an object with quantityClass', () => {
+          assert.equal(product.viewData.quantityClass, product.quantityClass);
+        });
+
+        it('returns an object with priceClass', () => {
+          assert.equal(product.viewData.priceClass, product.priceClass);
+        });
+
+        it('returns an object with formattedPrice', () => {
+          assert.equal(product.viewData.formattedPrice, product.formattedPrice);
+        });
+
+        it('returns an object with formattedCompareAtPrice', () => {
+          assert.equal(product.viewData.formattedCompareAtPrice, product.formattedCompareAtPrice);
+        });
+
+        it('returns an object with carouslIndex', () => {
+          assert.equal(product.viewData.carouselIndex, 0);
+        });
+
+        it('returns an object with carouselImages', () => {
+          assert.deepEqual(product.viewData.carouselImages, product.carouselImages);
         });
       });
 
       describe('buttonText', () => {
         beforeEach(async () => {
           await product.init(testProductCopy);
-        });
-
-        describe('when variant does not exist', () => {
-          it('returns unavailable text', () => {
-            product.selectedVariant = null;
-            assert.equal(product.buttonText, product.options.text.unavailable);
+          Object.defineProperties(product, {
+            variantExists: {
+              writable: true,
+            },
+            variantInStock: {
+              writable: true,
+            },
           });
         });
 
-        describe('when variant is out of stock', () => {
-          it('returns out of stock text', () => {
-            product.selectedVariant = {
-              id: 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0NQ==',
-              available: false,
-            };
-            assert.equal(product.buttonText, product.options.text.outOfStock);
-          });
+        it('returns button text if button destination is modal', () => {
+          product.config.product.buttonDestination = 'modal';
+          assert.equal(product.buttonText, product.options.text.button);
         });
 
-        describe('when variant is available', () => {
-          it('returns button text', () => {
-            product.selectedVariant = {
-              id: 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0NQ==',
-              available: true,
-            };
-            assert.equal(product.buttonText, product.options.text.button);
-          });
+        it('returns unavailable text if variant does not exist', () => {
+          product.variantExists = false;
+          assert.equal(product.buttonText, product.options.text.unavailable);
+        });
+
+        it('returns out of stock text if variant is out of stock', () => {
+          product.variantExists = true;
+          product.variantInStock = false;
+          assert.equal(product.buttonText, product.options.text.outOfStock);
+        });
+
+        it('returns button text if variant is available', () => {
+          product.variantExists = true;
+          product.variantInStock = true;
+          assert.equal(product.buttonText, product.options.text.button);
         });
       });
 
       describe('buttonEnabled', () => {
-        describe('if buttonActionAvailable is false', () => {
-          it('returns false', () => {
-            product.cart = null;
-            assert.notOk(product.buttonEnabled);
-          });
+        it('returns true if button destination is modal', () => {
+          product.config.product.buttonDestination = 'modal';
+          assert.isTrue(product.buttonEnabled);
         });
 
-        describe('if buttonActionAvailable is true', () => {
-          beforeEach(async () => {
-            await product.init(testProductCopy);
-          });
-
-          describe('if variant is in stock', () => {
-            it('returns true', () => {
-              assert.ok(product.buttonEnabled);
+        describe('when button destination is not modal', () => {
+          beforeEach(() => {
+            product.config.product.buttonDestination = 'cart';
+            Object.defineProperties(product, {
+              buttonActionAvailable: {
+                writable: true,
+              },
+              variantExists: {
+                writable: true,
+              },
+              variantInStock: {
+                writable: true,
+              },
             });
           });
 
-          describe('if variant is not in stock', () => {
-            it('returns false', () => {
-              product.selectedVariant = {
-                available: false,
-              };
-              assert.notOk(product.buttonEnabled);
-            });
+          it('returns false if button action is not available', () => {
+            product.buttonActionAvailable = false;
+            product.variantExists = true;
+            product.variantInStock = true;
+            assert.isFalse(product.buttonEnabled);
+          });
+
+          it('returns false if variant does not exist', () => {
+            product.buttonActionAvailable = true;
+            product.variantExists = false;
+            product.variantInStock = true;
+            assert.isFalse(product.buttonEnabled);
+          });
+
+          it('returns false if variant is not in stock', () => {
+            product.buttonActionAvailable = true;
+            product.variantExists = true;
+            product.variantInStock = false;
+            assert.isFalse(product.buttonEnabled);
+          });
+
+          it('returns true if button action is available, product exists, and product is in stock', () => {
+            product.buttonActionAvailable = true;
+            product.variantExists = true;
+            product.variantInStock = true;
+            assert.isTrue(product.buttonEnabled);
           });
         });
       });
 
       describe('variantExists', () => {
-        describe('if variant exists for selected options', () => {
-          it('returns true', async () => {
-            await product.init(testProductCopy);
-            product.selectedVariant = {id: 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0NQ=='};
-            assert.isOk(product.variantExists);
-          });
+        it('returns true if variant exists in model', async () => {
+          await product.init(testProductCopy);
+          product.selectedVariant = {id: 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0NQ=='};
+          assert.isTrue(product.variantExists);
         });
 
-        describe('if variant does not exist for selected options', () => {
-          it('returns false', async () => {
-            await product.init(testProductCopy);
-            product.selectedVariant = null;
-            assert.isNotOk(product.variantExists);
-          });
+        it('returns false if selected variant does not exist', async () => {
+          await product.init(testProductCopy);
+          product.selectedVariant = null;
+          assert.isFalse(product.variantExists);
+        });
+
+        it('returns false if selected variant is not in model', async () => {
+          await product.init(testProductCopy);
+          product.selectedVariant = {id: 'non-existent-id'};
+          assert.isFalse(product.variantExists);
         });
       });
 
       describe('hasVariants', () => {
-        describe('if multiple variants', () => {
-          it('returns true', async () => {
-            await product.init(testProductCopy);
-            product.model.variants = [{id: 123}, {id: 234}];
-            assert.ok(product.hasVariants);
-          });
+        it('returns true if there are multiple variants in model', async () => {
+          await product.init(testProductCopy);
+          product.model.variants = [{id: 123}, {id: 234}];
+          assert.isTrue(product.hasVariants);
         });
 
-        describe('if single variant', () => {
-          it('returns false on #hasVariants if single variant', async () => {
-            await product.init(testProductCopy);
-            product.model.variants = [{id: 123}];
-            assert.notOk(product.hasVariants);
-          });
+        it('returns false if there is one variant in model', async () => {
+          await product.init(testProductCopy);
+          product.model.variants = [{id: 123}];
+          assert.isFalse(product.hasVariants);
+        });
+
+        it('returns false if there is no variant in model', async () => {
+          await product.init(testProductCopy);
+          product.model.variants = [];
+          assert.isFalse(product.hasVariants);
         });
       });
 
