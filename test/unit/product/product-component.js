@@ -282,6 +282,73 @@ describe('Product Component class', () => {
       });
     });
 
+    describe('createCart()', () => {
+      let createCartStub;
+
+      beforeEach(() => {
+        createCartStub = sinon.stub(props, 'createCart').returns('cart');
+      });
+
+      afterEach(() => {
+        createCartStub.restore();
+      });
+
+      it('calls props createCart with correct config', () => {
+        product.globalConfig = {
+          globalConfig: 'globalConfig',
+        };
+        const expectedObj = {
+          globalConfig: product.globalConfig.globalConfig,
+          node: product.globalConfig.cartNode,
+          options: product.config,
+        };
+        product.createCart();
+        assert.calledOnce(createCartStub);
+        assert.calledWith(createCartStub, expectedObj);
+      });
+
+      it('returns props createCart return value', () => {
+        assert.equal(product.createCart(), 'cart');
+      });
+    });
+
+    describe('setupModel()', () => {
+      let superSetupModelStub;
+      let setDefaultVariantStub;
+      let modelMock;
+      let data;
+
+      beforeEach(() => {
+        data = {
+          id: '1',
+          title: 'hat',
+        };
+        modelMock = {
+          id: '2',
+          title: 'top',
+        };
+        superSetupModelStub = sinon.stub(Component.prototype, 'setupModel').resolves(modelMock);
+        setDefaultVariantStub = sinon.stub(product, 'setDefaultVariant').resolves(productFixture);
+      });
+
+      afterEach(() => {
+        superSetupModelStub.restore();
+        setDefaultVariantStub.restore();
+      });
+
+      it('calls parents setupModel and sets default varint with returned model', async () => {
+        await product.setupModel(data);
+        assert.calledOnce(superSetupModelStub);
+        assert.calledWith(superSetupModelStub, data);
+        assert.calledOnce(setDefaultVariantStub);
+        assert.calledWith(setDefaultVariantStub, modelMock);
+      });
+
+      it('returns setDefaultVariant value', async () => {
+        assert.equal(await product.setupModel(data), productFixture);
+      });
+    });
+
     describe('sdkFetch()', () => {
       it('fetches and returns data with fetch using the first product storefront id if storefront id is passed in as an array', async () => {
         product.storefrontId = ['Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0LzEyMzQ1'];
@@ -498,6 +565,106 @@ describe('Product Component class', () => {
             quantity: selectedQuantity,
           }]);
         });
+      });
+    });
+
+    describe('onBlockButtonKeyup()', () => {
+      let event;
+      let onButtonClickStub;
+      const target = {};
+
+      beforeEach(() => {
+        event = {};
+        onButtonClickStub = sinon.stub(product, 'onButtonClick');
+      });
+
+      afterEach(() => {
+        onButtonClickStub.restore();
+      });
+
+      it('calls onButtonClick if event keycode is the enter key', () => {
+        event.keyCode = 13; // enter key
+        product.onBlockButtonKeyup(event, target);
+        assert.calledOnce(onButtonClickStub);
+        assert.calledWith(onButtonClickStub, event, target);
+      });
+
+      it('does not call onButtonClick if event keycode is not the enter key', () => {
+        event.keyCode = 99;
+        product.onBlockButtonKeyup(event, target);
+        assert.notCalled(onButtonClickStub);
+      });
+    });
+
+    describe('onOptionSelect()', () => {
+      it('calls updateVariant with event target name and value', () => {
+        const updateVariantStub = sinon.stub(product, 'updateVariant');
+        const event = {
+          target: {
+            getAttribute(arg) {
+              return arg;
+            },
+            selectedIndex: 'index',
+            options: {
+              index: {
+                value: 'targetValue',
+              },
+            },
+          },
+        };
+        product.onOptionSelect(event);
+        assert.calledOnce(updateVariantStub);
+        assert.calledWith(updateVariantStub, 'name', 'targetValue');
+        updateVariantStub.restore();
+      });
+    });
+
+    describe('onQuantityBlur()', () => {
+      it('calls updateQuantity with function to parse target value', () => {
+        const target = {
+          value: '10',
+        };
+        const event = {};
+        const updateQuantityStub = sinon.stub(product, 'updateQuantity');
+        product.onQuantityBlur(event, target);
+        assert.calledOnce(updateQuantityStub);
+        const callbackValue = updateQuantityStub.getCall(0).args[0]();
+        assert.equal(callbackValue, 10);
+        updateQuantityStub.restore();
+      });
+    });
+
+    describe('onQuantityIncrement()', () => {
+      it('calls updateQuantity with function to add previous quantity with quantity param', () => {
+        const updateQuantityStub = sinon.stub(product, 'updateQuantity');
+        product.onQuantityIncrement(3);
+        assert.calledOnce(updateQuantityStub);
+        const callbackValue = updateQuantityStub.getCall(0).args[0](2);
+        assert.equal(callbackValue, 5);
+        updateQuantityStub.restore();
+      });
+    });
+
+    describe('closeCartOnBgClick()', () => {
+      let closeSpy;
+
+      beforeEach(() => {
+        closeSpy = sinon.spy();
+        product.cart = {
+          close: closeSpy,
+        };
+      });
+
+      it('closes cart if it is visible', () => {
+        product.cart.isVisible = true;
+        product.closeCartOnBgClick();
+        assert.calledOnce(closeSpy);
+      });
+
+      it('does not close cart if is not visible', () => {
+        product.cart.isVisible = false;
+        product.closeCartOnBgClick();
+        assert.notCalled(closeSpy);
       });
     });
 
@@ -1166,6 +1333,5 @@ describe('Product Component class', () => {
         });
       });
     });
-
   });
 });
