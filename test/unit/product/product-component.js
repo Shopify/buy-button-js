@@ -1177,8 +1177,8 @@ describe('Product Component class', () => {
           assert.isTrue(product.buttonActionAvailable);
         });
 
-        it('returns true if a cart exists', async () => {
-          await product.init(testProductCopy);
+        it('returns true if a cart exists', () => {
+          product.cart = {};
           assert.isTrue(product.buttonActionAvailable);
         });
 
