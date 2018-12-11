@@ -387,6 +387,45 @@ describe('Product Component class', () => {
       });
     });
 
+    describe('fetchData', () => {
+      describe('if sdkFetch returns a model', () => {
+        let sdkFetchStub;
+        const modelMock = {
+          id: '1',
+          handle: 'hat',
+        };
+
+        beforeEach(() => {
+          sdkFetchStub = sinon.stub(product, 'sdkFetch').resolves(modelMock);
+        });
+
+        afterEach(() => {
+          sdkFetchStub.restore();
+        });
+
+        it('sets storefront id and handle to the respective params in the model returned by sdkFetch', async () => {
+          await product.fetchData();
+          assert.equal(product.storefrontId, modelMock.id);
+          assert.equal(product.handle, modelMock.handle);
+        });
+
+        it('returns the model returned by sdkFetch', async () => {
+          assert.equal(await product.fetchData(), modelMock);
+        });
+      });
+
+      it('throws a Not Found error if sdkFetch does not return a model', async () => {
+        const sdkFetchStub = sinon.stub(product, 'sdkFetch').resolves();
+        try {
+          await product.fetchData();
+        } catch (error) {
+          assert.equal(error, 'Error: Not Found');
+        }
+        assert.throws(product.fetchData, Error);
+        sdkFetchStub.restore();
+      });
+    });
+
     describe('onButtonClick()', () => {
       let stopPropagationStub;
       let userEventStub;
@@ -668,6 +707,85 @@ describe('Product Component class', () => {
       });
     });
 
+    describe('onCarouselItemClick()', () => {
+      let preventDefaultStub;
+      let renderStub;
+      let event;
+      let target;
+
+      beforeEach(() => {
+        event = new Event('click');
+        target = document.createElement('div');
+        preventDefaultStub = sinon.stub(event, 'preventDefault');
+        renderStub = sinon.stub(product.view, 'render');
+        product.model = productFixture;
+      });
+
+      afterEach(() => {
+        renderStub.restore();
+      });
+
+      it('prevents the event\'s default', () => {
+        product.onCarouselItemClick(event, target);
+        assert.calledOnce(preventDefaultStub);
+      });
+
+      it('sets selected and cached image to image if the image clicked exists in the model', () => {
+        target.setAttribute('data-image-id', '1');
+        const expectedImage = {
+          id: '1',
+          src: `${rootImageURI}image-one.jpg`,
+        };
+
+        product.onCarouselItemClick(event, target);
+        assert.deepEqual(product.selectedImage, expectedImage);
+        assert.deepEqual(product.cachedImage, expectedImage);
+      });
+
+      it('keeps old selected and cached image if the image clicked does not exist in model', () => {
+        target.setAttribute('data-image-id', 'not a valid id');
+        const expectedImage = {
+          id: '2',
+          src: `${rootImageURI}image-two.jpeg`,
+        };
+
+        product.selectedImage = expectedImage;
+        product.cachedImage = expectedImage;
+        product.onCarouselItemClick(event, target);
+        assert.equal(product.selectedImage, expectedImage);
+        assert.equal(product.cachedImage, expectedImage);
+      });
+
+      it('renders the view', () => {
+        product.onCarouselItemClick(event, target);
+        assert.calledOnce(renderStub);
+      });
+    });
+
+    describe('nextIndex()', () => {
+      beforeEach(() => {
+        product.model = {
+          images: [1, 2, 3, 4, 5, 6],
+        };
+      });
+
+      it('returns the sum of the two params if it is above zero and less than the number of images in the model', () => {
+        assert.equal(product.nextIndex(2, 3), 5);
+      });
+
+      it('returns 0 if the sum of the two params is equal to the number of images in the model', () => {
+        assert.equal(product.nextIndex(3, 3), 0);
+      });
+
+      it('returns 0 if the sum of the two params is greater than the number of images in the model', () => {
+        assert.equal(product.nextIndex(3, 4), 0);
+      });
+
+      it('returns one less than the number of images in the model if the sum of the two params is below zero', () => {
+        assert.equal(product.nextIndex(-3, 2), product.model.images.length - 1);
+      });
+    });
+
     describe('onCarouselChange()', () => {
       let renderStub;
       let nextIndexStub;
@@ -793,6 +911,48 @@ describe('Product Component class', () => {
       });
     });
 
+    describe('updateQuantity()', () => {
+      let funcStub;
+      let userEventStub;
+      let renderStub;
+
+      beforeEach(() => {
+        funcStub = sinon.stub().callsFake((oldQty) => oldQty + 1);
+        userEventStub = sinon.stub(product, '_userEvent');
+        renderStub = sinon.stub(product.view, 'render');
+      });
+
+      afterEach(() => {
+        userEventStub.restore();
+        renderStub.restore();
+      });
+
+      it('calls function param and sets selected quantity to the functions return value', () => {
+        product.selectedQuantity = 1;
+        product.updateQuantity(funcStub);
+        assert.calledOnce(funcStub);
+        assert.calledWith(funcStub, 1);
+        assert.equal(product.selectedQuantity, 2);
+      });
+
+      it('sets selected quantity to zero if quantity after the function param is below zero', () => {
+        product.selectedQuantity = -5;
+        product.updateQuantity(funcStub);
+        assert.equal(product.selectedQuantity, 0);
+      });
+
+      it('calls userEvent() with updateQuantity', () => {
+        product.updateQuantity(funcStub);
+        assert.calledOnce(userEventStub);
+        assert.calledWith(userEventStub, 'updateQuantity');
+      });
+
+      it('renders the view', () => {
+        product.updateQuantity(funcStub);
+        assert.calledOnce(renderStub);
+      });
+    });
+
     describe('updateVariant()', () => {
       let renderStub;
       let userEventStub;
@@ -867,7 +1027,7 @@ describe('Product Component class', () => {
           value: false,
         });
         const expectedImage = {
-          id: 1,
+          id: '1',
           src: `${rootImageURI}image-one.jpg`,
         };
         product.updateVariant('Size', 'large');
