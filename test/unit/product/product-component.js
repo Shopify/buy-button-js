@@ -10,6 +10,7 @@ import ShopifyBuy from '../../../src/buybutton';
 import shopFixture from '../../fixtures/shop-info';
 import productFixture from '../../fixtures/product-fixture';
 import * as normalizeConfig from '../../../src/utils/normalize-config';
+import * as formatMoney from '../../../src/utils/money';
 
 const rootImageURI = 'https://cdn.shopify.com/s/files/1/0014/8583/2214/products/';
 
@@ -978,66 +979,164 @@ describe('Product Component class', () => {
       });
 
       describe('image', () => {
-        describe('default', () => {
-          beforeEach(async () => {
-            await product.init(testProductCopy);
-          });
+        let imageForSizeStub;
 
-          it('returns 480x720 default image', () => {
-            product.config.product.width = null;
-            assert.equal(product.image.src, `${rootImageURI}image-one_480x720.jpg`);
-          });
-
-          it('returns a srcLarge image option', () => {
-            product.config.product.width = null;
-            assert.equal(product.image.srcLarge, `${rootImageURI}image-one_550x825.jpg`);
+        beforeEach(async () => {
+          await product.init(testProductCopy);
+          imageForSizeStub = sinon.stub(product.props.client.image.helpers, 'imageForSize').callsFake((image, dimensions) => {
+            return dimensions;
           });
         });
 
-        describe('if selected variant doesn\'t have an image', () => {
-          beforeEach(async () => {
-            testProductCopy.variants[0].image = null;
-            await product.init(testProductCopy);
+        afterEach(() => {
+          imageForSizeStub.restore();
+        });
+
+        it('returns null if there is no selected variant and no image with carousel in options', () => {
+          product.selectedVariant = null;
+          product.config.product.contents.imgWithCarousel = null;
+          assert.isNull(product.image);
+        });
+
+        it('sets max width to 1000 if width in options is a percent', () => {
+          product.config.product.width = '5%';
+          assert.equal(product.image.src.maxWidth, 1000);
+        });
+
+        it('sets max width to width in options if it is a number', () => {
+          product.config.product.width = '5';
+          assert.equal(product.image.src.maxWidth, 5);
+        });
+
+        it('sets max width to 480 if there is no width in options', () => {
+          product.config.product.width = null;
+          assert.equal(product.image.src.maxWidth, 480);
+        });
+
+        it('sets max width of large image options to 550', () => {
+          assert.equal(product.image.srcLarge.maxWidth, 550);
+        });
+
+        it('sets max height to 1.5 times the max width', () => {
+          const image = product.image;
+          assert.equal(image.src.maxHeight, image.src.maxWidth * 1.5);
+          assert.equal(image.srcLarge.maxHeight, image.srcLarge.maxWidth * 1.5);
+        });
+
+        describe('return object', () => {
+          let expectedSrc;
+          let expectedSrcLarge;
+
+          beforeEach(() => {
+            const maxWidth = parseInt(product.options.width, 10);
+            expectedSrc = {maxWidth, maxHeight: maxWidth * 1.5};
+            expectedSrcLarge = {maxWidth: 550, maxHeight: 550 * 1.5};
+          });
+
+          it('returns object with id, src, and srcLarge from selected image if selected image exists', () => {
+            product.selectedImage = {
+              id: '123',
+            };
+            const expectedObject = {
+              id: product.selectedImage.id,
+              src: expectedSrc,
+              srcLarge: expectedSrcLarge,
+            };
+            assert.deepEqual(product.image, expectedObject);
+            assert.calledTwice(imageForSizeStub);
+            assert.calledWith(imageForSizeStub.getCall(0), product.selectedImage, expectedSrc);
+            assert.calledWith(imageForSizeStub.getCall(1), product.selectedImage, expectedSrcLarge);
+          });
+
+          it('returns object with id to null, src to empty string, and srcLarge to empty string if selected variant does not have an iage and there are no images in the model', () => {
             product.selectedImage = null;
-            product.defaultStorefrontVariantId = 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0Nw==';
+            product.selectedVariant = {image: null};
+            product.model.images = [];
+            const expectedObject = {
+              id: null,
+              src: '',
+              srcLarge: '',
+            };
+            assert.deepEqual(product.image, expectedObject);
           });
 
-          it('returns the default product image', () => {
-            assert.equal(product.image.src, `${rootImageURI}image-one.jpg`);
+          it('returns object with id, src, and srcLarge from first image in model if selected variant does not have an image', () => {
+            product.selectedImage = null;
+            product.selectedVariant = {image: null};
+            const firstImage = product.model.images[0];
+            const expectedObject = {
+              id: firstImage.id,
+              src: firstImage.src,
+              srcLarge: expectedSrcLarge,
+            };
+            assert.deepEqual(product.image, expectedObject);
+            assert.calledOnce(imageForSizeStub);
+            assert.calledWith(imageForSizeStub, firstImage, expectedSrcLarge);
           });
 
-          describe('if selected variant and its product don\'t have an image', () => {
-            it('returns no image', () => {
-              product.model.images = [];
-              assert.equal(product.image.src, '');
-            });
+          it('returns object with id, src, and srcLarge from selected variant as default', () => {
+            product.selectedImage = null;
+            product.selectedVariant = {
+              image: {
+                id: '456',
+              },
+            };
+            const expectedObject = {
+              id: product.selectedVariant.image.id,
+              src: expectedSrc,
+              srcLarge: expectedSrcLarge,
+            };
+            assert.deepEqual(product.image, expectedObject);
+            assert.calledTwice(imageForSizeStub);
+            assert.calledWith(imageForSizeStub.getCall(0), product.selectedVariant.image, expectedSrc);
+            assert.calledWith(imageForSizeStub.getCall(1), product.selectedVariant.image, expectedSrcLarge);
+          });
+        });
+      });
+
+      describe('formatMoney getters', () => {
+        let formatMoneyStub;
+        let formattedMoney;
+
+        beforeEach(() => {
+          formattedMoney = '$5.00';
+          product = Object.defineProperty(product, 'selectedVariant', {
+            writable: true,
+          });
+          formatMoneyStub = sinon.stub(formatMoney, 'default').returns(formattedMoney);
+        });
+
+        afterEach(() => {
+          formatMoneyStub.restore();
+        });
+
+        describe('formattedPrice', () => {
+          it('returns empty string if there is no selected variant', () => {
+            product.selectedVariant = null;
+            assert.equal(product.formattedPrice, '');
+          });
+
+          it('returns formatted money with selected variant price and money format from global config if there is a selected variant', () => {
+            product.selectedVariant = {price: 5};
+            product.globalConfig = {moneyFormat: 'CAD'};
+            assert.equal(product.formattedPrice, formattedMoney);
+            assert.calledOnce(formatMoneyStub);
+            assert.calledWith(formatMoneyStub, product.selectedVariant.price, product.globalConfig.moneyFormat);
           });
         });
 
-        describe('if width explicitly set and layout vertical', () => {
-          beforeEach(async () => {
-            product.config.product.width = '160px';
-            await product.init(testProductCopy);
+        describe('formattedCompareAtPrice', () => {
+          it('returns empty string if there is no selected variant', () => {
+            product.selectedVariant = null;
+            assert.equal(product.formattedPrice, '');
           });
 
-          it('returns smallest image larger than explicit width', () => {
-            assert.equal(product.image.src, `${rootImageURI}image-one_160x240.jpg`);
-          });
-        });
-
-        describe('when user selects an image from thumbnails', () => {
-          beforeEach(async () => {
-            await product.init(testProductCopy);
-            product.selectedImage = product.model.images[2];
-          });
-
-          it('returns selected image', () => {
-            assert.equal(product.image.src, `${rootImageURI}image-three_280x420.jpg`);
-          });
-
-          it('returns selected image of appropriate size if set', () => {
-            product.config.product.width = '480px';
-            assert.equal(product.image.src, `${rootImageURI}image-three_480x720.jpg`);
+          it('returns formatted money with selected variant compare at price and money format from global config if there is a selected variant', () => {
+            product.selectedVariant = {compareAtPrice: 5};
+            product.globalConfig = {moneyFormat: 'CAD'};
+            assert.equal(product.formattedPrice, formattedMoney);
+            assert.calledOnce(formatMoneyStub);
+            assert.calledWith(formatMoneyStub, product.selectedVariant.price, product.globalConfig.moneyFormat);
           });
         });
       });
@@ -1051,6 +1150,112 @@ describe('Product Component class', () => {
           assert.equal(viewData.currentImage.src, `${rootImageURI}image-one_280x420.jpg`);
           assert.ok(viewData.hasVariants);
           assert.equal(viewData.test, 'test string');
+        });
+      });
+
+      describe('carouselImages', () => {
+        let imageForSizeStub;
+        let carouselImages;
+
+        beforeEach(async () => {
+          await product.init(testProductCopy);
+          imageForSizeStub = sinon.stub(product.props.client.image.helpers, 'imageForSize').callsFake((image, dimensions) => {
+            return dimensions;
+          });
+          product = Object.defineProperty(product, 'currentImage', {
+            value: testProductCopy.images[0],
+          });
+          carouselImages = product.carouselImages;
+        });
+
+        afterEach(() => {
+          imageForSizeStub.restore();
+        });
+
+        it('returns an array of objects holding the id and src of each item in the model', () => {
+          assert.equal(carouselImages[0].id, testProductCopy.images[0].id);
+          assert.equal(carouselImages[0].src, testProductCopy.images[0].src);
+
+          assert.equal(carouselImages[1].id, testProductCopy.images[1].id);
+          assert.equal(carouselImages[1].src, testProductCopy.images[1].src);
+
+          assert.equal(carouselImages[2].id, testProductCopy.images[2].id);
+          assert.equal(carouselImages[2].src, testProductCopy.images[2].src);
+
+          assert.equal(carouselImages[3].id, testProductCopy.images[3].id);
+          assert.equal(carouselImages[3].src, testProductCopy.images[3].src);
+        });
+
+        it('sets carouselSrc in returned array to imageForSize return value for each model image', () => {
+          const expectedParam = {maxWidth: 100, maxHeight: 100};
+          assert.callCount(imageForSizeStub, testProductCopy.images.length);
+
+          assert.calledWith(imageForSizeStub.getCall(0), testProductCopy.images[0], expectedParam);
+          assert.deepEqual(carouselImages[0].carouselSrc, expectedParam);
+
+          assert.calledWith(imageForSizeStub.getCall(1), testProductCopy.images[1], expectedParam);
+          assert.deepEqual(carouselImages[1].carouselSrc, expectedParam);
+
+          assert.calledWith(imageForSizeStub.getCall(2), testProductCopy.images[2], expectedParam);
+          assert.deepEqual(carouselImages[2].carouselSrc, expectedParam);
+
+          assert.calledWith(imageForSizeStub.getCall(3), testProductCopy.images[3], expectedParam);
+          assert.deepEqual(carouselImages[3].carouselSrc, expectedParam);
+        });
+
+        it('sets isSelected in returned array to true if the image id is equal to the current image id', () => {
+          assert.isTrue(carouselImages[0].isSelected);
+          assert.isFalse(carouselImages[1].isSelected);
+          assert.isFalse(carouselImages[2].isSelected);
+          assert.isFalse(carouselImages[3].isSelected);
+        });
+      });
+
+      describe('buttonClass', () => {
+        beforeEach(() => {
+          Object.defineProperties(product, {
+            buttonEnabled: {
+              writable: true,
+            },
+            options: {
+              writable: true,
+              value: {
+                contents: {},
+              },
+            },
+            classes: {
+              value: {
+                disabled: 'disabled',
+                product: {
+                  buttonBesideQty: 'buttonBesideQty',
+                },
+              },
+            },
+          });
+        });
+
+        it('contains disabled class if button is not enabled', () => {
+          product.buttonEnabled = false;
+          assert.include(product.buttonClass, product.classes.disabled);
+        });
+
+        it('does not contain disabled class if button is enabled', () => {
+          product.buttonEnabled = true;
+          assert.notInclude(product.buttonClass, product.classes.disabled);
+        });
+
+        it('contains buttonBesideQty class if button has quantity', () => {
+          product.options = {
+            contents: {buttonWithQuantity: true},
+          };
+          assert.include(product.buttonClass, product.classes.product.buttonBesideQty);
+        });
+
+        it('does not contain buttonBesideQty class if button does not have quantity', () => {
+          product.options = {
+            contents: {buttonWithQuantity: false},
+          };
+          assert.notInclude(product.buttonClass, product.classes.product.buttonBesideQty);
         });
       });
 
