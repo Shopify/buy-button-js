@@ -1154,81 +1154,217 @@ describe('Product Component class', () => {
       });
 
       describe('requiresCart', () => {
-        describe('if buttonDestination is cart', () => {
-          it('returns true', () => {
-            assert.ok(product.requiresCart);
-          });
+        it('returns true if button destination is cart', () => {
+          product.config.product.buttonDestination = 'cart';
+          assert.isTrue(product.requiresCart);
         });
 
-        describe('if buttonDestination is not cart', () => {
-          it('returns false', () => {
-            product.config.product.buttonDestination = 'checkout';
-            assert.notOk(product.requiresCart);
-          });
+        it('returns false if button destination is not cart', () => {
+          product.config.product.buttonDestination = 'checkout';
+          assert.isFalse(product.requiresCart);
         });
       });
 
       describe('buttonActionAvailable', () => {
-        describe('if requriesCart is true', () => {
-          describe('if cart is not initialized', () => {
-            it('returns false', () => {
-              product.config.product.buttonDestination = 'cart';
-              assert.notOk(product.buttonActionAvailable);
-            });
-          });
-
-          describe('if cart is initialized', () => {
-            it('returns true', async () => {
-              await product.init(testProductCopy);
-              assert.ok(product.buttonActionAvailable);
-            });
+        beforeEach(() => {
+          Object.defineProperty(product, 'requiresCart', {
+            writable: true,
           });
         });
 
-        describe('if requiresCart is false', () => {
-          it('returns true', () => {
-            product.config.product.buttonDestination = 'checkout';
-            assert.ok(product.buttonActionAvailable);
-          });
+        it('returns true if product does not require cart', () => {
+          product.requiresCart = false;
+          assert.isTrue(product.buttonActionAvailable);
+        });
+
+        it('returns true if a cart exists', async () => {
+          await product.init(testProductCopy);
+          assert.isTrue(product.buttonActionAvailable);
+        });
+
+        it('returns false if product requires cart and cart does not exist', () => {
+          product.requiresCart = true;
+          assert.isFalse(product.buttonActionAvailable);
         });
       });
 
       describe('isButton', () => {
-        it('is true when isButton is turn on and there is no button', () => {
-          product.config.product.isButton = true;
-          product.config.product.contents.button = false;
-          product.config.product.contents.buttonWithQuantity = false;
-          const isButton = product.isButton;
-          assert.equal(isButton, true);
-        });
-
-        it('is false when there is a button', () => {
-          product.config.product.isButton = true;
-          product.config.product.contents.button = true;
-          product.config.product.contents.buttonWithQuantity = false;
-          const isButton = product.isButton;
-          assert.equal(isButton, false);
-        });
-
-        it('is false when there is a buttonWithQuantity', () => {
-          product.config.product.isButton = true;
-          product.config.product.contents.button = false;
-          product.config.product.contents.buttonWithQuantity = true;
-          const isButton = product.isButton;
-          assert.equal(isButton, false);
-        });
-
-        it('is false when isButton is turn off', () => {
+        it('returns false if option\'s isButton is false', () => {
           product.config.product.isButton = false;
-          const isButton = product.isButton;
-          assert.equal(isButton, false);
+          assert.isFalse(product.isButton);
+        });
+
+        describe('when option\'s isButton is true', () => {
+          beforeEach(() => {
+            product.config.product.isButton = true;
+          });
+
+          it('returns false if a button exists', () => {
+            product.config.product.contents.button = true;
+            assert.isFalse(product.isButton);
+          });
+
+          it('returns false if a button with quantity exists', () => {
+            product.config.product.contents.buttonWithQuantity = true;
+            assert.isFalse(product.isButton);
+          });
+
+          it('returns true if there is no button or button with quantity', () => {
+            product.config.product.contents.button = false;
+            product.config.product.contents.buttonWithQuantity = false;
+            assert.isTrue(product.isButton);
+          });
         });
       });
 
       describe('DOMEvents', () => {
-        it('returns functions for bindings', () => {
-          assert.isFunction(product.DOMEvents['change .shopify-buy__option-select__select']);
-          assert.isFunction(product.DOMEvents['click .shopify-buy__btn']);
+        it('binds closeCartOnBgClick to click', () => {
+          const closeCartOnBgClickStub = sinon.stub(product, 'closeCartOnBgClick');
+          product.DOMEvents.click();
+          assert.calledOnce(closeCartOnBgClickStub);
+          closeCartOnBgClickStub.restore();
+        });
+
+        describe('stopPropagation bindings', () => {
+          let stopPropagationStub;
+
+          beforeEach(() => {
+            stopPropagationStub = sinon.stub(product, 'stopPropagation');
+          });
+
+          afterEach(() => {
+            stopPropagationStub.restore();
+          });
+
+          it('binds stopPropagation to select click', () => {
+            product.DOMEvents[`click ${product.selectors.option.select}`]();
+            assert.calledOnce(stopPropagationStub);
+          });
+
+          it('binds stopPropagation to select focus', () => {
+            product.DOMEvents[`focus ${product.selectors.option.select}`]();
+            assert.calledOnce(stopPropagationStub);
+          });
+
+          it('binds stopPropagation to wrapper click', () => {
+            product.DOMEvents[`click ${product.selectors.option.wrapper}`]();
+            assert.calledOnce(stopPropagationStub);
+          });
+
+          it('binds stopPropagation to quantityInput click', () => {
+            product.DOMEvents[`click ${product.selectors.product.quantityInput}`]();
+            assert.calledOnce(stopPropagationStub);
+          });
+
+          it('binds stopPropagation to quantityButton click', () => {
+            product.DOMEvents[`click ${product.selectors.product.quantityButton}`]();
+            assert.calledOnce(stopPropagationStub);
+          });
+        });
+
+        it('binds onOptionSelect to select change', () => {
+          const onOptionSelectStub = sinon.stub(product, 'onOptionSelect');
+          product.DOMEvents[`change ${product.selectors.option.select}`]();
+          assert.calledOnce(onOptionSelectStub);
+          onOptionSelectStub.restore();
+        });
+
+        describe('onButtonClick bindings', () => {
+          let onButtonClickStub;
+
+          beforeEach(() => {
+            onButtonClickStub = sinon.stub(product, 'onButtonClick');
+          });
+
+          afterEach(() => {
+            onButtonClickStub.restore();
+          });
+
+          it('binds onButtonClick to button click', () => {
+            product.DOMEvents[`click ${product.selectors.product.button}`]();
+            assert.calledOnce(onButtonClickStub);
+          });
+
+          it('binds onButtonClick to blockButton click', () => {
+            product.DOMEvents[`click ${product.selectors.product.blockButton}`]();
+            assert.calledOnce(onButtonClickStub);
+          });
+        });
+
+        it('binds onBlockButtonKeyup to blockButton keyup', () => {
+          const onBlockButtonKeyupStub = sinon.stub(product, 'onBlockButtonKeyup');
+          product.DOMEvents[`keyup ${product.selectors.product.blockButton}`]();
+          assert.calledOnce(onBlockButtonKeyupStub);
+          onBlockButtonKeyupStub.restore();
+        });
+
+        describe('onQuantityIncrement bindngs', () => {
+          let onQuantityIncrementStub;
+
+          beforeEach(() => {
+            onQuantityIncrementStub = sinon.stub(product, 'onQuantityIncrement');
+          });
+
+          afterEach(() => {
+            onQuantityIncrementStub.restore();
+          });
+
+          it('binds onQuantityIncrement to quantityIncrement click', () => {
+            product.DOMEvents[`click ${product.selectors.product.quantityIncrement}`]();
+            assert.calledOnce(onQuantityIncrementStub);
+            assert.calledWith(onQuantityIncrementStub, 1);
+          });
+
+          it('binds onQuantityIncrement to quantityDecrement click', () => {
+            product.DOMEvents[`click ${product.selectors.product.quantityDecrement}`]();
+            assert.calledOnce(onQuantityIncrementStub);
+            assert.calledWith(onQuantityIncrementStub, -1);
+          });
+        });
+
+        it('binds onQuantityBlur to quantityInput blur', () => {
+          const onQuantityBlurStub = sinon.stub(product, 'onQuantityBlur');
+          product.DOMEvents[`blur ${product.selectors.product.quantityInput}`]();
+          assert.calledOnce(onQuantityBlurStub);
+          onQuantityBlurStub.restore();
+        });
+
+        it('binds onCarouselItemClick to carouselItem click', () => {
+          const onCarouselItemClickStub = sinon.stub(product, 'onCarouselItemClick');
+          product.DOMEvents[`click ${product.selectors.product.carouselItem}`]();
+          assert.calledOnce(onCarouselItemClickStub);
+          onCarouselItemClickStub.restore();
+        });
+
+        describe('onCarouselChange bindings', () => {
+          let onCarouselChangeStub;
+
+          beforeEach(() => {
+            onCarouselChangeStub = sinon.stub(product, 'onCarouselChange');
+          });
+
+          afterEach(() => {
+            onCarouselChangeStub.restore();
+          });
+
+          it('binds onCarouselChange to carouselNext click', () => {
+            product.DOMEvents[`click ${product.selectors.product.carouselNext}`]();
+            assert.calledOnce(onCarouselChangeStub);
+            assert.calledWith(onCarouselChangeStub, 1);
+          });
+
+          it('binds onCarouselChange to carouselPrevious click', () => {
+            product.DOMEvents[`click ${product.selectors.product.carouselPrevious}`]();
+            assert.calledOnce(onCarouselChangeStub);
+            assert.calledWith(onCarouselChangeStub, -1);
+          });
+        });
+
+        it('merges DOMEvents from options', () => {
+          const DOMEventSpy = sinon.spy();
+          product.config.product.DOMEvents = {DOMEvent: DOMEventSpy};
+          product.DOMEvents.DOMEvent();
+          assert.calledOnce(DOMEventSpy);
         });
       });
 
@@ -1323,11 +1459,8 @@ describe('Product Component class', () => {
         });
 
         describe('onlineStoreURL', () => {
-          beforeEach(() => {
-            product.model.onlineStoreUrl = 'https://test.myshopify.com/products/123';
-          });
-
           it('returns URL for a product on online store', () => {
+            product.model.onlineStoreUrl = 'https://test.myshopify.com/products/123';
             assert.equal(product.onlineStoreURL, `https://test.myshopify.com/products/123${expectedQs}`);
           });
         });
