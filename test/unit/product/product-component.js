@@ -928,49 +928,56 @@ describe('Product Component class', () => {
 
     describe('getters', () => {
       describe('shouldUpdateImage', () => {
+        beforeEach(async () => {
+          await product.init(testProductCopy);
+        });
+
         it('returns true if there is no cached image', () => {
           product.cachedImage = null;
           assert.isTrue(product.shouldUpdateImage);
         });
 
-        it('returns true if image and cached image are different', async () => {
-          product.config.product.width = '100px';
-          await product.init(testProductCopy);
+        it('returns true if image and cached image are different', () => {
+          product = Object.defineProperty(product, 'image', {
+            value: {src: 'hat.jpg'},
+          });
           product.cachedImage = 'bar.jpg';
           assert.isTrue(product.shouldUpdateImage);
         });
 
-        it('returns false if image and cached image are the same', async () => {
-          product.config.product.width = '240px';
-          await product.init(testProductCopy);
-          product.cachedImage = `${rootImageURI}image-one_240x360.jpg`;
+        it('returns false if image and cached image are the same', () => {
+          product = Object.defineProperty(product, 'image', {
+            value: {src: 'hat.jpg'},
+          });
+          product.cachedImage = 'hat.jpg';
           assert.isFalse(product.shouldUpdateImage);
         });
       });
 
 
       describe('currentImage', () => {
+        beforeEach(async () => {
+          await product.init(testProductCopy);
+        });
+
         it('sets cached image to product.image if image should update', async () => {
           product = Object.defineProperty(product, 'shouldUpateImage', {
             value: true,
           });
-          await product.init(testProductCopy);
           assert.deepEqual(product.cachedImage, product.image);
         });
 
         it('does not set cached image to product.image if image should not update', async () => {
           product = Object.defineProperty(product, 'shouldUpateImage', {
-            value: true,
+            value: false,
           });
           product.cachedImage = {
             src: 'not-image-src',
           };
-          await product.init(testProductCopy);
-          assert.notEqual(product.cachedImage, product.image);
+          assert.notDeepEqual(product.cachedImage, product.image);
         });
 
         it('returns cached image', async () => {
-          await product.init(testProductCopy);
           assert.equal(product.currentImage, product.cachedImage);
         });
       });
@@ -1041,97 +1048,100 @@ describe('Product Component class', () => {
       });
 
       describe('viewData', () => {
+        let viewData;
+
         beforeEach(async () => {
           await product.init(testProductCopy);
+          viewData = product.viewData;
         });
 
         it('returns an object merged with model', () => {
-          assert.equal(product.viewData.title, product.model.title);
-          assert.equal(product.viewData.id, product.model.id);
-          assert.equal(product.viewData.images, product.model.images);
-          assert.equal(product.viewData.options, product.model.options);
-          assert.equal(product.viewData.storeFrontId, product.model.storeFrontId);
-          assert.equal(product.viewData.variants, product.model.variants);
+          assert.equal(viewData.title, product.model.title);
+          assert.equal(viewData.id, product.model.id);
+          assert.equal(viewData.images, product.model.images);
+          assert.equal(viewData.options, product.model.options);
+          assert.equal(viewData.storeFrontId, product.model.storeFrontId);
+          assert.equal(viewData.variants, product.model.variants);
         });
 
         it('returns an object merged with option\'s viewData', () => {
-          assert.equal(product.viewData.test, product.options.viewData.test);
+          assert.equal(viewData.test, product.options.viewData.test);
         });
 
         it('returns an object with classes', () => {
-          assert.deepEqual(product.viewData.classes, product.classes);
+          assert.deepEqual(viewData.classes, product.classes);
         });
 
         it('returns an object with contents', () => {
-          assert.deepEqual(product.viewData.contents, product.options.contents);
+          assert.deepEqual(viewData.contents, product.options.contents);
         });
 
         it('returns an object with text', () => {
-          assert.deepEqual(product.viewData.text, product.options.text);
+          assert.deepEqual(viewData.text, product.options.text);
         });
 
         it('returns an object with optionsHtml', () => {
-          assert.equal(product.viewData.optionsHtml, product.optionsHtml);
+          assert.equal(viewData.optionsHtml, product.optionsHtml);
         });
 
         it('returns an object with decoratedOptions', () => {
-          assert.deepEqual(product.viewData.decoratedOptions, product.decoratedOptions);
+          assert.deepEqual(viewData.decoratedOptions, product.decoratedOptions);
         });
 
         it('returns an object with currentImage', () => {
-          assert.deepEqual(product.viewData.currentImage, product.currentImage);
+          assert.deepEqual(viewData.currentImage, product.currentImage);
         });
 
         it('returns an object with buttonClass', () => {
-          assert.equal(product.viewData.buttonClass, product.buttonClass);
+          assert.equal(viewData.buttonClass, product.buttonClass);
         });
 
         it('returns an object with hasVariants', () => {
-          assert.equal(product.viewData.hasVariants, product.hasVariants);
+          assert.equal(viewData.hasVariants, product.hasVariants);
         });
 
         it('returns an object with buttonDisabled', () => {
-          assert.equal(product.viewData.buttonDisabled, !product.buttonEnabled);
+          assert.equal(viewData.buttonDisabled, !product.buttonEnabled);
         });
 
         it('returns an object with selectedVariant', () => {
-          assert.equal(product.viewData.selectedVariant, product.selectedVariant);
+          assert.equal(viewData.selectedVariant, product.selectedVariant);
         });
 
         it('returns an object with selectedQuantity', () => {
-          assert.equal(product.viewData.selectedQuantity, product.selectedQuantity);
+          assert.equal(viewData.selectedQuantity, product.selectedQuantity);
         });
 
         it('returns an object with buttonText', () => {
-          assert.deepEqual(product.viewData.buttonText, product.buttonText);
+          assert.deepEqual(viewData.buttonText, product.buttonText);
         });
 
         it('returns an object with imgStyle', () => {
-          assert.equal(product.viewData.imgStyle, product.imgStyle);
+          assert.equal(viewData.imgStyle, product.imgStyle);
         });
 
         it('returns an object with quantityClass', () => {
-          assert.equal(product.viewData.quantityClass, product.quantityClass);
+          assert.equal(viewData.quantityClass, product.quantityClass);
         });
 
         it('returns an object with priceClass', () => {
-          assert.equal(product.viewData.priceClass, product.priceClass);
+          assert.equal(viewData.priceClass, product.priceClass);
         });
 
         it('returns an object with formattedPrice', () => {
-          assert.equal(product.viewData.formattedPrice, product.formattedPrice);
+          assert.equal(viewData.formattedPrice, product.formattedPrice);
         });
 
         it('returns an object with formattedCompareAtPrice', () => {
-          assert.equal(product.viewData.formattedCompareAtPrice, product.formattedCompareAtPrice);
+          assert.equal(viewData.formattedCompareAtPrice, product.formattedCompareAtPrice);
         });
 
         it('returns an object with carouslIndex', () => {
-          assert.equal(product.viewData.carouselIndex, 0);
+          assert.equal(viewData.carouselIndex, 0);
         });
 
         it('returns an object with carouselImages', () => {
-          assert.deepEqual(product.viewData.carouselImages, product.carouselImages);
+          assert.deepEqual(viewData.carouselImages, product.carouselImages);
         });
       });
 
@@ -1224,40 +1234,42 @@ describe('Product Component class', () => {
       });
 
       describe('variantExists', () => {
-        it('returns true if variant exists in model', async () => {
+        beforeEach(async () => {
           await product.init(testProductCopy);
+        });
+
+        it('returns true if variant exists in model', async () => {
           product.selectedVariant = {id: 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0NQ=='};
           assert.isTrue(product.variantExists);
         });
 
         it('returns false if selected variant does not exist', async () => {
-          await product.init(testProductCopy);
           product.selectedVariant = null;
           assert.isFalse(product.variantExists);
         });
 
         it('returns false if selected variant is not in model', async () => {
-          await product.init(testProductCopy);
           product.selectedVariant = {id: 'non-existent-id'};
           assert.isFalse(product.variantExists);
         });
       });
 
       describe('hasVariants', () => {
-        it('returns true if there are multiple variants in model', async () => {
+        beforeEach(async () => {
           await product.init(testProductCopy);
+        });
+
+        it('returns true if there are multiple variants in model', async () => {
           product.model.variants = [{id: 123}, {id: 234}];
           assert.isTrue(product.hasVariants);
         });
 
         it('returns false if there is one variant in model', async () => {
-          await product.init(testProductCopy);
           product.model.variants = [{id: 123}];
           assert.isFalse(product.hasVariants);
         });
 
         it('returns false if there is no variant in model', async () => {
-          await product.init(testProductCopy);
           product.model.variants = [];
           assert.isFalse(product.hasVariants);
         });
