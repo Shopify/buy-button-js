@@ -1048,7 +1048,7 @@ describe('Product Component class', () => {
             assert.calledWith(imageForSizeStub.getCall(1), product.selectedImage, expectedSrcLarge);
           });
 
-          it('returns object with id to null, src to empty string, and srcLarge to empty string if selected variant does not have an iage and there are no images in the model', () => {
+          it('returns object with id to null, src to empty string, and srcLarge to empty string if selected variant does not have an image and there are no images in the model', () => {
             product.selectedImage = null;
             product.selectedVariant = {image: null};
             product.model.images = [];
@@ -1100,9 +1100,6 @@ describe('Product Component class', () => {
 
         beforeEach(() => {
           formattedMoney = '$5.00';
-          product = Object.defineProperty(product, 'selectedVariant', {
-            writable: true,
-          });
           formatMoneyStub = sinon.stub(formatMoney, 'default').returns(formattedMoney);
         });
 
