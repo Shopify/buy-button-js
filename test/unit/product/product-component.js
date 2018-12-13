@@ -1033,14 +1033,16 @@ describe('Product Component class', () => {
             expectedSrcLarge = {maxWidth: 550, maxHeight: 550 * 1.5};
           });
 
-          it('returns object with id, src, and srcLarge from selected image if selected image exists', () => {
+          it('returns object with id, src, srcLarge, and srcOriginal from selected image if selected image exists', () => {
             product.selectedImage = {
               id: '123',
+              src: 'hat.jpg',
             };
             const expectedObject = {
               id: product.selectedImage.id,
               src: expectedSrc,
               srcLarge: expectedSrcLarge,
+              srcOriginal: product.selectedImage.src,
             };
             assert.deepEqual(product.image, expectedObject);
             assert.calledTwice(imageForSizeStub);
@@ -1048,7 +1050,7 @@ describe('Product Component class', () => {
             assert.calledWith(imageForSizeStub.getCall(1), product.selectedImage, expectedSrcLarge);
           });
 
-          it('returns object with id to null, src to empty string, and srcLarge to empty string if selected variant does not have an image and there are no images in the model', () => {
+          it('returns object with id to null and src, srcLarge, and srcOriginal to empty string if selected variant does not have an image and there are no images in the model', () => {
             product.selectedImage = null;
             product.selectedVariant = {image: null};
             product.model.images = [];
@@ -1056,6 +1058,7 @@ describe('Product Component class', () => {
               id: null,
               src: '',
               srcLarge: '',
+              srcOriginal: '',
             };
             assert.deepEqual(product.image, expectedObject);
           });
@@ -1068,6 +1071,7 @@ describe('Product Component class', () => {
               id: firstImage.id,
               src: firstImage.src,
               srcLarge: expectedSrcLarge,
+              srcOriginal: firstImage.src,
             };
             assert.deepEqual(product.image, expectedObject);
             assert.calledOnce(imageForSizeStub);
@@ -1079,12 +1083,14 @@ describe('Product Component class', () => {
             product.selectedVariant = {
               image: {
                 id: '456',
+                src: 'top.jpg',
               },
             };
             const expectedObject = {
               id: product.selectedVariant.image.id,
               src: expectedSrc,
               srcLarge: expectedSrcLarge,
+              srcOriginal: product.selectedVariant.image.src,
             };
             assert.deepEqual(product.image, expectedObject);
             assert.calledTwice(imageForSizeStub);
