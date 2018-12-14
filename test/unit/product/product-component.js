@@ -1512,6 +1512,36 @@ describe('Product Component class', () => {
         });
       });
 
+      describe('quantityClass', () => {
+        beforeEach(() => {
+          product = Object.defineProperty(product, 'classes', {
+            value: {
+              product: {
+                quantityWithButtons: 'quantityWithButtons',
+              },
+            },
+          });
+        });
+
+        it('returns quantityWithButtons class if quantityIncrement in options is true', () => {
+          product.config.product.contents.quantityIncrement = true;
+          product.config.product.contents.quantityDecrement = false;
+          assert.equal(product.quantityClass, product.classes.product.quantityWithButtons);
+        });
+
+        it('returns quantityWithButtons class if quantityDecrement in options is true', () => {
+          product.config.product.contents.quantityIncrement = false;
+          product.config.product.contents.quantityDecrement = true;
+          assert.equal(product.quantityClass, product.classes.product.quantityWithButtons);
+        });
+
+        it('returns an empty string if quantityIncrement and quantityDecrement in options are both false', () => {
+          product.config.product.contents.quantityIncrement = false;
+          product.config.product.contents.quantityDecrement = false;
+          assert.equal(product.quantityClass, '');
+        });
+      });
+
       describe('buttonText', () => {
         beforeEach(async () => {
           await product.init(testProductCopy);
@@ -1621,6 +1651,32 @@ describe('Product Component class', () => {
         });
       });
 
+      describe('variantInStock', () => {
+        beforeEach(() => {
+          product = Object.defineProperty(product, 'variantExists', {
+            writable: true,
+          });
+        });
+
+        it('returns true if variant exists and selected variant is available', () => {
+          product.variantExists = true;
+          product.selectedVariant = {available: true};
+          assert.isTrue(product.variantInStock);
+        });
+
+        it('returns false if variant does not exist', () => {
+          product.variantExists = false;
+          product.selectedVariant = {available: true};
+          assert.isFalse(product.variantInStock);
+        });
+
+        it('returns false if selected variant is not available', () => {
+          product.variantExists = true;
+          product.selectedVariant = {available: false};
+          assert.isFalse(product.variantInStock);
+        });
+      });
+
       describe('hasVariants', () => {
         beforeEach(async () => {
           await product.init(testProductCopy);
@@ -1674,6 +1730,32 @@ describe('Product Component class', () => {
         it('returns false if product requires cart and cart does not exist', () => {
           product.requiresCart = true;
           assert.isFalse(product.buttonActionAvailable);
+        });
+      });
+
+      describe('hasQuantity', () => {
+        it('returns quantityInput from options.contents', () => {
+          product.config.product.contents = {quantityInput: 'quantityInput'};
+          assert.equal(product.hasQuantity, product.options.contents.quantityInput);
+        });
+      });
+
+      describe('priceClass', () => {
+        it('returns loweredPrice class if selected variant has a compare at price', () => {
+          product = Object.defineProperty(product, 'classes', {
+            value: {
+              product: {
+                loweredPrice: 'loweredPrice',
+              },
+            },
+          });
+          product.selectedVariant = {compareAtPrice: '$5.00'};
+          assert.equal(product.priceClass, product.classes.product.loweredPrice);
+        });
+
+        it('returns empty string if selected variant does not have a compare at price', () => {
+          product.selectedVariant = {compareAtPrice: null};
+          assert.equal(product.priceClass, '');
         });
       });
 
@@ -1915,6 +1997,54 @@ describe('Product Component class', () => {
 
           product.updateVariant('Print', 'something');
           assert.deepEqual(product.decoratedOptions, expectedArray);
+        });
+      });
+
+      describe('trackingInfo', () => {
+        beforeEach(() => {
+          product.config.product.buttonDestination = 'cart';
+        });
+
+        it('returns an object with button destination if there is no selected variant', () => {
+          product.selectedVariant = null;
+          const expectedObject = {
+            destination: product.options.buttonDestination,
+          };
+          assert.deepEqual(product.trackingInfo, expectedObject);
+        });
+
+        it('returns an object with button destination, id, name, sku, and price if selected variant exists', () => {
+          product.selectedVariant = {
+            productTitle: 'hat',
+            price: '$5.00',
+          };
+          const expectedObject = {
+            destination: product.options.buttonDestination,
+            id: product.id,
+            name: product.selectedVariant.productTitle,
+            sku: null,
+            price: product.selectedVariant.price,
+          };
+          assert.deepEqual(product.trackingInfo, expectedObject);
+        });
+      });
+
+      describe('selectedVariantTrackingInfo', () => {
+        it('returns an object with selected variant id, name, quantity, sku, and price', () => {
+          product.selectedVariant = {
+            id: '456',
+            productTitle: 'hat',
+            price: '$5.00',
+          };
+          product.selectedQuantity = 5;
+          const expectedObject = {
+            id: product.selectedVariant.id,
+            name: product.selectedVariant.productTitle,
+            quantity: product.selectedQuantity,
+            sku: null,
+            price: product.selectedVariant.price,
+          };
+          assert.deepEqual(product.selectedVariantTrackingInfo, expectedObject);
         });
       });
 
