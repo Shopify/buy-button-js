@@ -168,12 +168,6 @@ describe('Product Component class', () => {
       fetchStub.restore();
       fetchByHandleStub.restore();
       document.body.removeChild(configCopy.node);
-      const divWrappers = document.getElementsByTagName('div');
-      for (let i = 0; i < divWrappers.length; i++) {
-        if (divWrappers[i].id !== 'mocha') {
-          document.body.removeChild(divWrappers[i]);
-        }
-      }
     });
 
     describe('stopPropagation()', () => {
