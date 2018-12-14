@@ -1858,63 +1858,203 @@ describe('Product Component class', () => {
       });
 
       describe('optionsHtml', () => {
-        it('it returns an html string', async () => {
-          await product.init(testProductCopy);
-          assert.match(product.optionsHtml, /<select/);
+        let renderStub;
+        const template = '<div></div>';
+
+        beforeEach(() => {
+          renderStub = sinon.stub(product.childTemplate, 'render').returns(template);
+          product = Object.defineProperty(product, 'decoratedOptions', {
+            writable: true,
+            value: [{
+              name: 'Print',
+              values: [{name: 'sloth', selected: true}],
+            }],
+          });
+          product.model = {
+            options: [{
+              name: 'Print',
+              values: [
+                {value: 'sloth'},
+              ],
+            }],
+          };
+        });
+
+        afterEach(() => {
+          renderStub.restore();
+        });
+
+        it('returns empty string if there are no options in contents', () => {
+          product.config.product.contents = {options: null};
+          assert.equal(product.optionsHtml, '');
+        });
+
+        it('renders object that merged decorated option with view data', () => {
+          const optionsHtml = product.optionsHtml;
+          const renderedData = renderStub.getCall(0).args[0].data;
+          assert.include(renderedData, product.decoratedOptions[0]);
+          assert.include(renderedData, product.options.viewData);
+          assert.isString(optionsHtml);
+        });
+
+        it('adds product classes to rendered data object', () => {
+          const optionsHtml = product.optionsHtml;
+          const renderedData = renderStub.getCall(0).args[0].data;
+          assert.deepEqual(renderedData.classes, product.classes);
+          assert.isString(optionsHtml);
+        });
+
+        it('sets onlyOption in rendered data to true if there is only one option in model', () => {
+          const optionsHtml = product.optionsHtml;
+          const renderedData = renderStub.getCall(0).args[0].data;
+          assert.equal(product.model.options.length, 1);
+          assert.isTrue(renderedData.onlyOption);
+          assert.isString(optionsHtml);
+        });
+
+        it('sets onlyOption in rendered data to false if there is more than one option in model', () => {
+          product.model.options.push({
+            name: 'Size',
+            values: [
+              {value: 'small'},
+            ],
+          });
+          const optionsHtml = product.optionsHtml;
+          const renderedData = renderStub.getCall(0).args[0].data;
+          assert.isFalse(renderedData.onlyOption);
+          assert.isString(optionsHtml);
+        });
+
+        it('renders data for each option in decorated options', () => {
+          product.decoratedOptions.push({
+            name: 'Size',
+            values: [{name: 'small', selected: true}],
+          });
+          const optionsHtml = product.optionsHtml;
+          const firstExpectedObject = {
+            data: {
+              name: 'Print',
+              values: [{name: 'sloth', selected: true}],
+              test: 'test string',
+              classes: product.classes,
+              onlyOption: true,
+            },
+          };
+          const secondExpectedObject = {
+            data: {
+              name: 'Size',
+              values: [{name: 'small', selected: true}],
+              test: 'test string',
+              classes: product.classes,
+              onlyOption: true,
+            },
+          };
+          assert.calledTwice(renderStub);
+          assert.calledWith(renderStub.getCall(0), firstExpectedObject);
+          assert.calledWith(renderStub.getCall(1), secondExpectedObject);
+          assert.isString(optionsHtml);
+        });
+
+        it('returns rendered template', () => {
+          assert.equal(product.optionsHtml, template);
+          product.decoratedOptions.push({
+            name: 'Size',
+            values: [{name: 'small', selected: true}],
+          });
+          assert.equal(product.optionsHtml, template + template);
         });
       });
 
       describe('decoratedOptions', () => {
-        const expectedArray = [
-          {
-            name: 'Print',
-            values: [
-              {
-                name: 'sloth',
-                selected: true,
-              },
-              {
-                name: 'shark',
-                selected: false,
-              },
-              {
-                name: 'cat',
-                selected: false,
-              },
-            ],
-          },
-          {
-            name: 'Size',
-            values: [
-              {
-                name: 'small',
-                selected: true,
-              },
-              {
-                name: 'large',
-                selected: false,
-              },
-            ],
-          },
-        ];
-
-        it('it returns options with selected', async () => {
+        it('it returns an array of options with correctly selected value', async () => {
+          const expectedArray = [
+            {
+              name: 'Print',
+              values: [
+                {
+                  name: 'sloth',
+                  selected: true,
+                },
+                {
+                  name: 'shark',
+                  selected: false,
+                },
+                {
+                  name: 'cat',
+                  selected: false,
+                },
+              ],
+            },
+            {
+              name: 'Size',
+              values: [
+                {
+                  name: 'small',
+                  selected: true,
+                },
+                {
+                  name: 'large',
+                  selected: false,
+                },
+              ],
+            },
+          ];
           await product.init(testProductCopy);
-          product.updateVariant('Size', 'small');
+          product.selectedOptions = {
+            Print: 'sloth',
+            Size: 'small',
+          };
           assert.deepEqual(product.decoratedOptions, expectedArray);
         });
+      });
 
-        it('it does not return options with multiple selected values in the same option name', async () => {
-          expectedArray[0].values.push({name: 'something', selected: true});
-          expectedArray[0].values[0].selected = false;
-          expectedArray[1].values.push({name: 'something', selected: false});
 
-          await product.init(testProductCopy);
-          product.model.options[0].values.push({value: 'something'});
-          product.model.options[1].values.push({value: 'something'});
+      describe('modalProductConfig', () => {
+        beforeEach(() => {
+          product.config.modalProduct = {
+            buttonDestination: 'cart',
+          };
+        });
 
-          product.updateVariant('Print', 'something');
-          assert.deepEqual(product.decoratedOptions, expectedArray);
+        it('return an object that includes modal product from config', () => {
+          assert.deepInclude(product.modalProductConfig, product.config.modalProduct);
+        });
+
+        it('returns a styles object with only whitelisted properties from styles in product config', () => {
+          const expectedObject = {
+            style1: {
+              background: 'background',
+              'background-color': 'background-color',
+              border: 'border',
+              'border-radius': 'border-radius',
+              ':hover': {
+                color: 'color',
+                'border-color': 'border-color',
+                'border-width': 'border-width',
+              },
+            },
+            style2: {
+              'border-style': 'border-style',
+              transition: 'transition',
+              'text-transform': 'text-transform',
+              'text-shadow': 'text-shadow',
+              '@media': {
+                'box-shadow': 'box-shadow',
+                'font-size': 'font-size',
+                'font-family': 'font-family',
+              },
+            },
+          };
+          product.config.product.styles = JSON.parse(JSON.stringify(expectedObject));
+          product.config.product.styles.style1['non-whitelist-style'] = 'not-in-whitelist';
+          product.config.product.styles.style1[':hover']['non-whitelist-style2'] = 'also-not-in-whitelist';
+          product.config.product.styles.style2['non-whitelist-style3'] = 'still-not-in-whitelist';
+          product.config.product.styles.style2['@media']['non-whitelist-style4'] = 'does-not-exist-in-whitelist';
+          assert.deepEqual(product.modalProductConfig.styles, expectedObject);
+        });
+
+        it('returns object with an empty object for styles if there is no styles in product config', () => {
+          assert.deepInclude(product.modalProductConfig, {styles: {}});
         });
       });
 
