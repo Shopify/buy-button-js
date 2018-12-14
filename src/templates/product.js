@@ -27,7 +27,7 @@ const productTemplate = {
                       </div>
                       <div class="{{data.classes.product.carousel}}">
                         {{#data.carouselImages}}
-                        <a data-element="product.carouselitem" href="{{src}}" class="{{data.classes.product.carouselItem}} {{#isSelected}} {{data.classes.product.carouselItemSelected}} {{/isSelected}}" data-image-id="{{id}}" style="background-image: url({{carouselSrc}})"></a>
+                        <a data-element="product.carouselitem" alt="{{altText}}" href="{{src}}" class="{{data.classes.product.carouselItem}} {{#isSelected}} {{data.classes.product.carouselItemSelected}} {{/isSelected}}" data-image-id="{{id}}" style="background-image: url({{carouselSrc}})"></a>
                         {{/data.carouselImages}}
                       </div>
                     </div>`,
