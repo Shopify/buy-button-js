@@ -1894,14 +1894,14 @@ describe('Product Component class', () => {
           const renderedData = renderStub.getCall(0).args[0].data;
           assert.include(renderedData, product.decoratedOptions[0]);
           assert.include(renderedData, product.options.viewData);
-          assert.isOk(optionsHtml);
+          assert.isString(optionsHtml);
         });
 
         it('adds product classes to rendered data object', () => {
           const optionsHtml = product.optionsHtml;
           const renderedData = renderStub.getCall(0).args[0].data;
           assert.deepEqual(renderedData.classes, product.classes);
-          assert.isOk(optionsHtml);
+          assert.isString(optionsHtml);
         });
 
         it('sets onlyOption in rendered data to true if there is only one option in model', () => {
@@ -1909,7 +1909,7 @@ describe('Product Component class', () => {
           const renderedData = renderStub.getCall(0).args[0].data;
           assert.equal(product.model.options.length, 1);
           assert.isTrue(renderedData.onlyOption);
-          assert.isOk(optionsHtml);
+          assert.isString(optionsHtml);
         });
 
         it('sets onlyOption in rendered data to false if there is more than one option in model', () => {
@@ -1922,7 +1922,7 @@ describe('Product Component class', () => {
           const optionsHtml = product.optionsHtml;
           const renderedData = renderStub.getCall(0).args[0].data;
           assert.isFalse(renderedData.onlyOption);
-          assert.isOk(optionsHtml);
+          assert.isString(optionsHtml);
         });
 
         it('renders data for each option in decorated options', () => {
@@ -1952,7 +1952,7 @@ describe('Product Component class', () => {
           assert.calledTwice(renderStub);
           assert.calledWith(renderStub.getCall(0), firstExpectedObject);
           assert.calledWith(renderStub.getCall(1), secondExpectedObject);
-          assert.isOk(optionsHtml);
+          assert.isString(optionsHtml);
         });
 
         it('returns rendered template', () => {
