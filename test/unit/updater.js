@@ -1,47 +1,67 @@
-import ShopifyBuy from '../../src/buybutton';
 import Component from '../../src/component';
 import Updater from '../../src/updater';
+import Template from '../../src/template';
 
 describe('Updater class', () => {
   describe('constructor', () => {
-    it('stores component to instance', () => {
-      const component = new Component({id: 1234});
-      const updater = new Updater(component);
-      assert.equal(updater.component, component);
-    });
-  });
-
-  describe('updateConfig()', () => {
     let component;
     let updater;
 
     beforeEach(() => {
       component = new Component({id: 1234});
-      component.view.render = sinon.spy();
-      component.view.resize = sinon.spy();
       updater = new Updater(component);
     });
 
-    it('merges new config with old config and updates view', () => {
-      updater.updateConfig({
-        options: {
-          product: {
-            buttonDestination: 'modal',
-          },
-        },
-      });
-      assert.equal(component.config.product.buttonDestination, 'modal');
-      assert.calledOnce(component.view.render);
-      assert.calledOnce(component.view.resize);
+    it('stores component to instance', () => {
+      assert.equal(updater.component, component);
     });
+  });
 
-    it('updates iframe if iframe exists', () => {
-      component.typeKey = 'product';
-      component.view.iframe = {
-        updateStyles: sinon.spy()
-      };
-      component.updateConfig({});
-      assert.calledWith(component.view.iframe.updateStyles, component.styles, component.googleFonts)
+  describe('prototype methods', () => {
+    describe('updateConfig()', () => {
+      let component;
+      let updater;
+      let renderSpy;
+      let resizeSpy;
+      const config = {options: {product: {}}};
+
+      beforeEach(() => {
+        renderSpy = sinon.spy();
+        resizeSpy = sinon.spy();
+        component = new Component({id: 1234});
+        component.typeKey = 'product';
+        component.view.render = renderSpy;
+        component.view.resize = resizeSpy;
+        updater = new Updater(component);
+      });
+
+      it('instantiates a template in the component view', () => {
+        updater.updateConfig(config);
+        assert.instanceOf(updater.component.view.template, Template);
+      });
+
+      it('merges config params with current config', () => {
+        const oldConfig = {test: 'test'};
+        updater.component.config = oldConfig;
+        updater.updateConfig(config);
+        assert.deepEqual(updater.component.config, Object.assign(config.options, oldConfig));
+      });
+
+      it('renders and resizes view', () => {
+        updater.updateConfig(config);
+        assert.calledOnce(renderSpy);
+        assert.calledOnce(resizeSpy);
+      });
+
+      it('updates iframe if iframe exists', () => {
+        const updateStylesSpy = sinon.spy();
+        component.view.iframe = {
+          updateStyles: updateStylesSpy,
+        };
+        component.updateConfig(config);
+        assert.calledOnce(updateStylesSpy);
+        assert.calledWith(updateStylesSpy, component.styles, component.googleFonts);
+      });
     });
   });
 });

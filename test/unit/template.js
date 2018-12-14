@@ -1,60 +1,63 @@
 import Template from '../../src/template';
 
-const contents = {
-  title: true,
-  button: true,
-  description: false,
-}
-const templates = {
-  button: '<button>BUTTON</button>',
-  title: '<h1>BUY MY BUTTONS {{data.name}}</h1>',
-  description: 'footer',
-}
-
-const order = ['title', 'button', 'description'];
-
-let template;
-
 describe('Template class', () => {
-  beforeEach(() => {
-    template = new Template(templates, contents, order);
-  });
+  let template;
+  const contents = {
+    title: true,
+    button: true,
+    description: false,
+  };
+  const templates = {
+    button: '<button>button</button>',
+    title: '<h1>title {{data.name}}</h1>',
+    description: 'footer',
+  };
+  const order = ['title', 'button', 'description'];
 
-  afterEach(() => {
-    template = null;
-  });
+  describe('constructor', () => {
+    beforeEach(() => {
+      template = new Template(templates, contents, order);
+    });
 
-  describe('get masterTemplate', () => {
-    it('returns a string template', () => {
-      const expectedString = '<h1>BUY MY BUTTONS {{data.name}}</h1><button>BUTTON</button>';
-      assert.equal(template.masterTemplate, expectedString);
+    it('sets templates, contents, and order from params', () => {
+      assert.equal(template.templates, templates);
+      assert.equal(template.contents, contents);
+      assert.equal(template.order, order);
     });
   });
 
-  describe('render', () => {
+  describe('prototype methods', () => {
+    describe('render()', () => {
+      const expectedString = '<h1>title test</h1><button>button</button>';
+      const data = {
+        name: 'test',
+      };
 
-    describe('without callback', () => {
-      it('it puts data into the strings', () => {
-        const expectedString = '<h1>BUY MY BUTTONS fool</h1><button>BUTTON</button>';
-        const data = {
-          name: 'fool'
-        }
-        const output = template.render({data: data});
-        assert.equal(expectedString, output);
+      describe('without callback', () => {
+        it('puts data into the string template', () => {
+          const output = template.render({data});
+          assert.equal(output, expectedString);
+        });
+      });
+
+      describe('with callback', () => {
+        it('puts data into the string template, then calls callback and returns its return value', () => {
+          const cbStub = sinon.stub().returnsArg(0);
+          const output = template.render({data}, cbStub);
+          assert.calledOnce(cbStub);
+          assert.calledWith(cbStub, expectedString);
+          assert.equal(output, expectedString);
+        });
       });
     });
 
-    describe('with callback', () => {
-      it('it puts data into the strings and calls callback', () => {
-        const expectedString = '<h1>BUY MY BUTTONS fool</h1><button>BUTTON</button>';
-        const data = {
-          name: 'fool'
-        }
-        const spy = sinon.spy();
-        const output = template.render({data: data}, spy);
-        assert.calledWith(spy, expectedString);
+    describe('getters', () => {
+      describe('masterTemplate', () => {
+        it('returns a string template', () => {
+          const expectedString = templates.title + templates.button;
+          assert.equal(template.masterTemplate, expectedString);
+        });
       });
     });
   });
 });
-
