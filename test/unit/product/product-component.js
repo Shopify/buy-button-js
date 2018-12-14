@@ -1201,13 +1201,17 @@ describe('Product Component class', () => {
             product.selectedImage = {
               id: '123',
               src: 'hat.jpg',
+              altText: 'red hat',
             };
+
             const expectedObject = {
               id: product.selectedImage.id,
               src: expectedSrc,
               srcLarge: expectedSrcLarge,
               srcOriginal: product.selectedImage.src,
+              altText: product.selectedImage.altText,
             };
+
             assert.deepEqual(product.image, expectedObject);
             assert.calledTwice(imageForSizeStub);
             assert.calledWith(imageForSizeStub.getCall(0), product.selectedImage, expectedSrc);
@@ -1223,6 +1227,7 @@ describe('Product Component class', () => {
               src: '',
               srcLarge: '',
               srcOriginal: '',
+              altText: '',
             };
             assert.deepEqual(product.image, expectedObject);
           });
@@ -1236,6 +1241,7 @@ describe('Product Component class', () => {
               src: firstImage.src,
               srcLarge: expectedSrcLarge,
               srcOriginal: firstImage.src,
+              altText: firstImage.altText,
             };
             assert.deepEqual(product.image, expectedObject);
             assert.calledOnce(imageForSizeStub);
@@ -1248,6 +1254,7 @@ describe('Product Component class', () => {
               image: {
                 id: '456',
                 src: 'top.jpg',
+                altText: 'tip top',
               },
             };
             const expectedObject = {
@@ -1255,6 +1262,7 @@ describe('Product Component class', () => {
               src: expectedSrc,
               srcLarge: expectedSrcLarge,
               srcOriginal: product.selectedVariant.image.src,
+              altText: product.selectedVariant.image.altText,
             };
             assert.deepEqual(product.image, expectedObject);
             assert.calledTwice(imageForSizeStub);
