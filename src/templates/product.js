@@ -19,7 +19,7 @@ const productTemplate = {
                           Left
                           <img class="carousel-button-arrow" src="//sdks.shopifycdn.com/buy-button/latest/arrow.svg" alt="Carousel Arrow"/>
                         </button>
-                        <img class="{{data.classes.product.img}}" src="{{data.currentImage.src}}" data-element="product.img" />
+                        <img class="{{data.classes.product.img}}" alt="{{data.currentImage.altText}}" src="{{data.currentImage.src}}" data-element="product.img" />
                         <button type="button" class="carousel-button carousel-button--next">
                           Right
                           <img class="carousel-button-arrow" src="//sdks.shopifycdn.com/buy-button/latest/arrow.svg" alt="Carousel Arrow"/>
