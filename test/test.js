@@ -11,6 +11,7 @@ import './unit/product/product-component';
 import './unit/product/product-updater';
 import './unit/product/product-view';
 import './unit/modal/modal-component';
+import './unit/toggle/toggle-view';
 import './unit/cart';
 import './unit/checkout';
 import './unit/product-set';
