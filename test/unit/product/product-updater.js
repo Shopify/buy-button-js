@@ -62,7 +62,7 @@ describe('Product Updater class', () => {
   });
 
   describe('updateConfig()', () => {
-    describe('if storefrontId or storefrontVariantId is supplied from config', () => {
+    describe('if id or variant id is supplied in config', () => {
       it('calls init and returns if id is updated', () => {
         product.updateConfig({id: 123});
         assert.calledOnce(initStub);
