@@ -144,7 +144,7 @@ export default class Product extends Component {
       src = this.props.client.image.helpers.imageForSize(this.selectedImage, imageOptions);
       srcLarge = this.props.client.image.helpers.imageForSize(this.selectedImage, imageOptionsLarge);
       srcOriginal = this.selectedImage.src;
-      altText = this.selectedImage.altText;
+      altText = (this.selectedImage.altText || this.model.title);
     } else if (this.selectedVariant.image == null && this.model.images[0] == null) {
       id = null;
       src = '';
@@ -156,14 +156,15 @@ export default class Product extends Component {
       src = this.model.images[0].src;
       srcLarge = this.props.client.image.helpers.imageForSize(this.model.images[0], imageOptionsLarge);
       srcOriginal = this.model.images[0].src;
-      altText = this.model.images[0].altText;
+      altText = (this.model.images[0].altText || this.model.title);
     } else {
       id = this.selectedVariant.image.id;
       src = this.props.client.image.helpers.imageForSize(this.selectedVariant.image, imageOptions);
       srcLarge = this.props.client.image.helpers.imageForSize(this.selectedVariant.image, imageOptionsLarge);
       srcOriginal = this.selectedVariant.image.src;
-      altText = this.selectedVariant.image.altText;
+      altText = (this.selectedVariant.image.altText || this.model.title);
     }
+
     return {id, src, srcLarge, srcOriginal, altText};
   }
 
@@ -218,13 +219,15 @@ export default class Product extends Component {
   }
 
   get carouselImages() {
+    let productTitle = this.model.title;
+
     return this.model.images.map((image) => {
       return {
         id: image.id,
         src: image.src,
         carouselSrc: this.props.client.image.helpers.imageForSize(image, {maxWidth: 100, maxHeight: 100}),
         isSelected: image.id === this.currentImage.id,
-        altText: image.altText,
+        altText: (image.altText || productTitle),
       };
     });
   }
