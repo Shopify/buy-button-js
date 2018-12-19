@@ -5,21 +5,14 @@ describe('Toggle View class', () => {
   let toggle;
   let cart;
   let toggleVisibilitySpy;
-  let node;
 
   beforeEach(() => {
     toggleVisibilitySpy = sinon.spy();
     cart = {
-      node: document.createElement('div'),
       toggleVisibility: toggleVisibilitySpy,
     };
-    document.body.appendChild(cart.node);
-    node = document.createElement('div');
+    const node = document.createElement('div');
     toggle = new Toggle({node}, {cart});
-  });
-
-  afterEach(() => {
-    document.body.removeChild(cart.node);
   });
 
   describe('render()', () => {
