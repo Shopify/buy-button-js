@@ -21,13 +21,14 @@ describe('Modal Component class', () => {
 
     it('creates a child div element to node in config if provided and sets node to child element', () => {
       const div = document.createElement('div');
-      const appendChildStub = sinon.stub(node, 'appendChild').returns(node);
+      const child = document.createElement('div');
+      const appendChildStub = sinon.stub(node, 'appendChild').returns(child);
       const createElementStub = sinon.stub(document, 'createElement').returns(div);
 
       modal = new Modal({node}, {});
       assert.calledOnce(appendChildStub);
       assert.calledWith(appendChildStub, div);
-      assert.equal(modal.node, node);
+      assert.equal(modal.node, child);
 
       appendChildStub.restore();
       createElementStub.restore();
@@ -35,13 +36,14 @@ describe('Modal Component class', () => {
 
     it('creates a new div element in the document body and sets node to the new element if a node is not provided in config', () => {
       const div = document.createElement('div');
-      const appendChildStub = sinon.stub(document.body, 'appendChild').returns(node);
+      const child = document.createElement('div');
+      const appendChildStub = sinon.stub(document.body, 'appendChild').returns(child);
       const createElementStub = sinon.stub(document, 'createElement').returns(div);
 
       modal = new Modal({}, {});
       assert.calledOnce(appendChildStub);
       assert.calledWith(appendChildStub, div);
-      assert.equal(modal.node, node);
+      assert.equal(modal.node, child);
 
       appendChildStub.restore();
       createElementStub.restore();
@@ -71,26 +73,17 @@ describe('Modal Component class', () => {
   describe('prototype methods', () => {
     const config = {
       node: document.createElement('div'),
-      options: {
-        product: {
-          iframe: false,
-          templates: {
-            button: '<button id="button" class="button">Fake button</button>',
-          },
-        },
-      },
     };
     let props;
     let modal;
     let closeModalStub;
-    let testProductCopy;
+    const testProductCopy = Object.assign({}, productFixture);
 
     beforeEach(() => {
       closeModalStub = sinon.stub().resolves();
       props = {
         closeModal: closeModalStub,
       };
-      testProductCopy = Object.assign({}, productFixture);
       modal = new Modal(config, props);
     });
 
@@ -234,12 +227,13 @@ describe('Modal Component class', () => {
         });
       });
 
-      describe('get productConfig', () => {
+      describe('productConfig', () => {
         it('returns object that includes global config', () => {
           assert.deepInclude(modal.productConfig, modal.globalConfig);
         });
 
         it('returns object with node that holds product wrapper', () => {
+          modal.productWrapper = document.createElement('div');
           assert.deepInclude(modal.productConfig, {node: modal.productWrapper});
         });
 
