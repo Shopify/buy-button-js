@@ -1,15 +1,11 @@
 import Toggle from '../../../src/components/toggle';
 import View from '../../../src/view';
 
-const fakeClient = {
-  fetchCart: () => { return; },
-  createCart: () => { return; },
-};
-
 describe('Toggle View class', () => {
   let toggle;
   let cart;
   let toggleVisibilitySpy;
+  let node;
 
   beforeEach(() => {
     toggleVisibilitySpy = sinon.spy();
@@ -18,7 +14,8 @@ describe('Toggle View class', () => {
       toggleVisibility: toggleVisibilitySpy,
     };
     document.body.appendChild(cart.node);
-    toggle = new Toggle({}, {client: fakeClient, cart});
+    node = document.createElement('div');
+    toggle = new Toggle({node}, {cart});
   });
 
   afterEach(() => {
@@ -91,7 +88,7 @@ describe('Toggle View class', () => {
         toggle.view.render();
       });
 
-      it('resizes three attributes', () => {
+      it('updates three attributes', () => {
         assert.calledThrice(setAttributeSpy);
       });
 
@@ -104,7 +101,6 @@ describe('Toggle View class', () => {
       });
 
       it('sets aria-label of iframe\'s parent to text title', () => {
-        toggle.config.toggle.title = 'title';
         assert.calledWith(setAttributeSpy.getCall(2), 'aria-label', toggle.options.text.title);
       });
 
@@ -251,14 +247,14 @@ describe('Toggle View class', () => {
     describe('readableLabel', () => {
       it('returns empty string if content title exists', () => {
         toggle.config.toggle.contents = {
-          title: 'title',
+          title: true,
         };
         assert.equal(toggle.view.readableLabel, '');
       });
 
       it('returns a p element with text title if content title does not exist', () => {
         toggle.config.toggle = {
-          contents: {title: null},
+          contents: {title: false},
           text: {title: 'title'},
         };
         assert.equal(toggle.view.readableLabel, `<p class="shopify-buy--visually-hidden">${toggle.options.text.title}</p>`);
