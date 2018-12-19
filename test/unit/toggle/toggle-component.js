@@ -52,7 +52,6 @@ describe('Toggle Component class', () => {
     beforeEach(() => {
       toggleVisibilitySpy = sinon.spy();
       cart = {
-        node: document.createElement('div'),
         toggleVisibility: toggleVisibilitySpy,
         model: {
           lineItems: [
