@@ -12,6 +12,7 @@ import './unit/product/product-updater';
 import './unit/product/product-view';
 import './unit/modal/modal-component';
 import './unit/modal/modal-updater';
+import './unit/modal/modal-view';
 import './unit/toggle/toggle-component';
 import './unit/toggle/toggle-view';
 import './unit/cart';
