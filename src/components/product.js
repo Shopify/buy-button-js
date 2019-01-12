@@ -774,9 +774,8 @@ export default class Product extends Component {
     return model;
   }
 
-
-  imageAltText(string) {
-    return (string || this.model.title);
+  imageAltText(altText) {
+    return altText || this.model.title;
   }
 
 }

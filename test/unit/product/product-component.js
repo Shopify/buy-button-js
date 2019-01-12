@@ -1241,8 +1241,9 @@ describe('Product Component class', () => {
               src: firstImage.src,
               srcLarge: expectedSrcLarge,
               srcOriginal: firstImage.src,
-              altText: (firstImage.altText || 'test'),
+              altText: 'test',
             };
+
             assert.deepEqual(product.image, expectedObject);
             assert.calledOnce(imageForSizeStub);
             assert.calledWith(imageForSizeStub, firstImage, expectedSrcLarge);
