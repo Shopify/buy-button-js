@@ -1087,6 +1087,17 @@ describe('Product Component class', () => {
       });
     });
 
+
+    describe('imageAltText()', () => {
+      it('outputs the images alt text value when alt text is passed', () => {
+        assert.equal(product.imageAltText('test alt'), 'test alt');
+      })
+
+      it('outputs the images alt text value as the images title when alt text is not passed', () => {
+        assert.equal(product.imageAltText(), 'test');
+      })
+    });
+
     describe('getters', () => {
       describe('shouldUpdateImage', () => {
         beforeEach(async () => {
@@ -1186,14 +1197,6 @@ describe('Product Component class', () => {
           assert.equal(image.src.maxHeight, image.src.maxWidth * 1.5);
           assert.equal(image.srcLarge.maxHeight, image.srcLarge.maxWidth * 1.5);
         });
-
-        it('outputs the images alt text value when alt text is passed', () => {
-          assert.equal(product.imageAltText("test alt"), "test alt");
-        })
-
-        it('outputs the images alt text value as the images title when alt text is not passed', () => {
-          assert.equal(product.imageAltText(), "test");
-        })
 
         describe('return object', () => {
           let expectedSrc;
