@@ -1089,7 +1089,7 @@ describe('Product Component class', () => {
 
 
     describe('imageAltText()', () => {
-      it('outputs the images alt text value when alt text is passed', () => {
+      it('returns the passed in image alt text if it is valid', () => {
         assert.equal(product.imageAltText('test alt'), 'test alt');
       })
 
