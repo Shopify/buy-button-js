@@ -1093,8 +1093,8 @@ describe('Product Component class', () => {
         assert.equal(product.imageAltText('test alt'), 'test alt');
       })
 
-      it('outputs the images alt text value as the images title when alt text is not passed', () => {
-        assert.equal(product.imageAltText(), 'test');
+      it('returns the image title when alt text passed in is null', () => {
+        assert.equal(product.imageAltText(null), 'test');
       })
     });
 
