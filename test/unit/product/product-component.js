@@ -1089,6 +1089,10 @@ describe('Product Component class', () => {
 
 
     describe('imageAltText()', () => {
+      beforeEach(async () => {
+        await product.init(testProductCopy);
+      });
+
       it('returns the passed in image alt text if it is valid', () => {
         assert.equal(product.imageAltText('test alt'), 'test alt');
       })
