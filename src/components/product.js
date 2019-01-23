@@ -127,6 +127,7 @@ export default class Product extends Component {
     let src;
     let srcLarge;
     let srcOriginal;
+    let altText;
 
     const imageOptions = {
       maxWidth: imageSize,
@@ -143,23 +144,28 @@ export default class Product extends Component {
       src = this.props.client.image.helpers.imageForSize(this.selectedImage, imageOptions);
       srcLarge = this.props.client.image.helpers.imageForSize(this.selectedImage, imageOptionsLarge);
       srcOriginal = this.selectedImage.src;
+      altText = this.imageAltText(this.selectedImage.altText);
     } else if (this.selectedVariant.image == null && this.model.images[0] == null) {
       id = null;
       src = '';
       srcLarge = '';
       srcOriginal = '';
+      altText = '';
     } else if (this.selectedVariant.image == null) {
       id = this.model.images[0].id;
       src = this.model.images[0].src;
       srcLarge = this.props.client.image.helpers.imageForSize(this.model.images[0], imageOptionsLarge);
       srcOriginal = this.model.images[0].src;
+      altText = this.imageAltText(this.model.images[0].altText);
     } else {
       id = this.selectedVariant.image.id;
       src = this.props.client.image.helpers.imageForSize(this.selectedVariant.image, imageOptions);
       srcLarge = this.props.client.image.helpers.imageForSize(this.selectedVariant.image, imageOptionsLarge);
       srcOriginal = this.selectedVariant.image.src;
+      altText = this.imageAltText(this.selectedVariant.image.altText);
     }
-    return {id, src, srcLarge, srcOriginal};
+
+    return {id, src, srcLarge, srcOriginal, altText};
   }
 
   /**
@@ -219,6 +225,7 @@ export default class Product extends Component {
         src: image.src,
         carouselSrc: this.props.client.image.helpers.imageForSize(image, {maxWidth: 100, maxHeight: 100}),
         isSelected: image.id === this.currentImage.id,
+        altText: this.imageAltText(image.altText),
       };
     });
   }
@@ -766,4 +773,9 @@ export default class Product extends Component {
     this.selectedVariant = selectedVariant;
     return model;
   }
+
+  imageAltText(altText) {
+    return altText || this.model.title;
+  }
+
 }

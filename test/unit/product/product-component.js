@@ -1087,6 +1087,21 @@ describe('Product Component class', () => {
       });
     });
 
+
+    describe('imageAltText()', () => {
+      beforeEach(async () => {
+        await product.init(testProductCopy);
+      });
+
+      it('returns the passed in image alt text if it is valid', () => {
+        assert.equal(product.imageAltText('test alt'), 'test alt');
+      })
+
+      it('returns the image title when alt text passed in is null', () => {
+        assert.equal(product.imageAltText(null), 'test');
+      })
+    });
+
     describe('getters', () => {
       describe('shouldUpdateImage', () => {
         beforeEach(async () => {
@@ -1201,13 +1216,17 @@ describe('Product Component class', () => {
             product.selectedImage = {
               id: '123',
               src: 'hat.jpg',
+              altText: 'red hat',
             };
+
             const expectedObject = {
               id: product.selectedImage.id,
               src: expectedSrc,
               srcLarge: expectedSrcLarge,
               srcOriginal: product.selectedImage.src,
+              altText: product.selectedImage.altText,
             };
+
             assert.deepEqual(product.image, expectedObject);
             assert.calledTwice(imageForSizeStub);
             assert.calledWith(imageForSizeStub.getCall(0), product.selectedImage, expectedSrc);
@@ -1223,6 +1242,7 @@ describe('Product Component class', () => {
               src: '',
               srcLarge: '',
               srcOriginal: '',
+              altText: '',
             };
             assert.deepEqual(product.image, expectedObject);
           });
@@ -1236,7 +1256,9 @@ describe('Product Component class', () => {
               src: firstImage.src,
               srcLarge: expectedSrcLarge,
               srcOriginal: firstImage.src,
+              altText: 'test',
             };
+
             assert.deepEqual(product.image, expectedObject);
             assert.calledOnce(imageForSizeStub);
             assert.calledWith(imageForSizeStub, firstImage, expectedSrcLarge);
@@ -1248,6 +1270,7 @@ describe('Product Component class', () => {
               image: {
                 id: '456',
                 src: 'top.jpg',
+                altText: 'tip top',
               },
             };
             const expectedObject = {
@@ -1255,6 +1278,7 @@ describe('Product Component class', () => {
               src: expectedSrc,
               srcLarge: expectedSrcLarge,
               srcOriginal: product.selectedVariant.image.src,
+              altText: product.selectedVariant.image.altText,
             };
             assert.deepEqual(product.image, expectedObject);
             assert.calledTwice(imageForSizeStub);
