@@ -11,8 +11,19 @@ import ShopifyBuy from '../../src/buybutton';
 let cart;
 
 describe('Cart class', () => {
+  let closeCartSpy;
+
   beforeEach(() => {
-    cart = new Cart({}, {
+    closeCartSpy = sinon.spy();
+    cart = new Cart({
+      options: {
+        cart: {
+          viewData: {
+            test: 'test string',
+          },
+        },
+      },
+    }, {
       client: ShopifyBuy.buildClient({
         domain: 'test.myshopify.com',
         storefrontAccessToken: 123
@@ -29,6 +40,7 @@ describe('Cart class', () => {
           }
         }
       },
+      closeCart: closeCartSpy,
     });
   });
   afterEach(() => {
@@ -323,6 +335,180 @@ describe('Cart class', () => {
       return cart.init().then(() => {
         assert.notCalled(fetchMoneyFormatStub);
       });
+    });
+  });
+
+  describe('DOMEvents', () => {
+    it('binds closeCart to click on cart close', () => {
+      cart.DOMEvents[`click ${cart.selectors.cart.close}`]();
+      assert.calledOnce(closeCartSpy);
+    });
+
+    describe('onQuantityIncrement bindings', () => {
+      let quantityIncrementStub;
+
+      beforeEach(() => {
+        quantityIncrementStub = sinon.stub(cart, 'onQuantityIncrement');
+      });
+
+      afterEach(() => {
+        quantityIncrementStub.restore();
+      });
+
+      it('binds onQuantityIncrement to click on quantity increment and passes a value of 1', () => {
+        cart.DOMEvents[`click ${cart.selectors.lineItem.quantityIncrement}`]();
+        assert.calledOnce(quantityIncrementStub);
+        assert.calledWith(quantityIncrementStub, 1);
+      });
+
+      it('bind onQuantityIncrement to click on quantity decrement and passes a value of -1', () => {
+        cart.DOMEvents[`click ${cart.selectors.lineItem.quantityDecrement}`]();
+        assert.calledOnce(quantityIncrementStub);
+        assert.calledWith(quantityIncrementStub, -1);
+      });
+    });
+
+    it('binds onCheckout to click on cart button', () => {
+      const onCheckoutStub = sinon.stub(cart, 'onCheckout');
+      cart.DOMEvents[`click ${cart.selectors.cart.button}`]();
+      assert.calledOnce(onCheckoutStub);
+      onCheckoutStub.restore();
+    });
+
+    it('binds onQuantityBlur to blur on quantity input field', () => {
+      const onQuantityBlurStub = sinon.stub(cart, 'onQuantityBlur');
+      cart.DOMEvents[`blur ${cart.selectors.lineItem.quantityInput}`]();
+      assert.calledOnce(onQuantityBlurStub);
+      onQuantityBlurStub.restore();
+    });
+
+    it('binds onNoteBlur to blur on cart note field', () => {
+      const onNoteBlurStub = sinon.stub(cart, 'onNoteBlur');
+      cart.DOMEvents[`blur ${cart.selectors.cart.note}`]();
+      assert.calledOnce(onNoteBlurStub);
+      onNoteBlurStub.restore();
+    });
+  });
+
+  describe('viewData()', () => {
+    let viewData;
+
+    beforeEach(async () => {
+      const lineItems = [
+        {
+          id: 1234,
+          quantity: 2,
+          variant: {
+            id: 1111,
+            title: 'test variant',
+            price: '20.00',
+          },
+        },
+      ];
+      cart.model = {
+        id: 1,
+        lineItems,
+        note: 'test cart note',
+        subtotalPrice: '123.00',
+      };
+      cart.lineItemCache = lineItems;
+      viewData = cart.viewData;
+    });
+
+    it('returns an object merged with model', () => {
+      assert.equal(viewData.id, cart.model.id);
+      assert.deepEqual(viewData.lineItems, cart.model.lineItems);
+      assert.equal(viewData.subtotalPrice, cart.model.subtotalPrice);
+    });
+
+    it('returns an object merged with options view data', () => {
+      assert.equal(viewData.test, cart.options.viewData.test);
+    });
+
+    it('returns an object with text', () => {
+      assert.deepEqual(viewData.text, cart.options.text);
+    });
+
+    it('returns an object with classes', () => {
+      assert.deepEqual(viewData.classes, cart.classes);
+    });
+
+    it('returns an object with lineItemsHtml', () => {
+      assert.equal(viewData.lineItemsHtml, cart.lineItemsHtml);
+    });
+
+    it('returns an object with isEmpty', () => {
+      assert.equal(viewData.isEmpty, cart.isEmpty);
+    });
+
+    it('returns an object with formatted total', () => {
+      assert.equal(viewData.formattedTotal, cart.formattedTotal);
+    });
+
+    it('returns an object with contents', () => {
+      assert.deepEqual(viewData.contents, cart.options.contents);
+    });
+
+    it('returns an object with cart note', () => {
+      assert.equal(viewData.cartNote, cart.cartNote);
+    });
+  });
+
+  describe('get cartNote', () => {
+    it('returns the note from the cart model', () => {
+      const note = 'test cart note';
+      cart.model.note = note;
+
+      assert.equal(cart.cartNote, cart.model.note);
+    });
+  });
+
+  describe('onNoteBlur()', () => {
+    it('calls set note with the event', () => {
+      const setNoteStub = sinon.stub(cart, 'setNote');
+      const event = new Event('test');
+
+      cart.onNoteBlur(event);
+      assert.calledOnce(setNoteStub);
+      assert.calledWith(setNoteStub, event);
+
+      setNoteStub.restore();
+    });
+  });
+
+  describe('setNote()', () => {
+    let updateAttributesStub;
+    const mockCheckout = {
+      lineItems: [
+        {id: '1'},
+        {id: '2'},
+      ],
+    };
+
+    const note = 'test cart note';
+    const event = {
+      target: {
+        value: note,
+      },
+    };
+
+    beforeEach(() => {
+      updateAttributesStub = sinon.stub(cart.props.client.checkout, 'updateAttributes').resolves(mockCheckout);
+    });
+
+    afterEach(() => {
+      updateAttributesStub.restore();
+    });
+
+    it('calls updateAttributes on the cart', async () => {
+      await cart.setNote(event);
+      assert.calledOnce(updateAttributesStub);
+      assert.calledWith(updateAttributesStub, cart.model.id, {note});
+    });
+
+    it('sets the cart model to the checkout returned from the client', async () => {
+      await cart.setNote(event);
+      assert.equal(cart.model, mockCheckout);
     });
   });
 });

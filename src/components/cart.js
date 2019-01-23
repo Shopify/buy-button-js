@@ -67,6 +67,7 @@ export default class Cart extends Component {
       [`click ${this.selectors.lineItem.quantityDecrement}`]: this.onQuantityIncrement.bind(this, -1),
       [`click ${this.selectors.cart.button}`]: this.onCheckout.bind(this),
       [`blur ${this.selectors.lineItem.quantityInput}`]: this.onQuantityBlur.bind(this),
+      [`blur ${this.selectors.cart.note}`]: this.onNoteBlur.bind(this),
     }, this.options.DOMEvents);
   }
 
@@ -96,6 +97,8 @@ export default class Cart extends Component {
       lineItemsHtml: this.lineItemsHtml,
       isEmpty: this.isEmpty,
       formattedTotal: this.formattedTotal,
+      contents: this.options.contents,
+      cartNote: this.cartNote,
     });
   }
 
@@ -113,6 +116,10 @@ export default class Cart extends Component {
    */
   get isEmpty() {
     return this.model.lineItems.length < 1;
+  }
+
+  get cartNote() {
+    return this.model.note;
   }
 
   get wrapperClass() {
@@ -246,6 +253,10 @@ export default class Cart extends Component {
     this.setQuantity(target, () => parseInt(target.value, 10));
   }
 
+  onNoteBlur(evt) {
+    this.setNote(evt);
+  }
+
   onQuantityIncrement(qty, evt, target) {
     this.setQuantity(target, (prevQty) => prevQty + qty);
   }
@@ -264,6 +275,14 @@ export default class Cart extends Component {
     const item = this.model.lineItems.find((lineItem) => lineItem.id === id);
     const newQty = fn(item.quantity);
     return this.props.tracker.trackMethod(this.updateItem.bind(this), 'Update Cart', this.cartItemTrackingInfo(item, newQty))(id, newQty);
+  }
+
+  setNote(evt) {
+    const note = evt.target.value;
+    return this.props.client.checkout.updateAttributes(this.model.id, {note}).then((checkout) => {
+      this.model = checkout;
+      return checkout;
+    });
   }
 
   /**
