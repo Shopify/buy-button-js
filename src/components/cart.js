@@ -67,7 +67,7 @@ export default class Cart extends Component {
       [`click ${this.selectors.lineItem.quantityDecrement}`]: this.onQuantityIncrement.bind(this, -1),
       [`click ${this.selectors.cart.button}`]: this.onCheckout.bind(this),
       [`blur ${this.selectors.lineItem.quantityInput}`]: this.onQuantityBlur.bind(this),
-      [`blur ${this.selectors.cart.note}`]: this.onNoteBlur.bind(this),
+      [`blur ${this.selectors.cart.note}`]: this.setNote.bind(this),
     }, this.options.DOMEvents);
   }
 
@@ -251,10 +251,6 @@ export default class Cart extends Component {
 
   onQuantityBlur(evt, target) {
     this.setQuantity(target, () => parseInt(target.value, 10));
-  }
-
-  onNoteBlur(evt) {
-    this.setNote(evt);
   }
 
   onQuantityIncrement(qty, evt, target) {

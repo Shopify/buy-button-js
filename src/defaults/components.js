@@ -212,7 +212,7 @@ const defaults = {
       button: 'shopify-buy__btn shopify-buy__btn--cart-checkout',
       close: 'shopify-buy__btn--close',
       cartScroll: 'shopify-buy__cart-scroll',
-      cartScrollSmall: 'shopify-buy__cart-scroll--small',
+      cartScrollWithCartNote: 'shopify-buy__cart-scroll--cart-note',
       empty: 'shopify-buy__cart-empty-text',
       note: 'shopify-buy__cart__note',
       noteDescription: 'shopify-buy__cart__note__description',

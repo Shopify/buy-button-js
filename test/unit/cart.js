@@ -18,8 +18,12 @@ describe('Cart class', () => {
     cart = new Cart({
       options: {
         cart: {
-          viewData: {
-            test: 'test string',
+          contents: {
+            title: false,
+            note: true,
+          },
+          text: {
+            notice: 'test',
           },
         },
       },
@@ -382,11 +386,11 @@ describe('Cart class', () => {
       onQuantityBlurStub.restore();
     });
 
-    it('binds onNoteBlur to blur on cart note field', () => {
-      const onNoteBlurStub = sinon.stub(cart, 'onNoteBlur');
+    it('binds setNote to blur on cart note field', () => {
+      const setNoteStub = sinon.stub(cart, 'setNote');
       cart.DOMEvents[`blur ${cart.selectors.cart.note}`]();
-      assert.calledOnce(onNoteBlurStub);
-      onNoteBlurStub.restore();
+      assert.calledOnce(setNoteStub);
+      setNoteStub.restore();
     });
   });
 
@@ -419,10 +423,6 @@ describe('Cart class', () => {
       assert.equal(viewData.id, cart.model.id);
       assert.deepEqual(viewData.lineItems, cart.model.lineItems);
       assert.equal(viewData.subtotalPrice, cart.model.subtotalPrice);
-    });
-
-    it('returns an object merged with options view data', () => {
-      assert.equal(viewData.test, cart.options.viewData.test);
     });
 
     it('returns an object with text', () => {
@@ -460,19 +460,6 @@ describe('Cart class', () => {
       cart.model.note = note;
 
       assert.equal(cart.cartNote, cart.model.note);
-    });
-  });
-
-  describe('onNoteBlur()', () => {
-    it('calls set note with the event', () => {
-      const setNoteStub = sinon.stub(cart, 'setNote');
-      const event = new Event('test');
-
-      cart.onNoteBlur(event);
-      assert.calledOnce(setNoteStub);
-      assert.calledWith(setNoteStub, event);
-
-      setNoteStub.restore();
     });
   });
 
