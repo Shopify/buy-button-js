@@ -54,6 +54,7 @@
   padding-right: calc(var(--gutter-cart) * 2);
   position: relative;
   z-index: var(--max-z-index);
+  background-color: inherit;
 }
 
 .shopify-buy__cart__title {
