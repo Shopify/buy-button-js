@@ -195,6 +195,7 @@ const defaults = {
       title: true,
       lineItems: true,
       footer: true,
+      note: false,
     },
     order: ['title', 'lineItems', 'footer'],
     classes: {
@@ -211,7 +212,11 @@ const defaults = {
       button: 'shopify-buy__btn shopify-buy__btn--cart-checkout',
       close: 'shopify-buy__btn--close',
       cartScroll: 'shopify-buy__cart-scroll',
+      cartScrollWithCartNote: 'shopify-buy__cart-scroll--cart-note',
       empty: 'shopify-buy__cart-empty-text',
+      note: 'shopify-buy__cart__note',
+      noteDescription: 'shopify-buy__cart__note__description',
+      noteTextArea: 'shopify-buy__cart__note__text-area',
     },
     text: {
       title: 'Cart',
@@ -220,6 +225,7 @@ const defaults = {
       total: 'SUBTOTAL',
       currency: 'CAD',
       notice: 'Shipping and discount codes are added at checkout.',
+      noteDescription: 'Special instructions for seller',
     },
   },
   lineItem: {
