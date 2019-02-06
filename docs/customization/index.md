@@ -269,6 +269,7 @@ var contents = {
   title: true,
   lineItems: true,
   footer: true,
+  note: false,
 },
 ```
 
@@ -282,6 +283,7 @@ var text = {
   total: 'Total',
   currency: 'CAD',
   notice: 'Shipping and discount codes are added at checkout.',
+  noteDescription: 'Special instructions for seller',
 },
 ```
 
