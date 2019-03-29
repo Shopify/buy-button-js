@@ -110,6 +110,10 @@ export default class Cart extends Component {
     return formatMoney(this.model.subtotalPrice, this.moneyFormat);
   }
 
+  get formattedLineItemsSubtotal() {
+    return formatMoney(this.model.lineItemsSubtotalPrice.amount, this.moneyFormat);
+  }
+
   /**
    * whether cart is empty
    * @return {Boolean}

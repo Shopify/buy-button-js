@@ -164,7 +164,7 @@ describe('Cart class', () => {
 
     it('calls sanitizeCheckout then updateCache with the new checkout', () => {
       localStorage.setItem(cart.localStorageCheckoutKey, 123);
-      
+
       const checkout = {id: 1111, lineItems: [
         {id: 1112, variant: null},
         {id: 1113, variant: {id: 1114}},
@@ -173,7 +173,7 @@ describe('Cart class', () => {
       const sanitizedCheckout = {id: 1111, lineItems: [
         {id: 1113, variant: {id: 1114}},
       ]};
-      
+
       const fetchCart = sinon.stub(cart.props.client.checkout, 'fetch').resolves(checkout);
       const sanitizeCheckout = sinon.stub(cart, 'sanitizeCheckout').resolves(sanitizedCheckout);
       const updateCache = sinon.stub(cart, 'updateCache').resolves();
@@ -217,7 +217,7 @@ describe('Cart class', () => {
         {id: 1113, variant: {id: 1114}},
       ]};
       const removeLineItems = sinon.stub(cart.props.client.checkout, 'removeLineItems').resolves(sanitizedCheckout);
-      
+
       return cart.sanitizeCheckout(checkout).then((data) => {
         assert.deepEqual(data, sanitizedCheckout);
         assert.calledOnce(removeLineItems);
@@ -297,6 +297,18 @@ describe('Cart class', () => {
         subtotalPrice: '20.00',
       }
       assert.equal(cart.formattedTotal, '$20.00');
+    });
+  });
+
+  describe('get formattedLineItemsSubtotal', () => {
+    it.only('uses money helper to return currency formatted value', () => {
+      cart.model = {
+        lineItemsSubtotalPrice: {
+          amount: '30.00',
+          currencyCode: 'USD'
+        }
+      }
+      assert.equal(cart.formattedLineItemsSubtotal, '$30.00');
     });
   });
 
@@ -414,6 +426,10 @@ describe('Cart class', () => {
         lineItems,
         note: 'test cart note',
         subtotalPrice: '123.00',
+        lineItemsSubtotalPrice: {
+          amount: '130.00',
+          currencyCode: 'USD'
+        },
       };
       cart.lineItemCache = lineItems;
       viewData = cart.viewData;
@@ -423,6 +439,7 @@ describe('Cart class', () => {
       assert.equal(viewData.id, cart.model.id);
       assert.deepEqual(viewData.lineItems, cart.model.lineItems);
       assert.equal(viewData.subtotalPrice, cart.model.subtotalPrice);
+      assert.equal(viewData.lineItemsSubtotalPrice, cart.model.lineItemsSubtotalPrice);
     });
 
     it('returns an object with text', () => {
