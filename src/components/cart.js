@@ -96,7 +96,7 @@ export default class Cart extends Component {
       classes: this.classes,
       lineItemsHtml: this.lineItemsHtml,
       isEmpty: this.isEmpty,
-      formattedTotal: this.formattedTotal,
+      formattedTotal: this.formattedLineItemsSubtotal,
       contents: this.options.contents,
       cartNote: this.cartNote,
     });
