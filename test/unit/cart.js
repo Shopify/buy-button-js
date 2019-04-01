@@ -428,7 +428,7 @@ describe('Cart class', () => {
         subtotalPrice: '123.00',
         lineItemsSubtotalPrice: {
           amount: '130.00',
-          currencyCode: 'USD'
+          currencyCode: 'USD',
         },
       };
       cart.lineItemCache = lineItems;
@@ -459,7 +459,7 @@ describe('Cart class', () => {
     });
 
     it('returns an object with formatted total', () => {
-      assert.equal(viewData.formattedTotal, cart.formattedTotal);
+      assert.equal(viewData.formattedTotal, cart.formattedLineItemsSubtotal);
     });
 
     it('returns an object with contents', () => {
