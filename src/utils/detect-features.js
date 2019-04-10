@@ -32,8 +32,20 @@ var supportsTransforms = function() {
   return detectCSSFeature('transform');
 }
 
+const supportsWindowOpen = () => {
+  const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+  if (userAgent.indexOf('Mac OS X') === -1) {
+    return true;
+  }
+  const unSupportedApps = ['Instagram', 'Pinterest/iOS', 'FBAN/FBIOS', 'FBAN/MessengerForiOS'];
+  return !unSupportedApps.some((appName) => {
+    return userAgent.indexOf(appName) > -1;
+  });
+}
+
 export default {
   animation: supportsAnimations(),
   transition: supportsTransitions(),
   transform: supportsTransforms(),
+  windowOpen: supportsWindowOpen,
 }

@@ -22,6 +22,7 @@ import './unit/tracker';
 import './unit/merge';
 import './unit/money';
 import './unit/normalize-config';
+import './unit/detect-features';
 
 window.chai = chai;
 window.sinon = sinon;

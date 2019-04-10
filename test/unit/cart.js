@@ -301,13 +301,13 @@ describe('Cart class', () => {
   });
 
   describe('get formattedLineItemsSubtotal', () => {
-    it.only('uses money helper to return currency formatted value', () => {
+    it('uses money helper to return currency formatted value', () => {
       cart.model = {
         lineItemsSubtotalPrice: {
           amount: '30.00',
-          currencyCode: 'USD'
-        }
-      }
+          currencyCode: 'USD',
+        },
+      };
       assert.equal(cart.formattedLineItemsSubtotal, '$30.00');
     });
   });

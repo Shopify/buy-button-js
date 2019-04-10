@@ -5,6 +5,7 @@ import Checkout from './checkout';
 import windowUtils from '../utils/window-utils';
 import formatMoney from '../utils/money';
 import normalizeConfig from '../utils/normalize-config';
+import browserFeatures from '../utils/detect-features';
 import ProductView from '../views/product';
 import ProductUpdater from '../updaters/product';
 
@@ -602,7 +603,7 @@ export default class Product extends Component {
       this.props.tracker.track('Direct Checkout', {});
       let checkoutWindow;
 
-      if (this.config.cart.popup) {
+      if (this.config.cart.popup && browserFeatures.windowOpen()) {
         const params = (new Checkout(this.config)).params;
         checkoutWindow = window.open('', 'checkout', params);
       } else {
