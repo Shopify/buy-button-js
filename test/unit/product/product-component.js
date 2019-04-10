@@ -11,6 +11,7 @@ import shopFixture from '../../fixtures/shop-info';
 import productFixture from '../../fixtures/product-fixture';
 import * as normalizeConfig from '../../../src/utils/normalize-config';
 import * as formatMoney from '../../../src/utils/money';
+import * as browserFeatures from '../../../src/utils/detect-features';
 
 const rootImageURI = 'https://cdn.shopify.com/s/files/1/0014/8583/2214/products/';
 
@@ -582,13 +583,27 @@ describe('Product Component class', () => {
           assert.calledWith(trackSpy, 'Direct Checkout', {});
         });
 
-        it('opens checkout in a new window if cart popup in config is true', async () => {
+        it('opens checkout in a new window if cart popup in config is true and browser supports window.open', async () => {
           product.config.cart.popup = true;
+          const browserFeaturesStub = sinon.stub(browserFeatures, 'default').value({
+            windowOpen: () => true,
+          });
           const checkout = new Checkout(product.config);
           product.onButtonClick(evt, target);
           await Promise.all([createCheckoutPromise, addLineItemsPromise]);
           assert.calledOnce(openWindowStub);
           assert.calledWith(openWindowStub, '', 'checkout', checkout.params);
+          browserFeaturesStub.restore();
+        });
+
+        it('does not open checkout in a new window if browser does not support window.open', () => {
+          product.config.cart.popup = true;
+          const browserFeaturesStub = sinon.stub(browserFeatures, 'default').value({
+            windowOpen: () => false,
+          });
+          product.onButtonClick(evt, target);
+          assert.notCalled(openWindowStub);
+          browserFeaturesStub.restore();
         });
 
         it('creates checkout and adds line items', async () => {
