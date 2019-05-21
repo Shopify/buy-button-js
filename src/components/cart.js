@@ -67,6 +67,7 @@ export default class Cart extends Component {
       [`click ${this.selectors.lineItem.quantityDecrement}`]: this.onQuantityIncrement.bind(this, -1),
       [`click ${this.selectors.cart.button}`]: this.onCheckout.bind(this),
       [`blur ${this.selectors.lineItem.quantityInput}`]: this.onQuantityBlur.bind(this),
+      [`blur ${this.selectors.cart.note}`]: this.setNote.bind(this),
     }, this.options.DOMEvents);
   }
 
@@ -95,7 +96,9 @@ export default class Cart extends Component {
       classes: this.classes,
       lineItemsHtml: this.lineItemsHtml,
       isEmpty: this.isEmpty,
-      formattedTotal: this.formattedTotal,
+      formattedTotal: this.formattedLineItemsSubtotal,
+      contents: this.options.contents,
+      cartNote: this.cartNote,
     });
   }
 
@@ -107,12 +110,20 @@ export default class Cart extends Component {
     return formatMoney(this.model.subtotalPrice, this.moneyFormat);
   }
 
+  get formattedLineItemsSubtotal() {
+    return formatMoney(this.model.lineItemsSubtotalPrice.amount, this.moneyFormat);
+  }
+
   /**
    * whether cart is empty
    * @return {Boolean}
    */
   get isEmpty() {
     return this.model.lineItems.length < 1;
+  }
+
+  get cartNote() {
+    return this.model.note;
   }
 
   get wrapperClass() {
@@ -161,12 +172,25 @@ export default class Cart extends Component {
         if (checkout.completedAt) {
           return this.createCheckout();
         }
-        this.updateCache(this.model.lineItems);
-        return checkout;
+        return this.sanitizeCheckout(checkout).then((newCheckout) => {
+          this.updateCache(newCheckout.lineItems);
+          return newCheckout;
+        });
       }).catch(() => { return this.createCheckout(); });
     } else {
       return this.createCheckout();
     }
+  }
+
+  sanitizeCheckout(checkout) {
+    const lineItemsToDelete = checkout.lineItems.filter((item) => !item.variant);
+    if (!lineItemsToDelete.length) {
+      return Promise.resolve(checkout);
+    }
+    const lineItemIds = lineItemsToDelete.map((item) => item.id);
+    return this.props.client.checkout.removeLineItems(checkout.id, lineItemIds).then((newCheckout) => {
+      return newCheckout;
+    });
   }
 
   fetchMoneyFormat() {
@@ -182,7 +206,7 @@ export default class Cart extends Component {
    * @return {Promise} promise resolving to instance.
    */
   init(data) {
-    if (!this.config.moneyFormat) {
+    if (!this.moneyFormat) {
       this.fetchMoneyFormat().then((moneyFormat) => {
         this.moneyFormat = moneyFormat;
       });
@@ -251,6 +275,14 @@ export default class Cart extends Component {
     const item = this.model.lineItems.find((lineItem) => lineItem.id === id);
     const newQty = fn(item.quantity);
     return this.props.tracker.trackMethod(this.updateItem.bind(this), 'Update Cart', this.cartItemTrackingInfo(item, newQty))(id, newQty);
+  }
+
+  setNote(evt) {
+    const note = evt.target.value;
+    return this.props.client.checkout.updateAttributes(this.model.id, {note}).then((checkout) => {
+      this.model = checkout;
+      return checkout;
+    });
   }
 
   /**

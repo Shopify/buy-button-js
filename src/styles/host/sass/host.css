@@ -6,7 +6,6 @@
 .shopify-buy-modal-is-active {
   height: 100%;
   overflow: auto;
-  -webkit-overflow-scrolling: touch;
 }
 
 .shopify-buy-frame {

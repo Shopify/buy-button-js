@@ -5,6 +5,7 @@ import Checkout from './checkout';
 import windowUtils from '../utils/window-utils';
 import formatMoney from '../utils/money';
 import normalizeConfig from '../utils/normalize-config';
+import browserFeatures from '../utils/detect-features';
 import ProductView from '../views/product';
 import ProductUpdater from '../updaters/product';
 
@@ -126,6 +127,8 @@ export default class Product extends Component {
     let id;
     let src;
     let srcLarge;
+    let srcOriginal;
+    let altText;
 
     const imageOptions = {
       maxWidth: imageSize,
@@ -141,20 +144,29 @@ export default class Product extends Component {
       id = this.selectedImage.id;
       src = this.props.client.image.helpers.imageForSize(this.selectedImage, imageOptions);
       srcLarge = this.props.client.image.helpers.imageForSize(this.selectedImage, imageOptionsLarge);
+      srcOriginal = this.selectedImage.src;
+      altText = this.imageAltText(this.selectedImage.altText);
     } else if (this.selectedVariant.image == null && this.model.images[0] == null) {
       id = null;
       src = '';
       srcLarge = '';
+      srcOriginal = '';
+      altText = '';
     } else if (this.selectedVariant.image == null) {
       id = this.model.images[0].id;
       src = this.model.images[0].src;
       srcLarge = this.props.client.image.helpers.imageForSize(this.model.images[0], imageOptionsLarge);
+      srcOriginal = this.model.images[0].src;
+      altText = this.imageAltText(this.model.images[0].altText);
     } else {
       id = this.selectedVariant.image.id;
       src = this.props.client.image.helpers.imageForSize(this.selectedVariant.image, imageOptions);
       srcLarge = this.props.client.image.helpers.imageForSize(this.selectedVariant.image, imageOptionsLarge);
+      srcOriginal = this.selectedVariant.image.src;
+      altText = this.imageAltText(this.selectedVariant.image.altText);
     }
-    return {id, src, srcLarge};
+
+    return {id, src, srcLarge, srcOriginal, altText};
   }
 
   /**
@@ -214,6 +226,7 @@ export default class Product extends Component {
         src: image.src,
         carouselSrc: this.props.client.image.helpers.imageForSize(image, {maxWidth: 100, maxHeight: 100}),
         isSelected: image.id === this.currentImage.id,
+        altText: this.imageAltText(image.altText),
       };
     });
   }
@@ -407,16 +420,20 @@ export default class Product extends Component {
    * @return {Object}
    */
   get trackingInfo() {
+    const info = {
+      destination: this.options.buttonDestination,
+    };
+
     if (this.selectedVariant) {
-      return {
+      Object.assign(info, {
         id: this.id,
         name: this.selectedVariant.productTitle,
         sku: null,
         price: this.selectedVariant.price,
-      };
-    } else {
-      return {};
+      });
     }
+
+    return info;
   }
 
   /**
@@ -583,18 +600,21 @@ export default class Product extends Component {
       this.openOnlineStore();
     } else {
       this._userEvent('openCheckout');
+      this.props.tracker.track('Direct Checkout', {});
       let checkoutWindow;
 
-      if (this.config.cart.popup) {
+      if (this.config.cart.popup && browserFeatures.windowOpen()) {
         const params = (new Checkout(this.config)).params;
-        checkoutWindow = window.open(null, 'checkout', params);
+        checkoutWindow = window.open('', 'checkout', params);
       } else {
         checkoutWindow = window;
       }
 
-      this.cart.addVariantToCart(this.selectedVariant, this.selectedQuantity, false).then((cart) => {
-        this.cart.close();
-        checkoutWindow.location = cart.webUrl;
+      this.props.client.checkout.create().then((checkout) => {
+        const lineItem = {variantId: this.selectedVariant.id, quantity: this.selectedQuantity};
+        this.props.client.checkout.addLineItems(checkout.id, [lineItem]).then((updatedCheckout) => {
+          checkoutWindow.location = updatedCheckout.webUrl;
+        });
       });
     }
   }
@@ -754,4 +774,9 @@ export default class Product extends Component {
     this.selectedVariant = selectedVariant;
     return model;
   }
+
+  imageAltText(altText) {
+    return altText || this.model.title;
+  }
+
 }

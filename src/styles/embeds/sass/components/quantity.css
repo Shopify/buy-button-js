@@ -45,8 +45,8 @@
   font-size: 16px;
   border: none;
   text-align: center;
-  -moz-appearance: textfield;
   -webkit-appearance: none;
+  -moz-appearance: textfield;
   display: inline-block;
   padding: 0;
   border-radius: 0;

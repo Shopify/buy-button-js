@@ -11,8 +11,23 @@ import ShopifyBuy from '../../src/buybutton';
 let cart;
 
 describe('Cart class', () => {
+  let closeCartSpy;
+
   beforeEach(() => {
-    cart = new Cart({}, {
+    closeCartSpy = sinon.spy();
+    cart = new Cart({
+      options: {
+        cart: {
+          contents: {
+            title: false,
+            note: true,
+          },
+          text: {
+            notice: 'test',
+          },
+        },
+      },
+    }, {
       client: ShopifyBuy.buildClient({
         domain: 'test.myshopify.com',
         storefrontAccessToken: 123
@@ -28,7 +43,8 @@ describe('Cart class', () => {
             fn(...arguments);
           }
         }
-      }
+      },
+      closeCart: closeCartSpy,
     });
   });
   afterEach(() => {
@@ -145,6 +161,36 @@ describe('Cart class', () => {
         assert.equal(localStorage.getItem(cart.localStorageCheckoutKey), checkout.id);
       });
     });
+
+    it('calls sanitizeCheckout then updateCache with the new checkout', () => {
+      localStorage.setItem(cart.localStorageCheckoutKey, 123);
+
+      const checkout = {id: 1111, lineItems: [
+        {id: 1112, variant: null},
+        {id: 1113, variant: {id: 1114}},
+        {id: 1115, variant: null},
+      ]};
+      const sanitizedCheckout = {id: 1111, lineItems: [
+        {id: 1113, variant: {id: 1114}},
+      ]};
+
+      const fetchCart = sinon.stub(cart.props.client.checkout, 'fetch').resolves(checkout);
+      const sanitizeCheckout = sinon.stub(cart, 'sanitizeCheckout').resolves(sanitizedCheckout);
+      const updateCache = sinon.stub(cart, 'updateCache').resolves();
+
+      return cart.fetchData().then((data) => {
+        assert.deepEqual(data, sanitizedCheckout);
+        assert.calledOnce(fetchCart);
+        assert.calledOnce(sanitizeCheckout);
+        assert.calledOnce(updateCache);
+        assert.calledWith(sanitizeCheckout, checkout);
+        assert.calledWith(updateCache, sanitizedCheckout.lineItems);
+
+        fetchCart.restore();
+        sanitizeCheckout.restore();
+        updateCache.restore();
+      });
+    });
   });
 
   describe('fetchMoneyFormat()', () => {
@@ -156,6 +202,28 @@ describe('Cart class', () => {
         assert.deepEqual(data, '₿{{amount}}');
         assert.calledOnce(fetchMoneyFormat);
         fetchMoneyFormat.restore();
+      });
+    });
+  });
+
+  describe('sanitizeCheckout()', () => {
+    it('calls removeLineItems for all line items with deleted variants', () => {
+      const checkout = {id: 1111, lineItems: [
+        {id: 1112, variant: null},
+        {id: 1113, variant: {id: 1114}},
+        {id: 1115, variant: null},
+      ]};
+      const sanitizedCheckout = {id: 1111, lineItems: [
+        {id: 1113, variant: {id: 1114}},
+      ]};
+      const removeLineItems = sinon.stub(cart.props.client.checkout, 'removeLineItems').resolves(sanitizedCheckout);
+
+      return cart.sanitizeCheckout(checkout).then((data) => {
+        assert.deepEqual(data, sanitizedCheckout);
+        assert.calledOnce(removeLineItems);
+        assert.calledWith(removeLineItems, 1111, [1112, 1115]);
+
+        removeLineItems.restore();
       });
     });
   });
@@ -232,6 +300,18 @@ describe('Cart class', () => {
     });
   });
 
+  describe('get formattedLineItemsSubtotal', () => {
+    it('uses money helper to return currency formatted value', () => {
+      cart.model = {
+        lineItemsSubtotalPrice: {
+          amount: '30.00',
+          currencyCode: 'USD',
+        },
+      };
+      assert.equal(cart.formattedLineItemsSubtotal, '$30.00');
+    });
+  });
+
   describe('empty', () => {
     it('empties and rerenders the cart', () => {
       const removeLineItemsStub = sinon.stub(cart.props.client.checkout, 'removeLineItems').returns(Promise.resolve());
@@ -243,6 +323,196 @@ describe('Cart class', () => {
         assert.calledOnce(cart.view.render);
         assert.calledOnce(cart.toggles[0].view.render);
       });
+    });
+  });
+
+  describe('init', () => {
+    let superInitStub;
+    let fetchMoneyFormatStub;
+    beforeEach(() => {
+      superInitStub = sinon.stub(Component.prototype, 'init').resolves({model: {lineItems: [{id: 123, quantity: 5}]}});
+      fetchMoneyFormatStub = sinon.stub(cart, 'fetchMoneyFormat').resolves();
+    });
+
+    afterEach(() => {
+      superInitStub.restore();
+      fetchMoneyFormatStub.restore();
+    });
+
+    it('calls fetchMoneyFormat when moneyFormat has not been set', () => {
+      cart.moneyFormat = null;
+      return cart.init().then(() => {
+        assert.calledOnce(fetchMoneyFormatStub);
+      });
+    });
+
+    it('does not call fetchMoneyFormat when moneyFormat has been set', () => {
+      cart.moneyFormat = '₿{{amount}}';
+      return cart.init().then(() => {
+        assert.notCalled(fetchMoneyFormatStub);
+      });
+    });
+  });
+
+  describe('DOMEvents', () => {
+    it('binds closeCart to click on cart close', () => {
+      cart.DOMEvents[`click ${cart.selectors.cart.close}`]();
+      assert.calledOnce(closeCartSpy);
+    });
+
+    describe('onQuantityIncrement bindings', () => {
+      let quantityIncrementStub;
+
+      beforeEach(() => {
+        quantityIncrementStub = sinon.stub(cart, 'onQuantityIncrement');
+      });
+
+      afterEach(() => {
+        quantityIncrementStub.restore();
+      });
+
+      it('binds onQuantityIncrement to click on quantity increment and passes a value of 1', () => {
+        cart.DOMEvents[`click ${cart.selectors.lineItem.quantityIncrement}`]();
+        assert.calledOnce(quantityIncrementStub);
+        assert.calledWith(quantityIncrementStub, 1);
+      });
+
+      it('bind onQuantityIncrement to click on quantity decrement and passes a value of -1', () => {
+        cart.DOMEvents[`click ${cart.selectors.lineItem.quantityDecrement}`]();
+        assert.calledOnce(quantityIncrementStub);
+        assert.calledWith(quantityIncrementStub, -1);
+      });
+    });
+
+    it('binds onCheckout to click on cart button', () => {
+      const onCheckoutStub = sinon.stub(cart, 'onCheckout');
+      cart.DOMEvents[`click ${cart.selectors.cart.button}`]();
+      assert.calledOnce(onCheckoutStub);
+      onCheckoutStub.restore();
+    });
+
+    it('binds onQuantityBlur to blur on quantity input field', () => {
+      const onQuantityBlurStub = sinon.stub(cart, 'onQuantityBlur');
+      cart.DOMEvents[`blur ${cart.selectors.lineItem.quantityInput}`]();
+      assert.calledOnce(onQuantityBlurStub);
+      onQuantityBlurStub.restore();
+    });
+
+    it('binds setNote to blur on cart note field', () => {
+      const setNoteStub = sinon.stub(cart, 'setNote');
+      cart.DOMEvents[`blur ${cart.selectors.cart.note}`]();
+      assert.calledOnce(setNoteStub);
+      setNoteStub.restore();
+    });
+  });
+
+  describe('viewData()', () => {
+    let viewData;
+
+    beforeEach(async () => {
+      const lineItems = [
+        {
+          id: 1234,
+          quantity: 2,
+          variant: {
+            id: 1111,
+            title: 'test variant',
+            price: '20.00',
+          },
+        },
+      ];
+      cart.model = {
+        id: 1,
+        lineItems,
+        note: 'test cart note',
+        subtotalPrice: '123.00',
+        lineItemsSubtotalPrice: {
+          amount: '130.00',
+          currencyCode: 'USD',
+        },
+      };
+      cart.lineItemCache = lineItems;
+      viewData = cart.viewData;
+    });
+
+    it('returns an object merged with model', () => {
+      assert.equal(viewData.id, cart.model.id);
+      assert.deepEqual(viewData.lineItems, cart.model.lineItems);
+      assert.equal(viewData.subtotalPrice, cart.model.subtotalPrice);
+      assert.equal(viewData.lineItemsSubtotalPrice, cart.model.lineItemsSubtotalPrice);
+    });
+
+    it('returns an object with text', () => {
+      assert.deepEqual(viewData.text, cart.options.text);
+    });
+
+    it('returns an object with classes', () => {
+      assert.deepEqual(viewData.classes, cart.classes);
+    });
+
+    it('returns an object with lineItemsHtml', () => {
+      assert.equal(viewData.lineItemsHtml, cart.lineItemsHtml);
+    });
+
+    it('returns an object with isEmpty', () => {
+      assert.equal(viewData.isEmpty, cart.isEmpty);
+    });
+
+    it('returns an object with formatted total', () => {
+      assert.equal(viewData.formattedTotal, cart.formattedLineItemsSubtotal);
+    });
+
+    it('returns an object with contents', () => {
+      assert.deepEqual(viewData.contents, cart.options.contents);
+    });
+
+    it('returns an object with cart note', () => {
+      assert.equal(viewData.cartNote, cart.cartNote);
+    });
+  });
+
+  describe('get cartNote', () => {
+    it('returns the note from the cart model', () => {
+      const note = 'test cart note';
+      cart.model.note = note;
+
+      assert.equal(cart.cartNote, cart.model.note);
+    });
+  });
+
+  describe('setNote()', () => {
+    let updateAttributesStub;
+    const mockCheckout = {
+      lineItems: [
+        {id: '1'},
+        {id: '2'},
+      ],
+    };
+
+    const note = 'test cart note';
+    const event = {
+      target: {
+        value: note,
+      },
+    };
+
+    beforeEach(() => {
+      updateAttributesStub = sinon.stub(cart.props.client.checkout, 'updateAttributes').resolves(mockCheckout);
+    });
+
+    afterEach(() => {
+      updateAttributesStub.restore();
+    });
+
+    it('calls updateAttributes on the cart', async () => {
+      await cart.setNote(event);
+      assert.calledOnce(updateAttributesStub);
+      assert.calledWith(updateAttributesStub, cart.model.id, {note});
+    });
+
+    it('sets the cart model to the checkout returned from the client', async () => {
+      await cart.setNote(event);
+      assert.equal(cart.model, mockCheckout);
     });
   });
 });

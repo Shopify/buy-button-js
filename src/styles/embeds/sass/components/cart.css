@@ -54,6 +54,7 @@
   padding-right: calc(var(--gutter-cart) * 2);
   position: relative;
   z-index: var(--max-z-index);
+  background-color: inherit;
 }
 
 .shopify-buy__cart__title {
@@ -70,6 +71,10 @@
   top: 0;
   height: 100%;
   width: 100%;
+}
+
+.shopify-buy__cart-scroll--cart-note {
+  padding: 70px 0 200px 0;
 }
 
 .shopify-buy__cart-items {
@@ -160,6 +165,23 @@
   clear: both;
   padding-top: 10px;
   text-align: center;
+  color: var(--color-title);
+}
+
+.shopify-buy__cart__note {
+  clear: both;
+  padding-top: 10px;
+}
+
+.shopify-buy__cart__note__description {
+  font-size: 11px;
+  color: var(--color-title);
+}
+
+.shopify-buy__cart__note__text-area {
+  resize: none;
+  font-size: 11px;
+  width: 100%;
   color: var(--color-title);
 }
 
