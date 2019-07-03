@@ -106,6 +106,7 @@ export default class ProductSet extends Component {
    */
   init(data) {
     const cartConfig = Object.assign({}, this.globalConfig, {
+      node: this.globalConfig.cartNode,
       options: this.config,
     });
 
