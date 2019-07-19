@@ -240,7 +240,7 @@ describe('ProductSet class', () => {
       superSpy = sinon.stub(Updater.prototype, 'updateConfig');
       renderProductsSpy = sinon.stub(set, 'renderProducts');
       set.products = [{
-        modal: null,
+        updateConfig: sinon.spy()
       }];
       set.cart = {
         updateConfig: sinon.spy()
@@ -251,9 +251,10 @@ describe('ProductSet class', () => {
       superSpy.restore();
     });
 
-    it('calls updateConfig on cart', () => {
+    it('calls updateConfig on super, cart and first product', () => {
       set.updateConfig(newConfig);
       assert.calledWith(set.cart.updateConfig, newConfig);
+      assert.calledWith(set.products[0].updateConfig, {options: newConfig.options});
       assert.calledWith(superSpy, newConfig);
     });
   });
