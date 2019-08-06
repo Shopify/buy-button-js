@@ -51,9 +51,8 @@ async function build() {
       }),
     ]);
 
-    const uglifyBundle = UglifyJS.minify(
-      fs.readFileSync(buildPaths.globals, 'utf8')
-    );
+    const code = await fs.readFileSync(buildPaths.globals, 'utf8');
+    const uglifyBundle = UglifyJS.minify(code);
     await fs.writeFileSync(buildPaths.min, uglifyBundle.code);
   } catch (err) {
     console.log(err);

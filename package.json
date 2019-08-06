@@ -63,7 +63,7 @@
     "aws-sdk": "2.6.8",
     "babelify": "10.0.0",
     "chai": "4.2.0",
-    "core-js": "2.4.1",
+    "core-js": "3.1.4",
     "eslint": "3.3.1",
     "eslint-plugin-shopify": "13.0",
     "fetch-pretender": "1.5.0",
