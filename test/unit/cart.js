@@ -3,14 +3,16 @@ import CartToggle from '../../src/components/toggle';
 import Component from '../../src/component';
 import Checkout from '../../src/components/checkout';
 import Template from '../../src/template';
-import defaults from '../../src/defaults/components';
 import CartUpdater from '../../src/updaters/cart';
 import CartView from '../../src/views/cart';
 import ShopifyBuy from '../../src/buybutton';
+import * as formatMoney from '../../src/utils/money';
+import * as elementClass from '../../src/utils/element-class';
 
 let cart;
 
 describe('Cart class', () => {
+  const moneyFormat = '${{amount}}';
   let closeCartSpy;
 
   beforeEach(() => {
@@ -27,6 +29,7 @@ describe('Cart class', () => {
           },
         },
       },
+      moneyFormat,
     }, {
       client: ShopifyBuy.buildClient({
         domain: 'test.myshopify.com',
@@ -76,29 +79,269 @@ describe('Cart class', () => {
   });
 
   describe('get lineItemsHtml', () => {
-    it('returns an html string', () => {
-      cart.lineItemCache = [
-        {
+    const variantAmount = '5.00';
+    let formatMoneySpy;
+
+    beforeEach(() => {
+      formatMoneySpy = sinon.spy(formatMoney, 'default');
+    });
+
+    afterEach(() => {
+      formatMoneySpy.restore();
+    });
+
+    it('calls render and returns an html string', () => {
+      cart.lineItemCache = [{
+        id: 123,
+        title: 'test',
+        variantTitle: 'test2',
+        quantity: 1,
+        variant: {
+          image: {
+            src: 'cdn.shopify.com/image.jpg',
+          },
+          priceV2: {
+            amount: '5.00',
+            currencyCode: 'CAD',
+          },
+        },
+        discountAllocations: [],
+      }];
+
+      const renderSpy = sinon.spy(cart.childTemplate, 'render');
+      assert.include(cart.lineItemsHtml, 'data-line-item-id="123"');
+      assert.calledOnce(renderSpy);
+    });
+
+    describe('price without discounts', () => {
+      beforeEach(() => {
+        cart.childTemplate.contents.price = true;
+        cart.childTemplate.contents.priceWithDiscounts = false;
+      });
+
+      it('does not render discounts if discounts allocations are present', () => {
+        const quantity = 2;
+        const discountAmount = '2.00';
+        cart.lineItemCache = [{
           id: 123,
           title: 'test',
-          variant_title: 'test2',
-          line_price: 20,
-          quantity: 1,
+          variantTitle: 'test2',
+          quantity,
           variant: {
             image: {
-              src: 'cdn.shopify.com/image.jpg'
+              src: 'cdn.shopify.com/image.jpg',
             },
-            priceV2:{
-              amount: '5.00',
+            priceV2: {
+              amount: variantAmount,
               currencyCode: 'CAD',
             },
           },
-        }
-      ]
+          discountAllocations: [
+            {
+              discountApplication: {
+                title: 'BOGO',
+                targetSelection: 'ENTITLED',
+              },
+              allocatedAmount: {
+                amount: discountAmount,
+                currencyCode: 'CAD',
+              },
+            },
+          ],
+        }];
 
-      const render = sinon.spy(cart.childTemplate, 'render');
-      assert.include(cart.lineItemsHtml, 'data-line-item-id="123"');
-      assert.calledOnce(render);
+        const cartLineItemsHtml = cart.lineItemsHtml;
+        const fullPrice = variantAmount * quantity;
+        const discountedPrice = fullPrice - discountAmount;
+
+        assert.notInclude(cartLineItemsHtml, 'data-element="lineItem.fullPrice"');
+        assert.notInclude(cartLineItemsHtml, 'data-element="lineItem.discount"');
+        assert.include(cartLineItemsHtml, 'data-element="lineItem.price"');
+        assert.notInclude(cartLineItemsHtml, `$${discountedPrice}.00`);
+        assert.include(cartLineItemsHtml, `$${fullPrice}.00`);
+      });
+    });
+
+    describe('price with discounts', () => {
+      beforeEach(() => {
+        cart.childTemplate.contents.price = false;
+        cart.childTemplate.contents.priceWithDiscounts = true;
+      });
+
+      it('renders the full price with no discounts, if no discounts allocations are present', () => {
+        const quantity = 2;
+        cart.lineItemCache = [{
+          id: 123,
+          title: 'test',
+          variantTitle: 'test2',
+          quantity,
+          variant: {
+            image: {
+              src: 'cdn.shopify.com/image.jpg',
+            },
+            priceV2: {
+              amount: variantAmount,
+              currencyCode: 'CAD',
+            },
+          },
+          discountAllocations: [],
+        }];
+
+        const cartLineItemsHtml = cart.lineItemsHtml;
+        const fullPrice = variantAmount * quantity;
+
+        assert.notInclude(cartLineItemsHtml, 'data-element="lineItem.fullPrice"');
+        assert.notInclude(cartLineItemsHtml, 'data-element="lineItem.discount"');
+        assert.include(cartLineItemsHtml, 'data-element="lineItem.price"');
+        assert.include(cartLineItemsHtml, `$${fullPrice}.00`);
+
+        assert.calledTwice(formatMoneySpy);
+        assert.alwaysCalledWith(formatMoneySpy, fullPrice, moneyFormat);
+      });
+
+      it('renders the discount information if a discount allocation exists with a target selection of `ENTITLED`', () => {
+        const discountAmount = '1.00';
+        const discountTitle = 'BOGO';
+        const quantity = 2;
+        cart.lineItemCache = [{
+          id: 123,
+          title: 'test',
+          variantTitle: 'test2',
+          quantity,
+          variant: {
+            image: {
+              src: 'cdn.shopify.com/image.jpg',
+            },
+            priceV2: {
+              amount: variantAmount,
+              currencyCode: 'CAD',
+            },
+          },
+          discountAllocations: [
+            {
+              discountApplication: {
+                title: discountTitle,
+                targetSelection: 'ENTITLED',
+              },
+              allocatedAmount: {
+                amount: discountAmount,
+                currencyCode: 'CAD',
+              },
+            },
+          ],
+        }];
+
+        const cartLineItemsHtml = cart.lineItemsHtml;
+        const fullPrice = variantAmount * quantity;
+        const discountedPrice = fullPrice - discountAmount;
+
+        assert.include(cartLineItemsHtml, 'data-element="lineItem.fullPrice"');
+        assert.include(cartLineItemsHtml, `$${fullPrice}.00`);
+
+        assert.include(cartLineItemsHtml, 'data-element="lineItem.discount"');
+        assert.include(cartLineItemsHtml, `${discountTitle} (-$${discountAmount})`);
+
+        assert.include(cartLineItemsHtml, 'data-element="lineItem.price"');
+        assert.include(cartLineItemsHtml, `$${discountedPrice}.00`);
+        
+        assert.calledThrice(formatMoneySpy);
+        assert.calledWith(formatMoneySpy.firstCall, fullPrice, moneyFormat);
+        assert.calledWith(formatMoneySpy.secondCall, discountAmount, moneyFormat);
+        assert.calledWith(formatMoneySpy.thirdCall, discountedPrice, moneyFormat);
+      });
+
+      it('renders the discount information if the discount allocation exists with a target of `EXPLICIT`', () => {
+        const discountAmount = '1.00';
+        const discountTitle = 'BOGO';
+        const quantity = 2;
+        cart.lineItemCache = [{
+          id: 123,
+          title: 'test',
+          variantTitle: 'test2',
+          quantity,
+          variant: {
+            image: {
+              src: 'cdn.shopify.com/image.jpg',
+            },
+            priceV2: {
+              amount: variantAmount,
+              currencyCode: 'CAD',
+            },
+          },
+          discountAllocations: [
+            {
+              discountApplication: {
+                title: discountTitle,
+                targetSelection: 'EXPLICIT',
+              },
+              allocatedAmount: {
+                amount: discountAmount,
+                currencyCode: 'CAD',
+              },
+            },
+          ],
+        }];
+
+        const cartLineItemsHtml = cart.lineItemsHtml;
+        const fullPrice = variantAmount * quantity;
+        const discountedPrice = fullPrice - discountAmount;
+
+        assert.include(cartLineItemsHtml, 'data-element="lineItem.fullPrice"');
+        assert.include(cartLineItemsHtml, `$${fullPrice}.00`);
+
+        assert.include(cartLineItemsHtml, 'data-element="lineItem.discount"');
+        assert.include(cartLineItemsHtml, `${discountTitle} (-$${discountAmount})`);
+
+        assert.include(cartLineItemsHtml, 'data-element="lineItem.price"');
+        assert.include(cartLineItemsHtml, `$${discountedPrice}.00`);
+        
+        assert.calledThrice(formatMoneySpy);
+        assert.calledWith(formatMoneySpy.firstCall, fullPrice, moneyFormat);
+        assert.calledWith(formatMoneySpy.secondCall, discountAmount, moneyFormat);
+        assert.calledWith(formatMoneySpy.thirdCall, discountedPrice, moneyFormat);
+      });
+
+      it('does not render the discount information if the discount allocation exists with a target of `ALL`', () => {
+        const quantity = 2;
+        cart.lineItemCache = [{
+          id: 123,
+          title: 'test',
+          variantTitle: 'test2',
+          quantity,
+          variant: {
+            image: {
+              src: 'cdn.shopify.com/image.jpg',
+            },
+            priceV2: {
+              amount: variantAmount,
+              currencyCode: 'CAD',
+            },
+          },
+          discountAllocations: [
+            {
+              discountApplication: {
+                title: 'BOGO',
+                targetSelection: 'ALL',
+              },
+              allocatedAmount: {
+                amount: '1.00',
+                currencyCode: 'CAD',
+              },
+            },
+          ],
+        }];
+
+        const cartLineItemsHtml = cart.lineItemsHtml;
+        const fullPrice = variantAmount * quantity;
+
+        assert.notInclude(cartLineItemsHtml, 'data-element="lineItem.fullPrice"');
+        assert.notInclude(cartLineItemsHtml, 'data-element="lineItem.discount"');
+        assert.include(cartLineItemsHtml, 'data-element="lineItem.price"');
+        assert.include(cartLineItemsHtml, `$${fullPrice}.00`);
+
+        assert.calledTwice(formatMoneySpy);
+        assert.alwaysCalledWith(formatMoneySpy, fullPrice, moneyFormat);
+      });
     });
   });
 
@@ -265,22 +508,51 @@ describe('Cart class', () => {
 
   describe('updateItem()', () => {
     let updateLineItemsStub;
+    let node;
+    let quantityNode;
+    let addClassToElementStub;
+    const lineItemId = 123;
+    const lineItemQuantity = 5;
 
     beforeEach(() => {
+      node = document.createElement('div');
+      node.setAttribute('id', lineItemId);
+
+      quantityNode = document.createElement('div');
+      quantityNode.setAttribute('class', cart.config.lineItem.classes.quantity);
+
+      node.appendChild(quantityNode);
+      document.body.appendChild(node);
+
       cart.model = {
         id: 123456,
       }
-      updateLineItemsStub = sinon.stub(cart.props.client.checkout, 'updateLineItems').returns(Promise.resolve({lineItems: [{id: 123, quantity: 5}]}))
+      updateLineItemsStub = sinon.stub(cart.props.client.checkout, 'updateLineItems').returns(Promise.resolve({lineItems: [{id: lineItemId, quantity: lineItemQuantity}]}))
+      addClassToElementStub = sinon.stub(elementClass, 'addClassToElement');
+
       cart.view.render = sinon.spy();
       cart.toggles[0].view.render = sinon.spy();
     });
 
+    afterEach(() => {
+      updateLineItemsStub.restore();
+      addClassToElementStub.restore();
+      document.body.removeChild(node);
+    });
+
     it('calls updateLineItem', () => {
-      return cart.updateItem(123, 5).then(() => {
-        assert.calledWith(updateLineItemsStub, 123456, [{id: 123, quantity:5}]);
+      return cart.updateItem(lineItemId, lineItemQuantity).then(() => {
+        assert.calledWith(updateLineItemsStub, 123456, [{id: lineItemId, quantity: lineItemQuantity}]);
         assert.calledOnce(cart.view.render);
         assert.calledOnce(cart.toggles[0].view.render);
-        assert.deepEqual(cart.model, {lineItems: [{id: 123, quantity: 5}]});
+        assert.deepEqual(cart.model, {lineItems: [{id: lineItemId, quantity: lineItemQuantity}]});
+      });
+    });
+
+    it('adds `is-loading` class to quantity element', () => {
+      return cart.updateItem(lineItemId, lineItemQuantity).then(() => {
+        assert.calledOnce(addClassToElementStub);
+        assert.calledWith(addClassToElementStub, 'is-loading', quantityNode);
       });
     });
   });
@@ -306,23 +578,32 @@ describe('Cart class', () => {
   });
 
   describe('get formattedTotal', () => {
-    it('uses money helper to return formatted value', () => {
-      cart.model = {
-        subtotalPrice: '20.00',
-      }
-      assert.equal(cart.formattedTotal, '$20.00');
-    });
-  });
+    const subtotalPriceAmount = '10.00';
+    const lineItemsSubtotalPriceAmount = '20.00';
 
-  describe('get formattedLineItemsSubtotal', () => {
-    it('uses money helper to return currency formatted value', () => {
+    beforeEach(() => {
       cart.model = {
+        subtotalPriceV2: {
+          amount: subtotalPriceAmount,
+          currentCode: 'CAD',
+        },
         lineItemsSubtotalPrice: {
-          amount: '30.00',
-          currencyCode: 'USD',
+          amount: lineItemsSubtotalPriceAmount,
+          currencyCode: 'CAD',
         },
       };
-      assert.equal(cart.formattedLineItemsSubtotal, '$30.00');
+    });
+
+    it('returns formatted subtotal price if contents discount field is true', () => {
+      cart.config.cart.contents.discounts = true;
+
+      assert.equal(cart.formattedTotal, `$${subtotalPriceAmount}`);
+    });
+
+    it('returns formatted line items subtotal price if contents discount field is false', () => {
+      cart.config.cart.contents.discounts = false;
+
+      assert.equal(cart.formattedTotal, `$${lineItemsSubtotalPriceAmount}`);
     });
   });
 
@@ -436,6 +717,7 @@ describe('Cart class', () => {
               currencyCode: 'CAD',
             },
           },
+          discountAllocations: [],
         },
       ];
       cart.model = {
@@ -443,10 +725,11 @@ describe('Cart class', () => {
         lineItems,
         note: 'test cart note',
         subtotalPrice: '123.00',
-        lineItemsSubtotalPrice: {
+        subtotalPriceV2: {
           amount: '130.00',
           currencyCode: 'USD',
         },
+        discountApplications: [],
       };
       cart.lineItemCache = lineItems;
       viewData = cart.viewData;
@@ -476,7 +759,7 @@ describe('Cart class', () => {
     });
 
     it('returns an object with formatted total', () => {
-      assert.equal(viewData.formattedTotal, cart.formattedLineItemsSubtotal);
+      assert.equal(viewData.formattedTotal, cart.formattedTotal);
     });
 
     it('returns an object with contents', () => {
@@ -530,6 +813,148 @@ describe('Cart class', () => {
     it('sets the cart model to the checkout returned from the client', async () => {
       await cart.setNote(event);
       assert.equal(cart.model, mockCheckout);
+    });
+  });
+
+  describe('get cartDiscounts', () => {
+    it('return an empty array if no discount applications exist', () => {
+      cart.model = {
+        lineItemsSubtotalPrice: {
+          amount: '20.0',
+          currencyCode: 'CAD',
+        },
+        discountApplications: [],
+      };
+
+      assert.equal(cart.cartDiscounts.length, 0);
+    });
+
+    it('returns an array of discount details if discount applications exist', () => {
+      cart.model = {
+        lineItemsSubtotalPrice: {
+          amount: '20.0',
+          currencyCode: 'CAD',
+        },
+        discountApplications: [
+          {
+            title: 'BOGO',
+            targetSelection: 'ALL',
+            value: {
+              percentage: '20',
+            },
+          },
+          {
+            title: 'BOGO',
+            targetSelection: 'ALL',
+            value: {
+              amount: '2.00',
+              currencyCode: 'CAD',
+            },
+          },
+        ],
+      };
+
+      assert.equal(cart.cartDiscounts.length, 2);
+    });
+
+    it('does not return discount details for a discount application with target selection `ENTITLED`', () => {
+      cart.model = {
+        lineItemsSubtotalPrice: {
+          amount: '20.0',
+          currencyCode: 'CAD',
+        },
+        discountApplications: [
+          {
+            title: 'BOGO',
+            targetSelection: 'ENTITLED',
+            value: {
+              amount: '2.00',
+              currencyCode: 'CAD',
+            },
+          },
+        ],
+      };
+
+      assert.equal(cart.cartDiscounts.length, 0);
+    });
+
+    it('does not return discount details for a discount application with target selection `EXPLICIT`', () => {
+      cart.model = {
+        lineItemsSubtotalPrice: {
+          amount: '20.0',
+          currencyCode: 'CAD',
+        },
+        discountApplications: [
+          {
+            title: 'BOGO',
+            targetSelection: 'EXPLICIT',
+            value: {
+              amount: '2.00',
+              currencyCode: 'CAD',
+            },
+          },
+        ],
+      };
+
+      assert.equal(cart.cartDiscounts.length, 0);
+    });
+
+    it('returns discount details for amount based discount applications with target selection `ALL`', () => {
+      const discountTitle = 'BOGO';
+      const discountAmount = '2.00';
+
+      cart.model = {
+        lineItemsSubtotalPrice: {
+          amount: '20.0',
+          currencyCode: 'CAD',
+        },
+        discountApplications: [
+          {
+            title: discountTitle,
+            targetSelection: 'ALL',
+            value: {
+              amount: discountAmount,
+              currencyCode: 'CAD',
+            },
+          },
+        ],
+      };
+
+      const discounts = cart.cartDiscounts;
+      assert.equal(discounts.length, 1);
+      assert.deepEqual(discounts[0], {
+        text: discountTitle,
+        amount: `-$${discountAmount}`,
+      });
+    });
+
+    it('returns discount details for percentage based discount applications with target selection `ALL`', () => {
+      const discountTitle = 'BOGO';
+      const discountPercentage = '20';
+      const lineItemSubtotal = '20.0';
+
+      cart.model = {
+        lineItemsSubtotalPrice: {
+          amount: lineItemSubtotal,
+          currencyCode: 'CAD',
+        },
+        discountApplications: [
+          {
+            title: discountTitle,
+            targetSelection: 'ALL',
+            value: {
+              percentage: discountPercentage,
+            },
+          },
+        ],
+      };
+
+      const discounts = cart.cartDiscounts;
+      assert.equal(discounts.length, 1);
+      assert.deepEqual(discounts[0], {
+        text: discountTitle,
+        amount: `-$${discountPercentage / 100 * lineItemSubtotal}.00`,
+      });
     });
   });
 });
