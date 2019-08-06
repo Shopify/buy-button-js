@@ -4691,10 +4691,10 @@ module-deps@^6.0.0:
     through2 "^2.0.0"
     xtend "^4.0.0"
 
-morphdom@1.4.6:
-  version "1.4.6"
-  resolved "https://registry.yarnpkg.com/morphdom/-/morphdom-1.4.6.tgz#0bd4f8207ec87c38157b676ec7b9bcf318f0838d"
-  integrity sha1-C9T4IH7IfDgVe2dux7m88xjwg40=
+morphdom@2.5.5:
+  version "2.5.5"
+  resolved "https://registry.yarnpkg.com/morphdom/-/morphdom-2.5.5.tgz#31b50b87f554b84fd2b0a7c29e6227e6fd0fcff7"
+  integrity sha512-KnhHwZjCxGfOpDXXQldHdEE6nUBXHeD981FltERdXyyQQ936T5qt0gnJcdqnMZPC7YacAwPF077zv5gj2HlrDw==
 
 ms@0.7.1:
   version "0.7.1"
