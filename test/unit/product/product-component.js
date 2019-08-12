@@ -1334,26 +1334,41 @@ describe('Product Component class', () => {
           });
 
           it('returns formatted money with selected variant price and money format from global config if there is a selected variant', () => {
-            product.selectedVariant = {price: 5};
+            product.selectedVariant = {
+              priceV2: {
+                amount: '5.00',
+                currencyCode: 'CAD',
+              },
+            };
             product.globalConfig = {moneyFormat: 'CAD'};
             assert.equal(product.formattedPrice, formattedMoney);
             assert.calledOnce(formatMoneyStub);
-            assert.calledWith(formatMoneyStub, product.selectedVariant.price, product.globalConfig.moneyFormat);
+            assert.calledWith(formatMoneyStub, product.selectedVariant.priceV2.amount, product.globalConfig.moneyFormat);
           });
         });
 
         describe('formattedCompareAtPrice', () => {
           it('returns empty string if there is no selected variant', () => {
             product.selectedVariant = null;
-            assert.equal(product.formattedPrice, '');
+            assert.equal(product.formattedCompareAtPrice, '');
+          });
+
+          it('returns empty string if there is no compare at price', () => {
+            product.selectedVariant.compareAtPriceV2 = null;
+            assert.equal(product.formattedCompareAtPrice, '');
           });
 
           it('returns formatted money with selected variant compare at price and money format from global config if there is a selected variant', () => {
-            product.selectedVariant = {compareAtPrice: 5};
+            product.selectedVariant = {
+              compareAtPriceV2: {
+                amount: '5.00',
+                currencyCode: 'CAD',
+              },
+            };
             product.globalConfig = {moneyFormat: 'CAD'};
-            assert.equal(product.formattedPrice, formattedMoney);
+            assert.equal(product.formattedCompareAtPrice, formattedMoney);
             assert.calledOnce(formatMoneyStub);
-            assert.calledWith(formatMoneyStub, product.selectedVariant.price, product.globalConfig.moneyFormat);
+            assert.calledWith(formatMoneyStub, product.selectedVariant.compareAtPriceV2.amount, product.globalConfig.moneyFormat);
           });
         });
       });
@@ -1799,12 +1814,17 @@ describe('Product Component class', () => {
               },
             },
           });
-          product.selectedVariant = {compareAtPrice: '$5.00'};
+          product.selectedVariant = {
+            compareAtPriceV2: {
+              amount: '5.00',
+              currencyCode: 'CAD',
+            },
+          };
           assert.equal(product.priceClass, product.classes.product.loweredPrice);
         });
 
         it('returns empty string if selected variant does not have a compare at price', () => {
-          product.selectedVariant = {compareAtPrice: null};
+          product.selectedVariant = {compareAtPriceV2: null};
           assert.equal(product.priceClass, '');
         });
       });
@@ -2206,14 +2226,17 @@ describe('Product Component class', () => {
         it('returns an object with button destination, id, name, sku, and price if selected variant exists', () => {
           product.selectedVariant = {
             productTitle: 'hat',
-            price: '$5.00',
+            priceV2: {
+              amount: '5.00',
+              currencyCode: 'CAD',
+            },
           };
           const expectedObject = {
             destination: product.options.buttonDestination,
             id: product.id,
             name: product.selectedVariant.productTitle,
             sku: null,
-            price: product.selectedVariant.price,
+            price: product.selectedVariant.priceV2.amount,
           };
           assert.deepEqual(product.trackingInfo, expectedObject);
         });
@@ -2224,7 +2247,10 @@ describe('Product Component class', () => {
           product.selectedVariant = {
             id: '456',
             productTitle: 'hat',
-            price: '$5.00',
+            priceV2: {
+              amount: '5.00',
+              currencyCode: 'CAD',
+            },
           };
           product.selectedQuantity = 5;
           const expectedObject = {
@@ -2232,7 +2258,7 @@ describe('Product Component class', () => {
             name: product.selectedVariant.productTitle,
             quantity: product.selectedQuantity,
             sku: null,
-            price: product.selectedVariant.price,
+            price: product.selectedVariant.priceV2.amount,
           };
           assert.deepEqual(product.selectedVariantTrackingInfo, expectedObject);
         });
