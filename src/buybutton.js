@@ -9,9 +9,14 @@ import 'core-js/features/array/find';
 import 'core-js/features/object/assign';
 import 'core-js/features/object/values';
 
-window.ShopifyBuy = window.ShopifyBuy || ShopifyBuy;
+class UpdatedShopifyBuy extends ShopifyBuy {
+  static buildClient(config) {
+    const newConfig = Object.assign({}, config, {source: 'buy-button-js'});
+    return super.buildClient(newConfig);
+  }
+}
 
-ShopifyBuy.UI = window.ShopifyBuy.UI || {
+UpdatedShopifyBuy.UI = {
   domains: {},
 
   init(client, integrations = {}, styleOverrides) {
@@ -31,4 +36,6 @@ ShopifyBuy.UI = window.ShopifyBuy.UI || {
   },
 };
 
-export default ShopifyBuy;
+window.ShopifyBuy = (window.ShopifyBuy && window.ShopifyBuy.UI) ? window.ShopifyBuy : UpdatedShopifyBuy;
+
+export default UpdatedShopifyBuy;
