@@ -87,7 +87,7 @@ export default class ProductSet extends Component {
         return {
           id: product.id,
           name: product.selectedVariant.title,
-          price: product.selectedVariant.price,
+          price: product.selectedVariant.priceV2.amount,
           sku: null,
         };
       });

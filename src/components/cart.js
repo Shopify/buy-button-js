@@ -81,7 +81,7 @@ export default class Cart extends Component {
       data.classes = this.classes;
       data.lineItemImage = this.imageForLineItem(data);
       data.variantTitle = data.variant.title === 'Default Title' ? '' : data.variant.title;
-      data.formattedPrice = formatMoney(data.variant.price * data.quantity, this.moneyFormat);
+      data.formattedPrice = formatMoney(data.variant.priceV2.amount * data.quantity, this.moneyFormat);
       return acc + this.childTemplate.render({data}, (output) => `<div id="${lineItem.id}" class=${this.classes.lineItem.lineItem}>${output}</div>`);
     }, '');
   }
@@ -381,10 +381,10 @@ export default class Cart extends Component {
    */
   cartItemTrackingInfo(item, quantity) {
     return {
-      id: item.variant_id,
+      id: item.variant.id,
       name: item.title,
       sku: null,
-      price: item.price,
+      price: item.variant.priceV2.amount,
       prevQuantity: item.quantity,
       quantity: parseFloat(quantity),
     };

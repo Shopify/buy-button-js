@@ -177,7 +177,7 @@ export default class Product extends Component {
     if (!this.selectedVariant) {
       return '';
     }
-    return formatMoney(this.selectedVariant.price, this.globalConfig.moneyFormat);
+    return formatMoney(this.selectedVariant.priceV2.amount, this.globalConfig.moneyFormat);
   }
 
   /**
@@ -185,10 +185,10 @@ export default class Product extends Component {
    * @return {String}
    */
   get formattedCompareAtPrice() {
-    if (!this.selectedVariant) {
+    if (!this.selectedVariant || !this.selectedVariant.compareAtPriceV2) {
       return '';
     }
-    return formatMoney(this.selectedVariant.compareAtPrice, this.globalConfig.moneyFormat);
+    return formatMoney(this.selectedVariant.compareAtPriceV2.amount, this.globalConfig.moneyFormat);
   }
 
   /**
@@ -289,7 +289,7 @@ export default class Product extends Component {
   }
 
   get priceClass() {
-    return this.selectedVariant && this.selectedVariant.compareAtPrice ? this.classes.product.loweredPrice : '';
+    return this.selectedVariant && this.selectedVariant.compareAtPriceV2 ? this.classes.product.loweredPrice : '';
   }
 
   get isButton() {
@@ -429,7 +429,7 @@ export default class Product extends Component {
         id: this.id,
         name: this.selectedVariant.productTitle,
         sku: null,
-        price: this.selectedVariant.price,
+        price: this.selectedVariant.priceV2.amount,
       });
     }
 
@@ -447,7 +447,7 @@ export default class Product extends Component {
       name: variant.productTitle,
       quantity: this.selectedQuantity,
       sku: null,
-      price: variant.price,
+      price: variant.priceV2.amount,
     };
   }
 

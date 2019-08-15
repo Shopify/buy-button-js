@@ -84,7 +84,15 @@ describe('Cart class', () => {
           variant_title: 'test2',
           line_price: 20,
           quantity: 1,
-          variant: {image: {src: 'cdn.shopify.com/image.jpg'}},
+          variant: {
+            image: {
+              src: 'cdn.shopify.com/image.jpg'
+            },
+            priceV2:{
+              amount: '5.00',
+              currencyCode: 'CAD',
+            },
+          },
         }
       ]
 
@@ -237,7 +245,13 @@ describe('Cart class', () => {
       cart.model = {
         lineItems: [{
           id: 1234,
-          quantity: 1
+          quantity: 1,
+          variant: {
+            priceV2: {
+              amount: '10.00',
+              currencyCode: 'CAD',
+            },
+          },
         }],
       }
       cart.updateItem = sinon.spy();
@@ -417,7 +431,10 @@ describe('Cart class', () => {
           variant: {
             id: 1111,
             title: 'test variant',
-            price: '20.00',
+            priceV2: {
+              amount: '20.00',
+              currencyCode: 'CAD',
+            },
           },
         },
       ];
