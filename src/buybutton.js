@@ -2,12 +2,12 @@ import ShopifyBuy from 'shopify-buy';
 import UI from './ui';
 import productTemplates from './templates/product';
 import 'whatwg-fetch';
-import 'core-js/modules/es6.promise';
-import 'core-js/modules/es6.string.ends-with';
-import 'core-js/modules/es6.array.iterator';
-import 'core-js/modules/es6.array.find';
-import 'core-js/modules/es6.object.assign';
-import 'core-js/modules/es7.object.values';
+import 'core-js/features/promise';
+import 'core-js/features/string/ends-with';
+import 'core-js/features/array/iterator';
+import 'core-js/features/array/find';
+import 'core-js/features/object/assign';
+import 'core-js/features/object/values';
 
 window.ShopifyBuy = window.ShopifyBuy || ShopifyBuy;
 
