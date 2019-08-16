@@ -218,7 +218,9 @@ export default class ProductSet extends Component {
 
     return Promise.all(promises).then(() => {
       this.view.resizeUntilFits();
-      this.showPagination();
+      if (this.options.contents.pagination) {
+        this.showPagination();
+      }
       return this;
     });
   }
