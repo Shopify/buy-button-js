@@ -283,7 +283,7 @@
   font-size: 0;
   text-align: center;
   min-height: 90px;
-  margin-left: -var(--gutter);
+  margin-left: calc(var(--gutter) * -1);
   margin-top: var(--gutter);
 }
 
