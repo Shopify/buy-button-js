@@ -206,18 +206,34 @@ describe('ProductSet class', () => {
     beforeEach(() => {
       initSpy = sinon.spy(Product.prototype, 'init');
       showPaginationStub = sinon.stub(set, 'showPagination').returns(Promise.resolve());
+      set.model.products = [fakeProduct];
       set.view.render();
     });
 
     afterEach(() => {
       initSpy.restore();
+      showPaginationStub.restore();
     });
 
     it('initializes an array of products', () => {
-      set.model.products = [fakeProduct];
-
-      return set.renderProducts().then((data) => {
+      return set.renderProducts().then(() => {
         assert.calledWith(initSpy, fakeProduct);
+      });
+    });
+
+    it('calls showPagination if pagination is set to true in contents', () => {
+      set.config.productSet.contents.pagination = true;
+
+      return set.renderProducts().then(() => {
+        assert.calledOnce(showPaginationStub);
+      });
+    });
+
+    it('does not call showPagination if pagination is set to false in contents', () => {
+      set.config.productSet.contents.pagination = false;
+
+      return set.renderProducts().then(() => {
+        assert.notCalled(showPaginationStub);
       });
     });
   });
