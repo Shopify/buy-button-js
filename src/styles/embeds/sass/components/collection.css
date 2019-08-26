@@ -3,10 +3,10 @@
 }
 
 .shopify-buy__collection-products {
-  margin-left: -var(--gutter);
+  margin-left: calc(var(--gutter) * -1);
   text-align: center;
   @media(min-width: 601px) {
-    margin-left: -var(--gutter-collection);
+    margin-left: calc(var(--gutter-collection) * -1);
   }
 }
 

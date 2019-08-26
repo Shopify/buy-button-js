@@ -7,7 +7,7 @@
   from {
     max-height: 0;
     transform: rotatex(90deg) translatey(-50%);
-    margin-bottom: -var(--cart-item-height);
+    margin-bottom: calc(var(--cart-item-height) * -1);
     opacity: 0;
   }
 
@@ -30,7 +30,7 @@
   to {
     max-height: 0;
     transform: rotatex(90deg) translatey(-50%);
-    margin-bottom: -var(--cart-item-height);
+    margin-bottom: calc(var(--cart-item-height) * -1);
     opacity: 0;
   }
 }
