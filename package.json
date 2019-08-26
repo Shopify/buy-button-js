@@ -105,7 +105,7 @@
     "morphdom": "2.5.5",
     "mustache": "3.0.1",
     "node-sass": "4.12.0",
-    "shopify-buy": "2.7.0",
+    "shopify-buy": "2.7.1",
     "uglify-js": "3.6.0"
   }
 }
