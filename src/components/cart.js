@@ -6,8 +6,12 @@ import Checkout from './checkout';
 import formatMoney from '../utils/money';
 import CartView from '../views/cart';
 import CartUpdater from '../updaters/cart';
+import {addClassToElement} from '../utils/element-class';
 
 export const NO_IMG_URL = '//sdks.shopifycdn.com/buy-button/latest/no-image.jpg';
+
+const LINE_ITEM_TARGET_SELECTIONS = ['ENTITLED', 'EXPLICIT'];
+const CART_TARGET_SELECTION = 'ALL';
 
 /**
  * Renders and cart embed.
@@ -78,10 +82,30 @@ export default class Cart extends Component {
   get lineItemsHtml() {
     return this.lineItemCache.reduce((acc, lineItem) => {
       const data = Object.assign({}, lineItem, this.options.viewData);
+      const fullPrice = data.variant.priceV2.amount * data.quantity;
+      const formattedPrice = formatMoney(fullPrice, this.moneyFormat);
+      const discountAllocations = data.discountAllocations;
+
+      const {discounts, totalDiscount} = discountAllocations.reduce((discountAcc, discount) => {
+        const targetSelection = discount.discountApplication.targetSelection;
+        if (LINE_ITEM_TARGET_SELECTIONS.indexOf(targetSelection) > -1) {
+          const discountAmount = discount.allocatedAmount.amount;
+          discountAcc.totalDiscount += discountAmount;
+          discountAcc.discounts.push({discount: `${discount.discountApplication.title} (-${formatMoney(discountAmount, this.moneyFormat)})`});
+        }
+        return discountAcc;
+      }, {
+        discounts: [],
+        totalDiscount: 0,
+      });
+      data.discounts = discounts.length > 0 ? discounts : null;
+      data.formattedFullPrice = totalDiscount > 0 ? formattedPrice : null;
+      data.formattedActualPrice = formatMoney(fullPrice - totalDiscount, this.moneyFormat);
+      data.formattedPrice = formattedPrice;
+
       data.classes = this.classes;
       data.lineItemImage = this.imageForLineItem(data);
       data.variantTitle = data.variant.title === 'Default Title' ? '' : data.variant.title;
-      data.formattedPrice = formatMoney(data.variant.priceV2.amount * data.quantity, this.moneyFormat);
       return acc + this.childTemplate.render({data}, (output) => `<div id="${lineItem.id}" class=${this.classes.lineItem.lineItem}>${output}</div>`);
     }, '');
   }
@@ -96,7 +120,8 @@ export default class Cart extends Component {
       classes: this.classes,
       lineItemsHtml: this.lineItemsHtml,
       isEmpty: this.isEmpty,
-      formattedTotal: this.formattedLineItemsSubtotal,
+      formattedTotal: this.formattedTotal,
+      discounts: this.cartDiscounts,
       contents: this.options.contents,
       cartNote: this.cartNote,
     });
@@ -107,11 +132,30 @@ export default class Cart extends Component {
    * @return {String}
    */
   get formattedTotal() {
-    return formatMoney(this.model.subtotalPrice, this.moneyFormat);
+    const total = this.options.contents.discounts ? this.model.subtotalPriceV2.amount : this.model.lineItemsSubtotalPrice.amount;
+    return formatMoney(total, this.moneyFormat);
   }
 
-  get formattedLineItemsSubtotal() {
-    return formatMoney(this.model.lineItemsSubtotalPrice.amount, this.moneyFormat);
+  get cartDiscounts() {
+    if (!this.options.contents.discounts) {
+      return null;
+    }
+
+    return this.model.discountApplications.reduce((discountArr, discount) => {
+      if (discount.targetSelection === CART_TARGET_SELECTION) {
+        let discountValue = 0;
+        if (discount.value.amount) {
+          discountValue = discount.value.amount;
+        } else if (discount.value.percentage) {
+          discountValue = (discount.value.percentage / 100) * this.model.lineItemsSubtotalPrice.amount;
+        }
+
+        if (discountValue > 0) {
+          discountArr.push({text: discount.title, amount: `-${formatMoney(discountValue, this.moneyFormat)}`});
+        }
+      }
+      return discountArr;
+    }, []);
   }
 
   /**
@@ -324,7 +368,13 @@ export default class Cart extends Component {
   updateItem(id, quantity) {
     this._userEvent('updateItemQuantity');
     const lineItem = {id, quantity};
-    this.updateCacheItem(id, quantity);
+    const lineItemEl = this.view.document.getElementById(id);
+    if (lineItemEl) {
+      const quantityEl = lineItemEl.getElementsByClassName(this.classes.lineItem.quantity)[0];
+      if (quantityEl) {
+        addClassToElement('is-loading', quantityEl);
+      }
+    }
     return this.props.client.checkout.updateLineItems(this.model.id, [lineItem]).then((checkout) => {
       this.model = checkout;
       this.updateCache(this.model.lineItems);
