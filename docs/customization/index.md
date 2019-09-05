@@ -270,6 +270,7 @@ var contents = {
   lineItems: true,
   footer: true,
   note: false,
+  discounts: true,
 },
 ```
 
@@ -306,7 +307,8 @@ var contents = {
   image: true,
   variantTitle: true,
   title: true,
-  price: true,
+  price: false,
+  priceWithDiscounts: true,
   quantity: true,
   quantityIncrement: true,
   quantityDecrement: true,
