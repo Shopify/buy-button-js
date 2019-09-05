@@ -1,6 +1,6 @@
 {
   "name": "@shopify/buy-button-js",
-  "version": "0.12.1",
+  "version": "1.0.0",
   "browserslist": [
     "last 2 Chrome versions",
     "last 2 Firefox versions",
