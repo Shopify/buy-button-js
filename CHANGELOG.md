@@ -13,6 +13,12 @@
 - Update layout of `lineItem` component to position variant title below product title ([#640](https://github.com/Shopify/buy-button-js/pull/640))
   - Update default position of `variantTitle` in the `lineItem` component's order array
   - Update default `variantTitle` styles
+- Update browser support ([#641](https://github.com/Shopify/buy-button-js/pull/641))
+  - Internet Explorer: 11+
+  - Safari: 8+
+  - Chrome, Firefox, Opera, Edge: last 2 versions
+  - iOS: 8+
+  - Android: 4.4+ 
 
 ### v0.12.0 (August 15, 2019)
 - Bump various npm dependencies, notably the following major updates: ([#633](https://github.com/Shopify/buy-button-js/pull/633))

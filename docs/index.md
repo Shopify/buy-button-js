@@ -17,9 +17,9 @@ This tool is intended for use by developers who are familiar with JavaScript and
 
 ## Current Support
 
-| Internet Explorer     | Chrome, Edge, Firefox     | Safari   | Opera   | iOS   | Android   |
-| :-------------------- | :------------------------ | :------- | :------ | :---- | :-------- |
-| 10+                   | (Current - 1) or Current  | 5.1+     | 12.1x, (Current - 1) or Current | 6.1+ | 2.3, 4.0+
+| Internet Explorer     | Chrome, Edge, Firefox, Opera     | Safari    | iOS     | Android   |
+| :-------------------- | :------------------------------- | :-------- | :------ | :-------- |
+| 11+                   | (Current - 1) or Current         | 8+        | 8+      | 4.4+
 
 ## Including the library
 
