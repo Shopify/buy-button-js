@@ -16,7 +16,9 @@ class UpdatedShopifyBuy extends ShopifyBuy {
   }
 }
 
-UpdatedShopifyBuy.UI = {
+window.ShopifyBuy = window.ShopifyBuy || UpdatedShopifyBuy;
+
+UpdatedShopifyBuy.UI = window.ShopifyBuy.UI || {
   domains: {},
 
   init(client, integrations = {}, styleOverrides) {
@@ -35,7 +37,5 @@ UpdatedShopifyBuy.UI = {
     },
   },
 };
-
-window.ShopifyBuy = (window.ShopifyBuy && window.ShopifyBuy.UI) ? window.ShopifyBuy : UpdatedShopifyBuy;
 
 export default UpdatedShopifyBuy;
