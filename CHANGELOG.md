@@ -1,5 +1,8 @@
 # Changelog
 
+### v1.0.1 (September 10, 2019)
+- Fix how ShopifyBuy.UI is set ([#643](https://github.com/Shopify/buy-button-js/pull/643))
+
 ### v1.0.0 (September 5, 2019)
 - Add support for automatic discounts in the `lineItem` component ([#640](https://github.com/Shopify/buy-button-js/pull/640))
   - Add `priceWithDiscounts` contents option and enable by default
