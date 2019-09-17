@@ -86,8 +86,8 @@ export default class ProductSet extends Component {
       return this.model.products.map((product) => {
         return {
           id: product.id,
-          name: product.selectedVariant.title,
-          price: product.selectedVariant.priceV2.amount,
+          name: product.variants[0].title,
+          price: product.variants[0].priceV2.amount,
           sku: null,
         };
       });
@@ -218,9 +218,12 @@ export default class ProductSet extends Component {
 
     return Promise.all(promises).then(() => {
       this.view.resizeUntilFits();
-      if (this.options.contents.pagination) {
+      const hasPagination = Object.keys(this.model.products[0]).includes('hasNextPage');
+
+      if (this.options.contents.pagination && hasPagination) {
         this.showPagination();
       }
+
       return this;
     });
   }

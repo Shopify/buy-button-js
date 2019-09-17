@@ -221,15 +221,37 @@ describe('ProductSet class', () => {
       });
     });
 
-    it('calls showPagination if pagination is set to true in contents', () => {
+    it('calls showPagination if pagination is set to true in contents and products have connections', () => {
       set.config.productSet.contents.pagination = true;
+      const updatedFakeProduct = Object.assign({}, fakeProduct);
+      updatedFakeProduct.hasNextPage = true;
+      set.model.products = [updatedFakeProduct];
 
       return set.renderProducts().then(() => {
         assert.calledOnce(showPaginationStub);
       });
     });
 
-    it('does not call showPagination if pagination is set to false in contents', () => {
+    it('does not call showPagination if pagination is set to true in contents and products do not have connections', () => {
+      set.config.productSet.contents.pagination = true;
+
+      return set.renderProducts().then(() => {
+        assert.notCalled(showPaginationStub);
+      });
+    });
+
+    it('does not call showPagination if pagination is set to false in contents and products have connections', () => {
+      set.config.productSet.contents.pagination = false;
+      const updatedFakeProduct = Object.assign({}, fakeProduct);
+      updatedFakeProduct.hasNextPage = true;
+      set.model.products = [updatedFakeProduct];
+
+      return set.renderProducts().then(() => {
+        assert.notCalled(showPaginationStub);
+      });
+    });
+
+    it('does not call showPagination if pagination is set to false in contents and products do not have connections', () => {
       set.config.productSet.contents.pagination = false;
 
       return set.renderProducts().then(() => {
@@ -303,4 +325,27 @@ describe('ProductSet class', () => {
       });
     });
   });
+
+  describe('trackingInfo', () => {
+
+    it('returns an object with the collection id when an the product set id is not an array', () => {
+      set.id = 1234;
+      const info = set.trackingInfo;
+      assert.deepEqual(info, {id: 1234});
+    });
+
+    it('returns an array of product info objects when the product set id is an array of ids', () => {
+      set.id = [1234];
+      set.model.products = [fakeProduct];
+      const info = set.trackingInfo;
+      assert.deepEqual(info, [{
+        id: fakeProduct.id,
+        name: fakeProduct.variants[0].title,
+        price: fakeProduct.variants[0].priceV2.amount,
+        sku: null,
+      }]);
+    });
+  });
+
+
 });
