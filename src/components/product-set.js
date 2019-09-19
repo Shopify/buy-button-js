@@ -218,7 +218,7 @@ export default class ProductSet extends Component {
 
     return Promise.all(promises).then(() => {
       this.view.resizeUntilFits();
-      const hasPagination = Object.keys(this.model.products[0]).includes('hasNextPage');
+      const hasPagination = (Object.keys(this.model.products[0]).indexOf('hasNextPage') > -1);
 
       if (this.options.contents.pagination && hasPagination) {
         this.showPagination();
