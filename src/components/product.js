@@ -420,20 +420,17 @@ export default class Product extends Component {
    * @return {Object}
    */
   get trackingInfo() {
-    const info = {
+    const variant = this.selectedVariant || this.model.variants[0];
+
+    return {
+      id: this.model.id,
+      name: this.model.title,
+      variantId: variant.id,
+      variantName: variant.title,
+      price: variant.priceV2.amount,
       destination: this.options.buttonDestination,
+      sku: null,
     };
-
-    if (this.selectedVariant) {
-      Object.assign(info, {
-        id: this.id,
-        name: this.selectedVariant.productTitle,
-        sku: null,
-        price: this.selectedVariant.priceV2.amount,
-      });
-    }
-
-    return info;
   }
 
   /**
@@ -444,10 +441,12 @@ export default class Product extends Component {
     const variant = this.selectedVariant;
     return {
       id: variant.id,
-      name: variant.productTitle,
+      name: variant.title,
+      productId: this.model.id,
+      productName: this.model.title,
       quantity: this.selectedQuantity,
-      sku: null,
       price: variant.priceV2.amount,
+      sku: null,
     };
   }
 

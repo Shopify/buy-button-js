@@ -13,7 +13,10 @@ const config = {
         button: '<button id="button" class="button">Fake button</button>'
       }
     }
-  }
+  },
+  product: {
+    buttonDestination: 'cart',
+  },
 }
 
 const fakeProduct = testProduct;
@@ -328,10 +331,12 @@ describe('ProductSet class', () => {
 
   describe('trackingInfo', () => {
 
-    it('returns an object with the collection id when an the product set id is not an array', () => {
-      set.id = 1234;
+    it('returns an object with the collection id and button destination when an the product set id is not an array', () => {
       const info = set.trackingInfo;
-      assert.deepEqual(info, {id: 1234});
+      assert.deepEqual(info, {
+        id: config.id,
+        destination: config.product.buttonDestination,
+      });
     });
 
     it('returns an array of product info objects when the product set id is an array of ids', () => {
@@ -340,8 +345,11 @@ describe('ProductSet class', () => {
       const info = set.trackingInfo;
       assert.deepEqual(info, [{
         id: fakeProduct.id,
-        name: fakeProduct.variants[0].title,
+        name: fakeProduct.title,
+        variantId: fakeProduct.variants[0].id,
+        variantName: fakeProduct.variants[0].title,
         price: fakeProduct.variants[0].priceV2.amount,
+        destination: config.product.buttonDestination,
         sku: null,
       }]);
     });

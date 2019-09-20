@@ -2213,40 +2213,59 @@ describe('Product Component class', () => {
       describe('trackingInfo', () => {
         beforeEach(() => {
           product.config.product.buttonDestination = 'cart';
+          product.model.variants = [
+            {
+              id: 'Xkdljlejkskskl3Zsike',
+              title: 'variant 1',
+              priceV2: {
+                amount: '6.0',
+              },
+            },
+          ];
         });
 
-        it('returns an object with button destination if there is no selected variant', () => {
+        it('returns a tracking info object with first variant\'s info if there is no selected variant', () => {
           product.selectedVariant = null;
           const expectedObject = {
+            id: product.model.id,
+            name: product.model.title,
+            variantId: product.model.variants[0].id,
+            variantName: product.model.variants[0].title,
+            price: product.model.variants[0].priceV2.amount,
             destination: product.options.buttonDestination,
+            sku: null,
           };
+
           assert.deepEqual(product.trackingInfo, expectedObject);
         });
 
-        it('returns an object with button destination, id, name, sku, and price if selected variant exists', () => {
+        it('returns a tracking info object with the selected variant\'s info if selected variant exists', () => {
           product.selectedVariant = {
-            productTitle: 'hat',
+            title: 'hat',
+            id: 'AAkdlfjljwijk3j35j3ljksLqQkslj',
             priceV2: {
               amount: '5.00',
               currencyCode: 'CAD',
             },
           };
           const expectedObject = {
-            destination: product.options.buttonDestination,
-            id: product.id,
-            name: product.selectedVariant.productTitle,
-            sku: null,
+            id: product.model.id,
+            name: product.model.title,
+            variantId: product.selectedVariant.id,
+            variantName: product.selectedVariant.title,
             price: product.selectedVariant.priceV2.amount,
+            destination: product.options.buttonDestination,
+            sku: null,
           };
           assert.deepEqual(product.trackingInfo, expectedObject);
         });
       });
 
       describe('selectedVariantTrackingInfo', () => {
-        it('returns an object with selected variant id, name, quantity, sku, and price', () => {
+        it('returns a tracking info object with selected variant info', () => {
           product.selectedVariant = {
             id: '456',
-            productTitle: 'hat',
+            title: 'hat',
             priceV2: {
               amount: '5.00',
               currencyCode: 'CAD',
@@ -2255,7 +2274,9 @@ describe('Product Component class', () => {
           product.selectedQuantity = 5;
           const expectedObject = {
             id: product.selectedVariant.id,
-            name: product.selectedVariant.productTitle,
+            name: product.selectedVariant.title,
+            productId: product.model.id,
+            productName: product.model.title,
             quantity: product.selectedQuantity,
             sku: null,
             price: product.selectedVariant.priceV2.amount,

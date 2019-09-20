@@ -82,18 +82,26 @@ export default class ProductSet extends Component {
    * @return {Object|Array}
    */
   get trackingInfo() {
+    const destination = this.config.product.buttonDestination;
+
     if (isArray(this.id)) {
       return this.model.products.map((product) => {
+        const variant = product.variants[0];
         return {
           id: product.id,
-          name: product.variants[0].title,
-          price: product.variants[0].priceV2.amount,
+          name: product.title,
+          variantId: variant.id,
+          variantName: variant.title,
+          price: variant.priceV2.amount,
+          destination,
           sku: null,
         };
       });
     }
+
     return {
       id: this.id,
+      destination,
     };
   }
 
