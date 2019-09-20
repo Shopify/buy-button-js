@@ -306,6 +306,7 @@ export default class Cart extends Component {
   }
 
   onCheckout() {
+    this._userEvent('openCheckout');
     this.checkout.open(this.model.webUrl);
   }
 
