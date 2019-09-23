@@ -2211,6 +2211,8 @@ describe('Product Component class', () => {
       });
 
       describe('trackingInfo', () => {
+        let expectedContentString;
+
         beforeEach(() => {
           product.config.product.buttonDestination = 'cart';
           product.model.variants = [
@@ -2222,10 +2224,12 @@ describe('Product Component class', () => {
               },
             },
           ];
+          expectedContentString = Object.keys(product.options.contents).filter((key) => product.options.contents[key]).toString();
         });
 
         it('returns a tracking info object with first variant\'s info if there is no selected variant', () => {
           product.selectedVariant = null;
+
           const expectedObject = {
             id: product.model.id,
             name: product.model.title,
@@ -2233,6 +2237,9 @@ describe('Product Component class', () => {
             variantName: product.model.variants[0].title,
             price: product.model.variants[0].priceV2.amount,
             destination: product.options.buttonDestination,
+            layout: product.options.layout,
+            contents: expectedContentString,
+            checkoutPopup: product.config.cart.popup,
             sku: null,
           };
 
@@ -2255,6 +2262,9 @@ describe('Product Component class', () => {
             variantName: product.selectedVariant.title,
             price: product.selectedVariant.priceV2.amount,
             destination: product.options.buttonDestination,
+            layout: product.options.layout,
+            contents: expectedContentString,
+            checkoutPopup: product.config.cart.popup,
             sku: null,
           };
           assert.deepEqual(product.trackingInfo, expectedObject);

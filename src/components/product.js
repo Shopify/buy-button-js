@@ -421,6 +421,8 @@ export default class Product extends Component {
    */
   get trackingInfo() {
     const variant = this.selectedVariant || this.model.variants[0];
+    const contents = this.options.contents;
+    const contentString = Object.keys(contents).filter((key) => contents[key]).toString();
 
     return {
       id: this.model.id,
@@ -429,6 +431,9 @@ export default class Product extends Component {
       variantName: variant.title,
       price: variant.priceV2.amount,
       destination: this.options.buttonDestination,
+      layout: this.options.layout,
+      contents: contentString,
+      checkoutPopup: this.config.cart.popup,
       sku: null,
     };
   }

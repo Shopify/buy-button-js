@@ -82,27 +82,33 @@ export default class ProductSet extends Component {
    * @return {Object|Array}
    */
   get trackingInfo() {
-    const destination = this.config.product.buttonDestination;
+    const contents = this.config.product.contents;
+    const contentString = Object.keys(contents).filter((key) => contents[key]).toString();
+
+    const config = {
+      destination: this.config.product.buttonDestination,
+      layout: this.config.product.layout,
+      contents: contentString,
+      checkoutPopup: this.config.cart.popup,
+    };
 
     if (isArray(this.id)) {
       return this.model.products.map((product) => {
         const variant = product.variants[0];
-        return {
+        return Object.assign(config, {
           id: product.id,
           name: product.title,
           variantId: variant.id,
           variantName: variant.title,
           price: variant.priceV2.amount,
-          destination,
           sku: null,
-        };
+        });
       });
     }
 
-    return {
-      id: this.id,
-      destination,
-    };
+    return Object.assign(config, {
+      id: this.storefrontId,
+    });
   }
 
   /**
@@ -226,7 +232,7 @@ export default class ProductSet extends Component {
 
     return Promise.all(promises).then(() => {
       this.view.resizeUntilFits();
-      const hasPagination = (Object.keys(this.model.products[0]).indexOf('hasNextPage') > -1);
+      const hasPagination = this.model.products[0].hasOwnProperty('hasNextPage');
 
       if (this.options.contents.pagination && hasPagination) {
         this.showPagination();

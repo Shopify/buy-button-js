@@ -6,7 +6,7 @@ import testProduct from '../fixtures/product-fixture';
 import ShopifyBuy from '../../src/buybutton';
 
 const config = {
-  id: 'Z2lkOi8vc2hvcGlmeS9Db2xsZWN0aW9uLzEyMzQ1',
+  storefrontId: 'Z2lkOi8vc2hvcGlmeS9Db2xsZWN0aW9uLzEyMzQ1',
   options: {
     product: {
       templates: {
@@ -14,10 +14,7 @@ const config = {
       }
     }
   },
-  product: {
-    buttonDestination: 'cart',
-  },
-}
+};
 
 const fakeProduct = testProduct;
 
@@ -330,12 +327,20 @@ describe('ProductSet class', () => {
   });
 
   describe('trackingInfo', () => {
+    let expectedContentString;
+
+    beforeEach(() => {
+      expectedContentString = Object.keys(set.config.product.contents).filter((key) => set.config.product.contents[key]).toString();
+    });
 
     it('returns an object with the collection id and button destination when an the product set id is not an array', () => {
       const info = set.trackingInfo;
       assert.deepEqual(info, {
-        id: config.id,
-        destination: config.product.buttonDestination,
+        id: config.storefrontId,
+        destination: set.config.product.buttonDestination,
+        layout: set.config.product.layout,
+        contents: expectedContentString,
+        checkoutPopup: set.config.cart.popup,
       });
     });
 
@@ -349,7 +354,10 @@ describe('ProductSet class', () => {
         variantId: fakeProduct.variants[0].id,
         variantName: fakeProduct.variants[0].title,
         price: fakeProduct.variants[0].priceV2.amount,
-        destination: config.product.buttonDestination,
+        destination: set.config.product.buttonDestination,
+        layout: set.config.product.layout,
+        contents: expectedContentString,
+        checkoutPopup: set.config.cart.popup,
         sku: null,
       }]);
     });
