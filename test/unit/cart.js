@@ -14,9 +14,12 @@ let cart;
 describe('Cart class', () => {
   const moneyFormat = '${{amount}}';
   let closeCartSpy;
+  let trackSpy;
 
   beforeEach(() => {
     closeCartSpy = sinon.spy();
+    trackSpy = sinon.spy();
+
     cart = new Cart({
       options: {
         cart: {
@@ -44,12 +47,14 @@ describe('Cart class', () => {
         trackMethod: (fn) => {
           return function () {
             fn(...arguments);
-          }
-        }
+          };
+        },
+        track: trackSpy,
       },
       closeCart: closeCartSpy,
     });
   });
+
   afterEach(() => {
     cart.destroy();
   });
@@ -769,6 +774,37 @@ describe('Cart class', () => {
 
     it('returns an object with cart note', () => {
       assert.equal(viewData.cartNote, cart.cartNote);
+    });
+  });
+
+  describe('onCheckout()', () => {
+    let openCheckoutStub;
+    let userEventStub;
+
+    beforeEach(() => {
+      openCheckoutStub = sinon.stub(cart.checkout, 'open');
+      userEventStub = sinon.stub(cart, '_userEvent');
+      cart.onCheckout();
+    });
+
+    afterEach(() => {
+      openCheckoutStub.restore();
+      userEventStub.restore();
+    });
+
+    it('triggers open checkout user event', () => {
+      assert.calledOnce(userEventStub);
+      assert.calledWith(userEventStub, 'openCheckout');
+    });
+
+    it('tracks open checkout', () => {
+      assert.calledOnce(trackSpy);
+      assert.calledWith(trackSpy, 'Open cart checkout', {});
+    });
+
+    it('open checkout', () => {
+      assert.calledOnce(openCheckoutStub);
+      assert.calledWith(openCheckoutStub, cart.model.webUrl);
     });
   });
 

@@ -359,6 +359,7 @@ describe('ProductSet class', () => {
         contents: expectedContentString,
         checkoutPopup: set.config.cart.popup,
         sku: null,
+        isProductSet: true,
       }]);
     });
   });
