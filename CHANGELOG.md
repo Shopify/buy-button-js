@@ -1,5 +1,13 @@
 # Changelog
 
+### v1.0.2 (September 24, 2019)
+- Add `openCheckout` user event ([#647](https://github.com/Shopify/buy-button-js/pull/647)) 
+- Fixed pagination error for product set buy buttons ([#645](https://github.com/Shopify/buy-button-js/pull/645))
+- Tracker related updates:
+  - Add 2 new events (`Open cart checkout` and `Open modal`) ([#648](https://github.com/Shopify/buy-button-js/pull/648))
+  - Standardized tracking info's `id` value to be the `storefrontId` ([#645](https://github.com/Shopify/buy-button-js/pull/645))
+  - Updated tracking info values and added addtional properties ([#645](https://github.com/Shopify/buy-button-js/pull/645))
+
 ### v1.0.1 (September 10, 2019)
 - Fix how ShopifyBuy.UI is set ([#643](https://github.com/Shopify/buy-button-js/pull/643))
 
