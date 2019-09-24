@@ -433,11 +433,13 @@ export default class Cart extends Component {
   cartItemTrackingInfo(item, quantity) {
     return {
       id: item.variant.id,
+      variantName: item.variant.title,
+      productId: item.variant.product.id,
       name: item.title,
-      sku: null,
       price: item.variant.priceV2.amount,
       prevQuantity: item.quantity,
       quantity: parseFloat(quantity),
+      sku: null,
     };
   }
 }

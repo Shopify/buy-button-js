@@ -6,15 +6,15 @@ import testProduct from '../fixtures/product-fixture';
 import ShopifyBuy from '../../src/buybutton';
 
 const config = {
-  id: 'Z2lkOi8vc2hvcGlmeS9Db2xsZWN0aW9uLzEyMzQ1',
+  storefrontId: 'Z2lkOi8vc2hvcGlmeS9Db2xsZWN0aW9uLzEyMzQ1',
   options: {
     product: {
       templates: {
         button: '<button id="button" class="button">Fake button</button>'
       }
     }
-  }
-}
+  },
+};
 
 const fakeProduct = testProduct;
 
@@ -221,15 +221,37 @@ describe('ProductSet class', () => {
       });
     });
 
-    it('calls showPagination if pagination is set to true in contents', () => {
+    it('calls showPagination if pagination is set to true in contents and products have connections', () => {
       set.config.productSet.contents.pagination = true;
+      const updatedFakeProduct = Object.assign({}, fakeProduct);
+      updatedFakeProduct.hasNextPage = true;
+      set.model.products = [updatedFakeProduct];
 
       return set.renderProducts().then(() => {
         assert.calledOnce(showPaginationStub);
       });
     });
 
-    it('does not call showPagination if pagination is set to false in contents', () => {
+    it('does not call showPagination if pagination is set to true in contents and products do not have connections', () => {
+      set.config.productSet.contents.pagination = true;
+
+      return set.renderProducts().then(() => {
+        assert.notCalled(showPaginationStub);
+      });
+    });
+
+    it('does not call showPagination if pagination is set to false in contents and products have connections', () => {
+      set.config.productSet.contents.pagination = false;
+      const updatedFakeProduct = Object.assign({}, fakeProduct);
+      updatedFakeProduct.hasNextPage = true;
+      set.model.products = [updatedFakeProduct];
+
+      return set.renderProducts().then(() => {
+        assert.notCalled(showPaginationStub);
+      });
+    });
+
+    it('does not call showPagination if pagination is set to false in contents and products do not have connections', () => {
       set.config.productSet.contents.pagination = false;
 
       return set.renderProducts().then(() => {
@@ -303,4 +325,43 @@ describe('ProductSet class', () => {
       });
     });
   });
+
+  describe('trackingInfo', () => {
+    let expectedContentString;
+
+    beforeEach(() => {
+      expectedContentString = Object.keys(set.config.product.contents).filter((key) => set.config.product.contents[key]).toString();
+    });
+
+    it('returns an object with the collection id and button destination when an the product set id is not an array', () => {
+      const info = set.trackingInfo;
+      assert.deepEqual(info, {
+        id: config.storefrontId,
+        destination: set.config.product.buttonDestination,
+        layout: set.config.product.layout,
+        contents: expectedContentString,
+        checkoutPopup: set.config.cart.popup,
+      });
+    });
+
+    it('returns an array of product info objects when the product set id is an array of ids', () => {
+      set.id = [1234];
+      set.model.products = [fakeProduct];
+      const info = set.trackingInfo;
+      assert.deepEqual(info, [{
+        id: fakeProduct.id,
+        name: fakeProduct.title,
+        variantId: fakeProduct.variants[0].id,
+        variantName: fakeProduct.variants[0].title,
+        price: fakeProduct.variants[0].priceV2.amount,
+        destination: set.config.product.buttonDestination,
+        layout: set.config.product.layout,
+        contents: expectedContentString,
+        checkoutPopup: set.config.cart.popup,
+        sku: null,
+      }]);
+    });
+  });
+
+
 });

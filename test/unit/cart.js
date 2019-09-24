@@ -498,6 +498,7 @@ describe('Cart class', () => {
         }],
       }
       cart.updateItem = sinon.spy();
+      cart.cartItemTrackingInfo = sinon.spy();
     });
 
     it('calls updateItem', () => {
@@ -954,6 +955,38 @@ describe('Cart class', () => {
       assert.deepEqual(discounts[0], {
         text: discountTitle,
         amount: `-$${discountPercentage / 100 * lineItemSubtotal}.00`,
+      });
+    });
+  });
+
+  describe('cartItemTrackingInfo', () => {
+    it('returns tracking info for cart item', () => {
+      const item = {
+        title: 'Test Sunglasses',
+        quantity: 2,
+        variant: {
+          id: 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0LzE5MzE1MjQzMDkwNDg',
+          title: 'Black shades',
+          priceV2: {
+            amount: '50.0',
+          },
+          product: {
+            id: 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xOTQ2Nzc3MjkxOTg2NA',
+          },
+        },
+      };
+
+      const trackingInfo = cart.cartItemTrackingInfo(item, '5');
+
+      assert.deepEqual(trackingInfo, {
+        id: item.variant.id,
+        variantName: item.variant.title,
+        productId: item.variant.product.id,
+        name: item.title,
+        price: item.variant.priceV2.amount,
+        prevQuantity: item.quantity,
+        quantity: 5,
+        sku: null,
       });
     });
   });
