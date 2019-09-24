@@ -102,6 +102,7 @@ export default class ProductSet extends Component {
           variantName: variant.title,
           price: variant.priceV2.amount,
           sku: null,
+          isProductSet: true,
         });
       });
     }

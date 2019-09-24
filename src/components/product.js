@@ -456,6 +456,16 @@ export default class Product extends Component {
   }
 
   /**
+   * get info about product to be sent to tracker
+   * @return {Object}
+   */
+  get productTrackingInfo() {
+    return {
+      id: this.model.id,
+    };
+  }
+
+  /**
    * get configuration object for product details modal based on product config and modalProduct config.
    * @return {Object} configuration object.
    */
@@ -599,6 +609,7 @@ export default class Product extends Component {
       }
     } else if (this.options.buttonDestination === 'modal') {
       this.props.setActiveEl(target);
+      this.props.tracker.track('Open modal', this.productTrackingInfo);
       this.openModal();
     } else if (this.options.buttonDestination === 'onlineStore') {
       this.openOnlineStore();

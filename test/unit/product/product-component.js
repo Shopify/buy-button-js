@@ -524,6 +524,11 @@ describe('Product Component class', () => {
           assert.calledWith(setActiveElSpy, target);
         });
 
+        it('tracks open modal', () => {
+          assert.calledOnce(trackSpy);
+          assert.calledWith(trackSpy, 'Open modal', product.productTrackingInfo);
+        });
+
         it('opens modal', () => {
           assert.calledOnce(openModalStub);
         });
@@ -2215,6 +2220,7 @@ describe('Product Component class', () => {
 
         beforeEach(() => {
           product.config.product.buttonDestination = 'cart';
+          product.model.id = 'lakjjk3ls3546lslsdkjf==';
           product.model.variants = [
             {
               id: 'Xkdljlejkskskl3Zsike',
@@ -2292,6 +2298,19 @@ describe('Product Component class', () => {
             price: product.selectedVariant.priceV2.amount,
           };
           assert.deepEqual(product.selectedVariantTrackingInfo, expectedObject);
+        });
+      });
+
+      describe('productTrackingInfo', () => {
+        beforeEach(() => {
+          product.model.id = 'Xkldjfjkej3l4jl3j5ljsodjflll';
+        });
+
+        it('returns a tracking info object with product id', () => {
+          const expectedObject = {
+            id: product.model.id,
+          };
+          assert.deepEqual(product.productTrackingInfo, expectedObject);
         });
       });
 
