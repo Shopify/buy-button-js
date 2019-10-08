@@ -345,8 +345,77 @@ describe('ProductSet class', () => {
     });
 
     it('returns an array of product info objects when the product set id is an array of ids', () => {
-      set.id = [1234];
-      set.model.products = [fakeProduct];
+      const fakeProduct2 = {
+        title: 'test2',
+        id: 4567,
+        storefrontId: 'GTYlkOi8vc2hvcGlmeS9Qcm9kdWN0LzEyMw==',
+        images: [
+          {
+            id: '1',
+            src: 'https://cdn.shopify.com/s/files/1/0014/8583/2214/products/image-one.jpg',
+          },
+          {
+            id: '2',
+            src: 'https://cdn.shopify.com/s/files/1/0014/8583/2214/products/image-two.jpeg',
+          },
+          {
+            id: '3',
+            src: 'https://cdn.shopify.com/s/files/1/0014/8583/2214/products/image-three.jpg',
+          },
+          {
+            id: '4',
+            src: 'https://cdn.shopify.com/s/files/1/0014/8583/2214/products/image-four.jpeg',
+          },
+        ],
+        options: [
+          {
+            name: 'Print',
+            values: [
+              {value: 'sloth'},
+              {value: 'shark'},
+              {value: 'cat'},
+            ],
+          },
+          {
+            name: 'Size',
+            selected: 'small',
+            values: [
+              {value: 'small'},
+              {value: 'large'},
+            ],
+          },
+        ],
+        variants: [
+          {
+            id: 'GTYOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0NQ==',
+            productId: 1245,
+            price: '20.00',
+            priceV2: {
+              amount: '20.00',
+              currencyCode: 'CAD',
+            },
+            title: 'sloth / small',
+            available: true,
+            image: {
+              id: 100,
+              src: 'https://cdn.shopify.com/s/files/1/0014/8583/2214/products/image-one.jpg',
+            },
+            selectedOptions: [
+              {
+                name: 'Print',
+                value: 'sloth',
+              },
+              {
+                name: 'Size',
+                value: 'small',
+              },
+            ],
+          },
+        ],
+      };
+
+      set.id = [1234, 4567];
+      set.model.products = [fakeProduct, fakeProduct2];
       const info = set.trackingInfo;
       assert.deepEqual(info, [{
         id: fakeProduct.id,
@@ -354,6 +423,19 @@ describe('ProductSet class', () => {
         variantId: fakeProduct.variants[0].id,
         variantName: fakeProduct.variants[0].title,
         price: fakeProduct.variants[0].priceV2.amount,
+        destination: set.config.product.buttonDestination,
+        layout: set.config.product.layout,
+        contents: expectedContentString,
+        checkoutPopup: set.config.cart.popup,
+        sku: null,
+        isProductSet: true,
+      },
+      {
+        id: fakeProduct2.id,
+        name: fakeProduct2.title,
+        variantId: fakeProduct2.variants[0].id,
+        variantName: fakeProduct2.variants[0].title,
+        price: fakeProduct2.variants[0].priceV2.amount,
         destination: set.config.product.buttonDestination,
         layout: set.config.product.layout,
         contents: expectedContentString,

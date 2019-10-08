@@ -95,7 +95,7 @@ export default class ProductSet extends Component {
     if (isArray(this.id)) {
       return this.model.products.map((product) => {
         const variant = product.variants[0];
-        return Object.assign(config, {
+        return Object.assign({}, config, {
           id: product.id,
           name: product.title,
           variantId: variant.id,
