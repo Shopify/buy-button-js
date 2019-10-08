@@ -1,5 +1,8 @@
 # Changelog
 
+### v1.0.3 (October 8, 2019)
+- Fix product set's `trackingInfo` to return tracking information for each product in set ([#651](https://github.com/Shopify/buy-button-js/pull/651)) 
+
 ### v1.0.2 (September 24, 2019)
 - Add `openCheckout` user event ([#647](https://github.com/Shopify/buy-button-js/pull/647)) 
 - Fixed pagination error for product set buy buttons ([#645](https://github.com/Shopify/buy-button-js/pull/645))
