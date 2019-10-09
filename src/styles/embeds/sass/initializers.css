@@ -22,6 +22,10 @@ html {
   -moz-osx-font-smoothing: grayscale;
 }
 
+select {
+  text-rendering: auto !important;
+}
+
 ul {
   list-style: none;
   padding-left: 0;
