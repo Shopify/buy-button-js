@@ -1,5 +1,8 @@
 # Changelog
 
+### v1.0.4 (October 9, 2019)
+- Changed text-rendering to auto for select elements to prevent Safari 13 from crashing ([#653](https://github.com/Shopify/buy-button-js/pull/653))
+
 ### v1.0.3 (October 8, 2019)
 - Fix product set's `trackingInfo` to return tracking information for each product in set ([#651](https://github.com/Shopify/buy-button-js/pull/651)) 
 
