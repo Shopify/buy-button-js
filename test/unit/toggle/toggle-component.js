@@ -94,6 +94,13 @@ describe('Toggle Component class', () => {
         it('returns the total quantity of all line items in cart model', () => {
           assert.equal(toggle.count, 3);
         });
+
+        it('returns a count of zero if the cart model is null', () => {
+          cart.model = null;
+          const nullCartToggle = new Toggle({node}, {cart});
+
+          assert.equal(toggle.count, 0);
+        });
       });
 
       describe('viewData', () => {

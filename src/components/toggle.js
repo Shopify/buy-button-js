@@ -12,6 +12,9 @@ export default class CartToggle extends Component {
   }
 
   get count() {
+    if (!this.props.cart.model) {
+      return 0;
+    }
     return this.props.cart.model.lineItems.reduce((acc, lineItem) => {
       return acc + lineItem.quantity;
     }, 0);

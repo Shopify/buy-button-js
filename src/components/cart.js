@@ -48,7 +48,7 @@ export default class Cart extends Component {
       return new CartToggle(merge({}, config, toggle), Object.assign({}, this.props, {cart: this}));
     }));
     return Promise.all(this.toggles.map((toggle) => {
-      return toggle.init({lineItems: this.model.lineItems});
+      return toggle.init({lineItems: this.lineItems});
     }));
   }
 
@@ -73,6 +73,14 @@ export default class Cart extends Component {
       [`blur ${this.selectors.lineItem.quantityInput}`]: this.onQuantityBlur.bind(this),
       [`blur ${this.selectors.cart.note}`]: this.setNote.bind(this),
     }, this.options.DOMEvents);
+  }
+
+  /**
+   * get cart line items.
+   * @return {Array} HTML
+   */
+  get lineItems() {
+    return this.model ? this.model.lineItems : [];
   }
 
   /**
@@ -115,7 +123,8 @@ export default class Cart extends Component {
    * @return {Object} viewData object.
    */
   get viewData() {
-    return merge(this.model, this.options.viewData, {
+    const modelData = this.model || {};
+    return merge(modelData, this.options.viewData, {
       text: this.options.text,
       classes: this.classes,
       lineItemsHtml: this.lineItemsHtml,
@@ -132,13 +141,16 @@ export default class Cart extends Component {
    * @return {String}
    */
   get formattedTotal() {
+    if (!this.model) {
+      return formatMoney(0, this.moneyFormat);
+    }
     const total = this.options.contents.discounts ? this.model.subtotalPriceV2.amount : this.model.lineItemsSubtotalPrice.amount;
     return formatMoney(total, this.moneyFormat);
   }
 
   get cartDiscounts() {
-    if (!this.options.contents.discounts) {
-      return null;
+    if (!this.options.contents.discounts || !this.model) {
+      return [];
     }
 
     return this.model.discountApplications.reduce((discountArr, discount) => {
@@ -163,11 +175,14 @@ export default class Cart extends Component {
    * @return {Boolean}
    */
   get isEmpty() {
+    if (!this.model) {
+      return true;
+    }
     return this.model.lineItems.length < 1;
   }
 
   get cartNote() {
-    return this.model.note;
+    return this.model && this.model.note;
   }
 
   get wrapperClass() {
@@ -192,16 +207,13 @@ export default class Cart extends Component {
   }
 
   /**
-   * creates a cart instance
-   * @return {Promise} promise resolving to cart instance
+   * sets model to null and removes checkout from localStorage
+   * @return {Promise} promise resolving to the cart model
    */
-  createCheckout() {
-    return this.props.client.checkout.create().then((checkout) => {
-
-      localStorage.setItem(this.localStorageCheckoutKey, checkout.id);
-      this.model = checkout;
-      return checkout;
-    });
+  removeCheckout() {
+    this.model = null;
+    localStorage.removeItem(this.localStorageCheckoutKey);
+    return this.model;
   }
 
   /**
@@ -214,15 +226,17 @@ export default class Cart extends Component {
       return this.props.client.checkout.fetch(checkoutId).then((checkout) => {
         this.model = checkout;
         if (checkout.completedAt) {
-          return this.createCheckout();
+          return this.removeCheckout();
         }
         return this.sanitizeCheckout(checkout).then((newCheckout) => {
           this.updateCache(newCheckout.lineItems);
           return newCheckout;
         });
-      }).catch(() => { return this.createCheckout(); });
+      }).catch(() => {
+        return this.removeCheckout();
+      });
     } else {
-      return this.createCheckout();
+      return Promise.resolve(null);
     }
   }
 
@@ -258,7 +272,8 @@ export default class Cart extends Component {
     return super.init(data)
       .then((cart) => {
         return this.toggles.map((toggle) => {
-          return toggle.init({lineItems: cart.model.lineItems});
+          const lineItems = cart.model ? cart.model.lineItems : [];
+          return toggle.init({lineItems});
         });
       }).then(() => this);
   }
@@ -403,14 +418,31 @@ export default class Cart extends Component {
       this.open();
     }
     const lineItem = {variantId: variant.id, quantity};
-    return this.props.client.checkout.addLineItems(this.model.id, [lineItem]).then((checkout) => {
-      this.model = checkout;
-      this.updateCache(this.model.lineItems);
-      this.view.render();
-      this.toggles.forEach((toggle) => toggle.view.render());
-      this.view.setFocus();
-      return checkout;
-    });
+    if (this.model) {
+      return this.props.client.checkout.addLineItems(this.model.id, [lineItem]).then((checkout) => {
+        this.model = checkout;
+        this.updateCache(this.model.lineItems);
+        this.view.render();
+        this.toggles.forEach((toggle) => toggle.view.render());
+        this.view.setFocus();
+        return checkout;
+      });
+    } else {
+      const input = {
+        lineItems: [
+          lineItem,
+        ],
+      };
+      return this.props.client.checkout.create(input).then((checkout) => {
+        localStorage.setItem(this.localStorageCheckoutKey, checkout.id);
+        this.model = checkout;
+        this.updateCache(this.model.lineItems);
+        this.view.render();
+        this.toggles.forEach((toggle) => toggle.view.render());
+        this.view.setFocus();
+        return checkout;
+      });
+    }
   }
 
   /**

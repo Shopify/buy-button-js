@@ -70,16 +70,43 @@ describe('Cart class', () => {
   });
 
   describe('createToggles()', () => {
-    it('creates toggle instances for passed nodes', () => {
-      cart.model.lineItems = [{}]
+    it('creates and initializes toggle instances for passed in nodes', () => {
+      const cartToggleInitStub = sinon.stub(CartToggle.prototype, 'init').resolves();
+      cart.toggles = [];
+
+      const lineItems = [{id: 321}];
+      cart.model.lineItems = lineItems;
+
       const config = {
         toggles: [{
-          node: document.body.appendChild(document.createElement('div'))
-        }]
-      }
+          node: document.body.appendChild(document.createElement('div')),
+        }],
+      };
+
       return cart.createToggles(config).then(() => {
-        assert.equal(cart.toggles.length, 2);
+        assert.equal(cart.toggles.length, 1);
+        assert.calledOnce(cartToggleInitStub);
+        assert.calledWith(cartToggleInitStub, {lineItems});
       });
+    });
+  });
+
+  describe('get lineItems', () => {
+    it('returns line items from the cart model', () => {
+      const lineItems = [
+        {id: '123'},
+        {id: '321'},
+      ];
+      cart.model = {
+        lineItems,
+      };
+
+      assert.equal(cart.lineItems, lineItems);
+    });
+
+    it('returns an empty array if cart model is null', () => {
+      cart.model = null;
+      assert.equal(cart.lineItems.length, 0);
     });
   });
 
@@ -380,7 +407,15 @@ describe('Cart class', () => {
   });
 
   describe('fetchData()', () => {
-    it('calls fetchRecentCart on client', () => {
+    it('resolves to null if key does not exist in localStorage', () => {
+      localStorage.removeItem(cart.localStorageCheckoutKey);
+
+      return cart.fetchData().then((data) => {
+        assert.equal(data, null);
+      });
+    });
+
+    it('calls fetch on client', () => {
       localStorage.setItem(cart.localStorageCheckoutKey, 12345)
       const fetchCart = sinon.stub(cart.props.client.checkout, 'fetch').returns(Promise.resolve({id: 12345, lineItems: []}));
 
@@ -391,30 +426,27 @@ describe('Cart class', () => {
       });
     });
 
-    it('calls createCart on client if localStorage is invalid', () => {
+    it('resolves to null and removes localStorage key if checkout fetch fails', () => {
       localStorage.setItem(cart.localStorageCheckoutKey, 1);
       const fetchCart = sinon.stub(cart.props.client.checkout, 'fetch').returns(Promise.reject({errors: [{ message: 'rejected.' }]}));
-      const createCheckout = sinon.stub(cart.props.client.checkout, 'create').returns(Promise.resolve({id: 12345, lineItems: []}));
 
       return cart.fetchData().then((data) => {
-        assert.deepEqual(data, {id: 12345, lineItems: []});
+        assert.deepEqual(data, null);
         assert.calledOnce(fetchCart);
-        assert.calledOnce(createCheckout);
-        assert.equal(localStorage.getItem(cart.localStorageCheckoutKey), 12345);
+        assert.equal(localStorage.getItem(cart.localStorageCheckoutKey), null);
+        fetchCart.restore();
       });
     });
 
-    it('calls createCart on client if checkout is completed', () => {
-      const checkout = {id: 1111, lineItems: []};
+    it('resolves to null and removes the localStorage key if checkout is completed', () => {
       localStorage.setItem(cart.localStorageCheckoutKey, 123);
       const fetchCart = sinon.stub(cart.props.client.checkout, 'fetch').returns(Promise.resolve({ completedAt: "04-12-2018", lineItems: []}));
-      const createCheckout = sinon.stub(cart.props.client.checkout, 'create').returns(Promise.resolve(checkout));
 
       return cart.fetchData().then((data) => {
-        assert.deepEqual(data, checkout);
+        assert.equal(data, null);
         assert.calledOnce(fetchCart);
-        assert.calledOnce(createCheckout);
-        assert.equal(localStorage.getItem(cart.localStorageCheckoutKey), checkout.id);
+        assert.equal(localStorage.getItem(cart.localStorageCheckoutKey), null);
+        fetchCart.restore();
       });
     });
 
@@ -563,22 +595,98 @@ describe('Cart class', () => {
     });
   });
 
-
   describe('addVariantToCart', () => {
-    it('calls addLineItems on client', () => {
-      cart.model = {
-        id: 123456,
-      }
-      cart.view.setFocus = sinon.spy();
-      const addLineItemsStub = sinon.stub(cart.props.client.checkout, 'addLineItems').returns(Promise.resolve({lineItems: [{id: 123, quantity: 1}]}));
-      const render = sinon.stub(cart.view, 'render');
-      const toggleRender = sinon.stub(cart.toggles[0].view, 'render');
+    const modelId = 135;
+    const variantId = 1111;
+    const quantity = 2;
+    const variant = {
+      id: variantId,
+    };
+    const lineItem = {variantId, quantity};
+    let cartOpenStub;
+    let setFocusStub;
+    let addLineItemsStub;
+    let checkoutCreateStub;
+    let renderStub;
+    let toggleRenderStub;
+    let updateCacheStub;
+    const mockCheckout = {
+      id: 1001,
+      lineItems: [{id: 1212, quantity: 4}],
+    };
 
-      return cart.addVariantToCart({id: 123}).then(() => {
-        assert.calledWith(addLineItemsStub, 123456, [{variantId: 123, quantity:1}]);
-        assert.calledOnce(toggleRender);
-        assert.called(cart.view.setFocus);
-        assert.deepEqual(cart.model, {lineItems: [{id: 123, quantity: 1}]});
+    beforeEach(() => {
+      cartOpenStub = sinon.stub(cart, 'open');
+      setFocusStub = sinon.stub(cart.view, 'setFocus');
+      addLineItemsStub = sinon.stub(cart.props.client.checkout, 'addLineItems').returns(Promise.resolve(mockCheckout));
+      checkoutCreateStub = sinon.stub(cart.props.client.checkout, 'create').returns(Promise.resolve(mockCheckout));
+      renderStub = sinon.stub(cart.view, 'render');
+      toggleRenderStub = sinon.stub(cart.toggles[0].view, 'render');
+      updateCacheStub = sinon.stub(cart, 'updateCache');
+    });
+
+    afterEach(() => {
+      cartOpenStub.restore();
+      setFocusStub.restore();
+      addLineItemsStub.restore();
+      checkoutCreateStub.restore();
+      renderStub.restore();
+      toggleRenderStub.restore();
+      updateCacheStub.restore();
+    });
+
+    it('returns null if quantity parameter is 0', () => {
+      assert.equal(cart.addVariantToCart(variant, 0), null);
+    });
+
+    it('adds line item with quantity 1 if quantity parameter is not provided', () => {
+      cart.model = {
+        id: modelId,
+      };
+
+      return cart.addVariantToCart(variant).then(() => {
+        assert.calledWith(addLineItemsStub, modelId, [{variantId, quantity: 1}]);
+      });
+    });
+
+    it('adds line item to checkout and returns the updated checkout if cart model exists', () => {
+      cart.model = {
+        id: modelId,
+      };
+
+      return cart.addVariantToCart(variant, quantity).then((checkout) => {
+        assert.notCalled(checkoutCreateStub);
+        assert.calledOnce(addLineItemsStub);
+        assert.calledWith(addLineItemsStub, modelId, [lineItem]);
+        assert.deepEqual(checkout, mockCheckout);
+      });
+    });
+
+    it('creates a checkout with line item and returns the updated checkout if cart model is null', () => {
+      cart.model = null;
+
+      return cart.addVariantToCart(variant, quantity).then((checkout) => {
+        assert.calledOnce(checkoutCreateStub);
+        assert.calledWith(checkoutCreateStub, {lineItems: [lineItem]});
+        assert.deepEqual(checkout, mockCheckout);
+      });
+    });
+
+    it('calls open on cart if openCart parameter is not provided', () => {
+      return cart.addVariantToCart(variant, quantity).then(() => {
+        assert.calledOnce(cartOpenStub);
+      });
+    });
+
+    it('calls open on cart if openCart parameter is true', () => {
+      return cart.addVariantToCart(variant, quantity, true).then(() => {
+        assert.calledOnce(cartOpenStub);
+      });
+    });
+
+    it('does not call open on cart if openCart parameter is false', () => {
+      return cart.addVariantToCart(variant, quantity, false).then(() => {
+        assert.notCalled(cartOpenStub);
       });
     });
   });
@@ -587,29 +695,61 @@ describe('Cart class', () => {
     const subtotalPriceAmount = '10.00';
     const lineItemsSubtotalPriceAmount = '20.00';
 
-    beforeEach(() => {
+    describe('with model', () => {
+      beforeEach(() => {
+        cart.model = {
+          subtotalPriceV2: {
+            amount: subtotalPriceAmount,
+            currentCode: 'CAD',
+          },
+          lineItemsSubtotalPrice: {
+            amount: lineItemsSubtotalPriceAmount,
+            currencyCode: 'CAD',
+          },
+        };
+      });
+
+      it('returns formatted subtotal price if contents discount field is true', () => {
+        cart.config.cart.contents.discounts = true;
+
+        assert.equal(cart.formattedTotal, `$${subtotalPriceAmount}`);
+      });
+
+      it('returns formatted line items subtotal price if contents discount field is false', () => {
+        cart.config.cart.contents.discounts = false;
+
+        assert.equal(cart.formattedTotal, `$${lineItemsSubtotalPriceAmount}`);
+      });
+    });
+
+    it('returns a formatted 0 price if model is null', () => {
+      cart.model = null;
+
+      assert.equal(cart.formattedTotal, '$0.00');
+    });
+  });
+
+  describe('get isEmpty', () => {
+    it('returns true if cart model is null', () => {
+      cart.model = null;
+
+      assert.equal(cart.isEmpty, true);
+    });
+
+    it('returns true if cart model line items array is empty', () => {
       cart.model = {
-        subtotalPriceV2: {
-          amount: subtotalPriceAmount,
-          currentCode: 'CAD',
-        },
-        lineItemsSubtotalPrice: {
-          amount: lineItemsSubtotalPriceAmount,
-          currencyCode: 'CAD',
-        },
+        lineItems: [],
       };
+
+      assert.equal(cart.isEmpty, true);
     });
 
-    it('returns formatted subtotal price if contents discount field is true', () => {
-      cart.config.cart.contents.discounts = true;
+    it('returns false if cart model line items array is not empty', () => {
+      cart.model = {
+        lineItems: [{id: '123123'}],
+      };
 
-      assert.equal(cart.formattedTotal, `$${subtotalPriceAmount}`);
-    });
-
-    it('returns formatted line items subtotal price if contents discount field is false', () => {
-      cart.config.cart.contents.discounts = false;
-
-      assert.equal(cart.formattedTotal, `$${lineItemsSubtotalPriceAmount}`);
+      assert.equal(cart.isEmpty, false);
     });
   });
 
@@ -630,15 +770,34 @@ describe('Cart class', () => {
   describe('init', () => {
     let superInitStub;
     let fetchMoneyFormatStub;
+    let toggleInitSpy;
+    let mockToggle;
+    const data = {
+      key1: 'value1',
+      key2: 'value2',
+    };
+
     beforeEach(() => {
-      superInitStub = sinon.stub(Component.prototype, 'init').resolves({model: {lineItems: [{id: 123, quantity: 5}]}});
+      toggleInitSpy = sinon.spy();
+      mockToggle = {
+        init: toggleInitSpy,
+        destroy: sinon.spy(),
+      };
+      superInitStub = sinon.stub(Component.prototype, 'init').resolves({});
       fetchMoneyFormatStub = sinon.stub(cart, 'fetchMoneyFormat').resolves();
+      cart.toggles = [mockToggle];
     });
 
     afterEach(() => {
       superInitStub.restore();
       fetchMoneyFormatStub.restore();
     });
+
+    it('returns the cart instance', () => {
+      return cart.init(data).then((returnValue) => {
+        assert.deepEqual(cart, returnValue);
+      });
+    }); 
 
     it('calls fetchMoneyFormat when moneyFormat has not been set', () => {
       cart.moneyFormat = null;
@@ -652,6 +811,33 @@ describe('Cart class', () => {
       return cart.init().then(() => {
         assert.notCalled(fetchMoneyFormatStub);
       });
+    });
+
+    it('calls init on super with the data parameter', () => {
+      return cart.init(data).then(() => {
+        assert.calledOnce(superInitStub);
+        assert.calledWith(superInitStub, data);
+      });
+    });
+
+    it('calls init on the toggle with an empty line item array if the cart model is null', () => {
+      superInitStub.resolves({model: null});
+
+      return cart.init(data).then(() => {
+        assert.calledOnce(toggleInitSpy);
+        assert.calledWith(toggleInitSpy, {lineItems: []});
+      });
+    });
+
+    it('calls init on the toggle with the cart model`s line items', () => {
+      const lineItems = [{id: 123, quantity: 5}]
+      superInitStub.resolves({model: {lineItems}});
+
+      return cart.init(data).then(() => {
+        assert.calledOnce(toggleInitSpy);
+        assert.calledWith(toggleInitSpy, {lineItems});
+      });
+
     });
   });
 
@@ -710,70 +896,107 @@ describe('Cart class', () => {
   describe('viewData()', () => {
     let viewData;
 
-    beforeEach(async () => {
-      const lineItems = [
-        {
-          id: 1234,
-          quantity: 2,
-          variant: {
-            id: 1111,
-            title: 'test variant',
-            priceV2: {
-              amount: '20.00',
-              currencyCode: 'CAD',
+    describe('with model', () => {
+      beforeEach(async () => {
+        const lineItems = [
+          {
+            id: 1234,
+            quantity: 2,
+            variant: {
+              id: 1111,
+              title: 'test variant',
+              priceV2: {
+                amount: '20.00',
+                currencyCode: 'CAD',
+              },
             },
+            discountAllocations: [],
           },
-          discountAllocations: [],
-        },
-      ];
-      cart.model = {
-        id: 1,
-        lineItems,
-        note: 'test cart note',
-        subtotalPrice: '123.00',
-        subtotalPriceV2: {
-          amount: '130.00',
-          currencyCode: 'USD',
-        },
-        discountApplications: [],
-      };
-      cart.lineItemCache = lineItems;
-      viewData = cart.viewData;
+        ];
+        cart.model = {
+          id: 1,
+          lineItems,
+          note: 'test cart note',
+          subtotalPrice: '123.00',
+          subtotalPriceV2: {
+            amount: '130.00',
+            currencyCode: 'USD',
+          },
+          discountApplications: [],
+        };
+        cart.lineItemCache = lineItems;
+        viewData = cart.viewData;
+      });
+
+      it('returns an object merged with model', () => {
+        assert.equal(viewData.id, cart.model.id);
+        assert.deepEqual(viewData.lineItems, cart.model.lineItems);
+        assert.equal(viewData.subtotalPrice, cart.model.subtotalPrice);
+        assert.equal(viewData.lineItemsSubtotalPrice, cart.model.lineItemsSubtotalPrice);
+      });
+
+      it('returns an object with text', () => {
+        assert.deepEqual(viewData.text, cart.options.text);
+      });
+
+      it('returns an object with classes', () => {
+        assert.deepEqual(viewData.classes, cart.classes);
+      });
+
+      it('returns an object with lineItemsHtml', () => {
+        assert.equal(viewData.lineItemsHtml, cart.lineItemsHtml);
+      });
+
+      it('returns an object with isEmpty', () => {
+        assert.equal(viewData.isEmpty, cart.isEmpty);
+      });
+
+      it('returns an object with formatted total', () => {
+        assert.equal(viewData.formattedTotal, cart.formattedTotal);
+      });
+
+      it('returns an object with contents', () => {
+        assert.deepEqual(viewData.contents, cart.options.contents);
+      });
+
+      it('returns an object with cart note', () => {
+        assert.equal(viewData.cartNote, cart.cartNote);
+      });
     });
 
-    it('returns an object merged with model', () => {
-      assert.equal(viewData.id, cart.model.id);
-      assert.deepEqual(viewData.lineItems, cart.model.lineItems);
-      assert.equal(viewData.subtotalPrice, cart.model.subtotalPrice);
-      assert.equal(viewData.lineItemsSubtotalPrice, cart.model.lineItemsSubtotalPrice);
-    });
+    describe('without model', () => {
+      beforeEach(() => {
+        cart.model = null;
+        viewData = cart.viewData;
+      });
 
-    it('returns an object with text', () => {
-      assert.deepEqual(viewData.text, cart.options.text);
-    });
+      it('returns an object with text', () => {
+        assert.deepEqual(viewData.text, cart.options.text);
+      });
 
-    it('returns an object with classes', () => {
-      assert.deepEqual(viewData.classes, cart.classes);
-    });
+      it('returns an object with classes', () => {
+        assert.deepEqual(viewData.classes, cart.classes);
+      });
 
-    it('returns an object with lineItemsHtml', () => {
-      assert.equal(viewData.lineItemsHtml, cart.lineItemsHtml);
-    });
+      it('returns an object with lineItemsHtml', () => {
+        assert.equal(viewData.lineItemsHtml, cart.lineItemsHtml);
+      });
 
-    it('returns an object with isEmpty', () => {
-      assert.equal(viewData.isEmpty, cart.isEmpty);
-    });
+      it('returns an object with isEmpty', () => {
+        assert.equal(viewData.isEmpty, cart.isEmpty);
+      });
 
-    it('returns an object with formatted total', () => {
-      assert.equal(viewData.formattedTotal, cart.formattedTotal);
-    });
+      it('returns an object with formatted total', () => {
+        assert.equal(viewData.formattedTotal, cart.formattedTotal);
+      });
 
-    it('returns an object with contents', () => {
-      assert.deepEqual(viewData.contents, cart.options.contents);
-    });
+      it('returns an object with contents', () => {
+        assert.deepEqual(viewData.contents, cart.options.contents);
+      });
 
-    it('returns an object with cart note', () => {
-      assert.equal(viewData.cartNote, cart.cartNote);
+      it('returns an object with cart note', () => {
+        assert.equal(viewData.cartNote, cart.cartNote);
+      });
     });
   });
 
@@ -809,6 +1032,12 @@ describe('Cart class', () => {
   });
 
   describe('get cartNote', () => {
+    it('returns null if the cart model doesn`t exist', () => {
+      cart.model = null;
+
+      assert.equal(cart.cartNote, null);
+    });
+
     it('returns the note from the cart model', () => {
       const note = 'test cart note';
       cart.model.note = note;
@@ -854,6 +1083,12 @@ describe('Cart class', () => {
   });
 
   describe('get cartDiscounts', () => {
+    it('returns an empty array is cart model is null', () => {
+      cart.model = null;
+
+      assert.equal(cart.cartDiscounts.length, 0);
+    });
+
     it('return an empty array if no discount applications exist', () => {
       cart.model = {
         lineItemsSubtotalPrice: {
