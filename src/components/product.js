@@ -624,12 +624,17 @@ export default class Product extends Component {
       } else {
         checkoutWindow = window;
       }
+      const input = {
+        lineItems: [
+          {
+            variantId: this.selectedVariant.id,
+            quantity: this.selectedQuantity,
+          },
+        ],
+      };
 
-      this.props.client.checkout.create().then((checkout) => {
-        const lineItem = {variantId: this.selectedVariant.id, quantity: this.selectedQuantity};
-        this.props.client.checkout.addLineItems(checkout.id, [lineItem]).then((updatedCheckout) => {
-          checkoutWindow.location = updatedCheckout.webUrl;
-        });
+      this.props.client.checkout.create(input).then((checkout) => {
+        checkoutWindow.location = checkout.webUrl;
       });
     }
   }

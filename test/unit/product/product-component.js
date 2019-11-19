@@ -544,58 +544,39 @@ describe('Product Component class', () => {
 
       describe('if button destination is checkout', () => {
         let createCheckoutStub;
-        let createCheckoutPromise;
-        let addLineItemsStub;
-        let addLineItemsPromise;
         let openWindowStub;
-        const checkoutMock = {id: 1, webUrl: window.location};
+        const checkoutMock = {id: 1, webUrl: window.location.href};
 
         beforeEach(() => {
           product.config.product.buttonDestination = 'checkout';
-          createCheckoutPromise = new Promise((resolve) => {
-            createCheckoutStub = sinon.stub(product.props.client.checkout, 'create').callsFake(() => {
-              resolve();
-              return Promise.resolve(checkoutMock);
-            });
-          });
-          addLineItemsPromise = new Promise((resolve) => {
-            addLineItemsStub = sinon.stub(product.props.client.checkout, 'addLineItems').callsFake(() => {
-              resolve(checkoutMock);
-              return Promise.resolve(checkoutMock);
-            });
-          });
+          createCheckoutStub = sinon.stub(product.props.client.checkout, 'create').returns(Promise.resolve(checkoutMock));
           openWindowStub = sinon.stub(window, 'open').returns({location: ''});
-
         });
 
         afterEach(() => {
           openWindowStub.restore();
           createCheckoutStub.restore();
-          addLineItemsStub.restore();
         });
 
-        it('calls userEvent with openCheckout', async () => {
+        it('calls userEvent with openCheckout', () => {
           product.onButtonClick(evt, target);
-          await Promise.all([createCheckoutPromise, addLineItemsPromise]);
           assert.calledOnce(userEventStub);
           assert.calledWith(userEventStub, 'openCheckout');
         });
 
-        it('tracks Direct Checkout', async () => {
+        it('tracks Direct Checkout', () => {
           product.onButtonClick(evt, target);
-          await Promise.all([createCheckoutPromise, addLineItemsPromise]);
           assert.calledOnce(trackSpy);
           assert.calledWith(trackSpy, 'Direct Checkout', {});
         });
 
-        it('opens checkout in a new window if cart popup in config is true and browser supports window.open', async () => {
+        it('opens checkout in a new window if cart popup in config is true and browser supports window.open', () => {
           product.config.cart.popup = true;
           const browserFeaturesStub = sinon.stub(browserFeatures, 'default').value({
             windowOpen: () => true,
           });
           const checkout = new Checkout(product.config);
           product.onButtonClick(evt, target);
-          await Promise.all([createCheckoutPromise, addLineItemsPromise]);
           assert.calledOnce(openWindowStub);
           assert.calledWith(openWindowStub, '', 'checkout', checkout.params);
           browserFeaturesStub.restore();
@@ -606,24 +587,23 @@ describe('Product Component class', () => {
           const browserFeaturesStub = sinon.stub(browserFeatures, 'default').value({
             windowOpen: () => false,
           });
+          createCheckoutStub.rejects();
           product.onButtonClick(evt, target);
           assert.notCalled(openWindowStub);
           browserFeaturesStub.restore();
         });
 
-        it('creates checkout and adds line items', async () => {
+        it('creates checkout with line items', () => {
           const selectedQuantity = 2;
           product.selectedQuantity = selectedQuantity;
 
           product.onButtonClick(evt, target);
-          await Promise.all([createCheckoutPromise, addLineItemsPromise]);
 
           assert.calledOnce(createCheckoutStub);
-          assert.calledOnce(addLineItemsStub);
-          assert.calledWith(addLineItemsStub, checkoutMock.id, [{
+          assert.calledWith(createCheckoutStub, {lineItems: [{
             variantId: 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0NQ==',
             quantity: selectedQuantity,
-          }]);
+          }]});
         });
       });
     });
