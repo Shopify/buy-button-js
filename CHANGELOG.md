@@ -1,5 +1,9 @@
 # Changelog
 
+### v2.0.0 (November 19, 2019)
+- Defer creation of checkout until a variant is added to cart ([#657](https://github.com/Shopify/buy-button-js/pull/657)) 
+  - The cart component's model will now be null until a variant has been added to the cart
+
 ### v1.0.4 (October 9, 2019)
 - Changed text-rendering to auto for select elements to prevent Safari 13 from crashing ([#653](https://github.com/Shopify/buy-button-js/pull/653))
 
