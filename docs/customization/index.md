@@ -99,7 +99,7 @@ var text = {
 
 **Type**: object
 
-**Default value**: dependent on component. [View component defaults](https://github.com/Shopify/buy-button-js/blob/master/src/defaults/components.j)
+**Default value**: dependent on component. [View component defaults](https://github.com/Shopify/buy-button-js/blob/master/src/defaults/components.js)
 
 ### `styles`
 
