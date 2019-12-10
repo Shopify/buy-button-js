@@ -81,6 +81,7 @@ export default class Product extends Component {
     this.selectedVariant = {};
     this.selectedOptions = {};
     this.selectedImage = null;
+    this.carouselIndex = 1;
     this.updater = new ProductUpdater(this);
     this.view = new ProductView(this);
   }
@@ -214,7 +215,7 @@ export default class Product extends Component {
       priceClass: this.priceClass,
       formattedPrice: this.formattedPrice,
       formattedCompareAtPrice: this.formattedCompareAtPrice,
-      carouselIndex: 0,
+      carouselIndex: this.carouselIndex,
       carouselImages: this.carouselImages,
     });
   }
@@ -699,8 +700,10 @@ export default class Product extends Component {
       return image.id === this.currentImage.id;
     })[0];
     const currentImageIndex = imageList.indexOf(currentImage);
-    this.selectedImage = imageList[this.nextIndex(currentImageIndex, offset)];
+    const nextImageIndex = this.nextIndex(currentImageIndex, offset);
+    this.selectedImage = imageList[nextImageIndex];
     this.cachedImage = this.selectedImage;
+    this.carouselIndex = (nextImageIndex + 1)
     this.view.render();
   }
 
