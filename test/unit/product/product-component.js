@@ -388,6 +388,39 @@ describe('Product Component class', () => {
         }
       });
 
+      it('rejects if there is a falsey storefrontId array [null] and no handle', async () => {
+        product.storefrontId = [null];
+        product.handle = null;
+        try {
+          await product.sdkFetch();
+          assert.fail();
+        } catch (err) {
+          assert.equal(err.message, 'SDK Fetch Failed');
+        }
+      });
+
+      it('rejects if there is a falsey storefrontId array [""] and no handle', async () => {
+        product.storefrontId = [""];
+        product.handle = null;
+        try {
+          await product.sdkFetch();
+          assert.fail();
+        } catch (err) {
+          assert.equal(err.message, 'SDK Fetch Failed');
+        }
+      });
+
+      it('rejects if there is a falsey storefrontId array [0] and no handle', async () => {
+        product.storefrontId = [0];
+        product.handle = null;
+        try {
+          await product.sdkFetch();
+          assert.fail();
+        } catch (err) {
+          assert.equal(err.message, 'SDK Fetch Failed');
+        }
+      });
+
       it('rejects if there is no storefrontId or handle', async () => {
         product.storefrontId = null;
         product.handle = null;
