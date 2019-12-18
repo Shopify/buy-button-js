@@ -23,7 +23,7 @@
 }
 
 .shopify-buy__option-select {
-  & + & {
+  & + .shopify-buy__option-select {
     margin-top: calc(var(--gutter) / 2);
   }
 }
