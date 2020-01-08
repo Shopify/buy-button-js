@@ -12,6 +12,7 @@ import productFixture from '../../fixtures/product-fixture';
 import * as normalizeConfig from '../../../src/utils/normalize-config';
 import * as formatMoney from '../../../src/utils/money';
 import * as browserFeatures from '../../../src/utils/detect-features';
+import * as getUnitPriceBaseUnit from '../../../src/utils/unit-price';
 
 const rootImageURI = 'https://cdn.shopify.com/s/files/1/0014/8583/2214/products/';
 
@@ -1399,6 +1400,102 @@ describe('Product Component class', () => {
             assert.calledOnce(formatMoneyStub);
             assert.calledWith(formatMoneyStub, product.selectedVariant.compareAtPriceV2.amount, product.globalConfig.moneyFormat);
           });
+        });
+
+        describe('formattedUnitPrice', () => {
+          it('returns an empty string if showUnitPrice is false', () => {
+            const showUnitPriceStub = sinon.stub(product, 'showUnitPrice').get(() => false);
+
+            assert.equal(product.formattedUnitPrice, '');
+
+            showUnitPriceStub.restore();
+          });
+
+          it('returns formatted money with the variant`s unit price and money format from global config if there is a selected variant with a unit price', () => {
+            const showUnitPriceStub = sinon.stub(product, 'showUnitPrice').get(() => true);
+            product.selectedVariant = {
+              unitPrice: {
+                amount: '10.00',
+                currencyCode: 'CAD',
+              },
+            };
+            product.globalConfig = {moneyFormat: 'CAD'};
+
+            assert.equal(product.formattedUnitPrice, formattedMoney);
+            assert.calledOnce(formatMoneyStub);
+            assert.calledWith(formatMoneyStub, product.selectedVariant.unitPrice.amount, product.globalConfig.moneyFormat);
+
+            showUnitPriceStub.restore();
+          });
+        });
+      });
+
+      describe('formattedUnitPriceBaseUnit', () => {
+        it('returns an empty string if showUnitPrice is false', () => {
+          const showUnitPriceStub = sinon.stub(product, 'showUnitPrice').get(() => false);
+
+          assert.equal(product.formattedUnitPriceBaseUnit, '');
+
+          showUnitPriceStub.restore();
+        });
+
+        it('returns a formatted base unit from the selected variant`s unit price measurement', () => {
+          const mockUnitPriceBaseUnit = '100ml';
+          product.selectedVariant = {
+            unitPriceMeasurement: {
+              referenceValue: '100',
+              referenceUnit: 'ML',
+            },
+          };
+
+          const showUnitPriceStub = sinon.stub(product, 'showUnitPrice').get(() => true);
+          const getUnitPriceBaseUnitStub = sinon.stub(getUnitPriceBaseUnit, 'default').returns(mockUnitPriceBaseUnit);
+          
+          assert.equal(product.formattedUnitPriceBaseUnit, mockUnitPriceBaseUnit);
+          assert.calledOnce(getUnitPriceBaseUnitStub);
+          assert.calledWith(getUnitPriceBaseUnitStub, product.selectedVariant.unitPriceMeasurement.referenceValue, product.selectedVariant.unitPriceMeasurement.referenceUnit);
+
+          showUnitPriceStub.restore();
+          getUnitPriceBaseUnitStub.restore();
+        });
+      });
+
+      describe('showUnitPrice', () => {
+        it('returns false if there is no selected variant', () => {
+          product.selectedVariant = null;
+
+          assert.equal(product.showUnitPrice, false);
+        });
+
+        it('returns false if the selected variant`s unit price is null', () => {
+          product.selectedVariant = {
+            unitPrice: null,
+          };
+
+          assert.equal(product.showUnitPrice, false);
+        });
+
+        it('returns false if the selected variant has a unit price and the unit price content option is false', () => {
+          product.selectedVariant = {
+            unitPrice: {
+              amount: '5.00',
+              currencyCode: 'CAD',
+            },
+          };
+          product.config.product.contents.unitPrice = false;
+
+          assert.equal(product.showUnitPrice, false);
+        });
+
+        it('returns true if the selected variant has a unit price and the unit price content option is true', () => {
+          product.selectedVariant = {
+            unitPrice: {
+              amount: '5.00',
+              currencyCode: 'CAD',
+            },
+          };
+
+          assert.equal(product.showUnitPrice, true);
         });
       });
 

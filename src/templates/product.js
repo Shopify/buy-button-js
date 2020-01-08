@@ -38,6 +38,12 @@ const productTemplate = {
             {{#data.selectedVariant}}
             <span class="{{data.classes.product.price}} {{data.priceClass}}" data-element="product.price">{{data.formattedPrice}}</span>
             {{#data.selectedVariant.compareAtPrice}}<span class="{{data.classes.product.compareAt}}" data-element="product.compareAt">{{data.formattedCompareAtPrice}}</span>{{/data.selectedVariant.compareAtPrice}}
+            {{#data.showUnitPrice}}
+            <div class="{{data.classes.product.unitPrice}}" data-element="product.unitPrice">
+              <span class="visuallyhidden">{{data.text.unitPriceAccessibilityLabel}}</span>
+              {{data.formattedUnitPrice}}<span aria-hidden="true">/</span><span class="visuallyhidden">&nbsp;{{data.text.unitPriceAccessibilitySeparator}}&nbsp;</span>{{data.formattedUnitPriceBaseUnit}}
+            </div>
+            {{/data.showUnitPrice}}
             {{/data.selectedVariant}}
           </div>`,
   description: '<div class="{{data.classes.product.description}}" data-element="product.description">{{{data.descriptionHtml}}}</div>',
