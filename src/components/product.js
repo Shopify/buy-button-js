@@ -6,6 +6,7 @@ import windowUtils from '../utils/window-utils';
 import formatMoney from '../utils/money';
 import normalizeConfig from '../utils/normalize-config';
 import browserFeatures from '../utils/detect-features';
+import getUnitPriceBaseUnit from '../utils/unit-price';
 import ProductView from '../views/product';
 import ProductUpdater from '../updaters/product';
 
@@ -192,6 +193,44 @@ export default class Product extends Component {
   }
 
   /**
+   * get whether unit price string should be displayed
+   * @return {Boolean}
+   */
+
+  get showUnitPrice() {
+    if (!this.selectedVariant || !this.selectedVariant.unitPrice || !this.options.contents.unitPrice) {
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * get formatted variant unit price amount based on moneyFormat
+   * @return {String}
+   */
+  get formattedUnitPrice() {
+    if (!this.showUnitPrice) {
+      return '';
+    }
+
+    return formatMoney(this.selectedVariant.unitPrice.amount, this.globalConfig.moneyFormat);
+  }
+
+  /**
+   * get formatted variant unit price base unit
+   * @return {String}
+   */
+  get formattedUnitPriceBaseUnit() {
+    if (!this.showUnitPrice) {
+      return '';
+    }
+
+    const unitPriceMeasurement = this.selectedVariant.unitPriceMeasurement;
+
+    return getUnitPriceBaseUnit(unitPriceMeasurement.referenceValue, unitPriceMeasurement.referenceUnit);
+  }
+
+  /**
    * get data to be passed to view.
    * @return {Object} viewData object.
    */
@@ -214,6 +253,9 @@ export default class Product extends Component {
       priceClass: this.priceClass,
       formattedPrice: this.formattedPrice,
       formattedCompareAtPrice: this.formattedCompareAtPrice,
+      showUnitPrice: this.showUnitPrice,
+      formattedUnitPrice: this.formattedUnitPrice,
+      formattedUnitPriceBaseUnit: this.formattedUnitPriceBaseUnit,
       carouselIndex: 0,
       carouselImages: this.carouselImages,
     });
