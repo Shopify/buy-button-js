@@ -1,17 +1,24 @@
 # Changelog
 
+### v2.1.1 (March 23, 2020)
+- Updated `JS Buy SDK` to `v2.9.2` ([#674](https://github.com/Shopify/buy-button-js/pull/674))
+  - This update ensures that checkouts and content returned from Storefront API/JS Buy SDK will be in the store's primary language.
+
+### v2.1.0 (January 9, 2020)
+- Add unit pricing to the product component ([#671](https://github.com/Shopify/buy-button-js/pull/671))
+
 ### v2.0.0 (November 19, 2019)
-- Defer creation of checkout until a variant is added to cart ([#657](https://github.com/Shopify/buy-button-js/pull/657)) 
+- Defer creation of checkout until a variant is added to cart ([#657](https://github.com/Shopify/buy-button-js/pull/657))
   - The cart component's model will now be null until a variant has been added to the cart
 
 ### v1.0.4 (October 9, 2019)
 - Changed text-rendering to auto for select elements to prevent Safari 13 from crashing ([#653](https://github.com/Shopify/buy-button-js/pull/653))
 
 ### v1.0.3 (October 8, 2019)
-- Fix product set's `trackingInfo` to return tracking information for each product in set ([#651](https://github.com/Shopify/buy-button-js/pull/651)) 
+- Fix product set's `trackingInfo` to return tracking information for each product in set ([#651](https://github.com/Shopify/buy-button-js/pull/651))
 
 ### v1.0.2 (September 24, 2019)
-- Add `openCheckout` user event ([#647](https://github.com/Shopify/buy-button-js/pull/647)) 
+- Add `openCheckout` user event ([#647](https://github.com/Shopify/buy-button-js/pull/647))
 - Fixed pagination error for product set buy buttons ([#645](https://github.com/Shopify/buy-button-js/pull/645))
 - Tracker related updates:
   - Add 2 new events (`Open cart checkout` and `Open modal`) ([#648](https://github.com/Shopify/buy-button-js/pull/648))
@@ -39,7 +46,7 @@
   - Safari: 8+
   - Chrome, Firefox, Opera, Edge: last 2 versions
   - iOS: 8+
-  - Android: 4.4+ 
+  - Android: 4.4+
 
 ### v0.12.0 (August 15, 2019)
 - Bump various npm dependencies, notably the following major updates: ([#633](https://github.com/Shopify/buy-button-js/pull/633))
