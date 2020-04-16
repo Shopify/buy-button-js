@@ -227,8 +227,7 @@ export default class ProductSet extends Component {
 
     // fix for #672
     if (this.config.productSet.iframe === false) {
-        productConfig.node = this.node.querySelector(
-            ".".concat(this.classes.productSet.products));
+      productConfig.node = this.node.querySelector(`.${this.classes.productSet.products}`);
     }
 
     const promises = this.model.products.map((productModel) => {
