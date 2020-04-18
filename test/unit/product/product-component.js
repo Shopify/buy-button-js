@@ -1680,12 +1680,12 @@ describe('Product Component class', () => {
 
         it('contains disabled class if button is not enabled', () => {
           product.buttonEnabled = false;
-          assert.include(product.buttonClass, product.classes.disabled);
+          assert.include(product.buttonClass, product.classes.product.disabled);
         });
 
         it('does not contain disabled class if button is enabled', () => {
           product.buttonEnabled = true;
-          assert.notInclude(product.buttonClass, product.classes.disabled);
+          assert.notInclude(product.buttonClass, product.classes.product.disabled);
         });
 
         it('contains buttonBesideQty class if button has quantity', () => {

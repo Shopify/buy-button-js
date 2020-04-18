@@ -274,7 +274,7 @@ export default class Product extends Component {
   }
 
   get buttonClass() {
-    const disabledClass = this.buttonEnabled ? '' : this.classes.disabled;
+    const disabledClass = this.buttonEnabled ? '' : this.classes.product.disabled;
     const quantityClass = this.options.contents.buttonWithQuantity ? this.classes.product.buttonBesideQty : '';
     return `${disabledClass} ${quantityClass}`;
   }
