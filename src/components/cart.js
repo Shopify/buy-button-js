@@ -98,8 +98,9 @@ export default class Cart extends Component {
         const targetSelection = discount.discountApplication.targetSelection;
         if (LINE_ITEM_TARGET_SELECTIONS.indexOf(targetSelection) > -1) {
           const discountAmount = discount.allocatedAmount.amount;
+          const discountDisplayText = discount.discountApplication.title || discount.discountApplication.code;
           discountAcc.totalDiscount += discountAmount;
-          discountAcc.discounts.push({discount: `${discount.discountApplication.title} (-${formatMoney(discountAmount, this.moneyFormat)})`});
+          discountAcc.discounts.push({discount: `${discountDisplayText} (-${formatMoney(discountAmount, this.moneyFormat)})`});
         }
         return discountAcc;
       }, {
@@ -163,7 +164,8 @@ export default class Cart extends Component {
         }
 
         if (discountValue > 0) {
-          discountArr.push({text: discount.title, amount: `-${formatMoney(discountValue, this.moneyFormat)}`});
+          const discountDisplayText = discount.title || discount.code;
+          discountArr.push({text: discountDisplayText, amount: `-${formatMoney(discountValue, this.moneyFormat)}`});
         }
       }
       return discountArr;
