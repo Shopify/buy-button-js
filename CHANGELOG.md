@@ -1,5 +1,11 @@
 # Changelog
 
+### v2.1.3 (May 12, 2020)
+- Updated `JS Buy SDK` to `v2.10.0`, which uses Storefront API version [2020-04](https://shopify.dev/concepts/about-apis/versioning/release-notes/2020-04) ([#684](https://github.com/Shopify/buy-button-js/pull/684))
+
+### v2.1.2 (April 6, 2020)
+- Updated code of conduct report link ([#678](https://github.com/Shopify/buy-button-js/pull/678))
+
 ### v2.1.1 (March 23, 2020)
 - Updated `JS Buy SDK` to `v2.9.2` ([#674](https://github.com/Shopify/buy-button-js/pull/674))
   - This update ensures that checkouts and content returned from Storefront API/JS Buy SDK will be in the store's primary language.
