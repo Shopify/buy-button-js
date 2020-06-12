@@ -86,6 +86,6 @@
 
   &:hover {
     transform: scale(1.2);
-    color: color(var(--color-cart-title) lightness(- 5%));
+    color: color-mod(var(--color-cart-title) lightness(-5%));
   }
 }

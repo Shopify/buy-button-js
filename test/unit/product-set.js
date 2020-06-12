@@ -6,15 +6,15 @@ import testProduct from '../fixtures/product-fixture';
 import ShopifyBuy from '../../src/buybutton';
 
 const config = {
-  id: 'Z2lkOi8vc2hvcGlmeS9Db2xsZWN0aW9uLzEyMzQ1',
+  storefrontId: 'Z2lkOi8vc2hvcGlmeS9Db2xsZWN0aW9uLzEyMzQ1',
   options: {
     product: {
       templates: {
         button: '<button id="button" class="button">Fake button</button>'
       }
     }
-  }
-}
+  },
+};
 
 const fakeProduct = testProduct;
 
@@ -206,18 +206,56 @@ describe('ProductSet class', () => {
     beforeEach(() => {
       initSpy = sinon.spy(Product.prototype, 'init');
       showPaginationStub = sinon.stub(set, 'showPagination').returns(Promise.resolve());
+      set.model.products = [fakeProduct];
       set.view.render();
     });
 
     afterEach(() => {
       initSpy.restore();
+      showPaginationStub.restore();
     });
 
     it('initializes an array of products', () => {
-      set.model.products = [fakeProduct];
-
-      return set.renderProducts().then((data) => {
+      return set.renderProducts().then(() => {
         assert.calledWith(initSpy, fakeProduct);
+      });
+    });
+
+    it('calls showPagination if pagination is set to true in contents and products have connections', () => {
+      set.config.productSet.contents.pagination = true;
+      const updatedFakeProduct = Object.assign({}, fakeProduct);
+      updatedFakeProduct.hasNextPage = true;
+      set.model.products = [updatedFakeProduct];
+
+      return set.renderProducts().then(() => {
+        assert.calledOnce(showPaginationStub);
+      });
+    });
+
+    it('does not call showPagination if pagination is set to true in contents and products do not have connections', () => {
+      set.config.productSet.contents.pagination = true;
+
+      return set.renderProducts().then(() => {
+        assert.notCalled(showPaginationStub);
+      });
+    });
+
+    it('does not call showPagination if pagination is set to false in contents and products have connections', () => {
+      set.config.productSet.contents.pagination = false;
+      const updatedFakeProduct = Object.assign({}, fakeProduct);
+      updatedFakeProduct.hasNextPage = true;
+      set.model.products = [updatedFakeProduct];
+
+      return set.renderProducts().then(() => {
+        assert.notCalled(showPaginationStub);
+      });
+    });
+
+    it('does not call showPagination if pagination is set to false in contents and products do not have connections', () => {
+      set.config.productSet.contents.pagination = false;
+
+      return set.renderProducts().then(() => {
+        assert.notCalled(showPaginationStub);
       });
     });
   });
@@ -239,6 +277,9 @@ describe('ProductSet class', () => {
     beforeEach(() => {
       superSpy = sinon.stub(Updater.prototype, 'updateConfig');
       renderProductsSpy = sinon.stub(set, 'renderProducts');
+      set.products = [{
+        updateConfig: sinon.spy()
+      }];
       set.cart = {
         updateConfig: sinon.spy()
       }
@@ -248,9 +289,10 @@ describe('ProductSet class', () => {
       superSpy.restore();
     });
 
-    it('calls updateConfig on cart', () => {
+    it('calls updateConfig on super, cart and first product', () => {
       set.updateConfig(newConfig);
       assert.calledWith(set.cart.updateConfig, newConfig);
+      assert.calledWith(set.products[0].updateConfig, {options: newConfig.options});
       assert.calledWith(superSpy, newConfig);
     });
   });
@@ -283,4 +325,126 @@ describe('ProductSet class', () => {
       });
     });
   });
+
+  describe('trackingInfo', () => {
+    let expectedContentString;
+
+    beforeEach(() => {
+      expectedContentString = Object.keys(set.config.product.contents).filter((key) => set.config.product.contents[key]).toString();
+    });
+
+    it('returns an object with the collection id and button destination when an the product set id is not an array', () => {
+      const info = set.trackingInfo;
+      assert.deepEqual(info, {
+        id: config.storefrontId,
+        destination: set.config.product.buttonDestination,
+        layout: set.config.product.layout,
+        contents: expectedContentString,
+        checkoutPopup: set.config.cart.popup,
+      });
+    });
+
+    it('returns an array of product info objects when the product set id is an array of ids', () => {
+      const fakeProduct2 = {
+        title: 'test2',
+        id: 4567,
+        storefrontId: 'GTYlkOi8vc2hvcGlmeS9Qcm9kdWN0LzEyMw==',
+        images: [
+          {
+            id: '1',
+            src: 'https://cdn.shopify.com/s/files/1/0014/8583/2214/products/image-one.jpg',
+          },
+          {
+            id: '2',
+            src: 'https://cdn.shopify.com/s/files/1/0014/8583/2214/products/image-two.jpeg',
+          },
+          {
+            id: '3',
+            src: 'https://cdn.shopify.com/s/files/1/0014/8583/2214/products/image-three.jpg',
+          },
+          {
+            id: '4',
+            src: 'https://cdn.shopify.com/s/files/1/0014/8583/2214/products/image-four.jpeg',
+          },
+        ],
+        options: [
+          {
+            name: 'Print',
+            values: [
+              {value: 'sloth'},
+              {value: 'shark'},
+              {value: 'cat'},
+            ],
+          },
+          {
+            name: 'Size',
+            selected: 'small',
+            values: [
+              {value: 'small'},
+              {value: 'large'},
+            ],
+          },
+        ],
+        variants: [
+          {
+            id: 'GTYOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0NQ==',
+            productId: 1245,
+            price: '20.00',
+            priceV2: {
+              amount: '20.00',
+              currencyCode: 'CAD',
+            },
+            title: 'sloth / small',
+            available: true,
+            image: {
+              id: 100,
+              src: 'https://cdn.shopify.com/s/files/1/0014/8583/2214/products/image-one.jpg',
+            },
+            selectedOptions: [
+              {
+                name: 'Print',
+                value: 'sloth',
+              },
+              {
+                name: 'Size',
+                value: 'small',
+              },
+            ],
+          },
+        ],
+      };
+
+      set.id = [1234, 4567];
+      set.model.products = [fakeProduct, fakeProduct2];
+      const info = set.trackingInfo;
+      assert.deepEqual(info, [{
+        id: fakeProduct.id,
+        name: fakeProduct.title,
+        variantId: fakeProduct.variants[0].id,
+        variantName: fakeProduct.variants[0].title,
+        price: fakeProduct.variants[0].priceV2.amount,
+        destination: set.config.product.buttonDestination,
+        layout: set.config.product.layout,
+        contents: expectedContentString,
+        checkoutPopup: set.config.cart.popup,
+        sku: null,
+        isProductSet: true,
+      },
+      {
+        id: fakeProduct2.id,
+        name: fakeProduct2.title,
+        variantId: fakeProduct2.variants[0].id,
+        variantName: fakeProduct2.variants[0].title,
+        price: fakeProduct2.variants[0].priceV2.amount,
+        destination: set.config.product.buttonDestination,
+        layout: set.config.product.layout,
+        contents: expectedContentString,
+        checkoutPopup: set.config.cart.popup,
+        sku: null,
+        isProductSet: true,
+      }]);
+    });
+  });
+
+
 });

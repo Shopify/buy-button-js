@@ -12,6 +12,7 @@ import productFixture from '../../fixtures/product-fixture';
 import * as normalizeConfig from '../../../src/utils/normalize-config';
 import * as formatMoney from '../../../src/utils/money';
 import * as browserFeatures from '../../../src/utils/detect-features';
+import * as getUnitPriceBaseUnit from '../../../src/utils/unit-price';
 
 const rootImageURI = 'https://cdn.shopify.com/s/files/1/0014/8583/2214/products/';
 
@@ -377,6 +378,50 @@ describe('Product Component class', () => {
         assert.equal(data, fetchHandleData);
       });
 
+      it('rejects if there is an empty storefrontId array and no handle', async () => {
+        product.storefrontId = [];
+        product.handle = null;
+        try {
+          await product.sdkFetch();
+          assert.fail();
+        } catch (err) {
+          assert.equal(err.message, 'SDK Fetch Failed');
+        }
+      });
+
+      it('rejects if there is a falsey storefrontId array [null] and no handle', async () => {
+        product.storefrontId = [null];
+        product.handle = null;
+        try {
+          await product.sdkFetch();
+          assert.fail();
+        } catch (err) {
+          assert.equal(err.message, 'SDK Fetch Failed');
+        }
+      });
+
+      it('rejects if there is a falsey storefrontId array [""] and no handle', async () => {
+        product.storefrontId = [""];
+        product.handle = null;
+        try {
+          await product.sdkFetch();
+          assert.fail();
+        } catch (err) {
+          assert.equal(err.message, 'SDK Fetch Failed');
+        }
+      });
+
+      it('rejects if there is a falsey storefrontId array [0] and no handle', async () => {
+        product.storefrontId = [0];
+        product.handle = null;
+        try {
+          await product.sdkFetch();
+          assert.fail();
+        } catch (err) {
+          assert.equal(err.message, 'SDK Fetch Failed');
+        }
+      });
+
       it('rejects if there is no storefrontId or handle', async () => {
         product.storefrontId = null;
         product.handle = null;
@@ -524,6 +569,11 @@ describe('Product Component class', () => {
           assert.calledWith(setActiveElSpy, target);
         });
 
+        it('tracks open modal', () => {
+          assert.calledOnce(trackSpy);
+          assert.calledWith(trackSpy, 'Open modal', product.productTrackingInfo);
+        });
+
         it('opens modal', () => {
           assert.calledOnce(openModalStub);
         });
@@ -539,58 +589,39 @@ describe('Product Component class', () => {
 
       describe('if button destination is checkout', () => {
         let createCheckoutStub;
-        let createCheckoutPromise;
-        let addLineItemsStub;
-        let addLineItemsPromise;
         let openWindowStub;
-        const checkoutMock = {id: 1, webUrl: window.location};
+        const checkoutMock = {id: 1, webUrl: window.location.href};
 
         beforeEach(() => {
           product.config.product.buttonDestination = 'checkout';
-          createCheckoutPromise = new Promise((resolve) => {
-            createCheckoutStub = sinon.stub(product.props.client.checkout, 'create').callsFake(() => {
-              resolve();
-              return Promise.resolve(checkoutMock);
-            });
-          });
-          addLineItemsPromise = new Promise((resolve) => {
-            addLineItemsStub = sinon.stub(product.props.client.checkout, 'addLineItems').callsFake(() => {
-              resolve(checkoutMock);
-              return Promise.resolve(checkoutMock);
-            });
-          });
+          createCheckoutStub = sinon.stub(product.props.client.checkout, 'create').returns(Promise.resolve(checkoutMock));
           openWindowStub = sinon.stub(window, 'open').returns({location: ''});
-
         });
 
         afterEach(() => {
           openWindowStub.restore();
           createCheckoutStub.restore();
-          addLineItemsStub.restore();
         });
 
-        it('calls userEvent with openCheckout', async () => {
+        it('calls userEvent with openCheckout', () => {
           product.onButtonClick(evt, target);
-          await Promise.all([createCheckoutPromise, addLineItemsPromise]);
           assert.calledOnce(userEventStub);
           assert.calledWith(userEventStub, 'openCheckout');
         });
 
-        it('tracks Direct Checkout', async () => {
+        it('tracks Direct Checkout', () => {
           product.onButtonClick(evt, target);
-          await Promise.all([createCheckoutPromise, addLineItemsPromise]);
           assert.calledOnce(trackSpy);
           assert.calledWith(trackSpy, 'Direct Checkout', {});
         });
 
-        it('opens checkout in a new window if cart popup in config is true and browser supports window.open', async () => {
+        it('opens checkout in a new window if cart popup in config is true and browser supports window.open', () => {
           product.config.cart.popup = true;
           const browserFeaturesStub = sinon.stub(browserFeatures, 'default').value({
             windowOpen: () => true,
           });
           const checkout = new Checkout(product.config);
           product.onButtonClick(evt, target);
-          await Promise.all([createCheckoutPromise, addLineItemsPromise]);
           assert.calledOnce(openWindowStub);
           assert.calledWith(openWindowStub, '', 'checkout', checkout.params);
           browserFeaturesStub.restore();
@@ -601,24 +632,23 @@ describe('Product Component class', () => {
           const browserFeaturesStub = sinon.stub(browserFeatures, 'default').value({
             windowOpen: () => false,
           });
+          createCheckoutStub.rejects();
           product.onButtonClick(evt, target);
           assert.notCalled(openWindowStub);
           browserFeaturesStub.restore();
         });
 
-        it('creates checkout and adds line items', async () => {
+        it('creates checkout with line items', () => {
           const selectedQuantity = 2;
           product.selectedQuantity = selectedQuantity;
 
           product.onButtonClick(evt, target);
-          await Promise.all([createCheckoutPromise, addLineItemsPromise]);
 
           assert.calledOnce(createCheckoutStub);
-          assert.calledOnce(addLineItemsStub);
-          assert.calledWith(addLineItemsStub, checkoutMock.id, [{
+          assert.calledWith(createCheckoutStub, {lineItems: [{
             variantId: 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0NQ==',
             quantity: selectedQuantity,
-          }]);
+          }]});
         });
       });
     });
@@ -1334,27 +1364,138 @@ describe('Product Component class', () => {
           });
 
           it('returns formatted money with selected variant price and money format from global config if there is a selected variant', () => {
-            product.selectedVariant = {price: 5};
+            product.selectedVariant = {
+              priceV2: {
+                amount: '5.00',
+                currencyCode: 'CAD',
+              },
+            };
             product.globalConfig = {moneyFormat: 'CAD'};
             assert.equal(product.formattedPrice, formattedMoney);
             assert.calledOnce(formatMoneyStub);
-            assert.calledWith(formatMoneyStub, product.selectedVariant.price, product.globalConfig.moneyFormat);
+            assert.calledWith(formatMoneyStub, product.selectedVariant.priceV2.amount, product.globalConfig.moneyFormat);
           });
         });
 
         describe('formattedCompareAtPrice', () => {
           it('returns empty string if there is no selected variant', () => {
             product.selectedVariant = null;
-            assert.equal(product.formattedPrice, '');
+            assert.equal(product.formattedCompareAtPrice, '');
+          });
+
+          it('returns empty string if there is no compare at price', () => {
+            product.selectedVariant.compareAtPriceV2 = null;
+            assert.equal(product.formattedCompareAtPrice, '');
           });
 
           it('returns formatted money with selected variant compare at price and money format from global config if there is a selected variant', () => {
-            product.selectedVariant = {compareAtPrice: 5};
+            product.selectedVariant = {
+              compareAtPriceV2: {
+                amount: '5.00',
+                currencyCode: 'CAD',
+              },
+            };
             product.globalConfig = {moneyFormat: 'CAD'};
-            assert.equal(product.formattedPrice, formattedMoney);
+            assert.equal(product.formattedCompareAtPrice, formattedMoney);
             assert.calledOnce(formatMoneyStub);
-            assert.calledWith(formatMoneyStub, product.selectedVariant.price, product.globalConfig.moneyFormat);
+            assert.calledWith(formatMoneyStub, product.selectedVariant.compareAtPriceV2.amount, product.globalConfig.moneyFormat);
           });
+        });
+
+        describe('formattedUnitPrice', () => {
+          it('returns an empty string if showUnitPrice is false', () => {
+            const showUnitPriceStub = sinon.stub(product, 'showUnitPrice').get(() => false);
+
+            assert.equal(product.formattedUnitPrice, '');
+
+            showUnitPriceStub.restore();
+          });
+
+          it('returns formatted money with the variant`s unit price and money format from global config if there is a selected variant with a unit price', () => {
+            const showUnitPriceStub = sinon.stub(product, 'showUnitPrice').get(() => true);
+            product.selectedVariant = {
+              unitPrice: {
+                amount: '10.00',
+                currencyCode: 'CAD',
+              },
+            };
+            product.globalConfig = {moneyFormat: 'CAD'};
+
+            assert.equal(product.formattedUnitPrice, formattedMoney);
+            assert.calledOnce(formatMoneyStub);
+            assert.calledWith(formatMoneyStub, product.selectedVariant.unitPrice.amount, product.globalConfig.moneyFormat);
+
+            showUnitPriceStub.restore();
+          });
+        });
+      });
+
+      describe('formattedUnitPriceBaseUnit', () => {
+        it('returns an empty string if showUnitPrice is false', () => {
+          const showUnitPriceStub = sinon.stub(product, 'showUnitPrice').get(() => false);
+
+          assert.equal(product.formattedUnitPriceBaseUnit, '');
+
+          showUnitPriceStub.restore();
+        });
+
+        it('returns a formatted base unit from the selected variant`s unit price measurement', () => {
+          const mockUnitPriceBaseUnit = '100ml';
+          product.selectedVariant = {
+            unitPriceMeasurement: {
+              referenceValue: '100',
+              referenceUnit: 'ML',
+            },
+          };
+
+          const showUnitPriceStub = sinon.stub(product, 'showUnitPrice').get(() => true);
+          const getUnitPriceBaseUnitStub = sinon.stub(getUnitPriceBaseUnit, 'default').returns(mockUnitPriceBaseUnit);
+          
+          assert.equal(product.formattedUnitPriceBaseUnit, mockUnitPriceBaseUnit);
+          assert.calledOnce(getUnitPriceBaseUnitStub);
+          assert.calledWith(getUnitPriceBaseUnitStub, product.selectedVariant.unitPriceMeasurement.referenceValue, product.selectedVariant.unitPriceMeasurement.referenceUnit);
+
+          showUnitPriceStub.restore();
+          getUnitPriceBaseUnitStub.restore();
+        });
+      });
+
+      describe('showUnitPrice', () => {
+        it('returns false if there is no selected variant', () => {
+          product.selectedVariant = null;
+
+          assert.equal(product.showUnitPrice, false);
+        });
+
+        it('returns false if the selected variant`s unit price is null', () => {
+          product.selectedVariant = {
+            unitPrice: null,
+          };
+
+          assert.equal(product.showUnitPrice, false);
+        });
+
+        it('returns false if the selected variant has a unit price and the unit price content option is false', () => {
+          product.selectedVariant = {
+            unitPrice: {
+              amount: '5.00',
+              currencyCode: 'CAD',
+            },
+          };
+          product.config.product.contents.unitPrice = false;
+
+          assert.equal(product.showUnitPrice, false);
+        });
+
+        it('returns true if the selected variant has a unit price and the unit price content option is true', () => {
+          product.selectedVariant = {
+            unitPrice: {
+              amount: '5.00',
+              currencyCode: 'CAD',
+            },
+          };
+
+          assert.equal(product.showUnitPrice, true);
         });
       });
 
@@ -1799,12 +1940,17 @@ describe('Product Component class', () => {
               },
             },
           });
-          product.selectedVariant = {compareAtPrice: '$5.00'};
+          product.selectedVariant = {
+            compareAtPriceV2: {
+              amount: '5.00',
+              currencyCode: 'CAD',
+            },
+          };
           assert.equal(product.priceClass, product.classes.product.loweredPrice);
         });
 
         it('returns empty string if selected variant does not have a compare at price', () => {
-          product.selectedVariant = {compareAtPrice: null};
+          product.selectedVariant = {compareAtPriceV2: null};
           assert.equal(product.priceClass, '');
         });
       });
@@ -2191,50 +2337,101 @@ describe('Product Component class', () => {
       });
 
       describe('trackingInfo', () => {
+        let expectedContentString;
+
         beforeEach(() => {
           product.config.product.buttonDestination = 'cart';
+          product.model.id = 'lakjjk3ls3546lslsdkjf==';
+          product.model.variants = [
+            {
+              id: 'Xkdljlejkskskl3Zsike',
+              title: 'variant 1',
+              priceV2: {
+                amount: '6.0',
+              },
+            },
+          ];
+          expectedContentString = Object.keys(product.options.contents).filter((key) => product.options.contents[key]).toString();
         });
 
-        it('returns an object with button destination if there is no selected variant', () => {
+        it('returns a tracking info object with first variant\'s info if there is no selected variant', () => {
           product.selectedVariant = null;
+
           const expectedObject = {
+            id: product.model.id,
+            name: product.model.title,
+            variantId: product.model.variants[0].id,
+            variantName: product.model.variants[0].title,
+            price: product.model.variants[0].priceV2.amount,
             destination: product.options.buttonDestination,
+            layout: product.options.layout,
+            contents: expectedContentString,
+            checkoutPopup: product.config.cart.popup,
+            sku: null,
           };
+
           assert.deepEqual(product.trackingInfo, expectedObject);
         });
 
-        it('returns an object with button destination, id, name, sku, and price if selected variant exists', () => {
+        it('returns a tracking info object with the selected variant\'s info if selected variant exists', () => {
           product.selectedVariant = {
-            productTitle: 'hat',
-            price: '$5.00',
+            title: 'hat',
+            id: 'AAkdlfjljwijk3j35j3ljksLqQkslj',
+            priceV2: {
+              amount: '5.00',
+              currencyCode: 'CAD',
+            },
           };
           const expectedObject = {
+            id: product.model.id,
+            name: product.model.title,
+            variantId: product.selectedVariant.id,
+            variantName: product.selectedVariant.title,
+            price: product.selectedVariant.priceV2.amount,
             destination: product.options.buttonDestination,
-            id: product.id,
-            name: product.selectedVariant.productTitle,
+            layout: product.options.layout,
+            contents: expectedContentString,
+            checkoutPopup: product.config.cart.popup,
             sku: null,
-            price: product.selectedVariant.price,
           };
           assert.deepEqual(product.trackingInfo, expectedObject);
         });
       });
 
       describe('selectedVariantTrackingInfo', () => {
-        it('returns an object with selected variant id, name, quantity, sku, and price', () => {
+        it('returns a tracking info object with selected variant info', () => {
           product.selectedVariant = {
             id: '456',
-            productTitle: 'hat',
-            price: '$5.00',
+            title: 'hat',
+            priceV2: {
+              amount: '5.00',
+              currencyCode: 'CAD',
+            },
           };
           product.selectedQuantity = 5;
           const expectedObject = {
             id: product.selectedVariant.id,
-            name: product.selectedVariant.productTitle,
+            name: product.selectedVariant.title,
+            productId: product.model.id,
+            productName: product.model.title,
             quantity: product.selectedQuantity,
             sku: null,
-            price: product.selectedVariant.price,
+            price: product.selectedVariant.priceV2.amount,
           };
           assert.deepEqual(product.selectedVariantTrackingInfo, expectedObject);
+        });
+      });
+
+      describe('productTrackingInfo', () => {
+        beforeEach(() => {
+          product.model.id = 'Xkldjfjkej3l4jl3j5ljsodjflll';
+        });
+
+        it('returns a tracking info object with product id', () => {
+          const expectedObject = {
+            id: product.model.id,
+          };
+          assert.deepEqual(product.productTrackingInfo, expectedObject);
         });
       });
 

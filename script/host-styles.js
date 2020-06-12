@@ -1,10 +1,19 @@
 var fs = require('fs');
 var postcss = require('postcss');
-var cssnext = require('postcss-cssnext');
+var presetenv = require('postcss-preset-env')({
+  stage: 1,
+  features: {
+    'custom-properties': {
+      preserve: false,
+    },
+    'color-mod-function': true,
+  },
+});
 var cssimports = require('postcss-import');
+var csscalc = require('postcss-calc');
 
 fs.readdirSync('src/styles/host/sass').forEach(function(file) {
-  postcss([cssimports, cssnext])
+  postcss([cssimports, presetenv, csscalc])
     .process(fs.readFileSync('src/styles/host/sass/' + file), {from: 'src/styles/host/sass/' + file})
     .then(function(result) {
       var js = result.css.toString();

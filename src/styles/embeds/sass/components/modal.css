@@ -161,7 +161,7 @@
 
   .shopify-buy__btn--close {
     top: -60px;
-    color: color(var(--color-white) lightness(+ 10%));
+    color: color-mod(var(--color-white) lightness(+10%));
 
     &:hover {
       color: var(--color-white);

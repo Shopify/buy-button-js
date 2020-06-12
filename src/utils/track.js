@@ -28,7 +28,7 @@ export default class Tracker {
         if (properties.prevQuantity && (properties.quantity < properties.prevQuantity)) {
           return;
         }
-        this.track('Added Product', properties);
+        return this.track('Added Product', properties);
       default:
         return this.track(eventName, properties);
     }

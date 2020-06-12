@@ -43,6 +43,10 @@ const testProduct = {
       id: 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0NQ==',
       productId: 123,
       price: '123.00',
+      priceV2: {
+        amount: '123.00',
+        currencyCode: 'CAD',
+      },
       title: 'sloth / small',
       available: true,
       image: {
@@ -64,6 +68,10 @@ const testProduct = {
       id: 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0Ng==',
       productId: 123,
       price: '1.00',
+      priceV2: {
+        amount: '1.00',
+        currencyCode: 'CAD',
+      },
       title: 'shark / small',
       available: true,
       image: {
@@ -85,6 +93,10 @@ const testProduct = {
       id: 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0Nw==',
       productId: 123,
       price: '999.99',
+      priceV2: {
+        amount: '999.99',
+        currencyCode: 'CAD',
+      },
       title: 'shark / large',
       available: true,
       image: {
@@ -106,6 +118,10 @@ const testProduct = {
       id: 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0OA==',
       productId: 123,
       price: '0.00',
+      priceV2: {
+        amount: '0.00',
+        currencyCode: 'CAD',
+      },
       title: 'cat / small',
       available: false,
       selectedOptions: [

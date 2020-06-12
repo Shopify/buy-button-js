@@ -6,6 +6,7 @@ import windowUtils from '../utils/window-utils';
 import formatMoney from '../utils/money';
 import normalizeConfig from '../utils/normalize-config';
 import browserFeatures from '../utils/detect-features';
+import getUnitPriceBaseUnit from '../utils/unit-price';
 import ProductView from '../views/product';
 import ProductUpdater from '../updaters/product';
 
@@ -177,7 +178,7 @@ export default class Product extends Component {
     if (!this.selectedVariant) {
       return '';
     }
-    return formatMoney(this.selectedVariant.price, this.globalConfig.moneyFormat);
+    return formatMoney(this.selectedVariant.priceV2.amount, this.globalConfig.moneyFormat);
   }
 
   /**
@@ -185,10 +186,48 @@ export default class Product extends Component {
    * @return {String}
    */
   get formattedCompareAtPrice() {
-    if (!this.selectedVariant) {
+    if (!this.selectedVariant || !this.selectedVariant.compareAtPriceV2) {
       return '';
     }
-    return formatMoney(this.selectedVariant.compareAtPrice, this.globalConfig.moneyFormat);
+    return formatMoney(this.selectedVariant.compareAtPriceV2.amount, this.globalConfig.moneyFormat);
+  }
+
+  /**
+   * get whether unit price string should be displayed
+   * @return {Boolean}
+   */
+
+  get showUnitPrice() {
+    if (!this.selectedVariant || !this.selectedVariant.unitPrice || !this.options.contents.unitPrice) {
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * get formatted variant unit price amount based on moneyFormat
+   * @return {String}
+   */
+  get formattedUnitPrice() {
+    if (!this.showUnitPrice) {
+      return '';
+    }
+
+    return formatMoney(this.selectedVariant.unitPrice.amount, this.globalConfig.moneyFormat);
+  }
+
+  /**
+   * get formatted variant unit price base unit
+   * @return {String}
+   */
+  get formattedUnitPriceBaseUnit() {
+    if (!this.showUnitPrice) {
+      return '';
+    }
+
+    const unitPriceMeasurement = this.selectedVariant.unitPriceMeasurement;
+
+    return getUnitPriceBaseUnit(unitPriceMeasurement.referenceValue, unitPriceMeasurement.referenceUnit);
   }
 
   /**
@@ -214,6 +253,9 @@ export default class Product extends Component {
       priceClass: this.priceClass,
       formattedPrice: this.formattedPrice,
       formattedCompareAtPrice: this.formattedCompareAtPrice,
+      showUnitPrice: this.showUnitPrice,
+      formattedUnitPrice: this.formattedUnitPrice,
+      formattedUnitPriceBaseUnit: this.formattedUnitPriceBaseUnit,
       carouselIndex: 0,
       carouselImages: this.carouselImages,
     });
@@ -289,7 +331,7 @@ export default class Product extends Component {
   }
 
   get priceClass() {
-    return this.selectedVariant && this.selectedVariant.compareAtPrice ? this.classes.product.loweredPrice : '';
+    return this.selectedVariant && this.selectedVariant.compareAtPriceV2 ? this.classes.product.loweredPrice : '';
   }
 
   get isButton() {
@@ -420,20 +462,22 @@ export default class Product extends Component {
    * @return {Object}
    */
   get trackingInfo() {
-    const info = {
+    const variant = this.selectedVariant || this.model.variants[0];
+    const contents = this.options.contents;
+    const contentString = Object.keys(contents).filter((key) => contents[key]).toString();
+
+    return {
+      id: this.model.id,
+      name: this.model.title,
+      variantId: variant.id,
+      variantName: variant.title,
+      price: variant.priceV2.amount,
       destination: this.options.buttonDestination,
+      layout: this.options.layout,
+      contents: contentString,
+      checkoutPopup: this.config.cart.popup,
+      sku: null,
     };
-
-    if (this.selectedVariant) {
-      Object.assign(info, {
-        id: this.id,
-        name: this.selectedVariant.productTitle,
-        sku: null,
-        price: this.selectedVariant.price,
-      });
-    }
-
-    return info;
   }
 
   /**
@@ -444,10 +488,22 @@ export default class Product extends Component {
     const variant = this.selectedVariant;
     return {
       id: variant.id,
-      name: variant.productTitle,
+      name: variant.title,
+      productId: this.model.id,
+      productName: this.model.title,
       quantity: this.selectedQuantity,
+      price: variant.priceV2.amount,
       sku: null,
-      price: variant.price,
+    };
+  }
+
+  /**
+   * get info about product to be sent to tracker
+   * @return {Object}
+   */
+  get productTrackingInfo() {
+    return {
+      id: this.model.id,
     };
   }
 
@@ -556,9 +612,9 @@ export default class Product extends Component {
    * @return {Promise} promise resolving to model data.
    */
   sdkFetch() {
-    if (this.storefrontId && Array.isArray(this.storefrontId)) {
+    if (this.storefrontId && Array.isArray(this.storefrontId) && this.storefrontId[0]) {
       return this.props.client.product.fetch(this.storefrontId[0]);
-    } else if (this.storefrontId) {
+    } else if (this.storefrontId && !Array.isArray(this.storefrontId)) {
       return this.props.client.product.fetch(this.storefrontId);
     } else if (this.handle) {
       return this.props.client.product.fetchByHandle(this.handle).then((product) => product);
@@ -595,6 +651,7 @@ export default class Product extends Component {
       }
     } else if (this.options.buttonDestination === 'modal') {
       this.props.setActiveEl(target);
+      this.props.tracker.track('Open modal', this.productTrackingInfo);
       this.openModal();
     } else if (this.options.buttonDestination === 'onlineStore') {
       this.openOnlineStore();
@@ -609,12 +666,17 @@ export default class Product extends Component {
       } else {
         checkoutWindow = window;
       }
+      const input = {
+        lineItems: [
+          {
+            variantId: this.selectedVariant.id,
+            quantity: this.selectedQuantity,
+          },
+        ],
+      };
 
-      this.props.client.checkout.create().then((checkout) => {
-        const lineItem = {variantId: this.selectedVariant.id, quantity: this.selectedQuantity};
-        this.props.client.checkout.addLineItems(checkout.id, [lineItem]).then((updatedCheckout) => {
-          checkoutWindow.location = updatedCheckout.webUrl;
-        });
+      this.props.client.checkout.create(input).then((checkout) => {
+        checkoutWindow.location = checkout.webUrl;
       });
     }
   }

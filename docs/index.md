@@ -17,16 +17,16 @@ This tool is intended for use by developers who are familiar with JavaScript and
 
 ## Current Support
 
-| Internet Explorer     | Chrome, Edge, Firefox     | Safari   | Opera   | iOS   | Android   |
-| :-------------------- | :------------------------ | :------- | :------ | :---- | :-------- |
-| 10+                   | (Current - 1) or Current  | 5.1+     | 12.1x, (Current - 1) or Current | 6.1+ | 2.3, 4.0+
+| Internet Explorer     | Chrome, Edge, Firefox, Opera     | Safari    | iOS     | Android   |
+| :-------------------- | :------------------------------- | :-------- | :------ | :-------- |
+| 11+                   | (Current - 1) or Current         | 8+        | 8+      | 4.4+
 
 ## Including the library
 
-Include a script tag with a specific version of the library specified. The example below uses version `0.9.1`, but any version from `0.1.0` onwards is available on CDN. You can find the versions on [NPM](https://www.npmjs.com/package/@shopify/buy-button-js).
+Include a script tag with a specific version of the library specified. The example below uses version `1.0.0`, but the latest version can be found on [NPM](https://www.npmjs.com/package/@shopify/buy-button-js).
 
 ```html
-<script src="http://sdks.shopifycdn.com/buy-button/0.9.1/buybutton.js"></script>
+<script src="http://sdks.shopifycdn.com/buy-button/1.0.0/buybutton.js"></script>
 ```
 
 ## Creating a Shop Client
