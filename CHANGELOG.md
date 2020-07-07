@@ -1,8 +1,12 @@
 # Changelog
 
-### v2.1.4 (July 7, 2020)
+### v2.1.5 (July 7, 2020)
 
 - Updated `JS Buy SDK` to `v2.11.0`, which uses Storefront API version [2020-07](https://shopify.dev/concepts/about-apis/versioning/release-notes/2020-07) ([#699](https://github.com/Shopify/buy-button-js/pull/699))
+
+### v2.1.4 (July 7, 2020)
+
+- Updated changelog for [v2.1.3](https://github.com/Shopify/buy-button-js/pull/685)
 
 ### v2.1.3 (May 12, 2020)
 
