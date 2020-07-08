@@ -11,6 +11,9 @@ export default class ModalView extends View {
    */
   close() {
     this.component.isVisible = false;
+    if (this.wrapper && this._closeOnBgClick) {
+      this.wrapper.removeEventListener('click', this._closeOnBgClick);
+    }
     removeClassFromElement('is-active', this.wrapper);
     removeClassFromElement('is-active', this.document.body);
     removeClassFromElement('shopify-buy-modal-is-active', document.body);
@@ -36,7 +39,8 @@ export default class ModalView extends View {
    */
   delegateEvents() {
     super.delegateEvents();
-    this.wrapper.addEventListener('click', this.component.closeOnBgClick.bind(this.component));
+    this._closeOnBgClick = this.component.closeOnBgClick.bind(this.component);
+    this.wrapper.addEventListener('click', this._closeOnBgClick);
   }
 
   render() {
