@@ -1,5 +1,11 @@
 # Changelog
 
+### v2.1.6 (July 8, 2020)
+
+- Fixed disabled button css class [#681](https://github.com/shopify/buy-button-js/pull/681)
+- Show discount code within the cart when discount title is unavailable [#686](https://github.com/Shopify/buy-button-js/pull/686)
+- Prevent adding multiple close modal event listeners [#692](https://github.com/shopify/buy-button-js/pull/692)
+
 ### v2.1.5 (July 7, 2020)
 
 - Updated `JS Buy SDK` to `v2.11.0`, which uses Storefront API version [2020-07](https://shopify.dev/concepts/about-apis/versioning/release-notes/2020-07) ([#699](https://github.com/Shopify/buy-button-js/pull/699))
