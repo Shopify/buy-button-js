@@ -36,7 +36,7 @@ describe('Cart class', () => {
     }, {
       client: ShopifyBuy.buildClient({
         domain: 'test.myshopify.com',
-        storefrontAccessToken: 123
+        storefrontAccessToken: 123,
       }),
       browserFeatures: {
         transition: true,
@@ -45,7 +45,7 @@ describe('Cart class', () => {
       },
       tracker: {
         trackMethod: (fn) => {
-          return function () {
+          return function() {
             fn(...arguments);
           };
         },
@@ -275,7 +275,7 @@ describe('Cart class', () => {
 
         assert.include(cartLineItemsHtml, 'data-element="lineItem.price"');
         assert.include(cartLineItemsHtml, `$${discountedPrice}.00`);
-        
+
         assert.calledThrice(formatMoneySpy);
         assert.calledWith(formatMoneySpy.firstCall, fullPrice, moneyFormat);
         assert.calledWith(formatMoneySpy.secondCall, discountAmount, moneyFormat);
@@ -326,7 +326,58 @@ describe('Cart class', () => {
 
         assert.include(cartLineItemsHtml, 'data-element="lineItem.price"');
         assert.include(cartLineItemsHtml, `$${discountedPrice}.00`);
-        
+
+        assert.calledThrice(formatMoneySpy);
+        assert.calledWith(formatMoneySpy.firstCall, fullPrice, moneyFormat);
+        assert.calledWith(formatMoneySpy.secondCall, discountAmount, moneyFormat);
+        assert.calledWith(formatMoneySpy.thirdCall, discountedPrice, moneyFormat);
+      });
+
+      it('renders the discount information with the code as discount title if the discount allocation exists with a target of `EXPLICIT` and the discount title does not exist', () => {
+        const discountAmount = '1.00';
+        const discountCode = 'BOGO';
+        const quantity = 2;
+        cart.lineItemCache = [{
+          id: 123,
+          title: 'test',
+          variantTitle: 'test2',
+          quantity,
+          variant: {
+            image: {
+              src: 'cdn.shopify.com/image.jpg',
+            },
+            priceV2: {
+              amount: variantAmount,
+              currencyCode: 'CAD',
+            },
+          },
+          discountAllocations: [
+            {
+              discountApplication: {
+                code: discountCode,
+                targetSelection: 'EXPLICIT',
+              },
+              allocatedAmount: {
+                amount: discountAmount,
+                currencyCode: 'CAD',
+              },
+            },
+          ],
+        }];
+
+        const cartLineItemsHtml = cart.lineItemsHtml;
+        const fullPrice = variantAmount * quantity;
+        const discountedPrice = fullPrice - discountAmount;
+
+        assert.include(cartLineItemsHtml, 'data-element="lineItem.fullPrice"');
+        assert.include(cartLineItemsHtml, `$${fullPrice}.00`);
+
+        assert.include(cartLineItemsHtml, 'data-element="lineItem.discount"');
+        assert.include(cartLineItemsHtml, `${discountCode} (-$${discountAmount})`);
+
+        assert.include(cartLineItemsHtml, 'data-element="lineItem.price"');
+        assert.include(cartLineItemsHtml, `$${discountedPrice}.00`);
+
         assert.calledThrice(formatMoneySpy);
         assert.calledWith(formatMoneySpy.firstCall, fullPrice, moneyFormat);
         assert.calledWith(formatMoneySpy.secondCall, discountAmount, moneyFormat);
@@ -377,6 +428,7 @@ describe('Cart class', () => {
     });
   });
 
+
   describe('imageForLineItem', () => {
     beforeEach(() => {
       cart.lineItem = {
@@ -386,9 +438,9 @@ describe('Cart class', () => {
         line_price: 20,
         quantity: 1,
         variant: {
-          image: { src: 'cdn.shopify.com/variant_image.jpg'},
+          image: {src: 'cdn.shopify.com/variant_image.jpg'},
         },
-      }
+      };
     });
 
     it('returns the variant image if it exists', () => {
@@ -416,7 +468,7 @@ describe('Cart class', () => {
     });
 
     it('calls fetch on client', () => {
-      localStorage.setItem(cart.localStorageCheckoutKey, 12345)
+      localStorage.setItem(cart.localStorageCheckoutKey, 12345);
       const fetchCart = sinon.stub(cart.props.client.checkout, 'fetch').returns(Promise.resolve({id: 12345, lineItems: []}));
 
       return cart.fetchData().then((data) => {
@@ -428,7 +480,7 @@ describe('Cart class', () => {
 
     it('resolves to null and removes localStorage key if checkout fetch fails', () => {
       localStorage.setItem(cart.localStorageCheckoutKey, 1);
-      const fetchCart = sinon.stub(cart.props.client.checkout, 'fetch').returns(Promise.reject({errors: [{ message: 'rejected.' }]}));
+      const fetchCart = sinon.stub(cart.props.client.checkout, 'fetch').returns(Promise.reject({errors: [{message: 'rejected.'}]}));
 
       return cart.fetchData().then((data) => {
         assert.deepEqual(data, null);
@@ -440,7 +492,7 @@ describe('Cart class', () => {
 
     it('resolves to null and removes the localStorage key if checkout is completed', () => {
       localStorage.setItem(cart.localStorageCheckoutKey, 123);
-      const fetchCart = sinon.stub(cart.props.client.checkout, 'fetch').returns(Promise.resolve({ completedAt: "04-12-2018", lineItems: []}));
+      const fetchCart = sinon.stub(cart.props.client.checkout, 'fetch').returns(Promise.resolve({completedAt: '04-12-2018', lineItems: []}));
 
       return cart.fetchData().then((data) => {
         assert.equal(data, null);
@@ -483,8 +535,8 @@ describe('Cart class', () => {
 
   describe('fetchMoneyFormat()', () => {
     it('calls fetchShopInfo on client', () => {
-      localStorage.setItem(cart.localStorageCheckoutKey, 12345)
-      const fetchMoneyFormat = sinon.stub(cart.props.client.shop, 'fetchInfo').returns(Promise.resolve({ moneyFormat: '₿{{amount}}'}));
+      localStorage.setItem(cart.localStorageCheckoutKey, 12345);
+      const fetchMoneyFormat = sinon.stub(cart.props.client.shop, 'fetchInfo').returns(Promise.resolve({moneyFormat: '₿{{amount}}'}));
 
       return cart.fetchMoneyFormat().then((data) => {
         assert.deepEqual(data, '₿{{amount}}');
@@ -518,7 +570,7 @@ describe('Cart class', () => {
 
   describe('setQuantity()', () => {
     const node = {
-      getAttribute: () => 1234
+      getAttribute: () => 1234,
     };
 
     beforeEach(() => {
@@ -533,7 +585,7 @@ describe('Cart class', () => {
             },
           },
         }],
-      }
+      };
       cart.updateItem = sinon.spy();
       cart.cartItemTrackingInfo = sinon.spy();
     });
@@ -564,8 +616,8 @@ describe('Cart class', () => {
 
       cart.model = {
         id: 123456,
-      }
-      updateLineItemsStub = sinon.stub(cart.props.client.checkout, 'updateLineItems').returns(Promise.resolve({lineItems: [{id: lineItemId, quantity: lineItemQuantity}]}))
+      };
+      updateLineItemsStub = sinon.stub(cart.props.client.checkout, 'updateLineItems').returns(Promise.resolve({lineItems: [{id: lineItemId, quantity: lineItemQuantity}]}));
       addClassToElementStub = sinon.stub(elementClass, 'addClassToElement');
 
       cart.view.render = sinon.spy();
@@ -797,7 +849,7 @@ describe('Cart class', () => {
       return cart.init(data).then((returnValue) => {
         assert.deepEqual(cart, returnValue);
       });
-    }); 
+    });
 
     it('calls fetchMoneyFormat when moneyFormat has not been set', () => {
       cart.moneyFormat = null;
@@ -830,7 +882,7 @@ describe('Cart class', () => {
     });
 
     it('calls init on the toggle with the cart model`s line items', () => {
-      const lineItems = [{id: 123, quantity: 5}]
+      const lineItems = [{id: 123, quantity: 5}];
       superInitStub.resolves({model: {lineItems}});
 
       return cart.init(data).then(() => {
@@ -1227,6 +1279,32 @@ describe('Cart class', () => {
         text: discountTitle,
         amount: `-$${discountPercentage / 100 * lineItemSubtotal}.00`,
       });
+    });
+
+    it('returns discount code as discount title when target selection is `ALL` and discount title does not exists', () => {
+      const discountCode = 'BOGO';
+      const discountAmount = '2.00';
+
+      cart.model = {
+        lineItemsSubtotalPrice: {
+          amount: '20.0',
+          currencyCode: 'CAD',
+        },
+        discountApplications: [
+          {
+            code: discountCode,
+            targetSelection: 'ALL',
+            value: {
+              amount: discountAmount,
+              currencyCode: 'CAD',
+            },
+          },
+        ],
+      };
+
+      const discounts = cart.cartDiscounts;
+      assert.equal(discounts.length, 1);
+      assert.equal(discounts[0].text, discountCode);
     });
   });
 

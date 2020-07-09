@@ -26,7 +26,8 @@ describe('Modal View class', () => {
         },
       });
       const html = 'html';
-      const htmlString = '<div class="overlay"><div class="modal">html</div></div>';
+      const htmlString =
+        '<div class="overlay"><div class="modal">html</div></div>';
       assert.equal(modal.view.wrapTemplate(html), htmlString);
     });
   });
@@ -35,7 +36,11 @@ describe('Modal View class', () => {
     let removeClassFromElementStub;
 
     beforeEach(() => {
-      removeClassFromElementStub = sinon.stub(elementClass, 'removeClassFromElement');
+      removeClassFromElementStub = sinon.stub(
+        elementClass,
+        'removeClassFromElement'
+      );
+
       modal.view = Object.defineProperty(modal.view, 'document', {
         value: document,
       });
@@ -53,21 +58,67 @@ describe('Modal View class', () => {
     it('removes "is-active" class from wrapper and document body', () => {
       modal.view.wrapper = document.createElement('div');
       modal.view.close();
-      assert.calledWith(removeClassFromElementStub.getCall(0), 'is-active', modal.view.wrapper);
-      assert.calledWith(removeClassFromElementStub.getCall(1), 'is-active', modal.view.document.body);
+      assert.calledWith(
+        removeClassFromElementStub.getCall(0),
+        'is-active',
+        modal.view.wrapper
+      );
+      assert.calledWith(
+        removeClassFromElementStub.getCall(1),
+        'is-active',
+        modal.view.document.body
+      );
     });
 
     it('removes "shopify-buy-modal-is-active" class from document body and html element', () => {
       modal.view.close();
-      assert.calledWith(removeClassFromElementStub.getCall(2), 'shopify-buy-modal-is-active', document.body);
-      assert.calledWith(removeClassFromElementStub.getCall(3), 'shopify-buy-modal-is-active', document.getElementsByTagName('html')[0]);
+      assert.calledWith(
+        removeClassFromElementStub.getCall(2),
+        'shopify-buy-modal-is-active',
+        document.body
+      );
+      assert.calledWith(
+        removeClassFromElementStub.getCall(3),
+        'shopify-buy-modal-is-active',
+        document.getElementsByTagName('html')[0]
+      );
     });
 
     it('removes "is-active" and "is-block" classes from node if iframe does not exist', () => {
       modal.view.iframe = null;
       modal.view.close();
-      assert.calledWith(removeClassFromElementStub.getCall(4), 'is-active', modal.node);
-      assert.calledWith(removeClassFromElementStub.getCall(5), 'is-block', modal.node);
+      assert.calledWith(
+        removeClassFromElementStub.getCall(4),
+        'is-active',
+        modal.node
+      );
+      assert.calledWith(
+        removeClassFromElementStub.getCall(5),
+        'is-block',
+        modal.node
+      );
+    });
+
+    describe('removing wrapper click event', () => {
+      it('removes click event from wrapper if wrapper exists', () => {
+        const removeEventListenerSpy = sinon.spy();
+        modal.view.wrapper = {
+          removeEventListener: removeEventListenerSpy,
+        };
+        modal.view._closeOnBgClick = sinon.stub();
+        modal.view.close();
+        assert.calledOnce(removeEventListenerSpy);
+        assert.calledWith(removeEventListenerSpy, 'click', sinon.match.func);
+      });
+
+      it('does not remove click event from wrapper if no internal click event is set', () => {
+        const removeEventListenerSpy = sinon.spy();
+        modal.view.wrapper = {
+          removeEventListener: removeEventListenerSpy,
+        };
+        modal.view.close();
+        assert.notCalled(removeEventListenerSpy);
+      });
     });
 
     describe('when iframe exists', () => {
@@ -94,7 +145,11 @@ describe('Modal View class', () => {
         modal.props.browserFeatures.transition = true;
         modal.view.close();
         assert.calledOnce(addEventListenerSpy);
-        assert.calledWith(addEventListenerSpy, 'transitionend', sinon.match.func);
+        assert.calledWith(
+          addEventListenerSpy,
+          'transitionend',
+          sinon.match.func
+        );
         addEventListenerSpy.getCall(0).args[1]();
         assert.calledWith(removeClassSpy.getCall(1), 'is-active');
       });
@@ -138,6 +193,10 @@ describe('Modal View class', () => {
       addEventListenerSpy.getCall(0).args[1]();
       assert.calledOnce(closeOnBgClickStub);
     });
+
+    it('sets a local copy of closeOnBgClick function', () => {
+      assert.isFunction(modal.view._closeOnBgClick);
+    });
   });
 
   describe('render', () => {
@@ -177,15 +236,30 @@ describe('Modal View class', () => {
       it('adds "is-active" class to document body and wrapper', () => {
         modal.view.wrapper = document.createElement('div');
         modal.view.render();
-        assert.calledWith(addClassToElementStub.getCall(0), 'is-active', modal.view.document.body);
-        assert.calledWith(addClassToElementStub.getCall(3), 'is-active', modal.view.wrapper);
-
+        assert.calledWith(
+          addClassToElementStub.getCall(0),
+          'is-active',
+          modal.view.document.body
+        );
+        assert.calledWith(
+          addClassToElementStub.getCall(3),
+          'is-active',
+          modal.view.wrapper
+        );
       });
 
       it('adds "shopify-buy-modal-is-active" class to document body and html element', () => {
         modal.view.render();
-        assert.calledWith(addClassToElementStub.getCall(1), 'shopify-buy-modal-is-active', document.body);
-        assert.calledWith(addClassToElementStub.getCall(2), 'shopify-buy-modal-is-active', document.getElementsByTagName('html')[0]);
+        assert.calledWith(
+          addClassToElementStub.getCall(1),
+          'shopify-buy-modal-is-active',
+          document.body
+        );
+        assert.calledWith(
+          addClassToElementStub.getCall(2),
+          'shopify-buy-modal-is-active',
+          document.getElementsByTagName('html')[0]
+        );
       });
 
       it('adds "is-active" and "is-block" classes to iframe if iframe exists', () => {
@@ -202,8 +276,16 @@ describe('Modal View class', () => {
       it('adds "is-active" and "is-block" classes to node if iframe does not exist', () => {
         modal.view.iframe = null;
         modal.view.render();
-        assert.calledWith(addClassToElementStub.getCall(4), 'is-active', modal.node);
-        assert.calledWith(addClassToElementStub.getCall(5), 'is-block', modal.node);
+        assert.calledWith(
+          addClassToElementStub.getCall(4),
+          'is-active',
+          modal.node
+        );
+        assert.calledWith(
+          addClassToElementStub.getCall(5),
+          'is-block',
+          modal.node
+        );
       });
     });
   });
