@@ -225,7 +225,6 @@ export default class ProductSet extends Component {
       }),
     });
 
-    // fix for #672
     if (this.config.productSet.iframe === false) {
       productConfig.node = this.node.querySelector(`.${this.classes.productSet.products}`);
     }
