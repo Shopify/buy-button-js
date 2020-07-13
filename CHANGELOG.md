@@ -1,5 +1,9 @@
 # Changelog
 
+### v2.1.7 (July 13, 2020)
+
+- Update product set component to use the correct container node when in non-iFrame mode [#680](https://github.com/Shopify/buy-button-js/pull/680)
+
 ### v2.1.6 (July 8, 2020)
 
 - Fixed disabled button css class [#681](https://github.com/shopify/buy-button-js/pull/681)
