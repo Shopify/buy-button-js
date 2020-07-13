@@ -225,6 +225,10 @@ export default class ProductSet extends Component {
       }),
     });
 
+    if (this.config.productSet.iframe === false) {
+      productConfig.node = this.node.querySelector(`.${this.classes.productSet.products}`);
+    }
+
     const promises = this.model.products.map((productModel) => {
       const product = new Product(productConfig, this.props);
       this.products.push(product);
