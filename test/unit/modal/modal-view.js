@@ -1,6 +1,7 @@
 import Modal from '../../../src/components/modal';
 import View from '../../../src/view';
 import * as elementClass from '../../../src/utils/element-class';
+import * as focusUtils from '../../../src/utils/focus';
 
 describe('Modal View class', () => {
   const props = {
@@ -34,12 +35,15 @@ describe('Modal View class', () => {
 
   describe('close', () => {
     let removeClassFromElementStub;
+    let removeTrapFocusStub;
 
     beforeEach(() => {
       removeClassFromElementStub = sinon.stub(
         elementClass,
         'removeClassFromElement'
       );
+
+      removeTrapFocusStub = sinon.stub(focusUtils, 'removeTrapFocus');
 
       modal.view = Object.defineProperty(modal.view, 'document', {
         value: document,
@@ -48,6 +52,7 @@ describe('Modal View class', () => {
 
     afterEach(() => {
       removeClassFromElementStub.restore();
+      removeTrapFocusStub.restore();
     });
 
     it('sets the modal to not visible', () => {
@@ -97,6 +102,13 @@ describe('Modal View class', () => {
         'is-block',
         modal.node
       );
+    });
+
+    it('calls removeTrapFocus with the wrapper', () => {
+      modal.view.close();
+
+      assert.calledOnce(removeTrapFocusStub);
+      assert.calledWith(removeTrapFocusStub.firstCall, modal.view.wrapper);
     });
 
     describe('removing wrapper click event', () => {
