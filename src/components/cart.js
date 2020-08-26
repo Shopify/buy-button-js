@@ -7,6 +7,7 @@ import formatMoney from '../utils/money';
 import CartView from '../views/cart';
 import CartUpdater from '../updaters/cart';
 import {addClassToElement} from '../utils/element-class';
+import {removeTrapFocus} from '../utils/focus';
 
 export const NO_IMG_URL = '//sdks.shopifycdn.com/buy-button/latest/no-image.jpg';
 
@@ -291,6 +292,7 @@ export default class Cart extends Component {
   close() {
     this.isVisible = false;
     this.view.render();
+    removeTrapFocus(this.view.wrapper);
   }
 
   /**

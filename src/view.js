@@ -3,6 +3,7 @@ import Template from './template';
 import Iframe from './iframe';
 import styles from './styles/embeds/all';
 import {addClassToElement, removeClassFromElement} from './utils/element-class';
+import {trapFocus} from './utils/focus';
 
 const delegateEventSplitter = /^(\S+)\s*(.*)$/;
 const ESC_KEY = 27;
@@ -187,13 +188,10 @@ export default class View {
   }
 
   /**
-   * Focus first focusable element in wrapper.
+   * Trap focus in the wrapper.
    */
   setFocus() {
-    const focusable = this.wrapper.querySelectorAll('a, button, input, select')[0];
-    if (focusable) {
-      focusable.focus();
-    }
+    trapFocus(this.wrapper);
   }
 
   /**

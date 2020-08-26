@@ -1,5 +1,6 @@
 import View from '../view';
 import {addClassToElement, removeClassFromElement} from '../utils/element-class';
+import {removeTrapFocus} from '../utils/focus';
 
 export default class ModalView extends View {
   wrapTemplate(html) {
@@ -11,6 +12,7 @@ export default class ModalView extends View {
    */
   close() {
     this.component.isVisible = false;
+    removeTrapFocus(this.wrapper);
     if (this.wrapper && this._closeOnBgClick) {
       this.wrapper.removeEventListener('click', this._closeOnBgClick);
     }

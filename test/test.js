@@ -24,6 +24,7 @@ import './unit/money';
 import './unit/normalize-config';
 import './unit/detect-features';
 import './unit/unit-price';
+import './unit/focus';
 
 window.chai = chai;
 window.sinon = sinon;

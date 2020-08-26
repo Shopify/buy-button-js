@@ -8,6 +8,7 @@ import CartView from '../../src/views/cart';
 import ShopifyBuy from '../../src/buybutton';
 import * as formatMoney from '../../src/utils/money';
 import * as elementClass from '../../src/utils/element-class';
+import * as focusUtils from '../../src/utils/focus';
 
 let cart;
 
@@ -1337,6 +1338,38 @@ describe('Cart class', () => {
         quantity: 5,
         sku: null,
       });
+    });
+  });
+
+
+  describe('close()', () => {
+    let viewRenderSpy;
+    let removeTrapFocusStub;
+
+    beforeEach(() => {
+      viewRenderSpy = sinon.spy();
+      cart.view.render = viewRenderSpy;
+      removeTrapFocusStub = sinon.stub(focusUtils, 'removeTrapFocus');
+      cart.isVisible = true;
+
+      cart.close();
+    });
+
+    afterEach(() => {
+      removeTrapFocusStub.restore();
+    });
+
+    it('sets isVisible to false', () => {
+      assert.equal(cart.isVisible, false);
+    });
+
+    it('calls the view`s render function', () => {
+      assert.calledOnce(viewRenderSpy);
+    });
+
+    it('calls removeTrapFocus with the view wrapper', () => {
+      assert.calledOnce(removeTrapFocusStub);
+      assert.calledWith(removeTrapFocusStub.firstCall, cart.view.wrapper);
     });
   });
 });
