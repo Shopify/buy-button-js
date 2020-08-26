@@ -1378,14 +1378,10 @@ describe('Product Component class', () => {
         });
 
         describe('formattedCompareAtPrice', () => {
-          it('returns empty string if there is no selected variant', () => {
-            product.selectedVariant = null;
-            assert.equal(product.formattedCompareAtPrice, '');
-          });
-
           it('returns empty string if there is no compare at price', () => {
-            product.selectedVariant.compareAtPriceV2 = null;
+            const hasCompareAtPriceStub = sinon.stub(product, 'hasCompareAtPrice').get(() => false);
             assert.equal(product.formattedCompareAtPrice, '');
+            hasCompareAtPriceStub.restore();
           });
 
           it('returns formatted money with selected variant compare at price and money format from global config if there is a selected variant', () => {
@@ -1395,10 +1391,12 @@ describe('Product Component class', () => {
                 currencyCode: 'CAD',
               },
             };
+            const hasCompareAtPriceStub = sinon.stub(product, 'hasCompareAtPrice').get(() => true);
             product.globalConfig = {moneyFormat: 'CAD'};
             assert.equal(product.formattedCompareAtPrice, formattedMoney);
             assert.calledOnce(formatMoneyStub);
             assert.calledWith(formatMoneyStub, product.selectedVariant.compareAtPriceV2.amount, product.globalConfig.moneyFormat);
+            hasCompareAtPriceStub.restore();
           });
         });
 
@@ -1584,8 +1582,20 @@ describe('Product Component class', () => {
           assert.equal(viewData.formattedPrice, product.formattedPrice);
         });
 
+        it('returns an object with priceAccessibilityLabel', () => {
+          assert.equal(viewData.priceAccessibilityLabel, product.priceAccessibilityLabel);
+        });
+
+        it('returns an object with hasCompareAtPrice', () => {
+          assert.equal(viewData.hasCompareAtPrice, product.hasCompareAtPrice);
+        });
+
         it('returns an object with formattedCompareAtPrice', () => {
           assert.equal(viewData.formattedCompareAtPrice, product.formattedCompareAtPrice);
+        });
+
+        it('returns an object with compareAtPriceAccessibilityLabel', () => {
+          assert.equal(viewData.compareAtPriceAccessibilityLabel, product.compareAtPriceAccessibilityLabel);
         });
 
         it('returns an object with carouslIndex', () => {
@@ -1933,6 +1943,7 @@ describe('Product Component class', () => {
 
       describe('priceClass', () => {
         it('returns loweredPrice class if selected variant has a compare at price', () => {
+          const hasCompareAtPriceStub = sinon.stub(product, 'hasCompareAtPrice').get(() => true);
           product = Object.defineProperty(product, 'classes', {
             value: {
               product: {
@@ -1940,18 +1951,14 @@ describe('Product Component class', () => {
               },
             },
           });
-          product.selectedVariant = {
-            compareAtPriceV2: {
-              amount: '5.00',
-              currencyCode: 'CAD',
-            },
-          };
           assert.equal(product.priceClass, product.classes.product.loweredPrice);
+          hasCompareAtPriceStub.restore();
         });
 
         it('returns empty string if selected variant does not have a compare at price', () => {
-          product.selectedVariant = {compareAtPriceV2: null};
+          const hasCompareAtPriceStub = sinon.stub(product, 'hasCompareAtPrice').get(() => false);
           assert.equal(product.priceClass, '');
+          hasCompareAtPriceStub.restore();
         });
       });
 
@@ -2469,6 +2476,54 @@ describe('Product Component class', () => {
             product.model.onlineStoreUrl = 'https://test.myshopify.com/products/123';
             assert.equal(product.onlineStoreURL, `https://test.myshopify.com/products/123${expectedQs}`);
           });
+        });
+      });
+
+      describe('priceAccessibilityLabel', () => {
+        it('returns the sale price label if the selected variant has a compare at price', () => {
+          const hasCompareAtPriceStub = sinon.stub(product, 'hasCompareAtPrice').get(() => true);
+          assert.equal(product.priceAccessibilityLabel, product.options.text.salePriceAccessibilityLabel);
+          hasCompareAtPriceStub.restore();
+        });
+
+        it('returns the regular price label if the selected variant does not have a compare at price', () => {
+          const hasCompareAtPriceStub = sinon.stub(product, 'hasCompareAtPrice').get(() => false);
+          assert.equal(product.priceAccessibilityLabel, product.options.text.regularPriceAccessibilityLabel);
+          hasCompareAtPriceStub.restore();
+        });
+      });
+
+      describe('compareAtPriceAccessibilityLabel', () => {
+        it('returns the regular price label if the selected variant has a compare at price', () => {
+          const hasCompareAtPriceStub = sinon.stub(product, 'hasCompareAtPrice').get(() => true);
+          assert.equal(product.compareAtPriceAccessibilityLabel, product.options.text.regularPriceAccessibilityLabel);
+          hasCompareAtPriceStub.restore();
+        });
+
+        it('returns an empty string if the selected variant does not have a compare at price', () => {
+          const hasCompareAtPriceStub = sinon.stub(product, 'hasCompareAtPrice').get(() => false);
+          assert.equal(product.compareAtPriceAccessibilityLabel, '');
+          hasCompareAtPriceStub.restore();
+        });
+      });
+
+      describe('hasCompareAtPrice', () => {
+        it('returns false if there is no selected variant', () => {
+          product.selectedVariant = null;
+          assert.equal(product.hasCompareAtPrice, false);
+        });
+
+        it('returns false if the selected variant does not have a compare at price', () => {
+          product.selectedVariant.compareAtPriceV2 = null;
+          assert.equal(product.hasCompareAtPrice, false);
+        });
+
+        it('returns true if the selected variant has a compare at price', () => {
+          product.selectedVariant.compareAtPriceV2 = {
+            amount: '5.00',
+            currencyCode: 'CAD',
+          };
+          assert.equal(product.hasCompareAtPrice, true);
         });
       });
     });

@@ -186,7 +186,7 @@ export default class Product extends Component {
    * @return {String}
    */
   get formattedCompareAtPrice() {
-    if (!this.selectedVariant || !this.selectedVariant.compareAtPriceV2) {
+    if (!this.hasCompareAtPrice) {
       return '';
     }
     return formatMoney(this.selectedVariant.compareAtPriceV2.amount, this.globalConfig.moneyFormat);
@@ -252,7 +252,10 @@ export default class Product extends Component {
       quantityClass: this.quantityClass,
       priceClass: this.priceClass,
       formattedPrice: this.formattedPrice,
+      priceAccessibilityLabel: this.priceAccessibilityLabel,
+      hasCompareAtPrice: this.hasCompareAtPrice,
       formattedCompareAtPrice: this.formattedCompareAtPrice,
+      compareAtPriceAccessibilityLabel: this.compareAtPriceAccessibilityLabel,
       showUnitPrice: this.showUnitPrice,
       formattedUnitPrice: this.formattedUnitPrice,
       formattedUnitPriceBaseUnit: this.formattedUnitPriceBaseUnit,
@@ -331,7 +334,7 @@ export default class Product extends Component {
   }
 
   get priceClass() {
-    return this.selectedVariant && this.selectedVariant.compareAtPriceV2 ? this.classes.product.loweredPrice : '';
+    return this.hasCompareAtPrice ? this.classes.product.loweredPrice : '';
   }
 
   get isButton() {
@@ -841,4 +844,15 @@ export default class Product extends Component {
     return altText || this.model.title;
   }
 
+  get priceAccessibilityLabel() {
+    return this.hasCompareAtPrice ? this.options.text.salePriceAccessibilityLabel : this.options.text.regularPriceAccessibilityLabel;
+  }
+
+  get compareAtPriceAccessibilityLabel() {
+    return this.hasCompareAtPrice ? this.options.text.regularPriceAccessibilityLabel : '';
+  }
+
+  get hasCompareAtPrice() {
+    return Boolean(this.selectedVariant && this.selectedVariant.compareAtPriceV2);
+  }
 }

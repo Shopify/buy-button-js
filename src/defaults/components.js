@@ -82,6 +82,8 @@ const defaults = {
       unavailable: 'Unavailable',
       unitPriceAccessibilityLabel: 'Unit price',
       unitPriceAccessibilitySeparator: 'per',
+      regularPriceAccessibilityLabel: 'Regular price',
+      salePriceAccessibilityLabel: 'Sale price',
     },
   },
   modalProduct: {
