@@ -742,6 +742,42 @@ describe('Cart class', () => {
         assert.notCalled(cartOpenStub);
       });
     });
+
+    it('does not call setFocus if the openCart parameter is true and the model exists', () => {
+      cart.model = {
+        id: modelId,
+      };
+
+      return cart.addVariantToCart(variant, quantity, true).then(() => {
+        assert.notCalled(setFocusStub);
+      });
+    });
+
+    it('does not call setFocus if the openCart parameter is true and the model does not exist', () => {
+      cart.model = null;
+
+      return cart.addVariantToCart(variant, quantity, true).then(() => {
+        assert.notCalled(setFocusStub);
+      });
+    });
+
+    it('calls setFocus if the openCart parameter is false and the model exist', () => {
+      cart.model = {
+        id: modelId,
+      };
+
+      return cart.addVariantToCart(variant, quantity, false).then(() => {
+        assert.calledOnce(setFocusStub);
+      });
+    });
+
+    it('calls setFocus if openCart parameter is false and the model does not exist', () => {
+      cart.model = null;
+
+      return cart.addVariantToCart(variant, quantity, false).then(() => {
+        assert.calledOnce(setFocusStub);
+      });
+    });
   });
 
   describe('get formattedTotal', () => {

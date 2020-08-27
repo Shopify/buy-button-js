@@ -428,7 +428,9 @@ export default class Cart extends Component {
         this.updateCache(this.model.lineItems);
         this.view.render();
         this.toggles.forEach((toggle) => toggle.view.render());
-        this.view.setFocus();
+        if (!openCart) {
+          this.view.setFocus();
+        }
         return checkout;
       });
     } else {
@@ -443,7 +445,9 @@ export default class Cart extends Component {
         this.updateCache(this.model.lineItems);
         this.view.render();
         this.toggles.forEach((toggle) => toggle.view.render());
-        this.view.setFocus();
+        if (!openCart) {
+          this.view.setFocus();
+        }
         return checkout;
       });
     }

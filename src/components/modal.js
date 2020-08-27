@@ -44,6 +44,7 @@ export default class Modal extends Component {
     return Object.assign({}, this.globalConfig, {
       node: this.productWrapper,
       options: merge({}, this.config),
+      modalProduct: true,
     });
   }
 

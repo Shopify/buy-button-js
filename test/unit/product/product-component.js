@@ -90,6 +90,18 @@ describe('Product Component class', () => {
     it('creates a new view', () => {
       assert.instanceOf(product.view, ProductView);
     });
+
+    it('sets modalProduct to false if it is not provided in the config', () => {
+      assert.equal(product.modalProduct, false);
+    });
+
+    it('sets modalProduct to true if it is set to true in the config', () => {
+      const modalProductConfig = Object.assign({}, constructorConfig);
+      modalProductConfig.modalProduct = true;
+      product = new Product(modalProductConfig, props);
+
+      assert.equal(product.modalProduct, true);
+    });
   });
 
   describe('prototype methods', () => {
@@ -543,11 +555,17 @@ describe('Product Component class', () => {
           addToCartStub.restore();
         });
 
-        it('sets target to active el if iframe exists', () => {
-          product.iframe = {};
+        it('sets the active element to the target if it is not a modal product', () => {
+          product.modalProduct = false;
           product.onButtonClick(evt, target);
           assert.calledOnce(setActiveElSpy);
           assert.calledWith(setActiveElSpy, target);
+        });
+
+        it('does not set the active element if it is a modal product', () => {
+          product.modalProduct = true;
+          product.onButtonClick(evt, target);
+          assert.notCalled(setActiveElSpy);
         });
       });
 
