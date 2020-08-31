@@ -137,17 +137,25 @@ describe('Toggle View class', () => {
         assert.calledWith(addEventListenerSpy, 'keydown', sinon.match.func);
       });
 
-      it('does not toggle cart visibility if keydown event is not the enter key', () => {
-        const event = {keyCode: 999};
+      it('does not toggle cart visibility or call preventDefault if keydown event is not the enter key', () => {
+        const event = {
+          keyCode: 999,
+          preventDefault: sinon.spy()
+        };
         addEventListenerSpy.getCall(0).args[1](event);
         assert.notCalled(toggleVisibilitySpy);
+        assert.notCalled(event.preventDefault);
       });
 
-      it('toggles cart visibility if keydown event is the enter key', () => {
-        const event = {keyCode: 13}; // enter key
+      it('toggles cart visibility and calls preventDefault if keydown event is the enter key', () => {
+        const event = {
+          keyCode: 13, // enter key
+          preventDefault: sinon.spy(),
+        };
         addEventListenerSpy.getCall(0).args[1](event);
         assert.calledOnce(toggleVisibilitySpy);
         assert.calledWith(toggleVisibilitySpy, cart);
+        assert.calledOnce(event.preventDefault);
       });
     });
   });

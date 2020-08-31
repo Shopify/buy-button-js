@@ -57,6 +57,7 @@ export default class ToggleView extends View {
       if (evt.keyCode !== ENTER_KEY) {
         return;
       }
+      evt.preventDefault();
       this.component.props.cart.toggleVisibility(this.component.props.cart);
     });
   }
