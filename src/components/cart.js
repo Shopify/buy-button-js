@@ -301,7 +301,7 @@ export default class Cart extends Component {
   open() {
     this.isVisible = true;
     this.view.render();
-    this.view.setFocus();
+    this.setFocus();
   }
 
   /**
@@ -312,7 +312,7 @@ export default class Cart extends Component {
     this.isVisible = visible || !this.isVisible;
     this.view.render();
     if (this.isVisible) {
-      this.view.setFocus();
+      this.setFocus();
     }
   }
 
@@ -429,7 +429,7 @@ export default class Cart extends Component {
         this.view.render();
         this.toggles.forEach((toggle) => toggle.view.render());
         if (!openCart) {
-          this.view.setFocus();
+          this.setFocus();
         }
         return checkout;
       });
@@ -446,7 +446,7 @@ export default class Cart extends Component {
         this.view.render();
         this.toggles.forEach((toggle) => toggle.view.render());
         if (!openCart) {
-          this.view.setFocus();
+          this.setFocus();
         }
         return checkout;
       });
@@ -482,5 +482,11 @@ export default class Cart extends Component {
       quantity: parseFloat(quantity),
       sku: null,
     };
+  }
+
+  setFocus() {
+    setTimeout(() => {
+      this.view.setFocus();
+    }, 0);
   }
 }

@@ -1,14 +1,14 @@
-import Cart from '../../src/components/cart';
-import CartToggle from '../../src/components/toggle';
-import Component from '../../src/component';
-import Checkout from '../../src/components/checkout';
-import Template from '../../src/template';
-import CartUpdater from '../../src/updaters/cart';
-import CartView from '../../src/views/cart';
-import ShopifyBuy from '../../src/buybutton';
-import * as formatMoney from '../../src/utils/money';
-import * as elementClass from '../../src/utils/element-class';
-import * as focusUtils from '../../src/utils/focus';
+import Cart from '../../../src/components/cart';
+import CartToggle from '../../../src/components/toggle';
+import Component from '../../../src/component';
+import Checkout from '../../../src/components/checkout';
+import Template from '../../../src/template';
+import CartUpdater from '../../../src/updaters/cart';
+import CartView from '../../../src/views/cart';
+import ShopifyBuy from '../../../src/buybutton';
+import * as formatMoney from '../../../src/utils/money';
+import * as elementClass from '../../../src/utils/element-class';
+import * as focusUtils from '../../../src/utils/focus';
 
 let cart;
 
@@ -670,7 +670,7 @@ describe('Cart class', () => {
 
     beforeEach(() => {
       cartOpenStub = sinon.stub(cart, 'open');
-      setFocusStub = sinon.stub(cart.view, 'setFocus');
+      setFocusStub = sinon.stub(cart, 'setFocus');
       addLineItemsStub = sinon.stub(cart.props.client.checkout, 'addLineItems').returns(Promise.resolve(mockCheckout));
       checkoutCreateStub = sinon.stub(cart.props.client.checkout, 'create').returns(Promise.resolve(mockCheckout));
       renderStub = sinon.stub(cart.view, 'render');
@@ -692,39 +692,6 @@ describe('Cart class', () => {
       assert.equal(cart.addVariantToCart(variant, 0), null);
     });
 
-    it('adds line item with quantity 1 if quantity parameter is not provided', () => {
-      cart.model = {
-        id: modelId,
-      };
-
-      return cart.addVariantToCart(variant).then(() => {
-        assert.calledWith(addLineItemsStub, modelId, [{variantId, quantity: 1}]);
-      });
-    });
-
-    it('adds line item to checkout and returns the updated checkout if cart model exists', () => {
-      cart.model = {
-        id: modelId,
-      };
-
-      return cart.addVariantToCart(variant, quantity).then((checkout) => {
-        assert.notCalled(checkoutCreateStub);
-        assert.calledOnce(addLineItemsStub);
-        assert.calledWith(addLineItemsStub, modelId, [lineItem]);
-        assert.deepEqual(checkout, mockCheckout);
-      });
-    });
-
-    it('creates a checkout with line item and returns the updated checkout if cart model is null', () => {
-      cart.model = null;
-
-      return cart.addVariantToCart(variant, quantity).then((checkout) => {
-        assert.calledOnce(checkoutCreateStub);
-        assert.calledWith(checkoutCreateStub, {lineItems: [lineItem]});
-        assert.deepEqual(checkout, mockCheckout);
-      });
-    });
-
     it('calls open on cart if openCart parameter is not provided', () => {
       return cart.addVariantToCart(variant, quantity).then(() => {
         assert.calledOnce(cartOpenStub);
@@ -743,39 +710,80 @@ describe('Cart class', () => {
       });
     });
 
-    it('does not call setFocus if the openCart parameter is true and the model exists', () => {
+    it('adds line item with quantity 1 if quantity parameter is not provided', () => {
       cart.model = {
         id: modelId,
       };
 
-      return cart.addVariantToCart(variant, quantity, true).then(() => {
-        assert.notCalled(setFocusStub);
+      return cart.addVariantToCart(variant).then(() => {
+        assert.calledWith(addLineItemsStub, modelId, [{variantId, quantity: 1}]);
       });
     });
 
-    it('does not call setFocus if the openCart parameter is true and the model does not exist', () => {
-      cart.model = null;
+    describe('model exists', () => {
+      beforeEach(() => {
+        cart.model = {
+          id: modelId,
+        };
+      });
 
-      return cart.addVariantToCart(variant, quantity, true).then(() => {
-        assert.notCalled(setFocusStub);
+      it('adds line item to checkout and returns the updated checkout', () => {
+        return cart.addVariantToCart(variant, quantity).then((checkout) => {
+          assert.notCalled(checkoutCreateStub);
+          assert.calledOnce(addLineItemsStub);
+          assert.calledWith(addLineItemsStub, modelId, [lineItem]);
+          assert.deepEqual(checkout, mockCheckout);
+        });
+      });
+
+      it('does not call setFocus if the openCart parameter is true', () => {
+        return cart.addVariantToCart(variant, quantity, true).then(() => {
+          assert.notCalled(setFocusStub);
+        });
+      });
+
+      it('calls setFocus if the openCart parameter is false', () => {
+        return cart.addVariantToCart(variant, quantity, false).then(() => {
+          assert.calledOnce(setFocusStub);
+        });
+      });
+
+      it('does not call setFocus if the openCart parameter is not provided', () => {
+        return cart.addVariantToCart(variant, quantity).then(() => {
+          assert.notCalled(setFocusStub);
+        });
       });
     });
 
-    it('calls setFocus if the openCart parameter is false and the model exist', () => {
-      cart.model = {
-        id: modelId,
-      };
-
-      return cart.addVariantToCart(variant, quantity, false).then(() => {
-        assert.calledOnce(setFocusStub);
+    describe('model does not exist', () => {
+      beforeEach(() => {
+        cart.model = null;
       });
-    });
 
-    it('calls setFocus if openCart parameter is false and the model does not exist', () => {
-      cart.model = null;
+      it('creates a checkout with line item and returns the updated checkout if cart model is null', () => {
+        return cart.addVariantToCart(variant, quantity).then((checkout) => {
+          assert.calledOnce(checkoutCreateStub);
+          assert.calledWith(checkoutCreateStub, {lineItems: [lineItem]});
+          assert.deepEqual(checkout, mockCheckout);
+        });
+      });
 
-      return cart.addVariantToCart(variant, quantity, false).then(() => {
-        assert.calledOnce(setFocusStub);
+      it('does not call setFocus if the openCart parameter is true', () => {
+        return cart.addVariantToCart(variant, quantity, true).then(() => {
+          assert.notCalled(setFocusStub);
+        });
+      });
+
+      it('calls setFocus if openCart parameter is false', () => {
+        return cart.addVariantToCart(variant, quantity, false).then(() => {
+          assert.calledOnce(setFocusStub);
+        });
+      });
+
+      it('does not call setFocus if openCart parameter is not provided', () => {
+        return cart.addVariantToCart(variant, quantity).then(() => {
+          assert.notCalled(setFocusStub);
+        });
       });
     });
   });
@@ -1406,6 +1414,163 @@ describe('Cart class', () => {
     it('calls removeTrapFocus with the view wrapper', () => {
       assert.calledOnce(removeTrapFocusStub);
       assert.calledWith(removeTrapFocusStub.firstCall, cart.view.wrapper);
+    });
+  });
+
+  describe('open', () => {
+    let viewRenderStub;
+    let setFocusStub;
+
+    beforeEach(() => {
+      viewRenderStub = sinon.stub(cart.view, 'render');
+      setFocusStub = sinon.stub(cart, 'setFocus');
+    });
+
+    afterEach(() => {
+      viewRenderStub.restore();
+      setFocusStub.restore();
+    });
+
+    it('sets isVisible to true', () => {
+      cart.isVisible = false;
+      cart.open();
+
+      assert.equal(cart.isVisible, true);
+    });
+
+    it('calls render on the view', () => {
+      cart.open();
+
+      assert.calledOnce(viewRenderStub);
+    });
+
+    it('calls setFocus', () => {
+      cart.open();
+
+      assert.calledOnce(setFocusStub);
+    });
+  });
+
+  describe('toggleVisibility', () => {
+    let viewRenderStub;
+    let setFocusStub;
+
+    beforeEach(() => {
+      viewRenderStub = sinon.stub(cart.view, 'render');
+      setFocusStub = sinon.stub(cart, 'setFocus');
+    });
+
+    afterEach(() => {
+      viewRenderStub.restore();
+      setFocusStub.restore();
+    });
+
+    it('sets isVisible to true if it is currently false and true is passed in', () => {
+      cart.isVisible = false;
+      cart.toggleVisibility(true);
+
+      assert.equal(cart.isVisible, true);
+    });
+
+    it('sets isVisible to true if it is currently true and true is passed in', () => {
+      cart.isVisible = true;
+      cart.toggleVisibility(true);
+
+      assert.equal(cart.isVisible, true);
+    });
+
+    it('sets isVisible to true if it is currently false and false is passed in', () => {
+      cart.isVisible = false;
+      cart.toggleVisibility(false);
+
+      assert.equal(cart.isVisible, true);
+    });
+
+    it('sets isVisible to false if it is currently true and false is passed in', () => {
+      cart.isVisible = true;
+      cart.toggleVisibility(false);
+
+      assert.equal(cart.isVisible, false);
+    });
+
+    it('sets isVisible to true if it is currently false and nothing is passed in', () => {
+      cart.isVisible = false;
+      cart.toggleVisibility();
+
+      assert.equal(cart.isVisible, true);
+    });
+
+    it('sets isVisible to false if it is currently true and nothing is passed in', () => {
+      cart.isVisible = true;
+      cart.toggleVisibility();
+
+      assert.equal(cart.isVisible, false);
+    });
+
+    it('calls render on the view', () => {
+      cart.toggleVisibility();
+
+      assert.calledOnce(viewRenderStub);
+    });
+
+    it('calls setFocus if true is passed in and isVisible is currently false', () => {
+      cart.isVisible = false;
+      cart.toggleVisibility(true);
+
+      assert.calledOnce(setFocusStub);
+    });
+
+    it('calls setFocus if true is passed in and isVisible is currently true', () => {
+      cart.isVisible = true;
+      cart.toggleVisibility(true);
+
+      assert.calledOnce(setFocusStub);
+    });
+
+    it('calls setFocus if false is passed in and isVisible is currently false', () => {
+      cart.isVisible = false;
+      cart.toggleVisibility(false);
+
+      assert.calledOnce(setFocusStub);
+    });
+
+    it('does not call setFocus if false is passed in and isVisible is currently true', () => {
+      cart.isVisible = true;
+      cart.toggleVisibility(false);
+
+      assert.notCalled(setFocusStub);
+    });
+
+    it('calls setFocus if nothing is passed in and isVisible is currently false', () => {
+      cart.isVisible = false;
+      cart.toggleVisibility();
+
+      assert.calledOnce(setFocusStub);
+    });
+
+    it('does not call setFocus if nothing is passed in and isVisible is currently true', () => {
+      cart.isVisible = true;
+      cart.toggleVisibility();
+
+      assert.notCalled(setFocusStub);
+    });
+  });
+
+  describe('setFocus', () => {
+    it('calls setFocus on the view after a timeout of 0', () => {
+      const setTimeoutStub = sinon.stub(window, 'setTimeout');
+      const viewSetFocusStub = sinon.stub(cart.view, 'setFocus');
+
+      cart.setFocus();
+      
+      assert.calledOnce(setTimeoutStub);
+      assert.calledWith(setTimeoutStub, sinon.match.func, 0);
+
+      setTimeoutStub.getCall(0).args[0]();
+      assert.calledOnce(viewSetFocusStub);
+
+      setTimeoutStub.restore();
+      viewSetFocusStub.restore();
     });
   });
 });
