@@ -1,6 +1,7 @@
 import View from '../view';
 
 const ENTER_KEY = 13;
+const SPACE_KEY = 32;
 
 export default class ToggleView extends View {
   get shouldResizeY() {
@@ -54,9 +55,10 @@ export default class ToggleView extends View {
       return;
     }
     this.iframe.parent.addEventListener('keydown', (evt) => {
-      if (evt.keyCode !== ENTER_KEY) {
+      if (evt.keyCode !== ENTER_KEY && evt.keyCode !== SPACE_KEY) {
         return;
       }
+      evt.preventDefault();
       this.component.props.setActiveEl(this.node);
       this.component.props.cart.toggleVisibility(this.component.props.cart);
     });
