@@ -4,7 +4,6 @@
   box-sizing: border-box;
   position: relative;
   background: var(--color-white);
-  overflow: hidden;
   vertical-align: bottom;
 }
 
