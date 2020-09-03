@@ -16,10 +16,14 @@ describe('Cart class', () => {
   const moneyFormat = '${{amount}}';
   let closeCartSpy;
   let trackSpy;
+  let viewData;
+  const mockTime = 123;
+  let dateNowStub;
 
   beforeEach(() => {
     closeCartSpy = sinon.spy();
     trackSpy = sinon.spy();
+    dateNowStub = sinon.stub(Date, 'now').returns(mockTime);
 
     cart = new Cart({
       options: {
@@ -57,6 +61,7 @@ describe('Cart class', () => {
   });
 
   afterEach(() => {
+    dateNowStub.restore();
     cart.destroy();
   });
 
@@ -991,8 +996,6 @@ describe('Cart class', () => {
   });
 
   describe('viewData()', () => {
-    let viewData;
-
     describe('with model', () => {
       beforeEach(async () => {
         const lineItems = [
@@ -1059,6 +1062,10 @@ describe('Cart class', () => {
       it('returns an object with cart note', () => {
         assert.equal(viewData.cartNote, cart.cartNote);
       });
+
+      it('returns an object with cartNoteId', () => {
+        assert.equal(viewData.cartNoteId, cart.cartNoteId);
+      });
     });
 
     describe('without model', () => {
@@ -1093,6 +1100,10 @@ describe('Cart class', () => {
 
       it('returns an object with cart note', () => {
         assert.equal(viewData.cartNote, cart.cartNote);
+      });
+
+      it('returns an object with cartNoteId', () => {
+        assert.equal(viewData.cartNoteId, cart.cartNoteId);
       });
     });
   });
@@ -1140,6 +1151,12 @@ describe('Cart class', () => {
       cart.model.note = note;
 
       assert.equal(cart.cartNote, cart.model.note);
+    });
+  });
+
+  describe('get cartNoteId', () => {
+    it('returns a string containing the current time in ms', () => {
+      assert.equal(cart.cartNoteId, `CartNote-${mockTime}`);
     });
   });
 
