@@ -14,6 +14,10 @@ let cart;
 
 describe('Cart class', () => {
   const moneyFormat = '${{amount}}';
+  const quantityInputAccessibilityLabel = 'quantity accessibility label';
+  const quantityDecrementAccessibilityLabel = 'quantity decrement accessibility label';
+  const quantityIncrementAccessibilityLabel = 'quantity increment accessibility label';
+
   let closeCartSpy;
   let trackSpy;
   let viewData;
@@ -34,6 +38,13 @@ describe('Cart class', () => {
           },
           text: {
             notice: 'test',
+          },
+        },
+        lineItem: {
+          text: {
+            quantityInputAccessibilityLabel,
+            quantityDecrementAccessibilityLabel,
+            quantityIncrementAccessibilityLabel,
           },
         },
       },
@@ -149,6 +160,30 @@ describe('Cart class', () => {
       const renderSpy = sinon.spy(cart.childTemplate, 'render');
       assert.include(cart.lineItemsHtml, 'data-line-item-id="123"');
       assert.calledOnce(renderSpy);
+    });
+
+    it('renders the quantity accessibility labels', () => {
+      cart.lineItemCache = [{
+        id: 123,
+        title: 'test',
+        variantTitle: 'test2',
+        quantity: 1,
+        variant: {
+          image: {
+            src: 'cdn.shopify.com/image.jpg',
+          },
+          priceV2: {
+            amount: '5.00',
+            currencyCode: 'CAD',
+          },
+        },
+        discountAllocations: [],
+      }];
+
+      const cartLineItemsHtml = cart.lineItemsHtml;
+      assert.include(cartLineItemsHtml, `aria-label="${quantityInputAccessibilityLabel}"`);
+      assert.include(cartLineItemsHtml, `<span class="visuallyhidden">${quantityDecrementAccessibilityLabel}</span>`);
+      assert.include(cartLineItemsHtml, `<span class="visuallyhidden">${quantityIncrementAccessibilityLabel}</span>`);
     });
 
     describe('price without discounts', () => {
