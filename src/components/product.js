@@ -384,9 +384,11 @@ export default class Product extends Component {
       return '';
     }
 
-    return this.decoratedOptions.reduce((acc, option) => {
+    const uniqueId = Date.now();
+    return this.decoratedOptions.reduce((acc, option, index) => {
       const data = merge(option, this.options.viewData);
       data.classes = this.classes;
+      data.selectId = `Option-${uniqueId}-${index}`;
       data.onlyOption = (this.model.options.length === 1);
       return acc + this.childTemplate.render({data});
     }, '');
