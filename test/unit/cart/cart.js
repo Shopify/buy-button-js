@@ -139,7 +139,7 @@ describe('Cart class', () => {
       formatMoneySpy.restore();
     });
 
-    it('calls render and returns an html string', () => {
+    it('calls render and returns an html <li /> string', () => {
       cart.lineItemCache = [{
         id: 123,
         title: 'test',
@@ -158,7 +158,9 @@ describe('Cart class', () => {
       }];
 
       const renderSpy = sinon.spy(cart.childTemplate, 'render');
-      assert.include(cart.lineItemsHtml, 'data-line-item-id="123"');
+      const cartLineItemsHtml = cart.lineItemsHtml;
+      assert.include(cartLineItemsHtml, 'data-line-item-id="123"');
+      assert.match(cartLineItemsHtml, /<li\b.*>[\s\S]*<\/li>/);
       assert.calledOnce(renderSpy);
     });
 
