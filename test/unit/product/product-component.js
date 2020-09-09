@@ -653,31 +653,52 @@ describe('Product Component class', () => {
       });
     });
 
-    describe('onBlockButtonKeyup()', () => {
+    describe('onBlockButtonKeyDown()', () => {
       let event;
       let onButtonClickStub;
+      let preventDefaultSpy;
       const target = {};
 
       beforeEach(() => {
         event = {};
         onButtonClickStub = sinon.stub(product, 'onButtonClick');
+        preventDefaultSpy = sinon.spy();
       });
 
       afterEach(() => {
         onButtonClickStub.restore();
       });
 
-      it('calls onButtonClick if event keycode is the enter key', () => {
-        event.keyCode = 13; // enter key
-        product.onBlockButtonKeyup(event, target);
+      it('calls onButtonClick and preventDefault if event keycode is the enter key', () => {
+        event = {
+          keyCode: 13, // enter key
+          preventDefault: preventDefaultSpy,
+        };
+        product.onBlockButtonKeyDown(event, target);
         assert.calledOnce(onButtonClickStub);
         assert.calledWith(onButtonClickStub, event, target);
+        assert.calledOnce(preventDefaultSpy);
       });
 
-      it('does not call onButtonClick if event keycode is not the enter key', () => {
-        event.keyCode = 99;
-        product.onBlockButtonKeyup(event, target);
+      it('calls onButtonClick and preventDefault if event keycode is the space key', () => {
+        event = {
+          keyCode: 32, // space key
+          preventDefault: preventDefaultSpy,
+        };
+        product.onBlockButtonKeyDown(event, target);
+        assert.calledOnce(onButtonClickStub);
+        assert.calledWith(onButtonClickStub, event, target);
+        assert.calledOnce(preventDefaultSpy);
+      });
+
+      it('does not call onButtonClick or preventDefault if event keycode is not the enter or space key', () => {
+        event = {
+          keyCode: 99,
+          preventDefault: preventDefaultSpy,
+        };        
+        product.onBlockButtonKeyDown(event, target);
         assert.notCalled(onButtonClickStub);
+        assert.notCalled(preventDefaultSpy);
       });
     });
 
@@ -2065,11 +2086,11 @@ describe('Product Component class', () => {
           });
         });
 
-        it('binds onBlockButtonKeyup to blockButton keyup', () => {
-          const onBlockButtonKeyupStub = sinon.stub(product, 'onBlockButtonKeyup');
-          product.DOMEvents[`keyup ${product.selectors.product.blockButton}`]();
-          assert.calledOnce(onBlockButtonKeyupStub);
-          onBlockButtonKeyupStub.restore();
+        it('binds onBlockButtonKeyDown to blockButton keydown', () => {
+          const onBlockButtonKeyDownStub = sinon.stub(product, 'onBlockButtonKeyDown');
+          product.DOMEvents[`keydown ${product.selectors.product.blockButton}`]();
+          assert.calledOnce(onBlockButtonKeyDownStub);
+          onBlockButtonKeyDownStub.restore();
         });
 
         describe('onQuantityIncrement bindngs', () => {
