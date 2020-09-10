@@ -18,6 +18,16 @@ const rootImageURI = 'https://cdn.shopify.com/s/files/1/0014/8583/2214/products/
 
 describe('Product Component class', () => {
   let product;
+  let dateNowStub;
+  const mockTime = 123;
+
+  beforeEach(() => {
+    dateNowStub = sinon.stub(Date, 'now').returns(mockTime);
+  });
+
+  afterEach(() => {
+    dateNowStub.restore();
+  });
 
   describe('constructor', () => {
     let normalizeConfigStub;
@@ -2207,6 +2217,13 @@ describe('Product Component class', () => {
           assert.isString(optionsHtml);
         });
 
+        it('adds a selectId to the rendered data object', () => {
+          const optionsHtml = product.optionsHtml;
+          const renderedData = renderStub.getCall(0).args[0].data;
+          assert.equal(renderedData.selectId, `Option-${mockTime}-0`);
+          assert.isString(optionsHtml);
+        });
+
         it('sets onlyOption in rendered data to true if there is only one option in model', () => {
           const optionsHtml = product.optionsHtml;
           const renderedData = renderStub.getCall(0).args[0].data;
@@ -2241,6 +2258,7 @@ describe('Product Component class', () => {
               test: 'test string',
               classes: product.classes,
               onlyOption: true,
+              selectId: `Option-${mockTime}-0`,
             },
           };
           const secondExpectedObject = {
@@ -2250,6 +2268,7 @@ describe('Product Component class', () => {
               test: 'test string',
               classes: product.classes,
               onlyOption: true,
+              selectId: `Option-${mockTime}-1`,
             },
           };
           assert.calledTwice(renderStub);
