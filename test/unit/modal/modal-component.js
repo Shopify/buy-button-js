@@ -240,6 +240,10 @@ describe('Modal Component class', () => {
         it('returns object with options that holds config', () => {
           assert.deepInclude(modal.productConfig, {options: modal.config});
         });
+
+        it('returns object with modalProduct set to true', () => {
+          assert.deepInclude(modal.productConfig, {modalProduct: true});
+        });
       });
     });
   });

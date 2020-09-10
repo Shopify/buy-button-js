@@ -47,10 +47,12 @@ describe('Toggle Component class', () => {
 
   describe('prototype methods', () => {
     let toggleVisibilitySpy;
+    let setActiveElSpy;
     let cart;
 
     beforeEach(() => {
       toggleVisibilitySpy = sinon.spy();
+      setActiveElSpy = sinon.spy();
       cart = {
         toggleVisibility: toggleVisibilitySpy,
         model: {
@@ -66,7 +68,7 @@ describe('Toggle Component class', () => {
           ],
         },
       };
-      toggle = new Toggle({node}, {cart});
+      toggle = new Toggle({node}, {cart, setActiveEl: setActiveElSpy});
     });
 
     describe('toggleCart()', () => {
@@ -86,6 +88,11 @@ describe('Toggle Component class', () => {
 
       it('toggles visibility in cart', () => {
         assert.calledOnce(toggleVisibilitySpy);
+      });
+
+      it('calls setActiveEl with the cart view node', () => {
+        assert.calledOnce(setActiveElSpy);
+        assert.calledWith(setActiveElSpy.firstCall, toggle.view.node);
       });
     });
 

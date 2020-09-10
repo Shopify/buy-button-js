@@ -82,6 +82,7 @@ export default class Product extends Component {
     this.selectedVariant = {};
     this.selectedOptions = {};
     this.selectedImage = null;
+    this.modalProduct = Boolean(config.modalProduct);
     this.updater = new ProductUpdater(this);
     this.view = new ProductView(this);
   }
@@ -649,7 +650,7 @@ export default class Product extends Component {
       this.props.closeModal();
       this._userEvent('addVariantToCart');
       this.props.tracker.trackMethod(this.cart.addVariantToCart.bind(this), 'Update Cart', this.selectedVariantTrackingInfo)(this.selectedVariant, this.selectedQuantity);
-      if (this.iframe) {
+      if (!this.modalProduct) {
         this.props.setActiveEl(target);
       }
     } else if (this.options.buttonDestination === 'modal') {

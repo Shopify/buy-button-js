@@ -5,14 +5,19 @@ describe('Toggle View class', () => {
   let toggle;
   let cart;
   let toggleVisibilitySpy;
+  let setActiveElSpy;
 
   beforeEach(() => {
     toggleVisibilitySpy = sinon.spy();
+    setActiveElSpy = sinon.spy();
     cart = {
       toggleVisibility: toggleVisibilitySpy,
     };
     const node = document.createElement('div');
-    toggle = new Toggle({node}, {cart});
+    toggle = new Toggle({node}, {
+      cart,
+      setActiveEl: setActiveElSpy,
+    });
   });
 
   describe('render()', () => {
@@ -137,17 +142,20 @@ describe('Toggle View class', () => {
         assert.calledWith(addEventListenerSpy, 'keydown', sinon.match.func);
       });
 
-      it('does not toggle cart visibility if keydown event is not the enter key', () => {
+      it('does not toggle cart visibility or set the active element if keydown event is not the enter key', () => {
         const event = {keyCode: 999};
         addEventListenerSpy.getCall(0).args[1](event);
         assert.notCalled(toggleVisibilitySpy);
+        assert.notCalled(setActiveElSpy);
       });
 
-      it('toggles cart visibility if keydown event is the enter key', () => {
+      it('toggles cart visibility and sets the active element if keydown event is the enter key', () => {
         const event = {keyCode: 13}; // enter key
         addEventListenerSpy.getCall(0).args[1](event);
         assert.calledOnce(toggleVisibilitySpy);
         assert.calledWith(toggleVisibilitySpy, cart);
+        assert.calledWith(setActiveElSpy);
+        assert.calledWith(setActiveElSpy, toggle.view.node);
       });
     });
   });
