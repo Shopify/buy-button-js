@@ -28,8 +28,8 @@ const cartTemplates = {
               <p class="{{data.classes.cart.subtotal}}" data-element="cart.subtotal">{{data.formattedTotal}}</p>
               {{#data.contents.note}}
                 <div class="{{data.classes.cart.note}}" data-element="cart.note">
-                  <p class="{{data.classes.cart.noteDescription}}" data-element="cart.noteDescription">{{data.text.noteDescription}}</p>
-                  <textarea class="{{data.classes.cart.noteTextArea}}" data-element="cart.noteTextArea" rows="3"/>{{data.cartNote}}</textarea>
+                  <label for="{{data.cartNoteId}}" class="{{data.classes.cart.noteDescription}}" data-element="cart.noteDescription">{{data.text.noteDescription}}</label>
+                  <textarea id="{{data.cartNoteId}}" class="{{data.classes.cart.noteTextArea}}" data-element="cart.noteTextArea" rows="3"/>{{data.cartNote}}</textarea>
                 </div>
               {{/data.contents.note}}
               <p class="{{data.classes.cart.notice}}" data-element="cart.notice">{{data.text.notice}}</p>

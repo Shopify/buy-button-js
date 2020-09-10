@@ -135,6 +135,7 @@ export default class Cart extends Component {
       discounts: this.cartDiscounts,
       contents: this.options.contents,
       cartNote: this.cartNote,
+      cartNoteId: this.cartNoteId,
     });
   }
 
@@ -186,6 +187,10 @@ export default class Cart extends Component {
 
   get cartNote() {
     return this.model && this.model.note;
+  }
+
+  get cartNoteId() {
+    return `CartNote-${Date.now()}`;
   }
 
   get wrapperClass() {
