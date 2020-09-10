@@ -279,6 +279,11 @@ const defaults = {
       quantityIncrement: 'shopify-buy__quantity-increment',
       quantityDecrement: 'shopify-buy__quantity-decrement',
     },
+    text: {
+      quantityInputAccessibilityLabel: 'Quantity',
+      quantityDecrementAccessibilityLabel: 'Reduce item quantity by one',
+      quantityIncrementAccessibilityLabel: 'Increase item quantity by one',
+    },
   },
   toggle: {
     templates: toggleTemplates,
