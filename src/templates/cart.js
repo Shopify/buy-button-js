@@ -2,8 +2,8 @@ const cartTemplates = {
   title: `<div class="{{data.classes.cart.header}}" data-element="cart.header">
             <h2 class="{{data.classes.cart.title}}" data-element="cart.title">{{data.text.title}}</h2>
             <button class="{{data.classes.cart.close}}" data-element="cart.close">
-              <span aria-role="hidden">&times;</span>
-              <span class="visuallyhidden">Close</span>
+              <span aria-hidden="true">&times;</span>
+              <span class="visuallyhidden">{{data.text.closeAccessibilityLabel}}</span>
              </button>
           </div>`,
   lineItems: `<div class="{{data.classes.cart.cartScroll}}{{#data.contents.note}} {{data.classes.cart.cartScrollWithCartNote}}{{/data.contents.note}}{{#data.discounts}} {{data.classes.cart.cartScrollWithDiscounts}}{{/data.discounts}}" data-element="cart.cartScroll">
