@@ -417,6 +417,12 @@ describe('Component class', () => {
           });
         });
       });
+
+      describe('iframeTitle', () => {
+        it('returns the iframeTitle from the options text', () => {
+          assert.equal(component.iframeTitle, component.options.text.iframeTitle);
+        });
+      });
     });
 
     describe('"private" methods', () => {

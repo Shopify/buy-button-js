@@ -201,6 +201,10 @@ export default class Cart extends Component {
     return `${this.props.client.config.storefrontAccessToken}.${this.props.client.config.domain}.checkoutId`;
   }
 
+  get iframeTitle() {
+    return this.options.text.title;
+  }
+
   imageForLineItem(lineItem) {
     const imageSize = 180;
     const imageOptions = {

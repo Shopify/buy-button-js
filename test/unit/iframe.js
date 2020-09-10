@@ -62,6 +62,7 @@ describe('Iframe class', () => {
       constructorConfig = Object.assign({}, configObject, {
         googleFonts: ['Arial', 'Calibri'],
         width: '200px',
+        title: 'Iframe title',
       });
       createElementSpy = sinon.spy(document, 'createElement');
       setWidthStub = sinon.stub(Iframe.prototype, 'setWidth');
@@ -135,6 +136,19 @@ describe('Iframe class', () => {
 
     it('sets element name to name in config', () => {
       assert.equal(iframe.el.getAttribute('name'), constructorConfig.name);
+    });
+
+    it('sets element title to title in config if it exists', () => {
+      assert.equal(iframe.el.getAttribute('title'), constructorConfig.title);
+    });
+
+    it('does not set element title if it does not exist in the config', () => {
+      constructorConfig.title = null;
+      const setAttributeStub = sinon.stub(iframe.el, 'setAttribute');
+      iframe = new Iframe(parent, constructorConfig);
+      assert.neverCalledWith(setAttributeStub, 'title');
+      assert.equal(iframe.el.getAttribute('title'), null);
+      setAttributeStub.restore();
     });
 
     it('sets styleTag to null', () => {

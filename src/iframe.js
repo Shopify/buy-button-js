@@ -93,6 +93,9 @@ export default class iframe {
     });
     Object.keys(iframeAttrs).forEach((key) => this.el.setAttribute(key, iframeAttrs[key]));
     this.el.setAttribute('name', config.name);
+    if (config.title) {
+      this.el.setAttribute('title', config.title);
+    }
     this.styleTag = null;
   }
 

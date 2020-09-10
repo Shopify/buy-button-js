@@ -153,6 +153,14 @@ export default class Component {
   }
 
   /**
+   * get iframe title for component.
+   * @return {String} iframe title.
+   */
+  get iframeTitle() {
+    return this.options.text && this.options.text.iframeTitle;
+  }
+
+  /**
    * initializes component by creating model and rendering view.
    * @param {Object} [data] - data to initialize model with.
    * @return {Promise} promise resolving to instance.
