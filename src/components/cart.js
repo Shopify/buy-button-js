@@ -327,7 +327,9 @@ export default class Cart extends Component {
   }
 
   onQuantityIncrement(qty, evt, target) {
-    this.setQuantity(target, (prevQty) => prevQty + qty);
+    if (!target.parentNode.classList.contains('is-loading')) {
+      this.setQuantity(target, (prevQty) => prevQty + qty);
+    }
   }
 
   onCheckout() {
@@ -344,8 +346,12 @@ export default class Cart extends Component {
   setQuantity(target, fn) {
     const id = target.getAttribute('data-line-item-id');
     const item = this.model.lineItems.find((lineItem) => lineItem.id === id);
-    const newQty = fn(item.quantity);
-    return this.props.tracker.trackMethod(this.updateItem.bind(this), 'Update Cart', this.cartItemTrackingInfo(item, newQty))(id, newQty);
+    const oldQty = item.quantity;
+    const newQty = fn(oldQty);
+    if (newQty !== oldQty) {
+      return this.props.tracker.trackMethod(this.updateItem.bind(this), 'Update Cart', this.cartItemTrackingInfo(item, newQty))(id, newQty);
+    }
+    return Promise.resolve();
   }
 
   setNote(evt) {
