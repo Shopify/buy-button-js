@@ -30,6 +30,7 @@ export default class View {
       googleFonts: this.component.googleFonts,
       name: this.component.name,
       width: this.component.options.layout === 'vertical' ? this.component.options.width : null,
+      title: this.component.iframeTitle,
     });
     this.iframe.addClass(this.className);
     return this.iframe.load();
