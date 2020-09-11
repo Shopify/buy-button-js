@@ -54,3 +54,12 @@ yarn run docs
 Doc server will run at http://localhost:4000/buy-button-js/
 Docs source files are located in /docs.
 Docs are automatically deployed to gh-pages from master.
+
+## Limitations
+
+Per https://github.com/Shopify/buy-button-js/pull/290 you must use the popup checkout interface or live with these limiations:
+
+* Cannot redirect users back to original page after completing checkout
+* Cart will not be cleared on checkout
+* Will be unable to track successful redirect
+
