@@ -147,6 +147,9 @@ const defaults = {
     },
     order: ['contents'],
     templates: modalTemplates,
+    text: {
+      closeAccessibilityLabel: 'Close',
+    },
   },
   productSet: {
     iframe: true,
