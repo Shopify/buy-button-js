@@ -55,6 +55,10 @@
 
   &:focus {
     border-color: var(--color-border-focus);
+
+    @media (-ms-high-contrast: active) {
+      outline: 1px solid var(--color-white);
+    }
   }
 }
 
