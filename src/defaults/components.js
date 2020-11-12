@@ -259,9 +259,9 @@ const defaults = {
       'image',
       'title',
       'variantTitle',
+      'quantity',
       'price',
       'priceWithDiscounts',
-      'quantity',
     ],
     classes: {
       lineItem: 'shopify-buy__cart-item',
