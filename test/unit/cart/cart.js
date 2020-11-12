@@ -130,13 +130,17 @@ describe('Cart class', () => {
   describe('get lineItemsHtml', () => {
     const variantAmount = '5.00';
     let formatMoneySpy;
+    let renderSpy;
+
 
     beforeEach(() => {
       formatMoneySpy = sinon.spy(formatMoney, 'default');
+      renderSpy = sinon.spy(cart.childTemplate, 'render');
     });
 
     afterEach(() => {
       formatMoneySpy.restore();
+      renderSpy.restore();
     });
 
     it('calls render and returns an html <li /> string', () => {
@@ -157,7 +161,6 @@ describe('Cart class', () => {
         discountAllocations: [],
       }];
 
-      const renderSpy = sinon.spy(cart.childTemplate, 'render');
       const cartLineItemsHtml = cart.lineItemsHtml;
       assert.include(cartLineItemsHtml, 'data-line-item-id="123"');
       assert.match(cartLineItemsHtml, /<li\b.*>[\s\S]*<\/li>/);
@@ -186,6 +189,69 @@ describe('Cart class', () => {
       assert.include(cartLineItemsHtml, `aria-label="${quantityInputAccessibilityLabel}"`);
       assert.include(cartLineItemsHtml, `<span class="visuallyhidden">${quantityDecrementAccessibilityLabel}</span>`);
       assert.include(cartLineItemsHtml, `<span class="visuallyhidden">${quantityIncrementAccessibilityLabel}</span>`);
+    });
+
+    describe('Line item image', () => {
+      beforeEach(() => {
+        cart.lineItemCache = [{
+          id: 123,
+          title: 'test',
+          variantTitle: 'test2',
+          quantity: 1,
+          variant: {
+            image: {
+              src: 'cdn.shopify.com/image.jpg',
+            },
+            priceV2: {
+              amount: '5.00',
+              currencyCode: 'CAD',
+            },
+          },
+          discountAllocations: [],
+        }];
+      });
+
+      it('renders the child template with a line item image', () => {
+        const mockLineItemImage = 'mock-image-src.com';
+        const imageForLineItemStub = sinon.stub(cart, 'imageForLineItem').returns(mockLineItemImage);
+
+        const cartLineItemsHtml = cart.lineItemsHtml;
+        const renderData = renderSpy.getCall(0).args[0].data;
+
+        assert.calledOnce(imageForLineItemStub);
+        assert.equal(renderData.lineItemImage, mockLineItemImage);
+        assert.include(cartLineItemsHtml, `style="background-image: url(${mockLineItemImage})"`);
+
+        imageForLineItemStub.restore();
+      });
+
+      it('renders the child template line item image with a role and aria-label if alt text is not null', () => {
+        const mockLineItemImageAltText = 'alt text';
+        const imageAltTextForLineItemStub = sinon.stub(cart, 'imageAltTextForLineItem').returns(mockLineItemImageAltText);
+
+        const cartLineItemsHtml = cart.lineItemsHtml;
+        const renderData = renderSpy.getCall(0).args[0].data;
+
+        assert.calledOnce(imageAltTextForLineItemStub);
+        assert.equal(renderData.lineItemImageAltText, mockLineItemImageAltText);
+        assert.include(cartLineItemsHtml, `role="img" aria-label="${mockLineItemImageAltText}"`);
+
+        imageAltTextForLineItemStub.restore();
+      });
+
+      it('renders the child template line item image without a role or aria-label if alt text is null', () => {
+        const mockLineItemImageAltText = null;
+        const imageAltTextForLineItemStub = sinon.stub(cart, 'imageAltTextForLineItem').returns(mockLineItemImageAltText);
+
+        const cartLineItemsHtml = cart.lineItemsHtml;
+        const renderData = renderSpy.getCall(0).args[0].data;
+
+        assert.calledOnce(imageAltTextForLineItemStub);
+        assert.equal(renderData.lineItemImageAltText, mockLineItemImageAltText);
+        assert.notInclude(cartLineItemsHtml, 'role="img" aria-label');
+
+        imageAltTextForLineItemStub.restore();
+      });
     });
 
     describe('price without discounts', () => {
@@ -498,6 +564,49 @@ describe('Cart class', () => {
 
     afterEach(() => {
       cart.props.client.image.helpers.imageForSize.restore();
+    });
+  });
+
+  describe('imageAltTextForLineItem', () => {
+    it('returns null if the line item variant image does not exist', () => {
+      const lineItem = {
+        variant: {
+          id: 123,
+        },
+      };
+      const altText = cart.imageAltTextForLineItem(lineItem);
+
+      assert.equal(altText, null);
+    });
+
+    it('returns the line item variant image alt text if it exists', () => {
+      const lineItem = {
+        title: 'title',
+        variant: {
+          id: 123,
+          image: {
+            altText: 'image alt text',
+          },
+        },
+      };
+      const altText = cart.imageAltTextForLineItem(lineItem);
+
+      assert.equal(altText, lineItem.variant.image.altText);
+    });
+
+    it('returns the line item title if the variant image alt text does not exist', () => {
+      const lineItem = {
+        title: 'title',
+        variant: {
+          id: 123,
+          image: {
+            src: 'cdn.shopify.com/variant_image.jpg',
+          },
+        },
+      };
+      const altText = cart.imageAltTextForLineItem(lineItem);
+
+      assert.equal(altText, lineItem.title);
     });
   });
 
