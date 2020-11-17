@@ -93,21 +93,8 @@ export default class Cart extends Component {
       const data = Object.assign({}, lineItem, this.options.viewData);
       const fullPrice = data.variant.priceV2.amount * data.quantity;
       const formattedPrice = formatMoney(fullPrice, this.moneyFormat);
-      const discountAllocations = data.discountAllocations;
 
-      const {discounts, totalDiscount} = discountAllocations.reduce((discountAcc, discount) => {
-        const targetSelection = discount.discountApplication.targetSelection;
-        if (LINE_ITEM_TARGET_SELECTIONS.indexOf(targetSelection) > -1) {
-          const discountAmount = discount.allocatedAmount.amount;
-          const discountDisplayText = discount.discountApplication.title || discount.discountApplication.code;
-          discountAcc.totalDiscount += discountAmount;
-          discountAcc.discounts.push({discount: `${discountDisplayText} (-${formatMoney(discountAmount, this.moneyFormat)})`});
-        }
-        return discountAcc;
-      }, {
-        discounts: [],
-        totalDiscount: 0,
-      });
+      const {discounts, totalDiscount} = this.discountsForLineItem(lineItem);
       data.discounts = discounts.length > 0 ? discounts : null;
       data.formattedFullPrice = totalDiscount > 0 ? formattedPrice : null;
       data.formattedActualPrice = formatMoney(fullPrice - totalDiscount, this.moneyFormat);
@@ -408,8 +395,15 @@ export default class Cart extends Component {
       this.toggles.forEach((toggle) => toggle.view.render());
       if (quantity > 0) {
         this.view.render();
+        const updatedLineItem = this.model.lineItems.find((item) => item.id === id);
+        this.updateSummaryText(`${this.options.text.itemTotalAccessibilityLabel} ${this.formattedLineItemTotal(updatedLineItem)}`);
       } else {
         this.view.animateRemoveNode(id);
+        if (this.model.lineItems.length > 0) {
+          this.updateSummaryText(this.options.text.itemRemovedAccessibilityLabel);
+        } else {
+          this.updateSummaryText(`${this.options.text.itemRemovedAccessibilityLabel} ${this.options.text.empty}`, true);
+        }
       }
       return checkout;
     });
@@ -437,6 +431,7 @@ export default class Cart extends Component {
         if (!openCart) {
           this.setFocus();
         }
+        this.updateSummaryText(this.options.text.itemAddedAccessibilityLabel);
         return checkout;
       });
     } else {
@@ -454,6 +449,7 @@ export default class Cart extends Component {
         if (!openCart) {
           this.setFocus();
         }
+        this.updateSummaryText(this.options.text.itemAddedAccessibilityLabel);
         return checkout;
       });
     }
@@ -494,5 +490,44 @@ export default class Cart extends Component {
     setTimeout(() => {
       this.view.setFocus();
     }, 0);
+  }
+
+  updateSummaryText(lineItemText, hideSubtotal) {
+    const summaryText = hideSubtotal ? lineItemText : `${lineItemText} ${this.options.text.subtotalAccessibilityLabel} ${this.formattedTotal}`;
+
+    const summaryNode = this.view.document.querySelector(this.selectors.cart.hiddenSummary);
+    summaryNode.textContent = summaryText;
+
+    setTimeout(() => {
+      summaryNode.textContent = '';
+    }, 1000);
+  }
+
+  formattedLineItemTotal(lineItem) {
+    const fullPrice = lineItem.variant.priceV2.amount * lineItem.quantity;
+    if (!this.options.contents.discounts) {
+      return formatMoney(fullPrice, this.moneyFormat);
+    }
+
+    const {totalDiscount} = this.discountsForLineItem(lineItem);
+    return formatMoney(fullPrice - totalDiscount, this.moneyFormat);
+  }
+
+  discountsForLineItem(lineItem) {
+    const discountAllocations = lineItem.discountAllocations;
+
+    return discountAllocations.reduce((discountAcc, discount) => {
+      const targetSelection = discount.discountApplication.targetSelection;
+      if (LINE_ITEM_TARGET_SELECTIONS.indexOf(targetSelection) > -1) {
+        const discountAmount = discount.allocatedAmount.amount;
+        const discountDisplayText = discount.discountApplication.title || discount.discountApplication.code;
+        discountAcc.totalDiscount += discountAmount;
+        discountAcc.discounts.push({discount: `${discountDisplayText} (-${formatMoney(discountAmount, this.moneyFormat)})`});
+      }
+      return discountAcc;
+    }, {
+      discounts: [],
+      totalDiscount: 0,
+    });
   }
 }

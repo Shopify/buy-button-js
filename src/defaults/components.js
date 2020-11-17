@@ -230,6 +230,7 @@ const defaults = {
       note: 'shopify-buy__cart__note',
       noteDescription: 'shopify-buy__cart__note__description',
       noteTextArea: 'shopify-buy__cart__note__text-area',
+      hiddenSummary: 'shopify-buy__cart__summary visuallyhidden',
     },
     text: {
       title: 'Cart',
@@ -240,6 +241,10 @@ const defaults = {
       notice: 'Shipping and discount codes are added at checkout.',
       noteDescription: 'Special instructions for seller',
       closeAccessibilityLabel: 'Close cart',
+      subtotalAccessibilityLabel: 'Cart subtotal',
+      itemTotalAccessibilityLabel: 'Item total',
+      itemRemovedAccessibilityLabel: 'Item removed from cart.',
+      itemAddedAccessibilityLabel: 'Item added to cart.',
     },
   },
   lineItem: {
