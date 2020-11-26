@@ -14,22 +14,27 @@ const buttonTemplate = '<div class="{{data.classes.product.buttonWrapper}}" data
 const productTemplate = {
   img: '{{#data.currentImage.srcLarge}}<div class="{{data.classes.product.imgWrapper}}" data-element="product.imgWrapper"><img alt="{{data.currentImage.altText}}" data-element="product.img" class="{{data.classes.product.img}}" src="{{data.currentImage.srcLarge}}" /></div>{{/data.currentImage.srcLarge}}',
   imgWithCarousel: `<div class="{{data.classes.product.imgWrapper}}" data-element="product.imageWrapper">
-                      <div class="main-image-wrapper">
-                        <button type="button" class="carousel-button carousel-button--previous">
-                          Left
-                          <img class="carousel-button-arrow" src="//sdks.shopifycdn.com/buy-button/latest/arrow.svg" alt="Carousel Arrow"/>
-                        </button>
-                        <img class="{{data.classes.product.img}}" alt="{{data.currentImage.altText}}" src="{{data.currentImage.src}}" data-element="product.img" />
-                        <button type="button" class="carousel-button carousel-button--next">
-                          Right
-                          <img class="carousel-button-arrow" src="//sdks.shopifycdn.com/buy-button/latest/arrow.svg" alt="Carousel Arrow"/>
-                        </button>
+                      <div class="{{data.classes.product.carouselImgWrapper}}" aria-roledescription="{{data.text.carouselAriaRoleDescription}}" aria-label="{{data.text.carouselAriaLabel}}" >
+                        <div aria-live="polite" aria-atomic="true">
+                          <span class="visuallyhidden">{{data.imageIndexString}}</span>
+                          <img class="{{data.classes.product.img}}" alt="{{data.currentImage.altText}}" src="{{data.currentImage.src}}" data-element="product.img" />
+                        </div>
+                        <div class="{{data.classes.product.carouselButtons}}">
+                          <button type="button" class="{{data.classes.product.carouselButton}} {{data.classes.product.carouselPrevious}}" aria-label="{{data.text.carouselPreviousImage}}">
+                            <svg class="{{data.classes.product.carouselButtonIcon}}" viewBox="0 0 19 34"><path d="M15.2 4l.8.7L3.4 17.2 16 29.8l-.8.7L2 17.2 15.2 4z" /></svg>                          
+                          </button>
+                          <button type="button" class="{{data.classes.product.carouselButton}} {{data.classes.product.carouselNext}}" aria-label="{{data.text.carouselNextImage}}">
+                            <svg class="{{data.classes.product.carouselButtonIcon}}" viewBox="0 0 19 34"><path d="M2.9 30.7l-.8-.7 12.6-12.5L2.1 4.9l.8-.7 13.2 13.3L2.9 30.7z" /></svg>                          
+                          </button>
+                        </div>
                       </div>
-                      <div class="{{data.classes.product.carousel}}">
+                      <ul class="{{data.classes.product.carousel}}" role="list">
                         {{#data.carouselImages}}
-                        <a data-element="product.carouselitem" aria-label="{{altText}}" href="{{src}}" class="{{data.classes.product.carouselItem}} {{#isSelected}} {{data.classes.product.carouselItemSelected}} {{/isSelected}}" data-image-id="{{id}}" style="background-image: url({{carouselSrc}})"></a>
+                        <li class="{{data.classes.product.carouselItem}} {{#isSelected}} {{data.classes.product.carouselItemSelected}} {{/isSelected}}" {{#isSelected}} aria-current="true" {{/isSelected}}>
+                          <a class="{{data.classes.product.carouselItemLink}}" data-element="product.carouselitem" aria-label="{{ariaLabel}}" href="{{src}}" data-image-id="{{id}}" style="background-image: url({{carouselSrc}})"></a>
+                        </li>
                         {{/data.carouselImages}}
-                      </div>
+                      </ul>
                     </div>`,
   title: '<h1 class="{{data.classes.product.title}}" data-element="product.title">{{data.title}}</h1>',
   variantTitle: '{{#data.hasVariants}}<h2 class="{{data.classes.product.variantTitle}}" data-element="product.variantTitle">{{data.selectedVariant.title}}</h2>{{/data.hasVariants}}',

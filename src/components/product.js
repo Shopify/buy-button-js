@@ -7,6 +7,7 @@ import formatMoney from '../utils/money';
 import normalizeConfig from '../utils/normalize-config';
 import browserFeatures from '../utils/detect-features';
 import getUnitPriceBaseUnit from '../utils/unit-price';
+import parseTemplateString from '../utils/template-string';
 import ProductView from '../views/product';
 import ProductUpdater from '../updaters/product';
 
@@ -262,6 +263,7 @@ export default class Product extends Component {
       formattedUnitPriceBaseUnit: this.formattedUnitPriceBaseUnit,
       carouselIndex: 0,
       carouselImages: this.carouselImages,
+      imageIndexString: this.imageIndexString,
     });
   }
 
@@ -272,7 +274,7 @@ export default class Product extends Component {
         src: image.src,
         carouselSrc: this.props.client.image.helpers.imageForSize(image, {maxWidth: 100, maxHeight: 100}),
         isSelected: image.id === this.currentImage.id,
-        altText: this.imageAltText(image.altText),
+        ariaLabel: this.carouselImageLabel(image.altText),
       };
     });
   }
@@ -361,7 +363,7 @@ export default class Product extends Component {
       [`click ${this.selectors.product.quantityIncrement}`]: this.onQuantityIncrement.bind(this, 1),
       [`click ${this.selectors.product.quantityDecrement}`]: this.onQuantityIncrement.bind(this, -1),
       [`blur ${this.selectors.product.quantityInput}`]: this.onQuantityBlur.bind(this),
-      [`click ${this.selectors.product.carouselItem}`]: this.onCarouselItemClick.bind(this),
+      [`click ${this.selectors.product.carouselItemLink}`]: this.onCarouselItemClick.bind(this),
       [`click ${this.selectors.product.carouselNext}`]: this.onCarouselChange.bind(this, 1),
       [`click ${this.selectors.product.carouselPrevious}`]: this.onCarouselChange.bind(this, -1),
     }, this.options.DOMEvents);
@@ -847,6 +849,11 @@ export default class Product extends Component {
     return altText || this.model.title;
   }
 
+  carouselImageLabel(altText) {
+    const imageAlt = this.imageAltText(altText);
+    return `${this.options.text.carouselImageLinkAccessibilityLabel} ${imageAlt}`;
+  }
+
   get priceAccessibilityLabel() {
     return this.hasCompareAtPrice ? this.options.text.salePriceAccessibilityLabel : this.options.text.regularPriceAccessibilityLabel;
   }
@@ -857,5 +864,16 @@ export default class Product extends Component {
 
   get hasCompareAtPrice() {
     return Boolean(this.selectedVariant && this.selectedVariant.compareAtPriceV2);
+  }
+
+  get imageIndexString() {
+    const imageList = this.model.images;
+    const total = imageList.length;
+
+    const currentImage = imageList.find((image) => {
+      return image.id === this.currentImage.id;
+    });
+    const index = imageList.indexOf(currentImage) + 1;
+    return parseTemplateString(this.options.text.carouselImageIndexLabel, {index, total});
   }
 }

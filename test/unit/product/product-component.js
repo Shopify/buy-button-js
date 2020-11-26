@@ -13,6 +13,7 @@ import * as normalizeConfig from '../../../src/utils/normalize-config';
 import * as formatMoney from '../../../src/utils/money';
 import * as browserFeatures from '../../../src/utils/detect-features';
 import * as getUnitPriceBaseUnit from '../../../src/utils/unit-price';
+import * as parseTemplateString from '../../../src/utils/template-string';
 
 const rootImageURI = 'https://cdn.shopify.com/s/files/1/0014/8583/2214/products/';
 
@@ -809,6 +810,7 @@ describe('Product Component class', () => {
         const expectedImage = {
           id: '1',
           src: `${rootImageURI}image-one.jpg`,
+          altText: 'image one alt text',
         };
 
         product.onCarouselItemClick(event, target);
@@ -1103,6 +1105,7 @@ describe('Product Component class', () => {
         const expectedImage = {
           id: '1',
           src: `${rootImageURI}image-one.jpg`,
+          altText: 'image one alt text',
         };
         product.updateVariant('Size', 'large');
         assert.deepEqual(product.selectedImage, expectedImage);
@@ -1168,11 +1171,30 @@ describe('Product Component class', () => {
 
       it('returns the passed in image alt text if it is valid', () => {
         assert.equal(product.imageAltText('test alt'), 'test alt');
-      })
+      });
 
       it('returns the image title when alt text passed in is null', () => {
         assert.equal(product.imageAltText(null), product.model.title);
-      })
+      });
+    });
+
+    describe('carouselImageLabel()', () => {
+      beforeEach(async () => {
+        await product.init(testProductCopy);
+      });
+
+      it('returns a string containing the carousel image link accessibility label and image alt text', () => {
+        const mockImageAltText = 'image alt text';
+        const altText = 'alt text';
+        const imageAltTextStub = sinon.stub(product, 'imageAltText').returns(mockImageAltText);
+        const label = product.carouselImageLabel(altText);
+
+        assert.calledOnce(imageAltTextStub);
+        assert.calledWith(imageAltTextStub, altText);
+        assert.equal(label, `${product.options.text.carouselImageLinkAccessibilityLabel} ${mockImageAltText}`);
+
+        imageAltTextStub.restore();
+      });
     });
 
     describe('getters', () => {
@@ -1633,17 +1655,24 @@ describe('Product Component class', () => {
         it('returns an object with carouselImages', () => {
           assert.deepEqual(viewData.carouselImages, product.carouselImages);
         });
+
+        it('returns an object with imageIndexString', () => {
+          assert.equal(viewData.imageIndexString, product.imageIndexString);
+        });
       });
 
       describe('carouselImages', () => {
         let imageForSizeStub;
         let carouselImages;
+        let carouselImageLabelStub;
+        const mockImageLabel = 'mockImageLabel';
 
         beforeEach(async () => {
           await product.init(testProductCopy);
           imageForSizeStub = sinon.stub(product.props.client.image.helpers, 'imageForSize').callsFake((image, dimensions) => {
             return dimensions;
           });
+          carouselImageLabelStub = sinon.stub(product, 'carouselImageLabel').returns(mockImageLabel);
           product = Object.defineProperty(product, 'currentImage', {
             value: testProductCopy.images[0],
           });
@@ -1652,9 +1681,10 @@ describe('Product Component class', () => {
 
         afterEach(() => {
           imageForSizeStub.restore();
+          carouselImageLabelStub.restore();
         });
 
-        it('returns an array of objects holding the id and src of each item in the model', () => {
+        it('returns an array of objects holding the id and of each item in the model', () => {
           assert.equal(carouselImages[0].id, testProductCopy.images[0].id);
           assert.equal(carouselImages[0].src, testProductCopy.images[0].src);
 
@@ -1690,6 +1720,22 @@ describe('Product Component class', () => {
           assert.isFalse(carouselImages[1].isSelected);
           assert.isFalse(carouselImages[2].isSelected);
           assert.isFalse(carouselImages[3].isSelected);
+        });
+
+        it('returns an array of objects containing an aria label with the image alt text', () => {
+          assert.callCount(carouselImageLabelStub, testProductCopy.images.length);
+
+          assert.calledWith(carouselImageLabelStub.getCall(0), testProductCopy.images[0].altText);
+          assert.deepEqual(carouselImages[0].ariaLabel, mockImageLabel);
+
+          assert.calledWith(carouselImageLabelStub.getCall(1), testProductCopy.images[1].altText);
+          assert.deepEqual(carouselImages[1].ariaLabel, mockImageLabel);
+
+          assert.calledWith(carouselImageLabelStub.getCall(2), testProductCopy.images[2].altText);
+          assert.deepEqual(carouselImages[2].ariaLabel, mockImageLabel);
+
+          assert.calledWith(carouselImageLabelStub.getCall(3), testProductCopy.images[3].altText);
+          assert.deepEqual(carouselImages[3].ariaLabel, mockImageLabel);
         });
       });
 
@@ -2133,7 +2179,7 @@ describe('Product Component class', () => {
 
         it('binds onCarouselItemClick to carouselItem click', () => {
           const onCarouselItemClickStub = sinon.stub(product, 'onCarouselItemClick');
-          product.DOMEvents[`click ${product.selectors.product.carouselItem}`]();
+          product.DOMEvents[`click ${product.selectors.product.carouselItemLink}`]();
           assert.calledOnce(onCarouselItemClickStub);
           onCarouselItemClickStub.restore();
         });
@@ -2561,6 +2607,28 @@ describe('Product Component class', () => {
             currencyCode: 'CAD',
           };
           assert.equal(product.hasCompareAtPrice, true);
+        });
+      });
+
+      describe('imageIndexString', () => {
+        it('returns the parsed carousel image index label with index and total replacements', () => {
+          const mockTemplateString = 'mock template string';
+          const parseTemplateStringStub = sinon.stub(parseTemplateString, 'default').returns(mockTemplateString);
+          const selectedIndex = 2;
+          product.model.images = testProductCopy.images;
+          product = Object.defineProperty(product, 'currentImage', {
+            value: testProductCopy.images[selectedIndex],
+          });
+          const imageIndexString = product.imageIndexString;
+
+          assert.calledOnce(parseTemplateStringStub);
+          assert.calledWith(parseTemplateStringStub, product.options.text.carouselImageIndexLabel, {
+            index: selectedIndex + 1,
+            total: testProductCopy.images.length,
+          });
+          assert.equal(imageIndexString, mockTemplateString);
+
+          parseTemplateStringStub.restore();
         });
       });
     });

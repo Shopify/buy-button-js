@@ -6,18 +6,22 @@ const testProduct = {
     {
       id: '1',
       src: 'https://cdn.shopify.com/s/files/1/0014/8583/2214/products/image-one.jpg',
+      altText: 'image one alt text',
     },
     {
       id: '2',
       src: 'https://cdn.shopify.com/s/files/1/0014/8583/2214/products/image-two.jpeg',
+      altText: 'image two alt text',
     },
     {
       id: '3',
       src: 'https://cdn.shopify.com/s/files/1/0014/8583/2214/products/image-three.jpg',
+      altText: 'image three alt text',
     },
     {
       id: '4',
       src: 'https://cdn.shopify.com/s/files/1/0014/8583/2214/products/image-four.jpeg',
+      altText: 'image four alt text',
     },
   ],
   options: [
