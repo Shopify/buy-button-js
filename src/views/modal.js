@@ -1,5 +1,6 @@
 import View from '../view';
 import {addClassToElement, removeClassFromElement} from '../utils/element-class';
+import {removeTrapFocus} from '../utils/focus';
 
 export default class ModalView extends View {
   wrapTemplate(html) {
@@ -11,6 +12,10 @@ export default class ModalView extends View {
    */
   close() {
     this.component.isVisible = false;
+    removeTrapFocus(this.wrapper);
+    if (this.wrapper && this._closeOnBgClick) {
+      this.wrapper.removeEventListener('click', this._closeOnBgClick);
+    }
     removeClassFromElement('is-active', this.wrapper);
     removeClassFromElement('is-active', this.document.body);
     removeClassFromElement('shopify-buy-modal-is-active', document.body);
@@ -36,7 +41,8 @@ export default class ModalView extends View {
    */
   delegateEvents() {
     super.delegateEvents();
-    this.wrapper.addEventListener('click', this.component.closeOnBgClick.bind(this.component));
+    this._closeOnBgClick = this.component.closeOnBgClick.bind(this.component);
+    this.wrapper.addEventListener('click', this._closeOnBgClick);
   }
 
   render() {

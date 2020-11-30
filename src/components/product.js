@@ -82,6 +82,7 @@ export default class Product extends Component {
     this.selectedVariant = {};
     this.selectedOptions = {};
     this.selectedImage = null;
+    this.modalProduct = Boolean(config.modalProduct);
     this.updater = new ProductUpdater(this);
     this.view = new ProductView(this);
   }
@@ -186,7 +187,7 @@ export default class Product extends Component {
    * @return {String}
    */
   get formattedCompareAtPrice() {
-    if (!this.selectedVariant || !this.selectedVariant.compareAtPriceV2) {
+    if (!this.hasCompareAtPrice) {
       return '';
     }
     return formatMoney(this.selectedVariant.compareAtPriceV2.amount, this.globalConfig.moneyFormat);
@@ -252,7 +253,10 @@ export default class Product extends Component {
       quantityClass: this.quantityClass,
       priceClass: this.priceClass,
       formattedPrice: this.formattedPrice,
+      priceAccessibilityLabel: this.priceAccessibilityLabel,
+      hasCompareAtPrice: this.hasCompareAtPrice,
       formattedCompareAtPrice: this.formattedCompareAtPrice,
+      compareAtPriceAccessibilityLabel: this.compareAtPriceAccessibilityLabel,
       showUnitPrice: this.showUnitPrice,
       formattedUnitPrice: this.formattedUnitPrice,
       formattedUnitPriceBaseUnit: this.formattedUnitPriceBaseUnit,
@@ -274,7 +278,7 @@ export default class Product extends Component {
   }
 
   get buttonClass() {
-    const disabledClass = this.buttonEnabled ? '' : this.classes.disabled;
+    const disabledClass = this.buttonEnabled ? '' : this.classes.product.disabled;
     const quantityClass = this.options.contents.buttonWithQuantity ? this.classes.product.buttonBesideQty : '';
     return `${disabledClass} ${quantityClass}`;
   }
@@ -331,7 +335,7 @@ export default class Product extends Component {
   }
 
   get priceClass() {
-    return this.selectedVariant && this.selectedVariant.compareAtPriceV2 ? this.classes.product.loweredPrice : '';
+    return this.hasCompareAtPrice ? this.classes.product.loweredPrice : '';
   }
 
   get isButton() {
@@ -381,9 +385,11 @@ export default class Product extends Component {
       return '';
     }
 
-    return this.decoratedOptions.reduce((acc, option) => {
+    const uniqueId = Date.now();
+    return this.decoratedOptions.reduce((acc, option, index) => {
       const data = merge(option, this.options.viewData);
       data.classes = this.classes;
+      data.selectId = `Option-${uniqueId}-${index}`;
       data.onlyOption = (this.model.options.length === 1);
       return acc + this.childTemplate.render({data});
     }, '');
@@ -646,7 +652,7 @@ export default class Product extends Component {
       this.props.closeModal();
       this._userEvent('addVariantToCart');
       this.props.tracker.trackMethod(this.cart.addVariantToCart.bind(this), 'Update Cart', this.selectedVariantTrackingInfo)(this.selectedVariant, this.selectedQuantity);
-      if (this.iframe) {
+      if (!this.modalProduct) {
         this.props.setActiveEl(target);
       }
     } else if (this.options.buttonDestination === 'modal') {
@@ -841,4 +847,15 @@ export default class Product extends Component {
     return altText || this.model.title;
   }
 
+  get priceAccessibilityLabel() {
+    return this.hasCompareAtPrice ? this.options.text.salePriceAccessibilityLabel : this.options.text.regularPriceAccessibilityLabel;
+  }
+
+  get compareAtPriceAccessibilityLabel() {
+    return this.hasCompareAtPrice ? this.options.text.regularPriceAccessibilityLabel : '';
+  }
+
+  get hasCompareAtPrice() {
+    return Boolean(this.selectedVariant && this.selectedVariant.compareAtPriceV2);
+  }
 }

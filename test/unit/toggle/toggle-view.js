@@ -5,14 +5,19 @@ describe('Toggle View class', () => {
   let toggle;
   let cart;
   let toggleVisibilitySpy;
+  let setActiveElSpy;
 
   beforeEach(() => {
     toggleVisibilitySpy = sinon.spy();
+    setActiveElSpy = sinon.spy();
     cart = {
       toggleVisibility: toggleVisibilitySpy,
     };
     const node = document.createElement('div');
-    toggle = new Toggle({node}, {cart});
+    toggle = new Toggle({node}, {
+      cart,
+      setActiveEl: setActiveElSpy,
+    });
   });
 
   describe('render()', () => {
@@ -121,9 +126,11 @@ describe('Toggle View class', () => {
 
     describe('when iframe exists', () => {
       let addEventListenerSpy;
+      let preventDefaultSpy;
 
       beforeEach(() => {
         addEventListenerSpy = sinon.spy();
+        preventDefaultSpy = sinon.spy();
         toggle.view.iframe = {
           parent: {
             addEventListener: addEventListenerSpy,
@@ -137,17 +144,41 @@ describe('Toggle View class', () => {
         assert.calledWith(addEventListenerSpy, 'keydown', sinon.match.func);
       });
 
-      it('does not toggle cart visibility if keydown event is not the enter key', () => {
-        const event = {keyCode: 999};
+      it('does not toggle cart visibility, set the active element, or call preventDefault if keydown event is not the enter or space key', () => {
+        const event = {
+          keyCode: 999,
+          preventDefault: preventDefaultSpy,
+        };
         addEventListenerSpy.getCall(0).args[1](event);
         assert.notCalled(toggleVisibilitySpy);
+        assert.notCalled(preventDefaultSpy);
+        assert.notCalled(setActiveElSpy);
       });
 
-      it('toggles cart visibility if keydown event is the enter key', () => {
-        const event = {keyCode: 13}; // enter key
+      it('toggles cart visibility, sets the active element, and calls preventDefault if keydown event is the enter key', () => {
+        const event = {
+          keyCode: 13, // enter key
+          preventDefault: preventDefaultSpy,
+        };
         addEventListenerSpy.getCall(0).args[1](event);
         assert.calledOnce(toggleVisibilitySpy);
         assert.calledWith(toggleVisibilitySpy, cart);
+        assert.calledOnce(preventDefaultSpy);
+        assert.calledWith(setActiveElSpy);
+        assert.calledWith(setActiveElSpy, toggle.view.node);
+      });
+
+      it('toggles cart visibility, sets the active element, and calls preventDefault if keydown event is the space key', () => {
+        const event = {
+          keyCode: 32, // space key
+          preventDefault: preventDefaultSpy,
+        };
+        addEventListenerSpy.getCall(0).args[1](event);
+        assert.calledOnce(toggleVisibilitySpy);
+        assert.calledWith(toggleVisibilitySpy, cart);
+        assert.calledOnce(preventDefaultSpy);
+        assert.calledWith(setActiveElSpy);
+        assert.calledWith(setActiveElSpy, toggle.view.node);
       });
     });
   });

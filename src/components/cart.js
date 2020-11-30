@@ -7,6 +7,7 @@ import formatMoney from '../utils/money';
 import CartView from '../views/cart';
 import CartUpdater from '../updaters/cart';
 import {addClassToElement} from '../utils/element-class';
+import {removeTrapFocus} from '../utils/focus';
 
 export const NO_IMG_URL = '//sdks.shopifycdn.com/buy-button/latest/no-image.jpg';
 
@@ -98,8 +99,9 @@ export default class Cart extends Component {
         const targetSelection = discount.discountApplication.targetSelection;
         if (LINE_ITEM_TARGET_SELECTIONS.indexOf(targetSelection) > -1) {
           const discountAmount = discount.allocatedAmount.amount;
+          const discountDisplayText = discount.discountApplication.title || discount.discountApplication.code;
           discountAcc.totalDiscount += discountAmount;
-          discountAcc.discounts.push({discount: `${discount.discountApplication.title} (-${formatMoney(discountAmount, this.moneyFormat)})`});
+          discountAcc.discounts.push({discount: `${discountDisplayText} (-${formatMoney(discountAmount, this.moneyFormat)})`});
         }
         return discountAcc;
       }, {
@@ -112,9 +114,10 @@ export default class Cart extends Component {
       data.formattedPrice = formattedPrice;
 
       data.classes = this.classes;
+      data.text = this.config.lineItem.text;
       data.lineItemImage = this.imageForLineItem(data);
       data.variantTitle = data.variant.title === 'Default Title' ? '' : data.variant.title;
-      return acc + this.childTemplate.render({data}, (output) => `<div id="${lineItem.id}" class=${this.classes.lineItem.lineItem}>${output}</div>`);
+      return acc + this.childTemplate.render({data}, (output) => `<li id="${lineItem.id}" class=${this.classes.lineItem.lineItem}>${output}</li>`);
     }, '');
   }
 
@@ -133,6 +136,7 @@ export default class Cart extends Component {
       discounts: this.cartDiscounts,
       contents: this.options.contents,
       cartNote: this.cartNote,
+      cartNoteId: this.cartNoteId,
     });
   }
 
@@ -163,7 +167,8 @@ export default class Cart extends Component {
         }
 
         if (discountValue > 0) {
-          discountArr.push({text: discount.title, amount: `-${formatMoney(discountValue, this.moneyFormat)}`});
+          const discountDisplayText = discount.title || discount.code;
+          discountArr.push({text: discountDisplayText, amount: `-${formatMoney(discountValue, this.moneyFormat)}`});
         }
       }
       return discountArr;
@@ -183,6 +188,10 @@ export default class Cart extends Component {
 
   get cartNote() {
     return this.model && this.model.note;
+  }
+
+  get cartNoteId() {
+    return `CartNote-${Date.now()}`;
   }
 
   get wrapperClass() {
@@ -289,6 +298,7 @@ export default class Cart extends Component {
   close() {
     this.isVisible = false;
     this.view.render();
+    removeTrapFocus(this.view.wrapper);
   }
 
   /**
@@ -297,7 +307,7 @@ export default class Cart extends Component {
   open() {
     this.isVisible = true;
     this.view.render();
-    this.view.setFocus();
+    this.setFocus();
   }
 
   /**
@@ -308,7 +318,7 @@ export default class Cart extends Component {
     this.isVisible = visible || !this.isVisible;
     this.view.render();
     if (this.isVisible) {
-      this.view.setFocus();
+      this.setFocus();
     }
   }
 
@@ -424,7 +434,9 @@ export default class Cart extends Component {
         this.updateCache(this.model.lineItems);
         this.view.render();
         this.toggles.forEach((toggle) => toggle.view.render());
-        this.view.setFocus();
+        if (!openCart) {
+          this.setFocus();
+        }
         return checkout;
       });
     } else {
@@ -439,7 +451,9 @@ export default class Cart extends Component {
         this.updateCache(this.model.lineItems);
         this.view.render();
         this.toggles.forEach((toggle) => toggle.view.render());
-        this.view.setFocus();
+        if (!openCart) {
+          this.setFocus();
+        }
         return checkout;
       });
     }
@@ -474,5 +488,11 @@ export default class Cart extends Component {
       quantity: parseFloat(quantity),
       sku: null,
     };
+  }
+
+  setFocus() {
+    setTimeout(() => {
+      this.view.setFocus();
+    }, 0);
   }
 }

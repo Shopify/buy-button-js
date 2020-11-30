@@ -15,7 +15,8 @@ import './unit/modal/modal-updater';
 import './unit/modal/modal-view';
 import './unit/toggle/toggle-component';
 import './unit/toggle/toggle-view';
-import './unit/cart';
+import './unit/cart/cart';
+import './unit/cart/cart-view';
 import './unit/checkout';
 import './unit/product-set';
 import './unit/tracker';
@@ -24,6 +25,7 @@ import './unit/money';
 import './unit/normalize-config';
 import './unit/detect-features';
 import './unit/unit-price';
+import './unit/focus';
 
 window.chai = chai;
 window.sinon = sinon;

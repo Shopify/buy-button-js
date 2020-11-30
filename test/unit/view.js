@@ -3,6 +3,7 @@ import Component from '../../src/component';
 import Template from '../../src/template';
 import Iframe from '../../src/iframe';
 import * as elementClass from '../../src/utils/element-class';
+import * as focusUtils from '../../src/utils/focus';
 
 describe('View class', () => {
   describe('constructor', () => {
@@ -486,14 +487,12 @@ describe('View class', () => {
     });
 
     describe('setFocus()', () => {
-      it('focuses first focusable element in wrapper', () => {
-        view.wrapper = document.createElement('div');
-        view.wrapper.append(document.createElement('a'));
-        view.wrapper.append(document.createElement('button'));
-        const focusStub = sinon.stub(view.wrapper.firstElementChild, 'focus');
+      it('calls trapFocus with the view wrapper', () => {
+        const trapFocusStub = sinon.stub(focusUtils, 'trapFocus');
         view.setFocus();
-        assert.calledOnce(focusStub);
-        focusStub.restore();
+        assert.calledOnce(trapFocusStub);
+        assert.calledWith(trapFocusStub.firstCall, view.wrapper);
+        trapFocusStub.restore();
       });
     });
 

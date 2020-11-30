@@ -82,6 +82,8 @@ const defaults = {
       unavailable: 'Unavailable',
       unitPriceAccessibilityLabel: 'Unit price',
       unitPriceAccessibilitySeparator: 'per',
+      regularPriceAccessibilityLabel: 'Regular price',
+      salePriceAccessibilityLabel: 'Sale price',
     },
   },
   modalProduct: {
@@ -237,6 +239,7 @@ const defaults = {
       currency: 'CAD',
       notice: 'Shipping and discount codes are added at checkout.',
       noteDescription: 'Special instructions for seller',
+      closeAccessibilityLabel: 'Close cart',
     },
   },
   lineItem: {
@@ -275,6 +278,11 @@ const defaults = {
       quantityButton: 'shopify-buy__btn--seamless',
       quantityIncrement: 'shopify-buy__quantity-increment',
       quantityDecrement: 'shopify-buy__quantity-decrement',
+    },
+    text: {
+      quantityInputAccessibilityLabel: 'Quantity',
+      quantityDecrementAccessibilityLabel: 'Reduce item quantity by one',
+      quantityIncrementAccessibilityLabel: 'Increase item quantity by one',
     },
   },
   toggle: {

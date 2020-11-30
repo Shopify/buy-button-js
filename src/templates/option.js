@@ -1,8 +1,8 @@
 const optionTemplates = {
   option: `<div class="{{data.classes.option.option}}" data-element="option.option">
-    <label class="{{data.classes.option.label}} {{#data.onlyOption}}{{data.classes.option.hiddenLabel}}{{/data.onlyOption}}" data-element="option.label">{{data.name}}</label>
+    <label for="{{data.selectId}}" class="{{data.classes.option.label}} {{#data.onlyOption}}{{data.classes.option.hiddenLabel}}{{/data.onlyOption}}" data-element="option.label">{{data.name}}</label>
       <div class="{{data.classes.option.wrapper}}" data-element="option.wrapper">
-      <select class="{{data.classes.option.select}}" name="{{data.name}}" data-element="option.select">
+      <select id="{{data.selectId}}" class="{{data.classes.option.select}}" name="{{data.name}}" data-element="option.select">
         {{#data.values}}
           <option {{#selected}}selected{{/selected}} value="{{name}}">{{name}}</option>
         {{/data.values}}

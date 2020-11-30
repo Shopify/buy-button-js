@@ -1,24 +1,33 @@
-import Cart from '../../src/components/cart';
-import CartToggle from '../../src/components/toggle';
-import Component from '../../src/component';
-import Checkout from '../../src/components/checkout';
-import Template from '../../src/template';
-import CartUpdater from '../../src/updaters/cart';
-import CartView from '../../src/views/cart';
-import ShopifyBuy from '../../src/buybutton';
-import * as formatMoney from '../../src/utils/money';
-import * as elementClass from '../../src/utils/element-class';
+import Cart from '../../../src/components/cart';
+import CartToggle from '../../../src/components/toggle';
+import Component from '../../../src/component';
+import Checkout from '../../../src/components/checkout';
+import Template from '../../../src/template';
+import CartUpdater from '../../../src/updaters/cart';
+import CartView from '../../../src/views/cart';
+import ShopifyBuy from '../../../src/buybutton';
+import * as formatMoney from '../../../src/utils/money';
+import * as elementClass from '../../../src/utils/element-class';
+import * as focusUtils from '../../../src/utils/focus';
 
 let cart;
 
 describe('Cart class', () => {
   const moneyFormat = '${{amount}}';
+  const quantityInputAccessibilityLabel = 'quantity accessibility label';
+  const quantityDecrementAccessibilityLabel = 'quantity decrement accessibility label';
+  const quantityIncrementAccessibilityLabel = 'quantity increment accessibility label';
+
   let closeCartSpy;
   let trackSpy;
+  let viewData;
+  const mockTime = 123;
+  let dateNowStub;
 
   beforeEach(() => {
     closeCartSpy = sinon.spy();
     trackSpy = sinon.spy();
+    dateNowStub = sinon.stub(Date, 'now').returns(mockTime);
 
     cart = new Cart({
       options: {
@@ -31,12 +40,19 @@ describe('Cart class', () => {
             notice: 'test',
           },
         },
+        lineItem: {
+          text: {
+            quantityInputAccessibilityLabel,
+            quantityDecrementAccessibilityLabel,
+            quantityIncrementAccessibilityLabel,
+          },
+        },
       },
       moneyFormat,
     }, {
       client: ShopifyBuy.buildClient({
         domain: 'test.myshopify.com',
-        storefrontAccessToken: 123
+        storefrontAccessToken: 123,
       }),
       browserFeatures: {
         transition: true,
@@ -45,7 +61,7 @@ describe('Cart class', () => {
       },
       tracker: {
         trackMethod: (fn) => {
-          return function () {
+          return function() {
             fn(...arguments);
           };
         },
@@ -56,6 +72,7 @@ describe('Cart class', () => {
   });
 
   afterEach(() => {
+    dateNowStub.restore();
     cart.destroy();
   });
 
@@ -122,7 +139,7 @@ describe('Cart class', () => {
       formatMoneySpy.restore();
     });
 
-    it('calls render and returns an html string', () => {
+    it('calls render and returns an html <li /> string', () => {
       cart.lineItemCache = [{
         id: 123,
         title: 'test',
@@ -141,8 +158,34 @@ describe('Cart class', () => {
       }];
 
       const renderSpy = sinon.spy(cart.childTemplate, 'render');
-      assert.include(cart.lineItemsHtml, 'data-line-item-id="123"');
+      const cartLineItemsHtml = cart.lineItemsHtml;
+      assert.include(cartLineItemsHtml, 'data-line-item-id="123"');
+      assert.match(cartLineItemsHtml, /<li\b.*>[\s\S]*<\/li>/);
       assert.calledOnce(renderSpy);
+    });
+
+    it('renders the quantity accessibility labels', () => {
+      cart.lineItemCache = [{
+        id: 123,
+        title: 'test',
+        variantTitle: 'test2',
+        quantity: 1,
+        variant: {
+          image: {
+            src: 'cdn.shopify.com/image.jpg',
+          },
+          priceV2: {
+            amount: '5.00',
+            currencyCode: 'CAD',
+          },
+        },
+        discountAllocations: [],
+      }];
+
+      const cartLineItemsHtml = cart.lineItemsHtml;
+      assert.include(cartLineItemsHtml, `aria-label="${quantityInputAccessibilityLabel}"`);
+      assert.include(cartLineItemsHtml, `<span class="visuallyhidden">${quantityDecrementAccessibilityLabel}</span>`);
+      assert.include(cartLineItemsHtml, `<span class="visuallyhidden">${quantityIncrementAccessibilityLabel}</span>`);
     });
 
     describe('price without discounts', () => {
@@ -275,7 +318,7 @@ describe('Cart class', () => {
 
         assert.include(cartLineItemsHtml, 'data-element="lineItem.price"');
         assert.include(cartLineItemsHtml, `$${discountedPrice}.00`);
-        
+
         assert.calledThrice(formatMoneySpy);
         assert.calledWith(formatMoneySpy.firstCall, fullPrice, moneyFormat);
         assert.calledWith(formatMoneySpy.secondCall, discountAmount, moneyFormat);
@@ -326,7 +369,58 @@ describe('Cart class', () => {
 
         assert.include(cartLineItemsHtml, 'data-element="lineItem.price"');
         assert.include(cartLineItemsHtml, `$${discountedPrice}.00`);
-        
+
+        assert.calledThrice(formatMoneySpy);
+        assert.calledWith(formatMoneySpy.firstCall, fullPrice, moneyFormat);
+        assert.calledWith(formatMoneySpy.secondCall, discountAmount, moneyFormat);
+        assert.calledWith(formatMoneySpy.thirdCall, discountedPrice, moneyFormat);
+      });
+
+      it('renders the discount information with the code as discount title if the discount allocation exists with a target of `EXPLICIT` and the discount title does not exist', () => {
+        const discountAmount = '1.00';
+        const discountCode = 'BOGO';
+        const quantity = 2;
+        cart.lineItemCache = [{
+          id: 123,
+          title: 'test',
+          variantTitle: 'test2',
+          quantity,
+          variant: {
+            image: {
+              src: 'cdn.shopify.com/image.jpg',
+            },
+            priceV2: {
+              amount: variantAmount,
+              currencyCode: 'CAD',
+            },
+          },
+          discountAllocations: [
+            {
+              discountApplication: {
+                code: discountCode,
+                targetSelection: 'EXPLICIT',
+              },
+              allocatedAmount: {
+                amount: discountAmount,
+                currencyCode: 'CAD',
+              },
+            },
+          ],
+        }];
+
+        const cartLineItemsHtml = cart.lineItemsHtml;
+        const fullPrice = variantAmount * quantity;
+        const discountedPrice = fullPrice - discountAmount;
+
+        assert.include(cartLineItemsHtml, 'data-element="lineItem.fullPrice"');
+        assert.include(cartLineItemsHtml, `$${fullPrice}.00`);
+
+        assert.include(cartLineItemsHtml, 'data-element="lineItem.discount"');
+        assert.include(cartLineItemsHtml, `${discountCode} (-$${discountAmount})`);
+
+        assert.include(cartLineItemsHtml, 'data-element="lineItem.price"');
+        assert.include(cartLineItemsHtml, `$${discountedPrice}.00`);
+
         assert.calledThrice(formatMoneySpy);
         assert.calledWith(formatMoneySpy.firstCall, fullPrice, moneyFormat);
         assert.calledWith(formatMoneySpy.secondCall, discountAmount, moneyFormat);
@@ -377,6 +471,7 @@ describe('Cart class', () => {
     });
   });
 
+
   describe('imageForLineItem', () => {
     beforeEach(() => {
       cart.lineItem = {
@@ -386,9 +481,9 @@ describe('Cart class', () => {
         line_price: 20,
         quantity: 1,
         variant: {
-          image: { src: 'cdn.shopify.com/variant_image.jpg'},
+          image: {src: 'cdn.shopify.com/variant_image.jpg'},
         },
-      }
+      };
     });
 
     it('returns the variant image if it exists', () => {
@@ -416,7 +511,7 @@ describe('Cart class', () => {
     });
 
     it('calls fetch on client', () => {
-      localStorage.setItem(cart.localStorageCheckoutKey, 12345)
+      localStorage.setItem(cart.localStorageCheckoutKey, 12345);
       const fetchCart = sinon.stub(cart.props.client.checkout, 'fetch').returns(Promise.resolve({id: 12345, lineItems: []}));
 
       return cart.fetchData().then((data) => {
@@ -428,7 +523,7 @@ describe('Cart class', () => {
 
     it('resolves to null and removes localStorage key if checkout fetch fails', () => {
       localStorage.setItem(cart.localStorageCheckoutKey, 1);
-      const fetchCart = sinon.stub(cart.props.client.checkout, 'fetch').returns(Promise.reject({errors: [{ message: 'rejected.' }]}));
+      const fetchCart = sinon.stub(cart.props.client.checkout, 'fetch').returns(Promise.reject({errors: [{message: 'rejected.'}]}));
 
       return cart.fetchData().then((data) => {
         assert.deepEqual(data, null);
@@ -440,7 +535,7 @@ describe('Cart class', () => {
 
     it('resolves to null and removes the localStorage key if checkout is completed', () => {
       localStorage.setItem(cart.localStorageCheckoutKey, 123);
-      const fetchCart = sinon.stub(cart.props.client.checkout, 'fetch').returns(Promise.resolve({ completedAt: "04-12-2018", lineItems: []}));
+      const fetchCart = sinon.stub(cart.props.client.checkout, 'fetch').returns(Promise.resolve({completedAt: '04-12-2018', lineItems: []}));
 
       return cart.fetchData().then((data) => {
         assert.equal(data, null);
@@ -483,8 +578,8 @@ describe('Cart class', () => {
 
   describe('fetchMoneyFormat()', () => {
     it('calls fetchShopInfo on client', () => {
-      localStorage.setItem(cart.localStorageCheckoutKey, 12345)
-      const fetchMoneyFormat = sinon.stub(cart.props.client.shop, 'fetchInfo').returns(Promise.resolve({ moneyFormat: '₿{{amount}}'}));
+      localStorage.setItem(cart.localStorageCheckoutKey, 12345);
+      const fetchMoneyFormat = sinon.stub(cart.props.client.shop, 'fetchInfo').returns(Promise.resolve({moneyFormat: '₿{{amount}}'}));
 
       return cart.fetchMoneyFormat().then((data) => {
         assert.deepEqual(data, '₿{{amount}}');
@@ -518,7 +613,7 @@ describe('Cart class', () => {
 
   describe('setQuantity()', () => {
     const node = {
-      getAttribute: () => 1234
+      getAttribute: () => 1234,
     };
 
     beforeEach(() => {
@@ -533,7 +628,7 @@ describe('Cart class', () => {
             },
           },
         }],
-      }
+      };
       cart.updateItem = sinon.spy();
       cart.cartItemTrackingInfo = sinon.spy();
     });
@@ -564,8 +659,8 @@ describe('Cart class', () => {
 
       cart.model = {
         id: 123456,
-      }
-      updateLineItemsStub = sinon.stub(cart.props.client.checkout, 'updateLineItems').returns(Promise.resolve({lineItems: [{id: lineItemId, quantity: lineItemQuantity}]}))
+      };
+      updateLineItemsStub = sinon.stub(cart.props.client.checkout, 'updateLineItems').returns(Promise.resolve({lineItems: [{id: lineItemId, quantity: lineItemQuantity}]}));
       addClassToElementStub = sinon.stub(elementClass, 'addClassToElement');
 
       cart.view.render = sinon.spy();
@@ -617,7 +712,7 @@ describe('Cart class', () => {
 
     beforeEach(() => {
       cartOpenStub = sinon.stub(cart, 'open');
-      setFocusStub = sinon.stub(cart.view, 'setFocus');
+      setFocusStub = sinon.stub(cart, 'setFocus');
       addLineItemsStub = sinon.stub(cart.props.client.checkout, 'addLineItems').returns(Promise.resolve(mockCheckout));
       checkoutCreateStub = sinon.stub(cart.props.client.checkout, 'create').returns(Promise.resolve(mockCheckout));
       renderStub = sinon.stub(cart.view, 'render');
@@ -639,39 +734,6 @@ describe('Cart class', () => {
       assert.equal(cart.addVariantToCart(variant, 0), null);
     });
 
-    it('adds line item with quantity 1 if quantity parameter is not provided', () => {
-      cart.model = {
-        id: modelId,
-      };
-
-      return cart.addVariantToCart(variant).then(() => {
-        assert.calledWith(addLineItemsStub, modelId, [{variantId, quantity: 1}]);
-      });
-    });
-
-    it('adds line item to checkout and returns the updated checkout if cart model exists', () => {
-      cart.model = {
-        id: modelId,
-      };
-
-      return cart.addVariantToCart(variant, quantity).then((checkout) => {
-        assert.notCalled(checkoutCreateStub);
-        assert.calledOnce(addLineItemsStub);
-        assert.calledWith(addLineItemsStub, modelId, [lineItem]);
-        assert.deepEqual(checkout, mockCheckout);
-      });
-    });
-
-    it('creates a checkout with line item and returns the updated checkout if cart model is null', () => {
-      cart.model = null;
-
-      return cart.addVariantToCart(variant, quantity).then((checkout) => {
-        assert.calledOnce(checkoutCreateStub);
-        assert.calledWith(checkoutCreateStub, {lineItems: [lineItem]});
-        assert.deepEqual(checkout, mockCheckout);
-      });
-    });
-
     it('calls open on cart if openCart parameter is not provided', () => {
       return cart.addVariantToCart(variant, quantity).then(() => {
         assert.calledOnce(cartOpenStub);
@@ -687,6 +749,83 @@ describe('Cart class', () => {
     it('does not call open on cart if openCart parameter is false', () => {
       return cart.addVariantToCart(variant, quantity, false).then(() => {
         assert.notCalled(cartOpenStub);
+      });
+    });
+
+    it('adds line item with quantity 1 if quantity parameter is not provided', () => {
+      cart.model = {
+        id: modelId,
+      };
+
+      return cart.addVariantToCart(variant).then(() => {
+        assert.calledWith(addLineItemsStub, modelId, [{variantId, quantity: 1}]);
+      });
+    });
+
+    describe('model exists', () => {
+      beforeEach(() => {
+        cart.model = {
+          id: modelId,
+        };
+      });
+
+      it('adds line item to checkout and returns the updated checkout', () => {
+        return cart.addVariantToCart(variant, quantity).then((checkout) => {
+          assert.notCalled(checkoutCreateStub);
+          assert.calledOnce(addLineItemsStub);
+          assert.calledWith(addLineItemsStub, modelId, [lineItem]);
+          assert.deepEqual(checkout, mockCheckout);
+        });
+      });
+
+      it('does not call setFocus if the openCart parameter is true', () => {
+        return cart.addVariantToCart(variant, quantity, true).then(() => {
+          assert.notCalled(setFocusStub);
+        });
+      });
+
+      it('calls setFocus if the openCart parameter is false', () => {
+        return cart.addVariantToCart(variant, quantity, false).then(() => {
+          assert.calledOnce(setFocusStub);
+        });
+      });
+
+      it('does not call setFocus if the openCart parameter is not provided', () => {
+        return cart.addVariantToCart(variant, quantity).then(() => {
+          assert.notCalled(setFocusStub);
+        });
+      });
+    });
+
+    describe('model does not exist', () => {
+      beforeEach(() => {
+        cart.model = null;
+      });
+
+      it('creates a checkout with line item and returns the updated checkout if cart model is null', () => {
+        return cart.addVariantToCart(variant, quantity).then((checkout) => {
+          assert.calledOnce(checkoutCreateStub);
+          assert.calledWith(checkoutCreateStub, {lineItems: [lineItem]});
+          assert.deepEqual(checkout, mockCheckout);
+        });
+      });
+
+      it('does not call setFocus if the openCart parameter is true', () => {
+        return cart.addVariantToCart(variant, quantity, true).then(() => {
+          assert.notCalled(setFocusStub);
+        });
+      });
+
+      it('calls setFocus if openCart parameter is false', () => {
+        return cart.addVariantToCart(variant, quantity, false).then(() => {
+          assert.calledOnce(setFocusStub);
+        });
+      });
+
+      it('does not call setFocus if openCart parameter is not provided', () => {
+        return cart.addVariantToCart(variant, quantity).then(() => {
+          assert.notCalled(setFocusStub);
+        });
       });
     });
   });
@@ -797,7 +936,7 @@ describe('Cart class', () => {
       return cart.init(data).then((returnValue) => {
         assert.deepEqual(cart, returnValue);
       });
-    }); 
+    });
 
     it('calls fetchMoneyFormat when moneyFormat has not been set', () => {
       cart.moneyFormat = null;
@@ -830,7 +969,7 @@ describe('Cart class', () => {
     });
 
     it('calls init on the toggle with the cart model`s line items', () => {
-      const lineItems = [{id: 123, quantity: 5}]
+      const lineItems = [{id: 123, quantity: 5}];
       superInitStub.resolves({model: {lineItems}});
 
       return cart.init(data).then(() => {
@@ -894,8 +1033,6 @@ describe('Cart class', () => {
   });
 
   describe('viewData()', () => {
-    let viewData;
-
     describe('with model', () => {
       beforeEach(async () => {
         const lineItems = [
@@ -962,6 +1099,10 @@ describe('Cart class', () => {
       it('returns an object with cart note', () => {
         assert.equal(viewData.cartNote, cart.cartNote);
       });
+
+      it('returns an object with cartNoteId', () => {
+        assert.equal(viewData.cartNoteId, cart.cartNoteId);
+      });
     });
 
     describe('without model', () => {
@@ -996,6 +1137,10 @@ describe('Cart class', () => {
 
       it('returns an object with cart note', () => {
         assert.equal(viewData.cartNote, cart.cartNote);
+      });
+
+      it('returns an object with cartNoteId', () => {
+        assert.equal(viewData.cartNoteId, cart.cartNoteId);
       });
     });
   });
@@ -1043,6 +1188,12 @@ describe('Cart class', () => {
       cart.model.note = note;
 
       assert.equal(cart.cartNote, cart.model.note);
+    });
+  });
+
+  describe('get cartNoteId', () => {
+    it('returns a string containing the current time in ms', () => {
+      assert.equal(cart.cartNoteId, `CartNote-${mockTime}`);
     });
   });
 
@@ -1228,6 +1379,32 @@ describe('Cart class', () => {
         amount: `-$${discountPercentage / 100 * lineItemSubtotal}.00`,
       });
     });
+
+    it('returns discount code as discount title when target selection is `ALL` and discount title does not exists', () => {
+      const discountCode = 'BOGO';
+      const discountAmount = '2.00';
+
+      cart.model = {
+        lineItemsSubtotalPrice: {
+          amount: '20.0',
+          currencyCode: 'CAD',
+        },
+        discountApplications: [
+          {
+            code: discountCode,
+            targetSelection: 'ALL',
+            value: {
+              amount: discountAmount,
+              currencyCode: 'CAD',
+            },
+          },
+        ],
+      };
+
+      const discounts = cart.cartDiscounts;
+      assert.equal(discounts.length, 1);
+      assert.equal(discounts[0].text, discountCode);
+    });
   });
 
   describe('cartItemTrackingInfo', () => {
@@ -1259,6 +1436,195 @@ describe('Cart class', () => {
         quantity: 5,
         sku: null,
       });
+    });
+  });
+
+
+  describe('close()', () => {
+    let viewRenderSpy;
+    let removeTrapFocusStub;
+
+    beforeEach(() => {
+      viewRenderSpy = sinon.spy();
+      cart.view.render = viewRenderSpy;
+      removeTrapFocusStub = sinon.stub(focusUtils, 'removeTrapFocus');
+      cart.isVisible = true;
+
+      cart.close();
+    });
+
+    afterEach(() => {
+      removeTrapFocusStub.restore();
+    });
+
+    it('sets isVisible to false', () => {
+      assert.equal(cart.isVisible, false);
+    });
+
+    it('calls the view`s render function', () => {
+      assert.calledOnce(viewRenderSpy);
+    });
+
+    it('calls removeTrapFocus with the view wrapper', () => {
+      assert.calledOnce(removeTrapFocusStub);
+      assert.calledWith(removeTrapFocusStub.firstCall, cart.view.wrapper);
+    });
+  });
+
+  describe('open', () => {
+    let viewRenderStub;
+    let setFocusStub;
+
+    beforeEach(() => {
+      viewRenderStub = sinon.stub(cart.view, 'render');
+      setFocusStub = sinon.stub(cart, 'setFocus');
+    });
+
+    afterEach(() => {
+      viewRenderStub.restore();
+      setFocusStub.restore();
+    });
+
+    it('sets isVisible to true', () => {
+      cart.isVisible = false;
+      cart.open();
+
+      assert.equal(cart.isVisible, true);
+    });
+
+    it('calls render on the view', () => {
+      cart.open();
+
+      assert.calledOnce(viewRenderStub);
+    });
+
+    it('calls setFocus', () => {
+      cart.open();
+
+      assert.calledOnce(setFocusStub);
+    });
+  });
+
+  describe('toggleVisibility', () => {
+    let viewRenderStub;
+    let setFocusStub;
+
+    beforeEach(() => {
+      viewRenderStub = sinon.stub(cart.view, 'render');
+      setFocusStub = sinon.stub(cart, 'setFocus');
+    });
+
+    afterEach(() => {
+      viewRenderStub.restore();
+      setFocusStub.restore();
+    });
+
+    it('sets isVisible to true if it is currently false and true is passed in', () => {
+      cart.isVisible = false;
+      cart.toggleVisibility(true);
+
+      assert.equal(cart.isVisible, true);
+    });
+
+    it('sets isVisible to true if it is currently true and true is passed in', () => {
+      cart.isVisible = true;
+      cart.toggleVisibility(true);
+
+      assert.equal(cart.isVisible, true);
+    });
+
+    it('sets isVisible to true if it is currently false and false is passed in', () => {
+      cart.isVisible = false;
+      cart.toggleVisibility(false);
+
+      assert.equal(cart.isVisible, true);
+    });
+
+    it('sets isVisible to false if it is currently true and false is passed in', () => {
+      cart.isVisible = true;
+      cart.toggleVisibility(false);
+
+      assert.equal(cart.isVisible, false);
+    });
+
+    it('sets isVisible to true if it is currently false and nothing is passed in', () => {
+      cart.isVisible = false;
+      cart.toggleVisibility();
+
+      assert.equal(cart.isVisible, true);
+    });
+
+    it('sets isVisible to false if it is currently true and nothing is passed in', () => {
+      cart.isVisible = true;
+      cart.toggleVisibility();
+
+      assert.equal(cart.isVisible, false);
+    });
+
+    it('calls render on the view', () => {
+      cart.toggleVisibility();
+
+      assert.calledOnce(viewRenderStub);
+    });
+
+    it('calls setFocus if true is passed in and isVisible is currently false', () => {
+      cart.isVisible = false;
+      cart.toggleVisibility(true);
+
+      assert.calledOnce(setFocusStub);
+    });
+
+    it('calls setFocus if true is passed in and isVisible is currently true', () => {
+      cart.isVisible = true;
+      cart.toggleVisibility(true);
+
+      assert.calledOnce(setFocusStub);
+    });
+
+    it('calls setFocus if false is passed in and isVisible is currently false', () => {
+      cart.isVisible = false;
+      cart.toggleVisibility(false);
+
+      assert.calledOnce(setFocusStub);
+    });
+
+    it('does not call setFocus if false is passed in and isVisible is currently true', () => {
+      cart.isVisible = true;
+      cart.toggleVisibility(false);
+
+      assert.notCalled(setFocusStub);
+    });
+
+    it('calls setFocus if nothing is passed in and isVisible is currently false', () => {
+      cart.isVisible = false;
+      cart.toggleVisibility();
+
+      assert.calledOnce(setFocusStub);
+    });
+
+    it('does not call setFocus if nothing is passed in and isVisible is currently true', () => {
+      cart.isVisible = true;
+      cart.toggleVisibility();
+
+      assert.notCalled(setFocusStub);
+    });
+  });
+
+  describe('setFocus', () => {
+    it('calls setFocus on the view after a timeout of 0', () => {
+      const setTimeoutStub = sinon.stub(window, 'setTimeout');
+      const viewSetFocusStub = sinon.stub(cart.view, 'setFocus');
+
+      cart.setFocus();
+      
+      assert.calledOnce(setTimeoutStub);
+      assert.calledWith(setTimeoutStub, sinon.match.func, 0);
+
+      setTimeoutStub.getCall(0).args[0]();
+      assert.calledOnce(viewSetFocusStub);
+
+      setTimeoutStub.restore();
+      viewSetFocusStub.restore();
     });
   });
 });

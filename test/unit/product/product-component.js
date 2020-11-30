@@ -18,6 +18,16 @@ const rootImageURI = 'https://cdn.shopify.com/s/files/1/0014/8583/2214/products/
 
 describe('Product Component class', () => {
   let product;
+  let dateNowStub;
+  const mockTime = 123;
+
+  beforeEach(() => {
+    dateNowStub = sinon.stub(Date, 'now').returns(mockTime);
+  });
+
+  afterEach(() => {
+    dateNowStub.restore();
+  });
 
   describe('constructor', () => {
     let normalizeConfigStub;
@@ -89,6 +99,18 @@ describe('Product Component class', () => {
 
     it('creates a new view', () => {
       assert.instanceOf(product.view, ProductView);
+    });
+
+    it('sets modalProduct to false if it is not provided in the config', () => {
+      assert.equal(product.modalProduct, false);
+    });
+
+    it('sets modalProduct to true if it is set to true in the config', () => {
+      const modalProductConfig = Object.assign({}, constructorConfig);
+      modalProductConfig.modalProduct = true;
+      product = new Product(modalProductConfig, props);
+
+      assert.equal(product.modalProduct, true);
     });
   });
 
@@ -543,11 +565,17 @@ describe('Product Component class', () => {
           addToCartStub.restore();
         });
 
-        it('sets target to active el if iframe exists', () => {
-          product.iframe = {};
+        it('sets the active element to the target if it is not a modal product', () => {
+          product.modalProduct = false;
           product.onButtonClick(evt, target);
           assert.calledOnce(setActiveElSpy);
           assert.calledWith(setActiveElSpy, target);
+        });
+
+        it('does not set the active element if it is a modal product', () => {
+          product.modalProduct = true;
+          product.onButtonClick(evt, target);
+          assert.notCalled(setActiveElSpy);
         });
       });
 
@@ -1378,14 +1406,10 @@ describe('Product Component class', () => {
         });
 
         describe('formattedCompareAtPrice', () => {
-          it('returns empty string if there is no selected variant', () => {
-            product.selectedVariant = null;
-            assert.equal(product.formattedCompareAtPrice, '');
-          });
-
           it('returns empty string if there is no compare at price', () => {
-            product.selectedVariant.compareAtPriceV2 = null;
+            const hasCompareAtPriceStub = sinon.stub(product, 'hasCompareAtPrice').get(() => false);
             assert.equal(product.formattedCompareAtPrice, '');
+            hasCompareAtPriceStub.restore();
           });
 
           it('returns formatted money with selected variant compare at price and money format from global config if there is a selected variant', () => {
@@ -1395,10 +1419,12 @@ describe('Product Component class', () => {
                 currencyCode: 'CAD',
               },
             };
+            const hasCompareAtPriceStub = sinon.stub(product, 'hasCompareAtPrice').get(() => true);
             product.globalConfig = {moneyFormat: 'CAD'};
             assert.equal(product.formattedCompareAtPrice, formattedMoney);
             assert.calledOnce(formatMoneyStub);
             assert.calledWith(formatMoneyStub, product.selectedVariant.compareAtPriceV2.amount, product.globalConfig.moneyFormat);
+            hasCompareAtPriceStub.restore();
           });
         });
 
@@ -1584,8 +1610,20 @@ describe('Product Component class', () => {
           assert.equal(viewData.formattedPrice, product.formattedPrice);
         });
 
+        it('returns an object with priceAccessibilityLabel', () => {
+          assert.equal(viewData.priceAccessibilityLabel, product.priceAccessibilityLabel);
+        });
+
+        it('returns an object with hasCompareAtPrice', () => {
+          assert.equal(viewData.hasCompareAtPrice, product.hasCompareAtPrice);
+        });
+
         it('returns an object with formattedCompareAtPrice', () => {
           assert.equal(viewData.formattedCompareAtPrice, product.formattedCompareAtPrice);
+        });
+
+        it('returns an object with compareAtPriceAccessibilityLabel', () => {
+          assert.equal(viewData.compareAtPriceAccessibilityLabel, product.compareAtPriceAccessibilityLabel);
         });
 
         it('returns an object with carouslIndex', () => {
@@ -1680,12 +1718,12 @@ describe('Product Component class', () => {
 
         it('contains disabled class if button is not enabled', () => {
           product.buttonEnabled = false;
-          assert.include(product.buttonClass, product.classes.disabled);
+          assert.include(product.buttonClass, product.classes.product.disabled);
         });
 
         it('does not contain disabled class if button is enabled', () => {
           product.buttonEnabled = true;
-          assert.notInclude(product.buttonClass, product.classes.disabled);
+          assert.notInclude(product.buttonClass, product.classes.product.disabled);
         });
 
         it('contains buttonBesideQty class if button has quantity', () => {
@@ -1933,6 +1971,7 @@ describe('Product Component class', () => {
 
       describe('priceClass', () => {
         it('returns loweredPrice class if selected variant has a compare at price', () => {
+          const hasCompareAtPriceStub = sinon.stub(product, 'hasCompareAtPrice').get(() => true);
           product = Object.defineProperty(product, 'classes', {
             value: {
               product: {
@@ -1940,18 +1979,14 @@ describe('Product Component class', () => {
               },
             },
           });
-          product.selectedVariant = {
-            compareAtPriceV2: {
-              amount: '5.00',
-              currencyCode: 'CAD',
-            },
-          };
           assert.equal(product.priceClass, product.classes.product.loweredPrice);
+          hasCompareAtPriceStub.restore();
         });
 
         it('returns empty string if selected variant does not have a compare at price', () => {
-          product.selectedVariant = {compareAtPriceV2: null};
+          const hasCompareAtPriceStub = sinon.stub(product, 'hasCompareAtPrice').get(() => false);
           assert.equal(product.priceClass, '');
+          hasCompareAtPriceStub.restore();
         });
       });
 
@@ -2182,6 +2217,13 @@ describe('Product Component class', () => {
           assert.isString(optionsHtml);
         });
 
+        it('adds a selectId to the rendered data object', () => {
+          const optionsHtml = product.optionsHtml;
+          const renderedData = renderStub.getCall(0).args[0].data;
+          assert.equal(renderedData.selectId, `Option-${mockTime}-0`);
+          assert.isString(optionsHtml);
+        });
+
         it('sets onlyOption in rendered data to true if there is only one option in model', () => {
           const optionsHtml = product.optionsHtml;
           const renderedData = renderStub.getCall(0).args[0].data;
@@ -2216,6 +2258,7 @@ describe('Product Component class', () => {
               test: 'test string',
               classes: product.classes,
               onlyOption: true,
+              selectId: `Option-${mockTime}-0`,
             },
           };
           const secondExpectedObject = {
@@ -2225,6 +2268,7 @@ describe('Product Component class', () => {
               test: 'test string',
               classes: product.classes,
               onlyOption: true,
+              selectId: `Option-${mockTime}-1`,
             },
           };
           assert.calledTwice(renderStub);
@@ -2469,6 +2513,54 @@ describe('Product Component class', () => {
             product.model.onlineStoreUrl = 'https://test.myshopify.com/products/123';
             assert.equal(product.onlineStoreURL, `https://test.myshopify.com/products/123${expectedQs}`);
           });
+        });
+      });
+
+      describe('priceAccessibilityLabel', () => {
+        it('returns the sale price label if the selected variant has a compare at price', () => {
+          const hasCompareAtPriceStub = sinon.stub(product, 'hasCompareAtPrice').get(() => true);
+          assert.equal(product.priceAccessibilityLabel, product.options.text.salePriceAccessibilityLabel);
+          hasCompareAtPriceStub.restore();
+        });
+
+        it('returns the regular price label if the selected variant does not have a compare at price', () => {
+          const hasCompareAtPriceStub = sinon.stub(product, 'hasCompareAtPrice').get(() => false);
+          assert.equal(product.priceAccessibilityLabel, product.options.text.regularPriceAccessibilityLabel);
+          hasCompareAtPriceStub.restore();
+        });
+      });
+
+      describe('compareAtPriceAccessibilityLabel', () => {
+        it('returns the regular price label if the selected variant has a compare at price', () => {
+          const hasCompareAtPriceStub = sinon.stub(product, 'hasCompareAtPrice').get(() => true);
+          assert.equal(product.compareAtPriceAccessibilityLabel, product.options.text.regularPriceAccessibilityLabel);
+          hasCompareAtPriceStub.restore();
+        });
+
+        it('returns an empty string if the selected variant does not have a compare at price', () => {
+          const hasCompareAtPriceStub = sinon.stub(product, 'hasCompareAtPrice').get(() => false);
+          assert.equal(product.compareAtPriceAccessibilityLabel, '');
+          hasCompareAtPriceStub.restore();
+        });
+      });
+
+      describe('hasCompareAtPrice', () => {
+        it('returns false if there is no selected variant', () => {
+          product.selectedVariant = null;
+          assert.equal(product.hasCompareAtPrice, false);
+        });
+
+        it('returns false if the selected variant does not have a compare at price', () => {
+          product.selectedVariant.compareAtPriceV2 = null;
+          assert.equal(product.hasCompareAtPrice, false);
+        });
+
+        it('returns true if the selected variant has a compare at price', () => {
+          product.selectedVariant.compareAtPriceV2 = {
+            amount: '5.00',
+            currencyCode: 'CAD',
+          };
+          assert.equal(product.hasCompareAtPrice, true);
         });
       });
     });

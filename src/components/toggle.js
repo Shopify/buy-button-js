@@ -36,6 +36,7 @@ export default class CartToggle extends Component {
 
   toggleCart(evt) {
     evt.stopPropagation();
+    this.props.setActiveEl(this.view.node);
     this.props.cart.toggleVisibility();
   }
 }
