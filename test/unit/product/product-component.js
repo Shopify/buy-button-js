@@ -676,6 +676,7 @@ describe('Product Component class', () => {
           assert.calledWith(createCheckoutStub, {lineItems: [{
             variantId: 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0NQ==',
             quantity: selectedQuantity,
+            customAttributes: [],
           }]});
         });
       });
