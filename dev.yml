@@ -3,8 +3,8 @@ name: buy-button-js
 
 up:
   - node:
-      version: v8.1.4
-      yarn: true
+      version: v12.22.7
+      yarn: 1.22.15
 
 commands:
   test:
