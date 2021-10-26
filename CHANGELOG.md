@@ -1,5 +1,21 @@
 # Changelog
 
+### v2.1.8 (October 22, 2021)
+
+- Updated `JS Buy SDK` to `v2.12.0`, which uses Storefront API version [2021-07](https://shopify.dev/concepts/about-apis/versioning/release-notes/2021-07) ([#785](https://github.com/Shopify/buy-button-js/pull/785))
+- Use list markup for cart line items ([#720](https://github.com/Shopify/buy-button-js/pull/720))
+- Update line item quantity accessibility labels ([#717](https://github.com/Shopify/buy-button-js/pull/717))
+- Connect variant label to select ([#718](https://github.com/Shopify/buy-button-js/pull/718))
+- Increase opacity of compare at price to improve contrast ([#716](https://github.com/Shopify/buy-button-js/pull/716))
+- Connect the cart note label to the textarea ([#715](https://github.com/Shopify/buy-button-js/pull/715))
+- Update cart close accessibility label ([#714](https://github.com/Shopify/buy-button-js/pull/714))
+- Fix select focus state visibility in firefox ([#713](https://github.com/Shopify/buy-button-js/pull/713))
+- Toggle cart when space key is pressed ([#712](https://github.com/Shopify/buy-button-js/pull/712))
+- Prevent focus on cart elements when closed ([#710](https://github.com/Shopify/buy-button-js/pull/710))
+- Return focus to the right element when the cart is closed ([#709](https://github.com/Shopify/buy-button-js/pull/709))
+- Add price and compare at price accessibility labels ([#708](https://github.com/Shopify/buy-button-js/pull/708))
+- Add focus trap when cart or modal are open ([#707](https://github.com/Shopify/buy-button-js/pull/707))
+
 ### v2.1.7 (July 13, 2020)
 
 - Update product set component to use the correct container node when in non-iFrame mode [#680](https://github.com/Shopify/buy-button-js/pull/680)
