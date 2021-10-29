@@ -155,10 +155,6 @@
     padding-right: calc(var(--gutter) * 2);
   }
 
-  .shopify-buy__product__variant-img {
-    margin: 0 auto;
-  }
-
   .shopify-buy__btn--close {
     top: -60px;
     color: color-mod(var(--color-white) lightness(+10%));

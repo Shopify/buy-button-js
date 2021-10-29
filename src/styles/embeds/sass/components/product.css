@@ -298,17 +298,20 @@
   width: calc(16.666% - var(--gutter));
   margin-left: var(--gutter);
   display: inline-block;
-  vertical-align: middle;
-  cursor: pointer;
-  position: relative;
-  background-size: cover;
-  background-position: center;
-  padding: 0;
-  border: none;
 
   &:nth-child(n+7) {
     margin-top: var(--gutter);
   }
+}
+
+.shopify-buy__carousel-item__link {
+  display: block;
+  background-size: cover;
+  background-position: center;
+  cursor: pointer;
+  position: relative;
+  padding: 0;
+  border: none;
 
   &:before {
     content: "";
@@ -317,15 +320,16 @@
   }
 }
 
-.main-image-wrapper {
+.shopify-buy__carousel-img-wrapper {
   position: relative;
 }
 
-.carousel-button {
-  position: absolute;
+.shopify-buy__carousel__buttons {
+  text-align: center;
+}
+
+.shopify-buy__carousel__button {
   width: 75px;
-  top: 0;
-  height: 100%;
   border: none;
   font-size: 0;
   background-color: transparent;
@@ -335,23 +339,21 @@
   &:hover,
   &:focus {
     opacity: 0.9;
-    outline: none;
   }
 }
 
-.carousel-button-arrow {
+.shopify-buy__carousel__button--next {
+  margin-left: 10px;
+}
+
+.shopify-buy__carousel__button--previous {
+  margin-right: 10px;
+}
+
+.shopify-buy__carousel__button__icon {
   width: 20px;
   display: inline-block;
-  margin-left: 25px;
-}
-
-.carousel-button--previous {
-  left: 0;
-  transform: rotate(180deg);
-}
-
-.carousel-button--next {
-  right: 0;
+  fill: currentColor;
 }
 
 .shopify-buy__carousel-item--selected {
