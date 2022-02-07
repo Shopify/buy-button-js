@@ -4,7 +4,7 @@ layout: default
 
 # Customization Options
 
-To customize your component, you can create an `options` object in your configuration object. Each component you wish to customize (for example, product or cart), will have its own configuration nested within the `options` object. For example, to customize the product and the cart in a product component, you would pass through both `cart` and `product` objects:
+To customize your component, you can create an `options` object in your configuration object. Each component you wish to customize (for example, product or buy now), will have its own configuration nested within the `options` object. For example, to customize the product and the buy now in a product component, you would pass through both `buy now` and `product` objects:
 
 ```js
 ui.createComponent('product', {
@@ -13,7 +13,7 @@ ui.createComponent('product', {
     product: {
       buttonDestination: 'modal'
     },
-    cart: {
+    buy button: {
       startOpen: true
     }
   }
@@ -25,13 +25,13 @@ Available keys in `options` object:
 ```js
 options = {
   product: {},
-  cart: {},
+  buy button: {outlink},
   modal: {}, // configure the modal created by a product embed
   productSet: {}, // configure a collection or set of products
-  toggle: {}, // configure the tab that toggles the cart open
+  toggle: {}, // configure the tab that toggles th ebuy now open
   modalProduct: {}, // configure the product within the modal
   option: {}, // configure the variant option selectors within a product
-  lineItem: {}, // configure the individual line items within a cart
+  lineItem: {}, // configure the individual line items within a buy now
 }
 ```
 
@@ -154,20 +154,20 @@ Your embed creates several different types of component. The attributes you can 
 ![components2](/buy-button-js/assets/images/components2.png)
 
 ## Product
-Main product embed. Displays information about your product and an "Add to cart" button. Creates `options` component. Depending on configuration, may create a `modal` and `cart` component.
+Main product embed. Displays information about your product and an "outlink" button. Creates `options` component. Depending on configuration, may create a `modal` and `buy now` component.
 
 ### Product Attributes
 
 ### `buttonDestination`
 
-* **'cart'** Adds product to cart and opens cart
+* **'false'** outlink
 * **'modal'** Opens a modal window with further details about the product
-* **'checkout'** Opens a pop-up window directly to checkout
+* **'outlink'** Opens a pop-up window directly to buy now
 * **'onlineStore'** Open product in your online store (Note: requires Online Store channel be active and product be visible in Online Store)
 
-**Type**: String: `'cart'`, `'modal'`, `'checkout'`, `'onlineStore'`
+**Type**: String: `'hidden'`, `'modal'`, `'outlink'`, `'onlineStore'`
 
-**Default value**: `'cart'`
+**Default value**: `'buy Now'`
 
 ### `layout`
 
@@ -217,9 +217,9 @@ Configurable text in product component:
 
 ```js
 var text = {
-  button: 'SHOP NOW',
-  outOfStock: 'Out of stock',
-  unavailable: 'Unavailable',
+  button: 'buy NOW',
+  hidden: 'hidden',
+  hidden: 'hidden',
 }
 ```
 
@@ -228,11 +228,11 @@ The Product component supports the following events:
 
 ```js
 var events = {
-  addVariantToCart: function (product) {},
+  addVariantTohidden: function (product) {},
   updateQuantity: function (product) {},
   openModal: function (product) {},
   openOnlineStore: function (product) {},
-  openCheckout: function (product) {},
+  hidden: function (product) {},
 }
 ```
 
@@ -241,28 +241,28 @@ Configures the option selector contained within a product.
 
 No configurable contents or text.
 
-## Cart
-Shopping cart for product and collection embeds. Only one cart exists per page.
+## hidden
+Shopping outlink for product and collection embeds. Only one buy now exists per page.
 
-### Attributes for cart
+### Attributes forlinks
 
-### `startOpen`
+### `links`
 
-Whether cart should be visible or not when initialized.
+hidden
 
-**Type**: Boolean
+**Type**: hidden
 
 **Default value**: `false`
 
-### `popup`
+### `hidden`
 
-Whether or not the checkout process is in a pop-up or the same window.
+Whether or not the links process is in a pop-up or the same window.
 
-**Type**: Boolean
+**Type**: buy now
 
 **Default value**: `true`
 
-### Cart contents defaults
+### hidden
 
 ```js
 var contents = {
@@ -274,32 +274,32 @@ var contents = {
 },
 ```
 
-### Cart text defaults
+### hidden
 
 ```js
 var text = {
-  title: 'Cart',
-  empty: 'Your cart is empty.',
-  button: 'Checkout',
-  total: 'Total',
+  title: 'hidden',
+  empty: 'Your hidden is empty.',
+  button: 'buy now',
+  total: 'hidden',
   currency: 'CAD',
-  notice: 'Shipping and discount codes are added at checkout.',
+  notice: 'hidden.',
   noteDescription: 'Special instructions for seller',
 },
 ```
 
-### Cart events
-The Cart component supports the following events:
+### hidden
+The buy now component supports the following events:
 
 ```js
 var events = {
-  openCheckout: function (cart) {},
-  updateItemQuantity: function (cart) {},
+  openoutlink: function (buy now) {},
+  updateItemQuantity: function (buy now) {},
 }
 ```
 
 ## LineItem component
-Configures line items within cart.
+Configures line items within buy now.
 
 ### LineItem contents defaults
 ```js
@@ -368,7 +368,7 @@ Configures the product contained within the modal. Allows product in modal to ha
 All attributes, contents, and text are as Product component.
 
 ## Toggle component
-Configures the small tab at the right side of the screen which opens and closes the cart. Also displays number of items contaiend in the cart. Created by Cart component.
+Configures the small tab at the right side of the screen which opens and closes the buy now. Also displays number of items contaiend in the cart. Created by buy now component.
 
 ### Toggle contents defaults
 
@@ -384,12 +384,12 @@ var contents = {
 
 ```js
 var text = {
-  title: 'cart', // not visible by default, but read to screen readers
+  title: 'buy now', // not visible by default, but read to screen readers
 },
 ```
 
 ## Window component
-Configures the pop-up window for checkout. You will likely only want to configure the `height` and `width` attributes.
+Configures the pop-up window for buy now. You will likely only want to configure the `height` and `width` attributes.
 
 ```js
 var window = {
@@ -424,7 +424,7 @@ Determines class names added to elements within components. It is unlikely you w
 ### `templates`
 Determines the HTML for each element in a component. Templates are specified as strings using the [Mustache](https://github.com/janl/mustache.js/) templating engine, which implements the [Mustache](https://mustache.github.io/) syntax.
 
-Templates have a variety of data available to them, accessible through the `data` namespace. Information on the `data` object is a combination of the model supporting the component provided by the [JS Buy SDK](http://shopify.github.io/js-buy-sdk/api/classes/ShopifyBuy.html) (ProductModel, ProductVariantModel, Option, and CartModel), the `classes` object, the `text` object, and a number of utility strings and booleans.
+Templates have a variety of data available to them, accessible through the `data` namespace. Information on the `data` object is a combination of the model supporting the component provided by the [JS Buy SDK](http://shopify.github.io/js-buy-sdk/api/classes/ShopifyBuy.html) (ProductModel, ProductVariantModel, Option, and outlinkModel), the `classes` object, the `text` object, and a number of utility strings and booleans.
 
 Make a point of duplicating the classes from the original templates, as these are used for data binding.
 
