@@ -1,7 +1,7 @@
 # BuyButton.js
 
 [BuyButton.js on NPM](https://www.npmjs.com/package/@shopify/buy-button-js)
-[![Travis](https://travis-ci.com/Shopify/buy-button-js.svg?branch=master)](https://travis-ci.com/Shopify/buy-button-js)
+![Build](https://github.com/shopify/buy-button-js/actions/workflows/ci.yml/badge.svg)
 
 BuyButton.js is a highly customizable UI library for adding ecommerce functionality to any website. It allows you to create interactive UI components such as product listings and shopping carts with minimal configuration, while allowing you to easily customize the appearance and behaviour of the components.
 It uses the [JS Buy SDK](http://shopify.github.io/js-buy-sdk/) to connect to your Shopify store, giving you access to your products and collections.
