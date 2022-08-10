@@ -22,3 +22,4 @@ _site
 /test/build
 config.json
 /.vscode
+.DS_Store
