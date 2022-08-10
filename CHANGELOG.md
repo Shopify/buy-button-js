@@ -1,5 +1,10 @@
 # Changelog
 
+### v2.2.0 (August 10, 2022)
+
+- Updated `JS Buy SDK` to `v2.16.1`, which uses Storefront API version [2022-07](https://shopify.dev/concepts/about-apis/versioning/release-notes/2022-07) ([#816](https://github.com/Shopify/buy-button-js/pull/816))
+- Replaced `node-sass` with `sass` and updated `node` to `v16.16.0` ([#816](https://github.com/Shopify/buy-button-js/pull/816))
+
 ### v2.1.8 (October 22, 2021)
 
 - Updated `JS Buy SDK` to `v2.12.0`, which uses Storefront API version [2021-07](https://shopify.dev/concepts/about-apis/versioning/release-notes/2021-07) ([#785](https://github.com/Shopify/buy-button-js/pull/785))
