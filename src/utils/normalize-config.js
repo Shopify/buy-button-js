@@ -1,5 +1,5 @@
 function normalizeId(type, databaseKey) {
-  return btoa(`gid://shopify/${type}/${databaseKey}`);
+  return `gid://shopify/${type}/${databaseKey}`;
 }
 
 function getNormalizedIdFromConfig(type, config, databaseKey, storefrontKey) {
