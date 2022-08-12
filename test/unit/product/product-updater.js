@@ -64,30 +64,30 @@ describe('Product Updater class', () => {
   describe('updateConfig()', () => {
     describe('if id or variant id is supplied in config', () => {
       it('calls init and returns if id is updated', () => {
-        product.updateConfig({id: 123});
+        product.updateConfig({id: 123456789});
         assert.calledOnce(initStub);
         assert.notCalled(superUpdateConfigStub);
-        assert.equal(product.storefrontId, 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0LzEyMw==');
+        assert.equal(product.storefrontId, 'gid://shopify/Product/123456789');
       });
 
       it('calls init and returns if storefront id is updated', () => {
-        product.updateConfig({storefrontId: 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0LzEyMw=='});
+        product.updateConfig({storefrontId: 'gid://shopify/Product/123456789'});
         assert.calledOnce(initStub);
-        assert.equal(product.storefrontId, 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0LzEyMw==');
+        assert.equal(product.storefrontId, 'gid://shopify/Product/123456789');
       });
 
       it('calls init and returns if variant id is updated', () => {
-        product.updateConfig({variantId: 12347});
+        product.updateConfig({variantId: 19667555522789});
         assert.calledOnce(initStub);
         assert.notCalled(superUpdateConfigStub);
-        assert.equal(product.defaultStorefrontVariantId, 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0Nw==');
+        assert.equal(product.defaultStorefrontVariantId, 'gid://shopify/ProductVariant/19667555522789');
       });
 
       it('calls init and returns if storefront variant id is updated', () => {
-        product.updateConfig({storefrontVariantId: 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0Ng=='});
+        product.updateConfig({storefrontVariantId: 'gid://shopify/ProductVariant/19667555522084'});
         assert.calledOnce(initStub);
         assert.notCalled(superUpdateConfigStub);
-        assert.equal(product.defaultStorefrontVariantId, 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0Ng==');
+        assert.equal(product.defaultStorefrontVariantId, 'gid://shopify/ProductVariant/19667555522084');
       });
     });
 

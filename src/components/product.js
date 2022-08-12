@@ -541,7 +541,7 @@ export default class Product extends Component {
     return {
       channel: 'buy_button',
       referrer: encodeURIComponent(windowUtils.location()),
-      variant: atob(this.selectedVariant.id).split('/')[4],
+      variant: this.selectedVariant.id.split('/')[4],
     };
   }
 
