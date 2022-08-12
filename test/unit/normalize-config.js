@@ -7,12 +7,12 @@ describe('normalizeConfig', () => {
 
     assert.deepEqual(config, {
       id,
-      storefrontId: btoa(`gid://shopify/Product/${id}`),
+      storefrontId: `gid://shopify/Product/${id}`,
     });
   });
 
   it('doesn\'t clobber existing storefront IDs', () => {
-    const storefrontId = btoa('gid://shopify/Product/12345');
+    const storefrontId = 'gid://shopify/Product/12345';
     const config = normalizeConfig({storefrontId});
 
     assert.deepEqual(config, {
@@ -26,12 +26,12 @@ describe('normalizeConfig', () => {
 
     assert.deepEqual(config, {
       variantId,
-      storefrontVariantId: btoa(`gid://shopify/ProductVariant/${variantId}`),
+      storefrontVariantId: `gid://shopify/ProductVariant/${variantId}`,
     });
   });
 
   it('doesn\'t clobber existing storefront variant IDs', () => {
-    const storefrontVariantId = btoa('gid://shopify/ProductVariant/12345');
+    const storefrontVariantId = 'gid://shopify/ProductVariant/12345';
     const config = normalizeConfig({storefrontVariantId});
 
     assert.deepEqual(config, {
@@ -46,8 +46,8 @@ describe('normalizeConfig', () => {
     assert.deepEqual(config, {
       id,
       storefrontId: [
-        btoa(`gid://shopify/Product/${id[0]}`),
-        btoa(`gid://shopify/Product/${id[1]}`),
+        `gid://shopify/Product/${id[0]}`,
+        `gid://shopify/Product/${id[1]}`,
       ],
     });
   });
@@ -58,7 +58,7 @@ describe('normalizeConfig', () => {
 
     assert.deepEqual(config, {
       id,
-      storefrontId: btoa(`gid://shopify/Collection/${id}`),
+      storefrontId: `gid://shopify/Collection/${id}`,
     });
   });
 });

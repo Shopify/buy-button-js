@@ -1,7 +1,7 @@
 const testProduct = {
   title: 'test',
   id: 123,
-  storefrontId: 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0LzEyMw==',
+  storefrontId: 'gid://shopify/Product/123456789',
   images: [
     {
       id: '1',
@@ -40,7 +40,7 @@ const testProduct = {
   ],
   variants: [
     {
-      id: 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0NQ==',
+      id: 'gid://shopify/ProductVariant/19667571022088',
       productId: 123,
       price: '123.00',
       priceV2: {
@@ -65,7 +65,7 @@ const testProduct = {
       ],
     },
     {
-      id: 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0Ng==',
+      id: 'gid://shopify/ProductVariant/19667555522084',
       productId: 123,
       price: '1.00',
       priceV2: {
@@ -90,7 +90,7 @@ const testProduct = {
       ],
     },
     {
-      id: 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0Nw==',
+      id: 'gid://shopify/ProductVariant/19667555522789',
       productId: 123,
       price: '999.99',
       priceV2: {
@@ -115,7 +115,7 @@ const testProduct = {
       ],
     },
     {
-      id: 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0OA==',
+      id: 'gid://shopify/ProductVariant/196675555224567',
       productId: 123,
       price: '0.00',
       priceV2: {

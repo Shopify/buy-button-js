@@ -423,7 +423,7 @@ describe('Product Component class', () => {
       });
 
       it('rejects if there is a falsey storefrontId array [""] and no handle', async () => {
-        product.storefrontId = [""];
+        product.storefrontId = [''];
         product.handle = null;
         try {
           await product.sdkFetch();
@@ -674,7 +674,7 @@ describe('Product Component class', () => {
 
           assert.calledOnce(createCheckoutStub);
           assert.calledWith(createCheckoutStub, {lineItems: [{
-            variantId: 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0NQ==',
+            variantId: 'gid://shopify/ProductVariant/19667571022088',
             quantity: selectedQuantity,
           }]});
         });
@@ -1168,11 +1168,11 @@ describe('Product Component class', () => {
 
       it('returns the passed in image alt text if it is valid', () => {
         assert.equal(product.imageAltText('test alt'), 'test alt');
-      })
+      });
 
       it('returns the image title when alt text passed in is null', () => {
         assert.equal(product.imageAltText(null), product.model.title);
-      })
+      });
     });
 
     describe('getters', () => {
@@ -1476,7 +1476,7 @@ describe('Product Component class', () => {
 
           const showUnitPriceStub = sinon.stub(product, 'showUnitPrice').get(() => true);
           const getUnitPriceBaseUnitStub = sinon.stub(getUnitPriceBaseUnit, 'default').returns(mockUnitPriceBaseUnit);
-          
+
           assert.equal(product.formattedUnitPriceBaseUnit, mockUnitPriceBaseUnit);
           assert.calledOnce(getUnitPriceBaseUnitStub);
           assert.calledWith(getUnitPriceBaseUnitStub, product.selectedVariant.unitPriceMeasurement.referenceValue, product.selectedVariant.unitPriceMeasurement.referenceUnit);
@@ -2481,11 +2481,11 @@ describe('Product Component class', () => {
 
       describe('onlineStore getters', () => {
         let windowStub;
-        const expectedQs = '?channel=buy_button&referrer=http%3A%2F%2Ftest.com&variant=12345&';
+        const expectedQs = '?channel=buy_button&referrer=http%3A%2F%2Ftest.com&variant=19667571022088&';
 
         beforeEach(() => {
           windowStub = sinon.stub(windowUtils, 'location').returns('http://test.com');
-          product.selectedVariant = {id: 'Z2lkOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0NQ=='};
+          product.selectedVariant = {id: 'gid://shopify/ProductVariant/19667571022088'};
         });
 
         afterEach(() => {
@@ -2497,7 +2497,7 @@ describe('Product Component class', () => {
             assert.deepEqual(product.onlineStoreParams, {
               channel: 'buy_button',
               referrer: 'http%3A%2F%2Ftest.com',
-              variant: '12345',
+              variant: '19667571022088',
             });
           });
         });
