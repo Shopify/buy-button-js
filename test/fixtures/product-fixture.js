@@ -42,9 +42,12 @@ const testProduct = {
     {
       id: 'gid://shopify/ProductVariant/19667571022088',
       productId: 123,
-      price: '123.00',
+      price: {
+        amount: '123.0',
+        currencyCode: 'CAD',
+      },
       priceV2: {
-        amount: '123.00',
+        amount: '123.0',
         currencyCode: 'CAD',
       },
       title: 'sloth / small',
@@ -67,9 +70,12 @@ const testProduct = {
     {
       id: 'gid://shopify/ProductVariant/19667555522084',
       productId: 123,
-      price: '1.00',
+      price: {
+        amount: '1.0',
+        currencyCode: 'CAD',
+      },
       priceV2: {
-        amount: '1.00',
+        amount: '1.0',
         currencyCode: 'CAD',
       },
       title: 'shark / small',
@@ -92,7 +98,10 @@ const testProduct = {
     {
       id: 'gid://shopify/ProductVariant/19667555522789',
       productId: 123,
-      price: '999.99',
+      price: {
+        amount: '999.99',
+        currencyCode: 'CAD',
+      },
       priceV2: {
         amount: '999.99',
         currencyCode: 'CAD',
@@ -117,9 +126,12 @@ const testProduct = {
     {
       id: 'gid://shopify/ProductVariant/196675555224567',
       productId: 123,
-      price: '0.00',
+      price: {
+        amount: '0.0',
+        currencyCode: 'CAD',
+      },
       priceV2: {
-        amount: '0.00',
+        amount: '0.0',
         currencyCode: 'CAD',
       },
       title: 'cat / small',

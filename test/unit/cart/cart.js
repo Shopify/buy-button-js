@@ -150,7 +150,7 @@ describe('Cart class', () => {
             src: 'cdn.shopify.com/image.jpg',
           },
           priceV2: {
-            amount: '5.00',
+            amount: '5.0',
             currencyCode: 'CAD',
           },
         },
@@ -175,7 +175,7 @@ describe('Cart class', () => {
             src: 'cdn.shopify.com/image.jpg',
           },
           priceV2: {
-            amount: '5.00',
+            amount: '5.0',
             currencyCode: 'CAD',
           },
         },
@@ -623,7 +623,7 @@ describe('Cart class', () => {
           quantity: 1,
           variant: {
             priceV2: {
-              amount: '10.00',
+              amount: '10.0',
               currencyCode: 'CAD',
             },
           },
@@ -1043,7 +1043,7 @@ describe('Cart class', () => {
               id: 1111,
               title: 'test variant',
               priceV2: {
-                amount: '20.00',
+                amount: '20.0',
                 currencyCode: 'CAD',
               },
             },
@@ -1054,9 +1054,12 @@ describe('Cart class', () => {
           id: 1,
           lineItems,
           note: 'test cart note',
-          subtotalPrice: '123.00',
+          subtotalPrice: {
+            amount: '130.0',
+            currencyCode: 'USD',
+          },
           subtotalPriceV2: {
-            amount: '130.00',
+            amount: '130.0',
             currencyCode: 'USD',
           },
           discountApplications: [],
@@ -1616,7 +1619,7 @@ describe('Cart class', () => {
       const viewSetFocusStub = sinon.stub(cart.view, 'setFocus');
 
       cart.setFocus();
-      
+
       assert.calledOnce(setTimeoutStub);
       assert.calledWith(setTimeoutStub, sinon.match.func, 0);
 

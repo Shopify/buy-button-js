@@ -1394,7 +1394,7 @@ describe('Product Component class', () => {
           it('returns formatted money with selected variant price and money format from global config if there is a selected variant', () => {
             product.selectedVariant = {
               priceV2: {
-                amount: '5.00',
+                amount: '5.0',
                 currencyCode: 'CAD',
               },
             };
@@ -1415,7 +1415,7 @@ describe('Product Component class', () => {
           it('returns formatted money with selected variant compare at price and money format from global config if there is a selected variant', () => {
             product.selectedVariant = {
               compareAtPriceV2: {
-                amount: '5.00',
+                amount: '5.0',
                 currencyCode: 'CAD',
               },
             };
@@ -2422,7 +2422,7 @@ describe('Product Component class', () => {
             title: 'hat',
             id: 'AAkdlfjljwijk3j35j3ljksLqQkslj',
             priceV2: {
-              amount: '5.00',
+              amount: '5.0',
               currencyCode: 'CAD',
             },
           };
@@ -2448,7 +2448,7 @@ describe('Product Component class', () => {
             id: '456',
             title: 'hat',
             priceV2: {
-              amount: '5.00',
+              amount: '5.0',
               currencyCode: 'CAD',
             },
           };
