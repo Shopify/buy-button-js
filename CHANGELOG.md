@@ -1,5 +1,9 @@
 # Changelog
 
+### v2.3.0 (June 20, 2023)
+
+- Updated `JS Buy SDK` to `v2.19.0`, which uses Storefront API version [2023-04](https://shopify.dev/docs/api/release-notes/2023-04) ([#844](https://github.com/Shopify/buy-button-js/pull/844))
+
 ### v2.2.1 (August 12, 2022)
 
 - Removed `base64` encoding and decoding of `ids` during config normalization because Storefront API does not return encoded `ids` anymore ([#821](https://github.com/Shopify/buy-button-js/pull/821))
