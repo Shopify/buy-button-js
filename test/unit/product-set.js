@@ -389,9 +389,12 @@ describe('ProductSet class', () => {
           {
             id: 'GTYOi8vc2hvcGlmeS9Qcm9kdWN0VmFyaWFudC8xMjM0NQ==',
             productId: 1245,
-            price: '20.00',
+            price: {
+              amount: '20.0',
+              currencyCode: 'CAD',
+            },
             priceV2: {
-              amount: '20.00',
+              amount: '20.0',
               currencyCode: 'CAD',
             },
             title: 'sloth / small',
