@@ -128,15 +128,21 @@ describe('Cart class', () => {
   });
 
   describe('get lineItemsHtml', () => {
-    const variantAmount = '5.00';
+    const variantAmount = 5.00;
     let formatMoneySpy;
+    let discountsForLineItemStub;
 
     beforeEach(() => {
       formatMoneySpy = sinon.spy(formatMoney, 'default');
+      discountsForLineItemStub = sinon.stub(cart, 'discountsForLineItem').returns({
+        discounts: [],
+        totalDiscount: 0,
+      });
     });
 
     afterEach(() => {
       formatMoneySpy.restore();
+      discountsForLineItemStub.restore();
     });
 
     it('calls render and returns an html <li /> string', () => {
@@ -188,15 +194,16 @@ describe('Cart class', () => {
       assert.include(cartLineItemsHtml, `<span class="visuallyhidden">${quantityIncrementAccessibilityLabel}</span>`);
     });
 
-    describe('price without discounts', () => {
+    describe('priceWithDiscounts contents option false', () => {
       beforeEach(() => {
         cart.childTemplate.contents.price = true;
         cart.childTemplate.contents.priceWithDiscounts = false;
       });
 
-      it('does not render discounts if discounts allocations are present', () => {
+      it('renders the full price and does not render discounts if the line item has discounts', () => {
         const quantity = 2;
-        const discountAmount = '2.00';
+        const discountAmount = 2.00;
+        const discountTitle = 'BOGO';
         cart.lineItemCache = [{
           id: 123,
           title: 'test',
@@ -214,7 +221,7 @@ describe('Cart class', () => {
           discountAllocations: [
             {
               discountApplication: {
-                title: 'BOGO',
+                title: discountTitle,
                 targetSelection: 'ENTITLED',
               },
               allocatedAmount: {
@@ -237,13 +244,13 @@ describe('Cart class', () => {
       });
     });
 
-    describe('price with discounts', () => {
+    describe('priceWithDiscounts contents option true', () => {
       beforeEach(() => {
         cart.childTemplate.contents.price = false;
         cart.childTemplate.contents.priceWithDiscounts = true;
       });
 
-      it('renders the full price with no discounts, if no discounts allocations are present', () => {
+      it('renders the full price with no discounts if the line item does not have any discounts', () => {
         const quantity = 2;
         cart.lineItemCache = [{
           id: 123,
@@ -261,6 +268,10 @@ describe('Cart class', () => {
           },
           discountAllocations: [],
         }];
+        discountsForLineItemStub.returns({
+          discounts: [],
+          totalDiscount: 0,
+        });
 
         const cartLineItemsHtml = cart.lineItemsHtml;
         const fullPrice = variantAmount * quantity;
@@ -274,8 +285,8 @@ describe('Cart class', () => {
         assert.alwaysCalledWith(formatMoneySpy, fullPrice, moneyFormat);
       });
 
-      it('renders the discount information if a discount allocation exists with a target selection of `ENTITLED`', () => {
-        const discountAmount = '1.00';
+      it('renders the discount information if the line item has discounts', () => {
+        const discountAmount = 1.00;
         const discountTitle = 'BOGO';
         const quantity = 2;
         cart.lineItemCache = [{
@@ -305,6 +316,13 @@ describe('Cart class', () => {
             },
           ],
         }];
+        const mockDiscount = `${discountTitle} (-$${discountAmount}.00)`;
+        discountsForLineItemStub.returns({
+          discounts: [{
+            discount: mockDiscount,
+          }],
+          totalDiscount: discountAmount,
+        });
 
         const cartLineItemsHtml = cart.lineItemsHtml;
         const fullPrice = variantAmount * quantity;
@@ -314,159 +332,16 @@ describe('Cart class', () => {
         assert.include(cartLineItemsHtml, `$${fullPrice}.00`);
 
         assert.include(cartLineItemsHtml, 'data-element="lineItem.discount"');
-        assert.include(cartLineItemsHtml, `${discountTitle} (-$${discountAmount})`);
+        assert.include(cartLineItemsHtml, mockDiscount);
 
         assert.include(cartLineItemsHtml, 'data-element="lineItem.price"');
         assert.include(cartLineItemsHtml, `$${discountedPrice}.00`);
-
-        assert.calledThrice(formatMoneySpy);
-        assert.calledWith(formatMoneySpy.firstCall, fullPrice, moneyFormat);
-        assert.calledWith(formatMoneySpy.secondCall, discountAmount, moneyFormat);
-        assert.calledWith(formatMoneySpy.thirdCall, discountedPrice, moneyFormat);
-      });
-
-      it('renders the discount information if the discount allocation exists with a target of `EXPLICIT`', () => {
-        const discountAmount = '1.00';
-        const discountTitle = 'BOGO';
-        const quantity = 2;
-        cart.lineItemCache = [{
-          id: 123,
-          title: 'test',
-          variantTitle: 'test2',
-          quantity,
-          variant: {
-            image: {
-              src: 'cdn.shopify.com/image.jpg',
-            },
-            priceV2: {
-              amount: variantAmount,
-              currencyCode: 'CAD',
-            },
-          },
-          discountAllocations: [
-            {
-              discountApplication: {
-                title: discountTitle,
-                targetSelection: 'EXPLICIT',
-              },
-              allocatedAmount: {
-                amount: discountAmount,
-                currencyCode: 'CAD',
-              },
-            },
-          ],
-        }];
-
-        const cartLineItemsHtml = cart.lineItemsHtml;
-        const fullPrice = variantAmount * quantity;
-        const discountedPrice = fullPrice - discountAmount;
-
-        assert.include(cartLineItemsHtml, 'data-element="lineItem.fullPrice"');
-        assert.include(cartLineItemsHtml, `$${fullPrice}.00`);
-
-        assert.include(cartLineItemsHtml, 'data-element="lineItem.discount"');
-        assert.include(cartLineItemsHtml, `${discountTitle} (-$${discountAmount})`);
-
-        assert.include(cartLineItemsHtml, 'data-element="lineItem.price"');
-        assert.include(cartLineItemsHtml, `$${discountedPrice}.00`);
-
-        assert.calledThrice(formatMoneySpy);
-        assert.calledWith(formatMoneySpy.firstCall, fullPrice, moneyFormat);
-        assert.calledWith(formatMoneySpy.secondCall, discountAmount, moneyFormat);
-        assert.calledWith(formatMoneySpy.thirdCall, discountedPrice, moneyFormat);
-      });
-
-      it('renders the discount information with the code as discount title if the discount allocation exists with a target of `EXPLICIT` and the discount title does not exist', () => {
-        const discountAmount = '1.00';
-        const discountCode = 'BOGO';
-        const quantity = 2;
-        cart.lineItemCache = [{
-          id: 123,
-          title: 'test',
-          variantTitle: 'test2',
-          quantity,
-          variant: {
-            image: {
-              src: 'cdn.shopify.com/image.jpg',
-            },
-            priceV2: {
-              amount: variantAmount,
-              currencyCode: 'CAD',
-            },
-          },
-          discountAllocations: [
-            {
-              discountApplication: {
-                code: discountCode,
-                targetSelection: 'EXPLICIT',
-              },
-              allocatedAmount: {
-                amount: discountAmount,
-                currencyCode: 'CAD',
-              },
-            },
-          ],
-        }];
-
-        const cartLineItemsHtml = cart.lineItemsHtml;
-        const fullPrice = variantAmount * quantity;
-        const discountedPrice = fullPrice - discountAmount;
-
-        assert.include(cartLineItemsHtml, 'data-element="lineItem.fullPrice"');
-        assert.include(cartLineItemsHtml, `$${fullPrice}.00`);
-
-        assert.include(cartLineItemsHtml, 'data-element="lineItem.discount"');
-        assert.include(cartLineItemsHtml, `${discountCode} (-$${discountAmount})`);
-
-        assert.include(cartLineItemsHtml, 'data-element="lineItem.price"');
-        assert.include(cartLineItemsHtml, `$${discountedPrice}.00`);
-
-        assert.calledThrice(formatMoneySpy);
-        assert.calledWith(formatMoneySpy.firstCall, fullPrice, moneyFormat);
-        assert.calledWith(formatMoneySpy.secondCall, discountAmount, moneyFormat);
-        assert.calledWith(formatMoneySpy.thirdCall, discountedPrice, moneyFormat);
-      });
-
-      it('does not render the discount information if the discount allocation exists with a target of `ALL`', () => {
-        const quantity = 2;
-        cart.lineItemCache = [{
-          id: 123,
-          title: 'test',
-          variantTitle: 'test2',
-          quantity,
-          variant: {
-            image: {
-              src: 'cdn.shopify.com/image.jpg',
-            },
-            priceV2: {
-              amount: variantAmount,
-              currencyCode: 'CAD',
-            },
-          },
-          discountAllocations: [
-            {
-              discountApplication: {
-                title: 'BOGO',
-                targetSelection: 'ALL',
-              },
-              allocatedAmount: {
-                amount: '1.00',
-                currencyCode: 'CAD',
-              },
-            },
-          ],
-        }];
-
-        const cartLineItemsHtml = cart.lineItemsHtml;
-        const fullPrice = variantAmount * quantity;
-
-        assert.notInclude(cartLineItemsHtml, 'data-element="lineItem.fullPrice"');
-        assert.notInclude(cartLineItemsHtml, 'data-element="lineItem.discount"');
-        assert.include(cartLineItemsHtml, 'data-element="lineItem.price"');
-        assert.include(cartLineItemsHtml, `$${fullPrice}.00`);
 
         assert.calledTwice(formatMoneySpy);
-        assert.alwaysCalledWith(formatMoneySpy, fullPrice, moneyFormat);
+        assert.calledWith(formatMoneySpy.firstCall, fullPrice, moneyFormat);
+        assert.calledWith(formatMoneySpy.secondCall, discountedPrice, moneyFormat);
+        assert.calledOnce(discountsForLineItemStub);
+        assert.calledWith(discountsForLineItemStub, cart.lineItemCache[0]);
       });
     });
   });
@@ -644,8 +519,23 @@ describe('Cart class', () => {
     let node;
     let quantityNode;
     let addClassToElementStub;
+    let formattedLineItemTotalStub;
+    let updateSummaryTextStub;
     const lineItemId = 123;
     const lineItemQuantity = 5;
+    const lineItemVariantPrice = 5.00;
+    const mockCheckout = {
+      lineItems: [{
+        id: lineItemId,
+        variant: {
+          priceV2: {
+            amount: lineItemVariantPrice,
+          },
+        },
+        quantity: lineItemQuantity,
+      }],
+    };
+    const mockFormattedLineItemTotal = '$5.00';
 
     beforeEach(() => {
       node = document.createElement('div');
@@ -660,8 +550,10 @@ describe('Cart class', () => {
       cart.model = {
         id: 123456,
       };
-      updateLineItemsStub = sinon.stub(cart.props.client.checkout, 'updateLineItems').returns(Promise.resolve({lineItems: [{id: lineItemId, quantity: lineItemQuantity}]}));
+      updateLineItemsStub = sinon.stub(cart.props.client.checkout, 'updateLineItems').returns(Promise.resolve(mockCheckout));
       addClassToElementStub = sinon.stub(elementClass, 'addClassToElement');
+      formattedLineItemTotalStub = sinon.stub(cart, 'formattedLineItemTotal').returns(mockFormattedLineItemTotal);
+      updateSummaryTextStub = sinon.stub(cart, 'updateSummaryText');
 
       cart.view.render = sinon.spy();
       cart.toggles[0].view.render = sinon.spy();
@@ -670,6 +562,8 @@ describe('Cart class', () => {
     afterEach(() => {
       updateLineItemsStub.restore();
       addClassToElementStub.restore();
+      formattedLineItemTotalStub.restore();
+      updateSummaryTextStub.restore();
       document.body.removeChild(node);
     });
 
@@ -678,7 +572,7 @@ describe('Cart class', () => {
         assert.calledWith(updateLineItemsStub, 123456, [{id: lineItemId, quantity: lineItemQuantity}]);
         assert.calledOnce(cart.view.render);
         assert.calledOnce(cart.toggles[0].view.render);
-        assert.deepEqual(cart.model, {lineItems: [{id: lineItemId, quantity: lineItemQuantity}]});
+        assert.deepEqual(cart.model, mockCheckout);
       });
     });
 
@@ -686,6 +580,30 @@ describe('Cart class', () => {
       return cart.updateItem(lineItemId, lineItemQuantity).then(() => {
         assert.calledOnce(addClassToElementStub);
         assert.calledWith(addClassToElementStub, 'is-loading', quantityNode);
+      });
+    });
+
+    it('calls updateSummaryText with an "item removed" accessibility label if quantity is 0 and model has other line items', () => {
+      return cart.updateItem(lineItemId, 0).then(() => {
+        assert.calledOnce(cart.updateSummaryText);
+        assert.calledWith(cart.updateSummaryText, cart.options.text.itemRemovedAccessibilityLabel);
+      });
+    });
+
+    it('calls updateSummaryText with an "item removed" and "empty cart" accessibility label if quantity is 0 and model has no line items', () => {
+      updateLineItemsStub.returns(Promise.resolve({lineItems: []}));
+      return cart.updateItem(lineItemId, 0).then(() => {
+        assert.calledOnce(cart.updateSummaryText);
+        assert.calledWith(cart.updateSummaryText, `${cart.options.text.itemRemovedAccessibilityLabel} ${cart.options.text.empty}`, true);
+      });
+    });
+
+    it('calls updateSummaryText with an line item subtotal summary if quantity is greater than 0', () => {
+      return cart.updateItem(lineItemId, lineItemQuantity).then(() => {
+        assert.calledOnce(formattedLineItemTotalStub);
+        assert.calledWith(formattedLineItemTotalStub, mockCheckout.lineItems[0]);
+        assert.calledOnce(updateSummaryTextStub);
+        assert.calledWith(updateSummaryTextStub, `${cart.options.text.itemTotalAccessibilityLabel} ${mockFormattedLineItemTotal}`);
       });
     });
   });
@@ -705,6 +623,7 @@ describe('Cart class', () => {
     let renderStub;
     let toggleRenderStub;
     let updateCacheStub;
+    let updateSummaryTextStub;
     const mockCheckout = {
       id: 1001,
       lineItems: [{id: 1212, quantity: 4}],
@@ -718,6 +637,7 @@ describe('Cart class', () => {
       renderStub = sinon.stub(cart.view, 'render');
       toggleRenderStub = sinon.stub(cart.toggles[0].view, 'render');
       updateCacheStub = sinon.stub(cart, 'updateCache');
+      updateSummaryTextStub = sinon.stub(cart, 'updateSummaryText');
     });
 
     afterEach(() => {
@@ -728,6 +648,7 @@ describe('Cart class', () => {
       renderStub.restore();
       toggleRenderStub.restore();
       updateCacheStub.restore();
+      updateSummaryTextStub.restore();
     });
 
     it('returns null if quantity parameter is 0', () => {
@@ -795,6 +716,13 @@ describe('Cart class', () => {
           assert.notCalled(setFocusStub);
         });
       });
+
+      it('calls updateSummaryText with an "item added" accessibility label', () => {
+        return cart.addVariantToCart(variant, quantity).then(() => {
+          assert.calledOnce(updateSummaryTextStub);
+          assert.calledWith(updateSummaryTextStub, cart.options.text.itemAddedAccessibilityLabel)
+        });
+      });
     });
 
     describe('model does not exist', () => {
@@ -825,6 +753,13 @@ describe('Cart class', () => {
       it('does not call setFocus if openCart parameter is not provided', () => {
         return cart.addVariantToCart(variant, quantity).then(() => {
           assert.notCalled(setFocusStub);
+        });
+      });
+
+      it('calls updateSummaryText with an "item added" accessibility label', () => {
+        return cart.addVariantToCart(variant, quantity).then(() => {
+          assert.calledOnce(updateSummaryTextStub);
+          assert.calledWith(updateSummaryTextStub, cart.options.text.itemAddedAccessibilityLabel)
         });
       });
     });
@@ -1628,6 +1563,178 @@ describe('Cart class', () => {
 
       setTimeoutStub.restore();
       viewSetFocusStub.restore();
+    });
+  });
+
+  describe('updateSummaryText', () => {
+    let querySelectorStub;
+    let setTimeoutStub;
+    let mockSummaryNode;
+    const mockFormattedTotal = '$20.00';
+    const lineItemText = 'Item subtotal: $5.00.';
+
+    beforeEach(() => {
+      mockSummaryNode = {};
+      cart = Object.defineProperty(cart, 'formattedTotal', {
+        value: mockFormattedTotal,
+      });
+      querySelectorStub = sinon.stub(cart.view.document, 'querySelector').returns(mockSummaryNode);
+      setTimeoutStub = sinon.stub(window, 'setTimeout');
+    });
+
+    afterEach(() => {
+      querySelectorStub.restore();
+      setTimeoutStub.restore();
+    });
+
+    it('sets the summary node text to a string with the lineItemText argument and cart subtotal', () => {
+      cart.updateSummaryText(lineItemText);
+      const summaryText = mockSummaryNode.textContent;
+
+      assert.equal(summaryText, `${lineItemText} ${cart.options.text.subtotalAccessibilityLabel} ${mockFormattedTotal}`);
+    });
+
+    it('does not add cart subtotal summary text to summary node if hideSubtotal parameter is true', () => {
+      cart.updateSummaryText(lineItemText, true);
+      const summaryText = mockSummaryNode.textContent;
+
+      assert.equal(summaryText, lineItemText);
+    });
+
+    it('sets the summary node text to an empty string after a 1000 ms timeoutt', () => {
+      cart.updateSummaryText(lineItemText);
+
+      assert.calledOnce(setTimeoutStub);
+      assert.calledWith(setTimeoutStub, sinon.match.func, 1000);
+
+      setTimeoutStub.getCall(0).args[0]();
+      assert.equal(mockSummaryNode.textContent, '');
+    });
+  });
+
+  describe('formattedLineItemTotal', () => {
+    let formatMoneyStub;
+    let discountsForLineItemStub;
+    const lineItemAmount = 5.00;
+    const lineItemQuantity = 2;
+    const lineItemFullPrice = lineItemAmount * lineItemQuantity;
+    const mockFormattedMoney = '$10.00';
+    const totalDiscount = 2.00;
+    const mockLineItemDiscounts = {
+      totalDiscount,
+    };
+    const lineItem = {
+      variant: {
+        priceV2: {
+          amount: lineItemAmount,
+        },
+      },
+      quantity: lineItemQuantity,
+    };
+
+    beforeEach(() => {
+      formatMoneyStub = sinon.stub(formatMoney, 'default').returns(mockFormattedMoney);
+      discountsForLineItemStub = sinon.stub(cart, 'discountsForLineItem').returns(mockLineItemDiscounts);
+    });
+
+    afterEach(() => {
+      formatMoneyStub.restore();
+      discountsForLineItemStub.restore();
+    });
+
+    it('returns a formatted full price if the cart contents discounts option is set to false', () => {
+      cart.config.cart.contents.discounts = false;
+      const formattedLineItemTotal = cart.formattedLineItemTotal(lineItem);
+
+      assert.notCalled(discountsForLineItemStub);
+      assert.calledOnce(formatMoneyStub);
+      assert.calledWith(formatMoneyStub, lineItemFullPrice, cart.moneyFormat);
+      assert.equal(formattedLineItemTotal, mockFormattedMoney);
+    });
+
+    it('returns a formatted discounted price if the cart contents discounts option is set to true', () => {
+      cart.config.cart.contents.discounts = true;
+      const formattedLineItemTotal = cart.formattedLineItemTotal(lineItem);
+
+      assert.calledOnce(discountsForLineItemStub);
+      assert.calledWith(discountsForLineItemStub, lineItem);
+      assert.calledOnce(formatMoneyStub);
+      assert.calledWith(formatMoneyStub, lineItemFullPrice - totalDiscount, cart.moneyFormat);
+      assert.equal(formattedLineItemTotal, mockFormattedMoney);
+    });
+  });
+
+  describe('discountsForLineItem', () => {
+    let formatMoneyStub;
+    const explicitCode = 'explicit-discount';
+    const explicitAmount = 5.00;
+    const entitledCode = 'entitled-discount';
+    const entitledAmount = 2.00;
+    const allCode = 'all-discount';
+    const allAmount = 1.00;
+    const mockFormattedMoney = '$5.00';
+
+    const lineItem = {
+      discountAllocations: [
+        {
+          discountApplication: {
+            code: explicitCode,
+            targetSelection: 'EXPLICIT',
+          },
+          allocatedAmount: {
+            amount: explicitAmount,
+          },
+        },
+        {
+          discountApplication: {
+            title: entitledCode,
+            targetSelection: 'ENTITLED',
+          },
+          allocatedAmount: {
+            amount: entitledAmount,
+          },
+        },
+        {
+          discountApplication: {
+            title: allCode,
+            targetSelection: 'ALL',
+          },
+          allocatedAmount: {
+            amount: allAmount,
+          },
+        },
+      ],
+    };
+
+    beforeEach(() => {
+      formatMoneyStub = sinon.stub(formatMoney, 'default').returns(mockFormattedMoney);
+    });
+
+    afterEach(() => {
+      formatMoneyStub.restore();
+    });
+
+    it('returns the total of entitled and explicit discounts', () => {
+      const {totalDiscount} = cart.discountsForLineItem(lineItem);
+
+      assert.equal(totalDiscount, explicitAmount + entitledAmount);
+    });
+
+    it('returns a list of strings containing information about entitled and explicit discounts', () => {
+      const {discounts} = cart.discountsForLineItem(lineItem);
+      const explicitFormatMoneyArgs = formatMoneyStub.getCall(0).args;
+      const entitledFormatMoneyArgs = formatMoneyStub.getCall(1).args;
+      const explicitDiscount = discounts[0].discount;
+      const entitledDiscount = discounts[1].discount;
+
+      assert.equal(discounts.length, 2);
+      assert.calledTwice(formatMoneyStub);
+      assert.equal(explicitFormatMoneyArgs[0], explicitAmount);
+      assert.equal(explicitFormatMoneyArgs[1], cart.moneyFormat);
+      assert.equal(entitledFormatMoneyArgs[0], entitledAmount);
+      assert.equal(entitledFormatMoneyArgs[1], cart.moneyFormat);
+      assert.equal(explicitDiscount, `${explicitCode} (-${mockFormattedMoney})`);
+      assert.equal(entitledDiscount, `${entitledCode} (-${mockFormattedMoney})`);
     });
   });
 });
