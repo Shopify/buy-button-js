@@ -18,6 +18,8 @@ describe('Modal View class', () => {
 
   describe('wrapTemplate', () => {
     it('wraps html in a div element with modal class, and wraps modal div within a div with overlay class', () => {
+      const title = 'Model Title';
+      modal.model.title = title;
       modal = Object.defineProperty(modal, 'classes', {
         value: {
           modal: {
@@ -28,7 +30,7 @@ describe('Modal View class', () => {
       });
       const html = 'html';
       const htmlString =
-        '<div class="overlay"><div class="modal">html</div></div>';
+        `<div class="overlay" role="dialog" aria-modal="true" aria-labelledby="ModalProductTitle"><div class="modal"><div id="ModalProductTitle" hidden>${title}</div>${html}</div></div>`;
       assert.equal(modal.view.wrapTemplate(html), htmlString);
     });
   });
