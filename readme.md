@@ -1,3 +1,7 @@
+We had to build an integration with Shopify that allowed us to send some additional data from an external app to Shopify in order to build our customers custom retail functionality. 
+
+
+# Original Readme:
 # BuyButton.js
 
 [BuyButton.js on NPM](https://www.npmjs.com/package/@shopify/buy-button-js)
