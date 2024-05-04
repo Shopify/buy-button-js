@@ -95,7 +95,6 @@
     "watchify": "3.11.1",
     "wdio-dot-reporter": "0.0.6",
     "wdio-junit-reporter": "0.1.0",
-    "wdio-mocha-framework": "0.5.13",
     "webdriverio": "4.2.8",
     "whatwg-fetch": "3.0.0"
   },
