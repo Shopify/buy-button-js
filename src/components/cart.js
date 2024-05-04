@@ -419,15 +419,16 @@ export default class Cart extends Component {
    * add variant to cart.
    * @param {Object} variant - variant object.
    * @param {Number} [quantity=1] - quantity to be added.
+   * @param {Number} customAttributes - customAttributes to be added as { key: "_someKey", value: "_someValue" }. 
    */
-  addVariantToCart(variant, quantity = 1, openCart = true) {
+  addVariantToCart(variant, quantity = 1, customAttributes = [],  openCart = true) {
     if (quantity <= 0) {
       return null;
     }
     if (openCart) {
       this.open();
     }
-    const lineItem = {variantId: variant.id, quantity};
+    const lineItem = {variantId: variant.id, quantity, customAttributes};
     if (this.model) {
       return this.props.client.checkout.addLineItems(this.model.id, [lineItem]).then((checkout) => {
         this.model = checkout;
@@ -444,6 +445,7 @@ export default class Cart extends Component {
         lineItems: [
           lineItem,
         ],
+        customAttributes: this.options.customAttributes || [],
       };
       return this.props.client.checkout.create(input).then((checkout) => {
         localStorage.setItem(this.localStorageCheckoutKey, checkout.id);

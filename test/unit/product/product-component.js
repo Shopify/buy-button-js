@@ -676,6 +676,7 @@ describe('Product Component class', () => {
           assert.calledWith(createCheckoutStub, {lineItems: [{
             variantId: 'gid://shopify/ProductVariant/19667571022088',
             quantity: selectedQuantity,
+            customAttributes: [],
           }]});
         });
       });
