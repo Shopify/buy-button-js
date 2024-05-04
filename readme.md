@@ -13,10 +13,13 @@ This repository contains a modified version of the Shopify Buy Button library th
 ## Limitations
 
 - Custom attributes are not displayed in the cart before checkout, which may cause confusion for customers with bulk orders. However, this should not be an issue for small orders.
-
+- mocha test framework is purged
+- After compiling the library, you will need to manually merge your bits with the live shopify bits. We have provided our compiled minified version in ./latest folder.
 ## Usage
 
-This project is shared for educational purposes and is provided without warranty. Use and self-host at your own risk.
+This project is shared for educational purposes and is provided without warranty under the MIT license. 
+
+Use and self-host at your own risk.
 
 To build and run the project, we recommend using a Linux environment.
 
@@ -31,7 +34,7 @@ To build and run the project, we recommend using a Linux environment.
 7. Run `yarn build`
 
 
-# Original Readme:
+# Original unmodified Readme:
 ## BuyButton.js
 
 [BuyButton.js on NPM](https://www.npmjs.com/package/@shopify/buy-button-js)
