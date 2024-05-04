@@ -23,6 +23,17 @@ Use and self-host at your own risk.
 
 To build and run the project, we recommend using a Linux environment.
 
+## Notes
+
+For reference, we keep a copy of the code we compiled before and after merging it.
+
+/dist-compiled/[date]/github-dist - this is the original github compiled dist 
+/dist-compiled/[date]/customattributes-dist - this is the updated code compiled dist
+/dist-compiled/[date]/shopify-live - this is a reference copy of the live library hosted by shopify
+/dist-compiled/[date]/release - this is the minified source
+
+/latest - this is the latest minified source with custom attribute functionality.
+
 # Prereqs : 
 
 1. Install [nvm](https://github.com/nvm-sh/nvm)
@@ -33,6 +44,7 @@ To build and run the project, we recommend using a Linux environment.
 6. Run `yarn install`
 7. Run `yarn build`
 
+Happy building!!!
 
 # Original unmodified Readme:
 ## BuyButton.js
