@@ -33,7 +33,7 @@
     "src:transpile": "babel ./src --out-dir ./lib",
     "src:build": "node ./script/build.js",
     "---------- dev": null,
-    "src:watch": "watchify src/buybutton.js -t babelify --outfile tmp/buybutton.dev.js -v",
+    "src:watch": "watchify src/buybutton.js -t babelify src/buybutton.js --outfile ./tmp/buybutton.dev.js -v",
     "---------- test": null,
     "test-dev": "yarn run test-mocha:watch | testem",
     "test-mocha:build": "yarn run styles && browserify test/test.js -t babelify --outfile test/build/test.js",
@@ -93,9 +93,6 @@
     "testem": "2.17.0",
     "watch": "1.0.2",
     "watchify": "3.11.1",
-    "wdio-dot-reporter": "0.0.6",
-    "wdio-junit-reporter": "0.1.0",
-    "wdio-mocha-framework": "0.5.13",
     "webdriverio": "4.2.8",
     "whatwg-fetch": "3.0.0"
   },
