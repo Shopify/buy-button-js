@@ -6,7 +6,10 @@ import {addClassToElement, removeClassFromElement} from './utils/element-class';
 const iframeStyles = {
   width: '100%',
   overflow: 'hidden',
-  border: 'none',
+  // Firefox for some reason sets 'border: medium' even if we set it to 'border: none'
+  // when using JavaScript to set the style. The workaround is to set individual border styles
+  'border-width': '0',
+  'border-style': 'none',
 };
 
 const iframeAttrs = {
@@ -91,6 +94,7 @@ export default class iframe {
     Object.keys(iframeStyles).forEach((key) => {
       this.el.style[key] = iframeStyles[key];
     });
+
     Object.keys(iframeAttrs).forEach((key) => this.el.setAttribute(key, iframeAttrs[key]));
     this.el.setAttribute('name', config.name);
     this.styleTag = null;
