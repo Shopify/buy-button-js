@@ -68,7 +68,7 @@ var order = [
 
 **Type**: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)
 
-**Default value**: dependent on component. [View default values for all components](https://github.com/Shopify/buy-button-js/blob/master/src/defaults/components.js)
+**Default value**: dependent on component. [View default values for all components](https://github.com/Shopify/buy-button-js/blob/main/src/defaults/components.js)
 
 ### `contents`
 
@@ -83,7 +83,7 @@ var contents = {
 ```
 
 **Type**: object
-**Default value**: dependent on component. [View component defaults](https://github.com/Shopify/buy-button-js/blob/master/src/defaults/components.js)
+**Default value**: dependent on component. [View component defaults](https://github.com/Shopify/buy-button-js/blob/main/src/defaults/components.js)
 
 ### `text`
 
@@ -99,7 +99,7 @@ var text = {
 
 **Type**: object
 
-**Default value**: dependent on component. [View component defaults](https://github.com/Shopify/buy-button-js/blob/master/src/defaults/components.js)
+**Default value**: dependent on component. [View component defaults](https://github.com/Shopify/buy-button-js/blob/main/src/defaults/components.js)
 
 ### `styles`
 
@@ -118,7 +118,7 @@ var styles = {
 
 **Type**: object
 
-**Default value**: dependent on component. [View component defaults](https://github.com/Shopify/buy-button-js/blob/master/src/defaults/components.js)
+**Default value**: dependent on component. [View component defaults](https://github.com/Shopify/buy-button-js/blob/main/src/defaults/components.js)
 
 ### `events`
 
@@ -419,7 +419,7 @@ Determines class names added to elements within components. It is unlikely you w
 
 **Type**: Object
 
-**Default values**: dependent on component. [View defaults](https://github.com/Shopify/buy-button-js/blob/master/src/defaults/components.js).
+**Default values**: dependent on component. [View defaults](https://github.com/Shopify/buy-button-js/blob/main/src/defaults/components.js).
 
 ### `templates`
 Determines the HTML for each element in a component. Templates are specified as strings using the [Mustache](https://github.com/janl/mustache.js/) templating engine, which implements the [Mustache](https://mustache.github.io/) syntax.

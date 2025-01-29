@@ -1,8 +1,8 @@
 ## Deploying and publishing BuyButton.js
 
-Pull from master and install all dependencies
+Pull from main and install all dependencies
 ```
-git pull origin master
+git pull origin main
 yarn install
 ```
 Then run
@@ -18,7 +18,7 @@ Which will do 3 things:
 - create a tag
 
 ```
-git push origin master --tags
+git push origin main --tags
 ```
 
-Then deploy to S3 and NPM via [Shipit](https://shipit.shopify.io/shopify/buy-button-js/production)
+Then deploy via [Shipit](https://shipit.shopify.io/shopify/buy-button-js/production)
