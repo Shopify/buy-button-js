@@ -85,6 +85,7 @@ export default class Product extends Component {
     this.modalProduct = Boolean(config.modalProduct);
     this.updater = new ProductUpdater(this);
     this.view = new ProductView(this);
+    this.customAttributes = config.customAttributes || [];
   }
 
   /**
@@ -248,6 +249,7 @@ export default class Product extends Component {
       buttonDisabled: !this.buttonEnabled,
       selectedVariant: this.selectedVariant,
       selectedQuantity: this.selectedQuantity,
+      customAttributes: this.customAttributes,
       buttonText: this.buttonText,
       imgStyle: this.imgStyle,
       quantityClass: this.quantityClass,
@@ -651,7 +653,7 @@ export default class Product extends Component {
     } else if (this.options.buttonDestination === 'cart') {
       this.props.closeModal();
       this._userEvent('addVariantToCart');
-      this.props.tracker.trackMethod(this.cart.addVariantToCart.bind(this), 'Update Cart', this.selectedVariantTrackingInfo)(this.selectedVariant, this.selectedQuantity);
+      this.props.tracker.trackMethod(this.cart.addVariantToCart.bind(this), 'Update Cart', this.selectedVariantTrackingInfo)(this.selectedVariant, this.selectedQuantity, this.customAttributes);
       if (!this.modalProduct) {
         this.props.setActiveEl(target);
       }
@@ -677,6 +679,7 @@ export default class Product extends Component {
           {
             variantId: this.selectedVariant.id,
             quantity: this.selectedQuantity,
+            customAttributes: this.customAttributes,
           },
         ],
       };
