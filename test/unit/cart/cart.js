@@ -1630,4 +1630,10 @@ describe('Cart class', () => {
       viewSetFocusStub.restore();
     });
   });
+
+  describe('get iframeTitle', () => {
+    it('returns the title from the options text', () => {
+      assert.equal(cart.iframeTitle, cart.options.text.title);
+    });
+  });
 });
