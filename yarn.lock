@@ -5910,10 +5910,10 @@ shellwords@^0.1.1:
   resolved "https://registry.yarnpkg.com/shellwords/-/shellwords-0.1.1.tgz#d6b9181c1a48d397324c84871efbcfc73fc0654b"
   integrity sha512-vFwSUfQvqybiICwZY5+DAWIPLKsWO31Q91JSKl3UYv+K5c2QRPzn0qzec6QPu1Qc9eHYItiP3NdJqNVqetYAww==
 
-shopify-buy@2.20.0:
-  version "2.20.0"
-  resolved "https://registry.npmjs.org/shopify-buy/-/shopify-buy-2.20.0.tgz#b6455e78c01e28b0ddca61fb0c5a15ab66720a2c"
-  integrity sha512-xe6VlqJtI/c8BYeH2hhOw7gZSsbHUeGFUwVyAzQOR422Ml4UXTFld0GcbW88tkR/Vgy2tj592EL2paCws2fZzQ==
+shopify-buy@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/shopify-buy/-/shopify-buy-3.0.0.tgz#c1b09e278c7df9fc92791140ea5b787a730b2efc"
+  integrity sha512-zoq9SIZvhmodNZkgcs9YrB1xYquRiwJPoVl36zYYomujcEtZXVJp18yL5finw9Z7mYtNyVAfol4YDyPxIYu+zw==
 
 signal-exit@^3.0.0:
   version "3.0.2"
