@@ -30,7 +30,7 @@ jobs:
           node-version: "16.x"
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install --no-progress --ignore-engines
 
       - name: Check for changesets
         id: check_changesets
