@@ -15,7 +15,8 @@
   "repository": "git@github.com:Shopify/buy-button-js.git",
   "publishConfig": {
     "access": "public",
-    "@shopify:registry": "https://registry.npmjs.org/"
+    "@shopify:registry": "https://registry.npmjs.org/",
+    "provenance": true
   },
   "scripts": {
     "start": "rm -rf tmp && mkdir tmp && yarn run src:watch & yarn run styles:watch & yarn run serve",
