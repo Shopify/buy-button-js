@@ -27,7 +27,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "16.x"
+          node-version: "18.20"
 
       - name: Install dependencies
         run: yarn install --no-progress --ignore-engines
@@ -45,14 +45,14 @@ jobs:
 
       - name: Update package version and remove changesets
         if: env.changesets_found == 'true'
-        run: yarn changeset version
+        run: npx changeset version
 
       - name: Publish to NPM
         if: env.changesets_found == 'true'
         id: changesets
         uses: changesets/action@v1
         with:
-          publish: yarn changeset publish
+          publish: npx changeset publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
