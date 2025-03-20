@@ -17,4 +17,4 @@
 - `npm run doc-serve`
 
 ## Deployment
-Changes to the `docs` directory will automatically be deployed to http://shopify.github.io/js-buy-sdk/ when added to `master` (remote).
+Changes to the `docs` directory will automatically be deployed to http://shopify.github.io/js-buy-sdk/ when added to `main` (remote).

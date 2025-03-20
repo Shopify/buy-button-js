@@ -95,9 +95,6 @@
     "testem": "2.17.0",
     "watch": "1.0.2",
     "watchify": "3.11.1",
-    "wdio-dot-reporter": "0.0.6",
-    "wdio-junit-reporter": "0.1.0",
-    "wdio-mocha-framework": "0.5.13",
     "webdriverio": "4.2.8",
     "whatwg-fetch": "3.0.0"
   },
@@ -106,11 +103,8 @@
     "browserify": "16.3.0",
     "morphdom": "2.6.1",
     "mustache": "3.0.1",
-    "sass": "1.54.3",
+    "sass": "1.69.0",
     "shopify-buy": "2.20.0",
     "uglify-js": "3.16.3"
-  },
-  "resolutions": {
-    "fibers": "5.0.0"
   }
 }
