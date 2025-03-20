@@ -5,5 +5,5 @@ dependencies:
 deploy:
   override:
     - ejson decrypt -o config.json config.ejson
-    - npm run deploy
-    - npm publish
+    - npm run deploy # upload built scripts to the CDN
+    # - npm publish (npm publishing is now done via Github actions with changesets and provenance)

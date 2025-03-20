@@ -17,6 +17,6 @@ _site
 .sass-cache
 .jekyll-metadata
 /test/build
-config.json
+./config.json
 /.vscode
 .DS_Store
