@@ -23,10 +23,16 @@ This tool is intended for use by developers who are familiar with JavaScript and
 
 ## Including the library
 
-Include a script tag with a specific version of the library specified. The example below uses version `1.0.0`, but the latest version can be found on [NPM](https://www.npmjs.com/package/@shopify/buy-button-js).
+Include a script tag with a specific version of the library specified. The example below uses version `3.0.1`, but the latest version can be found on [NPM](https://www.npmjs.com/package/@shopify/buy-button-js).
 
 ```html
-<script src="http://sdks.shopifycdn.com/buy-button/1.0.0/buybutton.js"></script>
+<script src="http://sdks.shopifycdn.com/buy-button/latest/buybutton.js"></script>
+```
+
+Or for a specific version
+
+```html
+<script src="http://sdks.shopifycdn.com/buy-button/3.0.1/buybutton.js"></script>
 ```
 
 ## Creating a Shop Client

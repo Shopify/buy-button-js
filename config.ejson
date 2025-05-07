@@ -1,8 +1,8 @@
 {
     "_public_key": "334e76f93583af537eb49a71b24a821df9b0dbf7cee12e99c82a7db661bf362f",
     "aws": {
-        "accessKeyId": "EJ[1:aUBDPqzGtKvxoWnpds+1I1umbWd8ZUL916/YhuqLBxI=:DJlsx75dGSoby5+0a8+bjjuLfYXn4C/D:pfq8PudzjNTgSkc2piW8EK8GwSlALt3u/QbDjuObW6uxm4Ui]",
-        "secretAccessKey": "EJ[1:aUBDPqzGtKvxoWnpds+1I1umbWd8ZUL916/YhuqLBxI=:iPUZXRq1SdTliHllPTv/VmTfMw0uccss:jxd61X7YA31bRhdSmAAG22B9ebG7rkP4Hq4heyv7SzgkInSp1WocAwCx0ibu8Z9pehtm/ZYqXWE=]",
+        "accessKeyId": "EJ[1:Oge6S9PGXLFyn8Y0clKdeboKtKTL52EA56vMd8H/GF0=:PepyP0CDdTa7VFk9UD9kgi36XfFbqiEf:HcocdFYFH2K2qdbXxInRUU3mYH/6aYykyk1a4eO7668PA6VH]",
+        "secretAccessKey": "EJ[1:Oge6S9PGXLFyn8Y0clKdeboKtKTL52EA56vMd8H/GF0=:Yo2CPLXYdbO2ShC62tFI6rjZTDc4apN5:XARUeaS8n3+5cGdpNIh6QVWMVEMcrwAeM3gxMnxMr7lc+qTU7v5304uBCzIX3JPcPa0lDpTHQY8=]",
         "region": "EJ[1:OiyUsde52Pjv/BWOZvsusn9obI907/Auxw9OK7dvQyU=:pm+uvXotKKnnfLrZl2bAEy8DOm+vbOoQ:i7PXoqrnvsbQCerXHIEBWsB8qxaBnuT6bg==]",
         "bucket": "EJ[1:0D7xuWkrJDNx9Lmw1I/DxumQYX46klf1MKyoH8AEqFI=:/BpMJDVu1quXo/Md+CJjmQ4fLscTgfUM:KYoMOK7ePOY3A03gQM0uJnWBdtJ2cUcfqyjcuMbBLUIt2HM=]"
     }
