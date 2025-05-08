@@ -8,8 +8,11 @@ It uses the [JS Buy SDK](http://shopify.github.io/js-buy-sdk/) to connect to you
 To get started, take a look at [the documentation](http://shopify.github.io/buy-button-js/).
 For questions, suggestions and feedback, please <a href="https://github.com/Shopify/buy-button-js/issues">create an issue</a>.
 
-> [!NOTE]
-> The Buy Button JS library will soon be updated to use v3 of the JS Buy SDK library
+## BuyButton.js v3.0 troubleshooting
+
+### Checkout showing Online Store password page
+
+If your Online Store is password protected, users will be shown your Online Store password page when attempting to go to checkout. The best way to resolve this is to add [this redirect theme](https://github.com/instantcommerce/shopify-headless-theme) to your Online Store and remove password protection.
 
 ## Development
 
