@@ -99,7 +99,7 @@
     "whatwg-fetch": "3.0.0"
   },
   "dependencies": {
-    "@babel/runtime": "7.18.9",
+    "@babel/runtime": "7.26.10",
     "browserify": "16.3.0",
     "morphdom": "2.6.1",
     "mustache": "3.0.1",
