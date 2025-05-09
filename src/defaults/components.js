@@ -84,6 +84,7 @@ const defaults = {
       unitPriceAccessibilitySeparator: 'per',
       regularPriceAccessibilityLabel: 'Regular price',
       salePriceAccessibilityLabel: 'Sale price',
+      iframeTitle: 'Product buy button',
     },
   },
   modalProduct: {
@@ -122,6 +123,7 @@ const defaults = {
     buttonDestination: 'cart',
     text: {
       button: 'ADD TO CART',
+      iframeTitle: 'Product details modal buy button',
     },
   },
   modal: {
@@ -147,6 +149,9 @@ const defaults = {
     },
     order: ['contents'],
     templates: modalTemplates,
+    text: {
+      iframeTitle: 'Product details modal',
+    },
   },
   productSet: {
     iframe: true,
@@ -173,6 +178,7 @@ const defaults = {
     },
     text: {
       nextPageButton: 'Next page',
+      iframeTitle: 'Product collection buy buttons',
     },
   },
   option: {
@@ -310,6 +316,7 @@ const defaults = {
     },
     text: {
       title: 'cart',
+      iframeTitle: 'Cart toggle',
     },
   },
   window: {

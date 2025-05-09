@@ -65,6 +65,9 @@ describe('View class', () => {
           value: {
             iframe: true,
             manifest: ['product', 'option'],
+            text: {
+              iframeTitle: 'Iframe title',
+            },
           },
         });
       });
