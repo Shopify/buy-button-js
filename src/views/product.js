@@ -1,4 +1,5 @@
 import View from '../view';
+import Template from '../template';
 
 export default class ProductView extends View {
   get className() {
@@ -46,20 +47,22 @@ export default class ProductView extends View {
   }
 
   wrapTemplate(html) {
-    let ariaLabel;
-    switch (this.component.options.buttonDestination) {
-    case 'modal':
-      ariaLabel = 'View details';
-      break;
-    case 'cart':
-      ariaLabel = 'Add to cart';
-      break;
-    default:
-      ariaLabel = 'Buy Now';
-    }
-
     if (this.component.isButton) {
-      return `<div class="${this.wrapperClass} ${this.component.classes.product.product}"><div tabindex="0" role="button" aria-label="${ariaLabel}" class="${this.component.classes.product.blockButton}">${html}</div></div>`;
+      let ariaLabel;
+      switch (this.component.options.buttonDestination) {
+      case 'modal':
+        ariaLabel = this.component.options.text.isButtonModalAccessibilityLabel;
+        break;
+      case 'cart':
+        ariaLabel = this.component.options.text.isButtonCartAccessibilityLabel;
+        break;
+      default:
+        ariaLabel = this.component.options.text.isButtonCheckoutAccessibilityLabel;
+      }
+
+      const template = new Template(this.component.options.templates, {title: true, price: true}, this.component.options.order);
+      const summaryHtml = template.render({data: this.component.viewData});
+      return `<div class="${this.wrapperClass} ${this.component.classes.product.product}"><div class="visuallyhidden">${summaryHtml}</div><div tabindex="0" role="button" aria-label="${ariaLabel}" class="${this.component.classes.product.blockButton}">${html}</div></div>`;
     } else {
       return `<div class="${this.wrapperClass} ${this.component.classes.product.product}">${html}</div>`;
     }

@@ -84,6 +84,9 @@ const defaults = {
       unitPriceAccessibilitySeparator: 'per',
       regularPriceAccessibilityLabel: 'Regular price',
       salePriceAccessibilityLabel: 'Sale price',
+      isButtonModalAccessibilityLabel: 'View details',
+      isButtonCartAccessibilityLabel: 'Add to cart',
+      isButtonCheckoutAccessibilityLabel: 'Buy now',
     },
   },
   modalProduct: {
