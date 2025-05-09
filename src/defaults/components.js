@@ -310,6 +310,7 @@ const defaults = {
     },
     text: {
       title: 'cart',
+      countAccessibilityLabel: 'Number of items in your cart:',
     },
   },
   window: {
