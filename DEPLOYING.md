@@ -22,7 +22,7 @@ npx changeset add
 
 ### 4. Push your changes
 ```
-git push origin main
+git push
 ```
 
 ### 5. Create a PR and merge it into `main`
