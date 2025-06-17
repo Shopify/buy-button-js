@@ -1,6 +1,6 @@
 {
   "name": "@shopify/buy-button-js",
-  "version": "3.0.2-TEMP-REVERT-TO-Shopify_Buy_v2",
+  "version": null,
   "browserslist": [
     "last 2 Chrome versions",
     "last 2 Firefox versions",
