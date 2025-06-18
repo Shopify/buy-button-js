@@ -48,6 +48,9 @@ export default function formatMoney(amount, format) {
   case 'amount_no_decimals_with_space_separator':
     value = formatWithDelimiters(cents, 0, ' ');
     break;
+  case 'amount_with_space_separator':
+    value = formatWithDelimiters(cents, 2, ' ', ',');
+    break;  
   default:
     value = formatWithDelimiters(cents);
   }
