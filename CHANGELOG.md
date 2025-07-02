@@ -1,4 +1,21 @@
 # Changelog
+### v3.0.5 (July 2, 2025)
+- Upgrade to v3.0.7 of `shopify-buy`
+
+### v3.0.4 (June 18, 2025)
+- Upgrade to v3.0.6 of `shopify-buy`
+
+### v3.0.3 (June 17, 2025)
+- Upgrade to v3.0.5 of `shopify-buy`
+
+### v3.0.2 (May 7, 2025)
+- Re-release of Buy Button JS v3.0.1 (due to deploy issues)
+
+### v3.0.1 (May 7, 2025)
+- Upgrade to v3.0.4 of `shopify-buy`
+
+### v3.0.0 (April 8, 2025)
+- Upgrade to v3.0.0 of `shopify-buy`
 
 ### v2.4.0 (July 6, 2023)
 
