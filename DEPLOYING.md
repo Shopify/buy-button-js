@@ -16,23 +16,25 @@ yarn install
 npx changeset add
 ```
 
-### 3. Commit your changes (manually) using git. 
+### 3. Update CHANGELOG.md to describe your changes
+
+### 4. Commit your changes (manually) using git. 
 
 **Do NOT bump the version manually in `package.json`.**
 
-### 4. Push your changes
+### 5. Push your changes
 ```
 git push
 ```
 
-### 5. Create a PR and merge it into `main`
+### 6. Create a PR and merge it into `main`
 
 This will automatically:
 - Bump the version in `package.json`
 - Create the tag in GitHub for the new version
 - Publish the new version to npm
 
-### 6. Deploy via [Shipit](https://shipit.shopify.io/shopify/buy-button-js/production)
+### 7. Deploy via [Shipit](https://shipit.shopify.io/shopify/buy-button-js/production)
 
 Merging the PR will automatically publish the new version to npm, but the Shipit deploy is necessary to publish the new version to Shopify's CDN.
 
