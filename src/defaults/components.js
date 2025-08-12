@@ -147,6 +147,9 @@ const defaults = {
     },
     order: ['contents'],
     templates: modalTemplates,
+    text: {
+      iframeAccessibilityLabel: 'Product modal',
+    },
   },
   productSet: {
     iframe: true,
@@ -173,6 +176,7 @@ const defaults = {
     },
     text: {
       nextPageButton: 'Next page',
+      iframeAccessibilityLabel: 'Product collection',
     },
   },
   option: {
@@ -310,6 +314,7 @@ const defaults = {
     },
     text: {
       title: 'cart',
+      iframeAccessibilityLabel: 'Cart toggle',
     },
   },
   window: {

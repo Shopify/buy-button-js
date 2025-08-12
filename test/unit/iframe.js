@@ -135,7 +135,19 @@ describe('Iframe class', () => {
     });
 
     it('sets element name to name in config', () => {
+      iframe = new Iframe(parent, constructorConfig);
       assert.equal(iframe.el.getAttribute('name'), constructorConfig.name);
+    });
+
+    it('sets title attribute when title is provided in config', () => {
+      constructorConfig.title = 'Add to cart';
+      iframe = new Iframe(parent, constructorConfig);
+      assert.equal(iframe.el.getAttribute('title'), 'Add to cart');
+    });
+
+    it('does not set title attribute when title is not provided in config', () => {
+      iframe = new Iframe(parent, constructorConfig);
+      assert.isNull(iframe.el.getAttribute('title'));
     });
 
     it('sets styleTag to null', () => {

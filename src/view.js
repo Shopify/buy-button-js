@@ -22,6 +22,30 @@ export default class View {
     if (this.iframe || !this.component.options.iframe) {
       return Promise.resolve(this.iframe);
     }
+
+    // Determine title for iframe accessibility based on component type
+    let iframeTitle = '';
+    switch (this.component.typeKey) {
+    case 'product':
+      iframeTitle = (this.component.options.text && this.component.options.text.button) || 'Add to cart';
+      break;
+    case 'cart':
+      iframeTitle = (this.component.options.text && this.component.options.text.title) || 'Cart';
+      break;
+    case 'toggle':
+      iframeTitle = (this.component.options.text && this.component.options.text.iframeAccessibilityLabel) || 'Cart toggle';
+      break;
+    case 'modal':
+      iframeTitle = (this.component.options.text && this.component.options.text.iframeAccessibilityLabel) || 'Product modal';
+      break;
+    case 'productSet':
+      iframeTitle = (this.component.options.text && this.component.options.text.iframeAccessibilityLabel) || 'Product collection';
+      break;
+    default:
+      iframeTitle = 'Shopify component';
+      break;
+    }
+
     this.iframe = new Iframe(this.component.node, {
       classes: this.component.classes,
       customStyles: this.component.styles,
@@ -30,6 +54,7 @@ export default class View {
       googleFonts: this.component.googleFonts,
       name: this.component.name,
       width: this.component.options.layout === 'vertical' ? this.component.options.width : null,
+      title: iframeTitle,
     });
     this.iframe.addClass(this.className);
     return this.iframe.load();
