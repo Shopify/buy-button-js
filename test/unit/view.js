@@ -92,6 +92,99 @@ describe('View class', () => {
         assert.calledOnce(loadStub);
       });
 
+      it('passes title to iframe constructor for product component', async () => {
+        component.options.text = { button: 'ADD TO CART' };
+        const iframeConstructorSpy = sinon.spy(Iframe);
+        const originalIframe = Iframe;
+        Iframe = iframeConstructorSpy;
+
+        await view.init();
+
+        assert.calledWith(iframeConstructorSpy, component.node, sinon.match({
+          title: 'ADD TO CART'
+        }));
+
+        Iframe = originalIframe;
+      });
+
+      it('passes title to iframe constructor for cart component', async () => {
+        component.typeKey = 'cart';
+        component.options.text = { title: 'Cart' };
+        const iframeConstructorSpy = sinon.spy(Iframe);
+        const originalIframe = Iframe;
+        Iframe = iframeConstructorSpy;
+
+        await view.init();
+
+        assert.calledWith(iframeConstructorSpy, component.node, sinon.match({
+          title: 'Cart'
+        }));
+
+        Iframe = originalIframe;
+      });
+
+      it('passes title to iframe constructor for toggle component', async () => {
+        component.typeKey = 'toggle';
+        component.options.text = { iframeAccessibilityLabel: 'Cart toggle' };
+        const iframeConstructorSpy = sinon.spy(Iframe);
+        const originalIframe = Iframe;
+        Iframe = iframeConstructorSpy;
+
+        await view.init();
+
+        assert.calledWith(iframeConstructorSpy, component.node, sinon.match({
+          title: 'Cart toggle'
+        }));
+
+        Iframe = originalIframe;
+      });
+
+      it('passes title to iframe constructor for modal component', async () => {
+        component.typeKey = 'modal';
+        component.options.text = { iframeAccessibilityLabel: 'Product modal' };
+        const iframeConstructorSpy = sinon.spy(Iframe);
+        const originalIframe = Iframe;
+        Iframe = iframeConstructorSpy;
+
+        await view.init();
+
+        assert.calledWith(iframeConstructorSpy, component.node, sinon.match({
+          title: 'Product modal'
+        }));
+
+        Iframe = originalIframe;
+      });
+
+      it('passes title to iframe constructor for productSet component', async () => {
+        component.typeKey = 'productSet';
+        component.options.text = { iframeAccessibilityLabel: 'Product collection' };
+        const iframeConstructorSpy = sinon.spy(Iframe);
+        const originalIframe = Iframe;
+        Iframe = iframeConstructorSpy;
+
+        await view.init();
+
+        assert.calledWith(iframeConstructorSpy, component.node, sinon.match({
+          title: 'Product collection'
+        }));
+
+        Iframe = originalIframe;
+      });
+
+      it('passes default title when text is not provided', async () => {
+        const iframeConstructorSpy = sinon.spy(Iframe);
+        const originalIframe = Iframe;
+        Iframe = iframeConstructorSpy;
+
+        await view.init();
+
+        assert.calledWith(iframeConstructorSpy, component.node, sinon.match({
+          title: 'Add to cart'
+        }));
+
+        Iframe = originalIframe;
+      });
+
       it('returns the response of iframe\'s load()', async () => {
         const response = await view.init();
         assert.equal(response, loadRes);

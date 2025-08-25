@@ -1,4 +1,7 @@
 # Changelog
+### v3.0.6 (Unreleased)
+- Add title attribute to iframes for improved accessibility ([#919](https://github.com/Shopify/buy-button-js/pull/919))
+
 ### v3.0.5 (July 2, 2025)
 - Upgrade to v3.0.7 of `shopify-buy`
 
