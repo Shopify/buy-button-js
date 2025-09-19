@@ -93,29 +93,29 @@ Use Graphite (gt) commands for managing stacked branches:
 
 ## Tasks
 
-- [ ] 0. Initial Setup
+- [x] 0. Initial Setup
 
-  - [ ] 0.1. Create feature branch using `gt create typescript-migration-part-1` (from main branch)
+  - [x] 0.1. Create feature branch using `gt create typescript-migration-part-1` (from main branch)
 
-- [ ] 1. TypeScript Infrastructure Setup (PR 1)
+- [x] 1. TypeScript Infrastructure Setup (PR 1)
 
-  - [ ] 1.1. Install TypeScript as a development dependency using `npm install --save-dev typescript@^5.0.0`
+  - [x] 1.1. Install TypeScript as a development dependency using `npm install --save-dev typescript@^5.0.0`
 
-  - [ ] 1.2. Create `tsconfig.json` with strict mode enabled and appropriate compiler options for gradual migration
+  - [x] 1.2. Create `tsconfig.json` with strict mode enabled and appropriate compiler options for gradual migration
 
-  - [ ] 1.3. Update `.gitignore` to exclude TypeScript build artifacts (*.tsbuildinfo, dist-types/)
+  - [x] 1.3. Update `.gitignore` to exclude TypeScript build artifacts (*.tsbuildinfo, dist-types/)
 
-  - [ ] 1.4. Configure Rollup build system to handle both `.js` and `.ts` files during migration
+  - [x] 1.4. Configure Rollup build system to handle both `.js` and `.ts` files during migration
 
-  - [ ] 1.5. Add `type-check` script to package.json: `"type-check": "tsc --noEmit"`
+  - [x] 1.5. Add `type-check` script to package.json: `"type-check": "tsc --noEmit"`
 
-  - [ ] 1.6. Add TypeScript checking to CI pipeline as a non-blocking check initially
+  - [x] 1.6. Add TypeScript checking to CI pipeline as a non-blocking check initially
 
-  - [ ] 1.7. Verify setup by creating a test TypeScript file and running `npm run type-check`
+  - [x] 1.7. Verify setup by creating a test TypeScript file and running `npm run type-check`
 
-  - [ ] 1.8. Clean up test file and verify build still works with `npm run build`
+  - [x] 1.8. Clean up test file and verify build still works with `npm run build`
 
-  - [ ] 1.9. **[PR BOUNDARY]** Submit PR 1 using `gt submit`
+  - [x] 1.9. **[PR BOUNDARY]** Submit PR 1 using `gt submit` - https://github.com/Shopify/buy-button-js/pull/926/files
 
 - [ ] 2. Type Definitions Setup (PR 2)
 
@@ -606,3 +606,42 @@ Use Graphite (gt) commands for managing stacked branches:
   - [ ] 26.8. Run final verification: `npm test && npm run type-check && npm run build`
 
   - [ ] 26.9. **[PR BOUNDARY]** Submit PR 26 using `gt submit --stack` to submit entire stack
+
+## Important Learnings from Initial Setup
+
+### Package Manager Considerations
+**CRITICAL:** This project uses **Yarn**, not npm. Always use `yarn add` instead of `npm install` to avoid creating conflicting lock files.
+- The project has a `yarn.lock` file - respect this choice
+- Using `npm install` will create a `package-lock.json` with 12,000+ lines of unnecessary changes
+- All scripts in package.json use `yarn run` commands
+
+### Build System Architecture
+- The project uses Rollup with Babel for builds (not webpack or vite)
+- Babel handles TypeScript transpilation via `@babel/preset-typescript`
+- Build script is at `script/build.js` and needs TypeScript extensions added to both babel and nodeResolve plugins
+- The `.babelrc` file needs TypeScript preset added to both production and development environments
+
+### Git Workflow with Worktrees
+- This repository uses **git worktrees** - the main branch may be checked out in another worktree
+- Use `gt get` instead of `gt sync` for fetching and rebasing (gt sync doesn't work well with worktrees)
+- When creating branches, you might see errors about branches being used by other worktrees - this is normal
+
+### TypeScript Configuration Gotchas
+- Must use `"isolatedModules": true` in tsconfig.json for Babel compatibility
+- When exporting types, use `export type { TypeName }` syntax to avoid TS1205 errors
+- The project needs `allowJs: true` and `checkJs: false` for gradual migration
+
+### CI/CD Setup
+- GitHub Actions workflows are in `.github/workflows/`
+- The npm-release.yml handles package publishing
+- Created new ci.yml for TypeScript checking with `continue-on-error: true` for non-blocking checks
+
+### Testing Approach
+- Run `npm test` to verify changes don't break existing functionality
+- The project uses testem for test running
+- Build verification: `npm run build` should complete without errors
+
+### Next Steps Preparation
+- PR 1 (TypeScript setup) is complete and submitted
+- Next PR should install @types packages BUT NOT @types/shopify-buy
+- Must create custom shopify-buy types based on actual usage, not community types

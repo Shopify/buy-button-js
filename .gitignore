@@ -20,3 +20,7 @@ _site
 ./config.json
 /.vscode
 .DS_Store
+
+# TypeScript build artifacts
+*.tsbuildinfo
+/dist-types
