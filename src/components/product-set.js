@@ -214,7 +214,7 @@ export default class ProductSet extends Component {
       return Promise.resolve();
     }
     const productConfig = Object.assign({}, this.globalConfig, {
-      node: this.view.document.querySelector(`.${this.classes.productSet.products}`),
+      node: this.view.document.querySelector(`.${this.classes.productSet.products.replace(/\s+/g, '.')}`),
       options: merge({}, this.config, {
         product: {
           iframe: false,
