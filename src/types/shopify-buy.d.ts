@@ -70,7 +70,7 @@ declare module 'shopify-buy' {
   }
 
   export interface CheckoutCreateInput {
-    lineItems?: CheckoutLineItem[];
+    lineItems: CheckoutLineItem[];  // Required in our app (though SDK allows empty checkouts)
     presentmentCurrencyCode?: string;
   }
 
