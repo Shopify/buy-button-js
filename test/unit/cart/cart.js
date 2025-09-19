@@ -21,13 +21,10 @@ describe('Cart class', () => {
   let closeCartSpy;
   let trackSpy;
   let viewData;
-  const mockTime = 123;
-  let dateNowStub;
 
   beforeEach(() => {
     closeCartSpy = sinon.spy();
     trackSpy = sinon.spy();
-    dateNowStub = sinon.stub(Date, 'now').returns(mockTime);
 
     cart = new Cart({
       options: {
@@ -72,17 +69,17 @@ describe('Cart class', () => {
   });
 
   afterEach(() => {
-    dateNowStub.restore();
     cart.destroy();
   });
 
   describe('constructor', () => {
-    it('instantiates child template, checkout, toggles, updater, view', () => {
+    it('instantiates child template, checkout, toggles, updater, view, and index', () => {
       assert.instanceOf(cart.childTemplate, Template);
       assert.instanceOf(cart.checkout, Checkout);
       assert.instanceOf(cart.updater, CartUpdater);
       assert.instanceOf(cart.view, CartView);
       assert.instanceOf(cart.toggles[0], CartToggle);
+      assert.equal(cart.index, null);
     });
   });
 
@@ -1106,6 +1103,10 @@ describe('Cart class', () => {
       it('returns an object with cartNoteId', () => {
         assert.equal(viewData.cartNoteId, cart.cartNoteId);
       });
+
+      it('returns an object with cartTitleId', () => {
+        assert.equal(viewData.cartTitleId, cart.cartTitleId);
+      });
     });
 
     describe('without model', () => {
@@ -1144,6 +1145,10 @@ describe('Cart class', () => {
 
       it('returns an object with cartNoteId', () => {
         assert.equal(viewData.cartNoteId, cart.cartNoteId);
+      });
+
+      it('returns an object with cartTitleId', () => {
+        assert.equal(viewData.cartTitleId, cart.cartTitleId);
       });
     });
   });
@@ -1195,8 +1200,18 @@ describe('Cart class', () => {
   });
 
   describe('get cartNoteId', () => {
-    it('returns a string containing the current time in ms', () => {
-      assert.equal(cart.cartNoteId, `CartNote-${mockTime}`);
+    it('returns a string containing the cart`s index', () => {
+      const index = 3;
+      cart.index = index;
+      assert.equal(cart.cartNoteId, `CartNote-${index}`);
+    });
+  });
+
+  describe('get cartTitleId', () => {
+    it('returns a string containing the cart`s index', () => {
+      const index = 3;
+      cart.index = index;
+      assert.equal(cart.cartTitleId, `CartTitle-${index}`);
     });
   });
 
@@ -1610,6 +1625,15 @@ describe('Cart class', () => {
       cart.toggleVisibility();
 
       assert.notCalled(setFocusStub);
+    });
+  });
+
+  describe('setIndex', () => {
+    it('sets the index to the value provided', async () => {
+      const index = 5;
+      cart.setIndex(index);
+
+      assert.equal(cart.index, index);
     });
   });
 
