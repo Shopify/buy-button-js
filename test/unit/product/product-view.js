@@ -4,6 +4,7 @@ import ShopifyBuy from '../../../src/buybutton';
 import shopFixture from '../../fixtures/shop-info';
 import productFixture from '../../fixtures/product-fixture';
 import View from '../../../src/view';
+import Template from '../../../src/template';
 
 const config = {
   id: 123,
@@ -161,6 +162,8 @@ describe('Product View class', () => {
   });
 
   describe('wrapTemplate()', () => {
+    const testHtml = 'test';
+
     beforeEach(async () => {
       await product.init(testProductCopy);
       product = Object.defineProperty(product, 'isButton', {
@@ -170,30 +173,54 @@ describe('Product View class', () => {
 
     it('wraps html in a div with wrapper class and product class if the component is not a button', () => {
       product.isButton = false;
-      const htmlString = product.view.wrapTemplate('test');
-      assert.equal(htmlString, `<div class="${product.view.wrapperClass} ${product.classes.product.product}">test</div>`);
+      const htmlString = product.view.wrapTemplate(testHtml);
+      assert.equal(htmlString, `<div class="${product.view.wrapperClass} ${product.classes.product.product}">${testHtml}</div>`);
     });
 
     describe('if the component is a button', () => {
-      it('wraps html in a button with "View details" as aria label if button destination is modal', () => {
+      let templateRenderStub;
+      let templateConstructorStub;
+      const summaryHtml = '<div>summary html</div>';
+
+      beforeEach(() => {
         product.isButton = true;
+        templateRenderStub = sinon.stub(Template.prototype, 'render').returns(summaryHtml);
+        templateConstructorStub = sinon.stub(Template.prototype, 'constructor');
+      });
+
+      afterEach(() => {
+        console.log(templateConstructorStub);
+        templateConstructorStub.restore();
+        templateRenderStub.restore();
+      });
+
+      it('wraps html in a div', () => {
+        const htmlString = product.view.wrapTemplate(testHtml);
+        const wrapperDivRegex = new RegExp(`<div class="${product.view.wrapperClass} ${product.classes.product.product}">[\\s\\S]*${testHtml}[\\s\\S]*</div>`);
+        assert.match(htmlString, wrapperDivRegex);
+      });
+
+      it('adds a visually hidden div with summary html', () => {
+        const htmlString = product.view.wrapTemplate(testHtml);
+        assert.match(htmlString, `<div class="visuallyhidden">${summaryHtml}</div>`);
+      });
+
+      it('wraps html in a button div with modal accessibility text as the aria label if button destination is modal', () => {
         product.config.product.buttonDestination = 'modal';
-        const htmlString = product.view.wrapTemplate('test');
-        assert.equal(htmlString, `<div class="${product.view.wrapperClass} ${product.classes.product.product}"><div tabindex="0" role="button" aria-label="View details" class="${product.classes.product.blockButton}">test</div></div>`);
+        const htmlString = product.view.wrapTemplate(testHtml);
+        assert.match(htmlString, `<div tabindex="0" role="button" aria-label="${product.options.text.isButtonModalAccessibilityLabel}" class="${product.classes.product.blockButton}">${testHtml}</div>`);
       });
 
-      it('wraps html in a button with "Add to cart" as aria label if button destination is cart', () => {
-        product.isButton = true;
+      it('wraps html in a button div with cart accessibility text as the aria label if button destination is cart', () => {
         product.config.product.buttonDestination = 'cart';
-        const htmlString = product.view.wrapTemplate('test');
-        assert.equal(htmlString, `<div class="${product.view.wrapperClass} ${product.classes.product.product}"><div tabindex="0" role="button" aria-label="Add to cart" class="${product.classes.product.blockButton}">test</div></div>`);
+        const htmlString = product.view.wrapTemplate(testHtml);
+        assert.match(htmlString, `<div tabindex="0" role="button" aria-label="${product.options.text.isButtonCartAccessibilityLabel}" class="${product.classes.product.blockButton}">${testHtml}</div>`);
       });
 
-      it('wraps html in a button with "Buy Now" as aria label if button destination is checkout', () => {
-        product.isButton = true;
+      it('wraps html in a button div with checkout accessibility text as the aria label if button destination is checkout', () => {
         product.config.product.buttonDestination = 'checkout';
-        const htmlString = product.view.wrapTemplate('test');
-        assert.equal(htmlString, `<div class="${product.view.wrapperClass} ${product.classes.product.product}"><div tabindex="0" role="button" aria-label="Buy Now" class="${product.classes.product.blockButton}">test</div></div>`);
+        const htmlString = product.view.wrapTemplate(testHtml);
+        assert.match(htmlString, `<div tabindex="0" role="button" aria-label="${product.options.text.isButtonCheckoutAccessibilityLabel}" class="${product.classes.product.blockButton}">${testHtml}</div>`);
       });
     });
   });
