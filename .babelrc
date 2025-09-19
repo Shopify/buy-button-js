@@ -1,6 +1,12 @@
 {
   "env": {
     "production": {
+      "presets": [
+        ["@babel/preset-typescript", {
+          "isTSX": false,
+          "allExtensions": true
+        }]
+      ],
       "plugins": [
         "@babel/plugin-transform-template-literals",
         "@babel/plugin-transform-literals",
@@ -22,6 +28,12 @@
       ]
     },
     "development": {
+      "presets": [
+        ["@babel/preset-typescript", {
+          "isTSX": false,
+          "allExtensions": true
+        }]
+      ],
       "plugins": [
         "@babel/plugin-transform-modules-commonjs",
         "@babel/plugin-transform-template-literals",
