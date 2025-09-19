@@ -113,7 +113,7 @@ declare module 'shopify-buy' {
     addLineItems(checkoutId: string, lineItems: CheckoutLineItem[]): Promise<Checkout>;
     updateLineItems(checkoutId: string, lineItems: CheckoutLineItem[]): Promise<Checkout>;
     removeLineItems(checkoutId: string, lineItemIds: string[]): Promise<Checkout>;
-    updateAttributes(checkoutId: string, attributes: { note?: string; [key: string]: any }): Promise<Checkout>;
+    updateAttributes(checkoutId: string, attributes: { note: string }): Promise<Checkout>;  // Only note is used in our app
   }
 
   export interface Client {
