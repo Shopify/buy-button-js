@@ -31,7 +31,7 @@ const productTemplate = {
                         {{/data.carouselImages}}
                       </div>
                     </div>`,
-  title: '<h1 class="{{data.classes.product.title}}" data-element="product.title">{{data.title}}</h1>',
+  title: '<h2 class="{{data.classes.product.title}}" data-element="product.title">{{data.title}}</h2>',
   variantTitle: '{{#data.hasVariants}}<h2 class="{{data.classes.product.variantTitle}}" data-element="product.variantTitle">{{data.selectedVariant.title}}</h2>{{/data.hasVariants}}',
   options: '{{#data.hasVariants}}<div class="{{data.classes.product.options}}" data-element="product.options">{{{data.optionsHtml}}}</div>{{/data.hasVariants}}',
   price: `<div class="{{data.classes.product.prices}}" data-element="product.prices">
