@@ -23,6 +23,7 @@ function isMedia(key) {
 }
 
 const ENTER_KEY = 13;
+const SPACE_KEY = 32;
 
 const propertiesWhitelist = [
   'background',
@@ -357,7 +358,7 @@ export default class Product extends Component {
       [`change ${this.selectors.option.select}`]: this.onOptionSelect.bind(this),
       [`click ${this.selectors.product.button}`]: this.onButtonClick.bind(this),
       [`click ${this.selectors.product.blockButton}`]: this.onButtonClick.bind(this),
-      [`keyup ${this.selectors.product.blockButton}`]: this.onBlockButtonKeyup.bind(this),
+      [`keydown ${this.selectors.product.blockButton}`]: this.onBlockButtonKeyDown.bind(this),
       [`click ${this.selectors.product.quantityIncrement}`]: this.onQuantityIncrement.bind(this, 1),
       [`click ${this.selectors.product.quantityDecrement}`]: this.onQuantityIncrement.bind(this, -1),
       [`blur ${this.selectors.product.quantityInput}`]: this.onQuantityBlur.bind(this),
@@ -687,10 +688,13 @@ export default class Product extends Component {
     }
   }
 
-  onBlockButtonKeyup(evt, target) {
-    if (evt.keyCode === ENTER_KEY) {
-      this.onButtonClick(evt, target);
+  onBlockButtonKeyDown(evt, target) {
+    if (evt.keyCode !== ENTER_KEY && evt.keyCode !== SPACE_KEY) {
+      return;
     }
+
+    evt.preventDefault();
+    this.onButtonClick(evt, target);
   }
 
   onOptionSelect(evt) {
