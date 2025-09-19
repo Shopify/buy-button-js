@@ -117,23 +117,23 @@ Use Graphite (gt) commands for managing stacked branches:
 
   - [x] 1.9. **[PR BOUNDARY]** Submit PR 1 using `gt submit` - https://github.com/Shopify/buy-button-js/pull/926/files
 
-- [ ] 2. Type Definitions Setup (PR 2)
+- [x] 2. Type Definitions Setup (PR 2)
 
-  - [ ] 2.1. Create new branch using `gt create typescript-migration-part-2` (stacks on current branch)
+  - [x] 2.1. Create new branch using `gt create typescript-migration-part-2` (stacks on current branch)
 
-  - [ ] 2.2. Install @types packages for existing dependencies (NOT @types/shopify-buy): `npm install --save-dev @types/node @types/jest`
+  - [x] 2.2. Install @types packages for existing dependencies (NOT @types/shopify-buy): `npm install --save-dev @types/node @types/jest`
 
-  - [ ] 2.3. Create `src/types/` directory for centralized type definitions
+  - [x] 2.3. Create `src/types/` directory for centralized type definitions
 
-  - [ ] 2.4. Review @types/shopify-buy from npm (without installing) to understand type structure
+  - [x] 2.4. Review @types/shopify-buy from npm (without installing) to understand type structure
 
-  - [ ] 2.5. Create `src/types/shopify-buy.d.ts` with custom type definitions based on actual usage in codebase
+  - [x] 2.5. Create `src/types/shopify-buy.d.ts` with custom type definitions based on actual usage in codebase
 
-  - [ ] 2.6. Create `src/types/index.ts` for shared interfaces and core types used across components
+  - [x] 2.6. Create `src/types/index.ts` for shared interfaces and core types used across components
 
-  - [ ] 2.7. Add common utility types (DeepPartial, Nullable, etc.) to `src/types/utils.ts`
+  - [x] 2.7. Add common utility types (DeepPartial, Nullable, etc.) to `src/types/utils.ts`
 
-  - [ ] 2.8. Verify type definitions compile correctly with `npm run type-check`
+  - [x] 2.8. Verify type definitions compile correctly with `npm run type-check`
 
   - [ ] 2.9. **[PR BOUNDARY]** Submit PR 2 using `gt submit`
 
