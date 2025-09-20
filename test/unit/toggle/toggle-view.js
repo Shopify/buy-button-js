@@ -86,8 +86,8 @@ describe('Toggle View class', () => {
         toggle.view.render();
       });
 
-      it('updates three attributes', () => {
-        assert.calledThrice(setAttributeSpy);
+      it('updates four attributes', () => {
+        assert.callCount(setAttributeSpy, 4);
       });
 
       it('sets tabindex of iframe\'s parent to zero', () => {
@@ -100,6 +100,10 @@ describe('Toggle View class', () => {
 
       it('sets aria-label of iframe\'s parent to text title', () => {
         assert.calledWith(setAttributeSpy.getCall(2), 'aria-label', toggle.options.text.title);
+      });
+
+      it('sets aria-haspopup of iframe\'s parent to dialog', () => {
+        assert.calledWith(setAttributeSpy.getCall(3), 'aria-haspopup', 'dialog');
       });
 
       it('resizes view', () => {
