@@ -5,6 +5,11 @@
 import type { Client, Product, Variant, Collection, Checkout } from 'shopify-buy';
 
 /**
+ * Valid manifest component names
+ */
+export type ManifestComponent = 'product' | 'cart' | 'modal' | 'productSet' | 'toggle' | 'option' | 'lineItem';
+
+/**
  * Core component configuration
  */
 export interface ComponentConfig {
@@ -30,7 +35,8 @@ export interface ComponentOptions {
   productSet?: ProductSetComponentOptions;
   toggle?: ToggleComponentOptions;
   checkout?: CheckoutComponentOptions;
-  [key: string]: any;
+  option?: OptionComponentOptions;  // Sub-component for product options
+  lineItem?: LineItemComponentOptions;  // Sub-component for cart line items
 }
 
 /**
@@ -51,6 +57,9 @@ export interface ProductComponentOptions {
   quantityIncrement?: boolean;
   startOpen?: boolean;
   iframe?: boolean;
+  manifest?: ManifestComponent[];  // Components to include
+  styles?: Record<string, any>;  // CSS styles
+  googleFonts?: string[];  // Google fonts to load
   DOMEvents?: DOMEvents;
   events?: ComponentEvents;
 }
@@ -67,6 +76,9 @@ export interface CartComponentOptions {
   startOpen?: boolean;
   iframe?: boolean;
   popup?: boolean;
+  manifest?: ManifestComponent[];  // Components to include
+  styles?: Record<string, any>;  // CSS styles
+  googleFonts?: string[];  // Google fonts to load
   DOMEvents?: DOMEvents;
   events?: ComponentEvents;
 }
@@ -80,6 +92,9 @@ export interface ModalComponentOptions {
   classes?: ModalClasses;
   order?: string[];
   iframe?: boolean;
+  manifest?: ManifestComponent[];  // Components to include
+  styles?: Record<string, any>;  // CSS styles
+  googleFonts?: string[];  // Google fonts to load
   DOMEvents?: DOMEvents;
   events?: ComponentEvents;
 }
@@ -94,6 +109,9 @@ export interface ProductSetComponentOptions {
   limit?: number;
   order?: string[];
   iframe?: boolean;
+  manifest?: ManifestComponent[];  // Components to include
+  styles?: Record<string, any>;  // CSS styles
+  googleFonts?: string[];  // Google fonts to load
   DOMEvents?: DOMEvents;
   events?: ComponentEvents;
 }
@@ -107,6 +125,9 @@ export interface ToggleComponentOptions {
   classes?: ToggleClasses;
   sticky?: boolean;
   iframe?: boolean;
+  manifest?: ManifestComponent[];  // Components to include
+  styles?: Record<string, any>;  // CSS styles
+  googleFonts?: string[];  // Google fonts to load
   DOMEvents?: DOMEvents;
   events?: ComponentEvents;
 }
@@ -118,6 +139,30 @@ export interface CheckoutComponentOptions {
   iframe?: boolean;
   DOMEvents?: DOMEvents;
   events?: ComponentEvents;
+}
+
+/**
+ * Option sub-component options
+ */
+export interface OptionComponentOptions {
+  templates?: OptionTemplates;
+  contents?: OptionContents;
+  order?: string[];
+  classes?: OptionClasses;
+  styles?: Record<string, any>;  // CSS styles
+  googleFonts?: string[];  // Google fonts to load
+}
+
+/**
+ * LineItem sub-component options
+ */
+export interface LineItemComponentOptions {
+  templates?: LineItemTemplates;
+  contents?: LineItemContents;
+  order?: string[];
+  classes?: LineItemClasses;
+  styles?: Record<string, any>;  // CSS styles
+  googleFonts?: string[];  // Google fonts to load
 }
 
 /**
@@ -146,26 +191,38 @@ export interface CartContents {
   footer?: boolean;
   note?: boolean;
   discounts?: boolean;
-  [key: string]: boolean | undefined;
 }
 
 export interface ModalContents {
   contents?: boolean;
-  [key: string]: boolean | undefined;
 }
 
 export interface ProductSetContents {
   products?: boolean;
   pagination?: boolean;
   title?: boolean;
-  [key: string]: boolean | undefined;
 }
 
 export interface ToggleContents {
   count?: boolean;
   icon?: boolean;
   title?: boolean;
-  [key: string]: boolean | undefined;
+}
+
+export interface OptionContents {
+  option?: boolean;
+}
+
+export interface LineItemContents {
+  image?: boolean;
+  variantTitle?: boolean;
+  title?: boolean;
+  price?: boolean;
+  priceWithDiscounts?: boolean;
+  quantity?: boolean;
+  quantityIncrement?: boolean;
+  quantityDecrement?: boolean;
+  quantityInput?: boolean;
 }
 
 /**
@@ -179,26 +236,35 @@ export interface ProductTemplates {
   unitPrice?: string;
   description?: string;
   variantTitle?: string;
-  [key: string]: string | undefined;
 }
 
 export interface CartTemplates {
   title?: string;
   lineItems?: string;
   footer?: string;
-  [key: string]: string | undefined;
 }
 
 export interface ProductSetTemplates {
   title?: string;
   products?: string;
-  [key: string]: string | undefined;
 }
 
 export interface ToggleTemplates {
   icon?: string;
   title?: string;
-  [key: string]: string | undefined;
+}
+
+export interface OptionTemplates {
+  option?: string;
+}
+
+export interface LineItemTemplates {
+  image?: string;
+  title?: string;
+  variantTitle?: string;
+  price?: string;
+  priceWithDiscounts?: string;
+  quantity?: string;
 }
 
 /**
@@ -208,33 +274,76 @@ export interface ProductClasses {
   wrapper?: string[];
   product?: string[];
   button?: string[];
-  [key: string]: string[] | undefined;
+  img?: string[];
+  imgWrapper?: string[];
+  carousel?: string[];
+  title?: string[];
+  price?: string[];
+  options?: string[];
+  quantity?: string[];
+  description?: string[];
+  hasImage?: string[];
 }
 
 export interface CartClasses {
   wrapper?: string[];
   cart?: string[];
   lineItem?: string[];
-  [key: string]: string[] | undefined;
+  footer?: string[];
+  title?: string[];
+  note?: string[];
+  button?: string[];
+  subtotal?: string[];
 }
 
 export interface ModalClasses {
   wrapper?: string[];
   modal?: string[];
-  [key: string]: string[] | undefined;
+  overlay?: string[];
+  contents?: string[];
+  close?: string[];
+  footer?: string[];
+  product?: string[];
+  img?: string[];
+  imgWithCarousel?: string[];
 }
 
 export interface ProductSetClasses {
   wrapper?: string[];
   products?: string[];
   product?: string[];
-  [key: string]: string[] | undefined;
+  title?: string[];
+  pagination?: string[];
 }
 
 export interface ToggleClasses {
   wrapper?: string[];
   toggle?: string[];
-  [key: string]: string[] | undefined;
+  icon?: string[];
+  count?: string[];
+}
+
+export interface OptionClasses {
+  option?: string[];
+  wrapper?: string[];
+  select?: string[];
+  label?: string[];
+  optionDisabled?: string[];
+  optionSelected?: string[];
+  selectIcon?: string[];
+  hiddenLabel?: string[];
+}
+
+export interface LineItemClasses {
+  image?: string[];
+  title?: string[];
+  variantTitle?: string[];
+  price?: string[];
+  priceWithDiscounts?: string[];
+  quantity?: string[];
+  quantityButton?: string[];
+  quantityInput?: string[];
+  remove?: string[];
 }
 
 /**
@@ -246,7 +355,6 @@ export interface ProductText {
   unavailable?: string;
   unitPriceAccessibilityLabel?: string;
   unitPriceSeparator?: string;
-  [key: string]: string | undefined;
 }
 
 export interface CartText {
@@ -258,7 +366,9 @@ export interface CartText {
   currency?: string;
   button?: string;
   noteDescription?: string;
-  [key: string]: string | undefined;
+  discountText?: string;
+  subtotal?: string;
+  empty?: string;
 }
 
 /**
@@ -282,7 +392,6 @@ export interface ComponentEvents {
   afterRender?: () => void;
   beforeDestroy?: () => void;
   afterDestroy?: () => void;
-  [key: string]: (() => void) | undefined;
 }
 
 /**
@@ -292,7 +401,6 @@ export interface Toggle {
   id?: string;
   node?: HTMLElement;
   component?: string;
-  [key: string]: any;
 }
 
 /**
@@ -302,7 +410,6 @@ export interface UIConfig {
   domain?: string;
   storefrontAccessToken?: string;
   components?: UIComponents;
-  [key: string]: any;
 }
 
 /**
@@ -315,7 +422,6 @@ export interface UIComponents {
   productSet?: ComponentConfig[];
   modal?: ComponentConfig[];
   toggle?: ComponentConfig[];
-  [key: string]: ComponentConfig[] | undefined;
 }
 
 /**
@@ -343,7 +449,6 @@ export interface BrowserFeatures {
   transition: boolean;
   animation: boolean;
   transform: boolean;
-  [key: string]: boolean;
 }
 
 /**
