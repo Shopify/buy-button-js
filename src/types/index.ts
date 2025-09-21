@@ -6,6 +6,20 @@ import type { Client, Product, Variant, Collection, Checkout } from 'shopify-buy
 
 /**
  * Valid manifest component names
+ * 
+ * IMPORTANT: Type safety design decision
+ * 
+ * This union type replaces the need for [key: string]: any in ComponentOptions.
+ * The manifest arrays in src/defaults/components.js reference these exact component
+ * names when iterating through configurations.
+ * 
+ * By explicitly listing all valid component names, we:
+ * 1. Prevent typos in component names at compile time
+ * 2. Enable IDE autocomplete for valid components
+ * 3. Eliminate the need for index signatures that accept any string
+ * 
+ * If new component types are added, they must be added here AND have corresponding
+ * interfaces defined below.
  */
 export type ManifestComponent = 'product' | 'cart' | 'modal' | 'productSet' | 'toggle' | 'option' | 'lineItem';
 
@@ -27,6 +41,25 @@ export interface ComponentConfig {
 
 /**
  * Component options
+ * 
+ * CRITICAL: No [key: string]: any pattern
+ * 
+ * Previous versions used [key: string]: any to allow dynamic property access
+ * for manifest components. This defeated TypeScript's type safety purpose.
+ * 
+ * Solution implemented:
+ * - All valid component types are explicitly listed (main + sub-components)
+ * - Sub-components (option, lineItem) that appear in manifests have interfaces
+ * - Dynamic access pattern this.config[component] still works because all
+ *   possible values of 'component' from manifests are defined here
+ * 
+ * This ensures:
+ * - No arbitrary properties can be added by accident
+ * - All configuration must match defined interfaces
+ * - Type errors are caught at compile time, not runtime
+ * 
+ * DO NOT add [key: string]: any back - if new components are needed,
+ * add them explicitly with proper interfaces.
  */
 export interface ComponentOptions {
   product?: ProductComponentOptions;

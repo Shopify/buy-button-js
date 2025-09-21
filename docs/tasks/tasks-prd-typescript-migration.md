@@ -136,6 +136,28 @@ Use Graphite (gt) commands for managing stacked branches:
   - [x] 2.8. Verify type definitions compile correctly with `npm run type-check`
 
   - [x] 2.9. **[PR BOUNDARY]** Submit PR 2 using `gt submit` - https://app.graphite.dev/github/pr/Shopify/buy-button-js/927
+  
+  - [x] 2.10. **[MANUAL] Type safety improvements based on actual usage patterns (2025-09-21)**:
+      - **Issue**: Initial type definitions were too permissive with optional fields and `[key: string]: any` patterns throughout
+      - **Root cause analysis**:
+        1. Initial types were created to match SDK's maximum flexibility
+        2. SDK allows behaviors that buy-button-js never actually uses (e.g., empty checkouts)
+        3. Using `[key: string]: any` defeated TypeScript's type safety purpose
+        4. Dynamic property access pattern for manifest components wasn't properly typed
+      - **Evidence gathered**:
+        - Grep analysis showed `checkout.create()` ALWAYS called with lineItems in buy-button-js
+        - `updateAttributes` only ever used with `{note: string}` parameter
+        - Manifest arrays referenced sub-components ('option', 'lineItem') not in original interfaces
+        - All `[key: string]: any` usage was for accessing known sub-component configs
+      - **Solution implemented**: Three phases of type tightening:
+        1. Made `lineItems` required in `CheckoutCreateInput` (with comment explaining SDK allows empty)
+        2. Restricted `updateAttributes` to only accept `{ note: string }`
+        3. Eliminated ALL `[key: string]: any` patterns by:
+           - Creating `ManifestComponent` union type for valid component names
+           - Adding `OptionComponentOptions` and `LineItemComponentOptions` interfaces
+           - Defining all sub-component content/template/class types explicitly
+           - Removing index signatures from all interfaces
+      - **Outcome**: Full type safety achieved with zero `any` types, better IDE support, compile-time error detection
 
 - [ ] 3. Utility Files Migration - Part 1 (PR 3)
 
