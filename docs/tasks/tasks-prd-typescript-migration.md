@@ -716,3 +716,52 @@ Use Graphite (gt) commands for managing stacked branches:
 - Test build (browserify) needs separate configuration for TypeScript
 - Both systems use Babel with `@babel/preset-typescript` for transpilation
 - The `.babelrc` already has TypeScript preset in both production and development environments
+
+### Critical Learnings from PR 3 Work (2025-09-21)
+
+#### Test Philosophy - NEVER Skip Tests
+- **Fundamental Rule:** When tests fail due to technical constraints (ES6 modules, TypeScript, etc.), ALWAYS refactor them, never skip
+- **Pattern Recognition:** If you see `.skip()`, `xit()`, or commented tests, it's a red flag
+- **Solution Approach:** Test behavior/outcomes instead of implementation details
+- **Example:** Instead of spying on constructors, verify DOM attributes or object properties
+
+#### Git Operations with Deleted/Renamed Files
+- When a file shows as "deleted" in `git status`, use `git add <deleted-file>` to stage the deletion
+- Do NOT use `git rm` for files already deleted from working directory
+- Git will automatically recognize renames when you stage both the deletion and the new file
+- Always verify with `git status` that Git shows it as a rename, not delete+add
+
+#### Configuration Order Matters
+- **First Time TS File in Directory:** May need multiple configuration updates:
+  1. Browserify/babelify for test builds
+  2. ESLint for import resolution
+  3. Package.json for extensions
+- **Config Hierarchy:** Package.json configs can override command-line flags
+- **Verification:** Always run both `npm test` and `npm run type-check` after changes
+
+#### Test System Quirks
+- **Browserify Extensions:** Use `--extension=.ts --extension=.js` (singular, with equals)
+- **Babelify Config:** Can be set in package.json under `"babelify": { "extensions": [".js", ".ts"] }`
+- **ESLint Import Resolution:** Needs explicit settings for TS files in `.eslintrc`
+- **Pre-existing Test Failures:** Document and investigate - don't assume they're expected
+
+#### TypeScript Migration Pattern
+1. Create `.ts` file with proper types
+2. Delete `.js` file (Git will recognize as rename)
+3. Update build/test configurations if first TS file in directory
+4. Fix any import resolution issues
+5. Ensure all tests pass
+6. Commit as a single atomic change
+
+#### Common Pitfalls to Avoid
+- Don't assume test failures are "expected" - investigate root cause
+- Don't mix package managers (yarn vs npm) - check which lock file exists
+- Don't skip configuration steps - each build system needs its own TS config
+- Don't forget to test in headless mode to avoid popup browsers
+- Don't use `git rm` on already-deleted files - use `git add`
+
+#### Next Utility Conversions Should Be Smoother
+- ESLint and browserify configs are now set up for TypeScript
+- Test system knows how to handle `.ts` files
+- Pattern established for converting JS to TS files
+- Remaining utilities should follow same conversion process without config changes
