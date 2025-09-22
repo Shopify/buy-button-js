@@ -35,11 +35,11 @@
     "src:transpile": "babel ./src --out-dir ./lib",
     "src:build": "node ./script/build.js",
     "---------- dev": null,
-    "src:watch": "watchify src/buybutton.js -t babelify --outfile tmp/buybutton.dev.js -v",
+    "src:watch": "watchify src/buybutton.js -t babelify --extension=.ts --extension=.js --outfile tmp/buybutton.dev.js -v",
     "---------- test": null,
     "test-dev": "yarn run test-mocha:watch | testem",
-    "test-mocha:build": "yarn run styles && browserify test/test.js -t babelify --outfile test/build/test.js",
-    "test-mocha:watch": "yarn run styles && watchify test/test.js -t babelify --outfile test/build/test.js -v",
+    "test-mocha:build": "yarn run styles && browserify test/test.js -t babelify --extension=.ts --extension=.js --outfile test/build/test.js",
+    "test-mocha:watch": "yarn run styles && watchify test/test.js -t babelify --extension=.ts --extension=.js --outfile test/build/test.js -v",
     "pretest": "BABEL_ENV=development npm run test-mocha:build",
     "---------- css": null,
     "styles:watch": "watch 'yarn run styles' src/styles/embeds/sass src/styles/host/sass",
@@ -111,5 +111,11 @@
     "sass": "1.69.0",
     "shopify-buy": "3.0.7",
     "uglify-js": "3.16.3"
+  },
+  "babelify": {
+    "extensions": [".js", ".ts"]
+  },
+  "browserify": {
+    "transform": [["babelify", { "extensions": [".js", ".ts"] }]]
   }
 }

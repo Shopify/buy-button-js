@@ -161,9 +161,9 @@ Use Graphite (gt) commands for managing stacked branches:
 
 - [ ] 3. Utility Files Migration - Part 1 (PR 3)
 
-  - [ ] 3.1. Create new branch using `gt create typescript-migration-part-3` (stacks on current branch)
+  - [x] 3.1. Create new branch using `gt create typescript-migration-part-3` (stacks on current branch)
 
-  - [ ] 3.2. Convert `src/utils/is-function.js` to TypeScript with explicit type annotations
+  - [x] 3.2. Convert `src/utils/is-function.js` to TypeScript with explicit type annotations
 
   - [ ] 3.3. Convert `src/utils/throttle.js` to TypeScript with proper function type signatures
 
@@ -667,3 +667,52 @@ Use Graphite (gt) commands for managing stacked branches:
 - PR 1 (TypeScript setup) is complete and submitted
 - Next PR should install @types packages BUT NOT @types/shopify-buy
 - Must create custom shopify-buy types based on actual usage, not community types
+
+### Utility Migration Learnings (from PR 3 work)
+
+#### Test System Configuration for TypeScript
+- **browserify/babelify setup:** The test build uses browserify with babelify transformer
+- **Extension handling:** Must configure babelify to handle `.ts` extensions in package.json:
+  ```json
+  "babelify": {
+    "extensions": [".js", ".ts"]
+  }
+  ```
+- **Alternative approach:** Can also use `--extension=.ts --extension=.js` flags directly in browserify commands
+- **ESLint configuration:** Must update `.eslintrc` to resolve TypeScript files:
+  ```json
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".ts"]
+      }
+    }
+  }
+  ```
+
+#### Test Running Configuration
+- **Headless mode:** Always use "Headless Chrome" (with space) in testem.json to avoid browser popups
+- **Testem launcher names:** Use `npx testem launchers` to check exact launcher names - "ChromeHeadless" won't work, must be "Headless Chrome"
+
+#### Test Failures Investigation (Resolved)
+- **Issue:** 6 tests in `test/unit/view.js` were failing with "Iframe" is read-only error
+- **Root cause:** Tests added in August 2025 (commit f107502) attempted to reassign an ES6 import (`Iframe = iframeConstructorSpy`)
+- **ES6 imports are constants:** Unlike CommonJS `require()`, ES6 `import` creates read-only bindings
+- **Solution:** Refactored tests to check the iframe element's `title` attribute directly after creation instead of spying on constructor
+- **Fix approach:** After `view.init()`, verify `view.iframe.el.getAttribute('title')` matches expected value
+- **Result:** All 794 tests now pass, including the 6 iframe accessibility tests
+- **Benefit:** Tests now verify actual DOM behavior rather than internal implementation details
+
+#### File Conversion Process
+1. Create `.ts` file with proper types
+2. Delete the `.js` file
+3. Update browserify/babelify configuration if first TS file in a directory
+4. Update ESLint configuration if not already done
+5. Verify with `npm run type-check` and `npm test` (in headless mode)
+6. The build system (Rollup) was already configured in PR 1 to handle `.ts` files
+
+#### Build System Notes
+- Main build (Rollup) already handles TypeScript via PR 1 configuration
+- Test build (browserify) needs separate configuration for TypeScript
+- Both systems use Babel with `@babel/preset-typescript` for transpilation
+- The `.babelrc` already has TypeScript preset in both production and development environments

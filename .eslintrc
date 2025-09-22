@@ -6,5 +6,12 @@
   "rules": {
   	"promise/always-return": 0,
   	"promise/catch-or-return": 0
+  },
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".ts"]
+      }
+    }
   }
 }

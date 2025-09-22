@@ -94,95 +94,54 @@ describe('View class', () => {
 
       it('passes title to iframe constructor for product component', async () => {
         component.options.text = { button: 'ADD TO CART' };
-        const iframeConstructorSpy = sinon.spy(Iframe);
-        const originalIframe = Iframe;
-        Iframe = iframeConstructorSpy;
 
         await view.init();
 
-        assert.calledWith(iframeConstructorSpy, component.node, sinon.match({
-          title: 'ADD TO CART'
-        }));
-
-        Iframe = originalIframe;
+        assert.equal(view.iframe.el.getAttribute('title'), 'ADD TO CART');
       });
 
       it('passes title to iframe constructor for cart component', async () => {
         component.typeKey = 'cart';
         component.options.text = { title: 'Cart' };
-        const iframeConstructorSpy = sinon.spy(Iframe);
-        const originalIframe = Iframe;
-        Iframe = iframeConstructorSpy;
 
         await view.init();
 
-        assert.calledWith(iframeConstructorSpy, component.node, sinon.match({
-          title: 'Cart'
-        }));
-
-        Iframe = originalIframe;
+        assert.equal(view.iframe.el.getAttribute('title'), 'Cart');
       });
 
       it('passes title to iframe constructor for toggle component', async () => {
         component.typeKey = 'toggle';
         component.options.text = { iframeAccessibilityLabel: 'Cart toggle' };
-        const iframeConstructorSpy = sinon.spy(Iframe);
-        const originalIframe = Iframe;
-        Iframe = iframeConstructorSpy;
 
         await view.init();
 
-        assert.calledWith(iframeConstructorSpy, component.node, sinon.match({
-          title: 'Cart toggle'
-        }));
-
-        Iframe = originalIframe;
+        assert.equal(view.iframe.el.getAttribute('title'), 'Cart toggle');
       });
 
       it('passes title to iframe constructor for modal component', async () => {
         component.typeKey = 'modal';
         component.options.text = { iframeAccessibilityLabel: 'Product modal' };
-        const iframeConstructorSpy = sinon.spy(Iframe);
-        const originalIframe = Iframe;
-        Iframe = iframeConstructorSpy;
 
         await view.init();
 
-        assert.calledWith(iframeConstructorSpy, component.node, sinon.match({
-          title: 'Product modal'
-        }));
-
-        Iframe = originalIframe;
+        assert.equal(view.iframe.el.getAttribute('title'), 'Product modal');
       });
 
       it('passes title to iframe constructor for productSet component', async () => {
         component.typeKey = 'productSet';
         component.options.text = { iframeAccessibilityLabel: 'Product collection' };
-        const iframeConstructorSpy = sinon.spy(Iframe);
-        const originalIframe = Iframe;
-        Iframe = iframeConstructorSpy;
 
         await view.init();
 
-        assert.calledWith(iframeConstructorSpy, component.node, sinon.match({
-          title: 'Product collection'
-        }));
-
-        Iframe = originalIframe;
+        assert.equal(view.iframe.el.getAttribute('title'), 'Product collection');
       });
 
       it('passes default title when text is not provided', async () => {
-        const iframeConstructorSpy = sinon.spy(Iframe);
-        const originalIframe = Iframe;
-        Iframe = iframeConstructorSpy;
-
+        // No text options provided, should use default based on component type
+        // For product component, the default is 'Add to cart'
         await view.init();
 
-        assert.calledWith(iframeConstructorSpy, component.node, sinon.match({
-          title: 'Add to cart'
-        }));
-
-        Iframe = originalIframe;
+        assert.equal(view.iframe.el.getAttribute('title'), 'Add to cart');
       });
 
       it('returns the response of iframe\'s load()', async () => {
