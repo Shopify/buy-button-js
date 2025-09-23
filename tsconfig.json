@@ -1,0 +1,67 @@
+{
+  "compilerOptions": {
+    /* Strict Type-Checking Options */
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    
+    /* Module Options */
+    "module": "ESNext",
+    "target": "ES2015",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    
+    /* Gradual Migration Options */
+    "allowJs": true,
+    "checkJs": false,
+    
+    /* Output Options */
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "sourceMap": true,
+    "declaration": true,
+    "declarationDir": "./dist-types",
+    
+    /* Additional Options */
+    "resolveJsonModule": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "lib": ["ES2015", "DOM"],
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    
+    /* Emit Options */
+    "noEmit": false,
+    "noEmitOnError": true,
+    "removeComments": true,
+    "preserveConstEnums": true,
+    
+    /* Interop Constraints */
+    "isolatedModules": true,
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "dist-types",
+    "build",
+    "examples",
+    "test"
+  ]
+}

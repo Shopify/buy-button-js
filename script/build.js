@@ -23,9 +23,10 @@ async function build() {
       plugins: [
         babel({
           exclude: ['node_modules/**'],
+          extensions: ['.js', '.ts'],
         }),
         nodeResolve({
-          extensions: ['.js'],
+          extensions: ['.js', '.ts'],
           mainFields: ['module', 'main'],
         }),
         commonjs(),
