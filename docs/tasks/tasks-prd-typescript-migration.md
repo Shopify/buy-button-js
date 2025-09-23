@@ -117,25 +117,47 @@ Use Graphite (gt) commands for managing stacked branches:
 
   - [x] 1.9. **[PR BOUNDARY]** Submit PR 1 using `gt submit` - https://github.com/Shopify/buy-button-js/pull/926/files
 
-- [ ] 2. Type Definitions Setup (PR 2)
+- [x] 2. Type Definitions Setup (PR 2)
 
-  - [ ] 2.1. Create new branch using `gt create typescript-migration-part-2` (stacks on current branch)
+  - [x] 2.1. Create new branch using `gt create typescript-migration-part-2` (stacks on current branch)
 
-  - [ ] 2.2. Install @types packages for existing dependencies (NOT @types/shopify-buy): `npm install --save-dev @types/node @types/jest`
+  - [x] 2.2. Install @types packages for existing dependencies (NOT @types/shopify-buy): `npm install --save-dev @types/node @types/jest`
 
-  - [ ] 2.3. Create `src/types/` directory for centralized type definitions
+  - [x] 2.3. Create `src/types/` directory for centralized type definitions
 
-  - [ ] 2.4. Review @types/shopify-buy from npm (without installing) to understand type structure
+  - [x] 2.4. Review @types/shopify-buy from npm (without installing) to understand type structure
 
-  - [ ] 2.5. Create `src/types/shopify-buy.d.ts` with custom type definitions based on actual usage in codebase
+  - [x] 2.5. Create `src/types/shopify-buy.d.ts` with custom type definitions based on actual usage in codebase
 
-  - [ ] 2.6. Create `src/types/index.ts` for shared interfaces and core types used across components
+  - [x] 2.6. Create `src/types/index.ts` for shared interfaces and core types used across components
 
-  - [ ] 2.7. Add common utility types (DeepPartial, Nullable, etc.) to `src/types/utils.ts`
+  - [x] 2.7. Add common utility types (DeepPartial, Nullable, etc.) to `src/types/utils.ts`
 
-  - [ ] 2.8. Verify type definitions compile correctly with `npm run type-check`
+  - [x] 2.8. Verify type definitions compile correctly with `npm run type-check`
 
-  - [ ] 2.9. **[PR BOUNDARY]** Submit PR 2 using `gt submit`
+  - [x] 2.9. **[PR BOUNDARY]** Submit PR 2 using `gt submit` - https://app.graphite.dev/github/pr/Shopify/buy-button-js/927
+  
+  - [x] 2.10. **[MANUAL] Type safety improvements based on actual usage patterns (2025-09-21)**:
+      - **Issue**: Initial type definitions were too permissive with optional fields and `[key: string]: any` patterns throughout
+      - **Root cause analysis**:
+        1. Initial types were created to match SDK's maximum flexibility
+        2. SDK allows behaviors that buy-button-js never actually uses (e.g., empty checkouts)
+        3. Using `[key: string]: any` defeated TypeScript's type safety purpose
+        4. Dynamic property access pattern for manifest components wasn't properly typed
+      - **Evidence gathered**:
+        - Grep analysis showed `checkout.create()` ALWAYS called with lineItems in buy-button-js
+        - `updateAttributes` only ever used with `{note: string}` parameter
+        - Manifest arrays referenced sub-components ('option', 'lineItem') not in original interfaces
+        - All `[key: string]: any` usage was for accessing known sub-component configs
+      - **Solution implemented**: Three phases of type tightening:
+        1. Made `lineItems` required in `CheckoutCreateInput` (with comment explaining SDK allows empty)
+        2. Restricted `updateAttributes` to only accept `{ note: string }`
+        3. Eliminated ALL `[key: string]: any` patterns by:
+           - Creating `ManifestComponent` union type for valid component names
+           - Adding `OptionComponentOptions` and `LineItemComponentOptions` interfaces
+           - Defining all sub-component content/template/class types explicitly
+           - Removing index signatures from all interfaces
+      - **Outcome**: Full type safety achieved with zero `any` types, better IDE support, compile-time error detection
 
 - [ ] 3. Utility Files Migration - Part 1 (PR 3)
 
