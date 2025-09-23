@@ -2,35 +2,35 @@
 
 ## PR Breakdown
 
-This migration will be implemented across multiple small PRs (~200-500 lines each):
+This migration will be implemented across multiple small PRs (ideal: ~100 lines, good: 100-300 lines, max: 500 lines only when absolutely necessary):
 
-**PR 1: TypeScript Infrastructure Setup** (~200 lines)
+**PR 1: TypeScript Infrastructure Setup** (~100-150 lines)
 - TypeScript configuration and build setup
 - CI pipeline configuration
 - Initial type checking setup
 
-**PR 2: Type Definitions Setup** (~300 lines)
+**PR 2: Type Definitions Setup** (~100-200 lines)
 - Install @types packages for dependencies
 - Create custom shopify-buy type definitions
 - Set up core interfaces and types directory
 
-**PR 3-6: Utility Files Migration** (~400 lines each, 4 PRs)
+**PR 3-6: Utility Files Migration** (~100-200 lines each, 4 PRs)
 - Convert utility functions to TypeScript
 - Add explicit types for all utilities
 - Convert utility test files
 
-**PR 7-16: Components Migration (Bottom-up)** (~500 lines each, 10 PRs)
+**PR 7-16: Components Migration (Bottom-up)** (~100-200 lines each, may need more PRs to stay small)
 - Convert views components
 - Convert updaters components  
 - Convert main components
 - Maintain class/function signatures
 
-**PR 17-19: Entry Points Migration** (~400-500 lines each, 3 PRs)
+**PR 17-19: Entry Points Migration** (~100-200 lines each, may need more PRs to stay small)
 - Convert main entry files
 - Update build outputs
 - Ensure UMD bundle compatibility
 
-**PR 20-25: Test Files Migration** (~400 lines each, 6 PRs)
+**PR 20-25: Test Files Migration** (~100-200 lines each, may need more PRs to stay small)
 - Convert all test files to TypeScript
 - Ensure tests continue to pass
 - Add type checking for tests
@@ -68,7 +68,7 @@ This migration will be implemented across multiple small PRs (~200-500 lines eac
 - Each PR should be independently reviewable and shippable
 - Use type assertions only at JS/TS boundaries during migration
 - Prefer interfaces over type aliases for object shapes
-- Keep PRs under 500 lines for effective review
+- Keep PRs small for effective review (ideal: ~100 lines, good: 100-300 lines, max: 500 lines only when absolutely necessary)
 
 ## Version Control with Graphite
 
@@ -159,25 +159,61 @@ Use Graphite (gt) commands for managing stacked branches:
            - Removing index signatures from all interfaces
       - **Outcome**: Full type safety achieved with zero `any` types, better IDE support, compile-time error detection
 
-- [ ] 3. Utility Files Migration - Part 1 (PR 3)
+- [x] 3. Utility Files Migration - is-function.js (PR 3)
 
   - [x] 3.1. Create new branch using `gt create typescript-migration-part-3` (stacks on current branch)
 
   - [x] 3.2. Convert `src/utils/is-function.js` to TypeScript with explicit type annotations
 
-  - [ ] 3.3. Convert `src/utils/throttle.js` to TypeScript with proper function type signatures
+  - [x] 3.2.1. **[PR BOUNDARY]** Submit PR 3 using `gt submit` - https://app.graphite.dev/github/pr/Shopify/buy-button-js/928
 
-  - [ ] 3.4. Convert `src/utils/merge.js` to TypeScript with generic type parameters
+- [x] 3.3. Utility Files Migration - throttle.js (PR 3-3)
 
-  - [ ] 3.5. Convert `src/utils/detect-features.js` to TypeScript with proper return types
+  - [x] 3.3.1. Create new branch using `gt create typescript-migration-part-3-3` (stacks on current branch)
 
-  - [ ] 3.6. Update any imports in other files that reference these utilities
+  - [x] 3.3.2. Convert `src/utils/throttle.js` to TypeScript with proper function type signatures
 
-  - [ ] 3.7. Run tests to ensure utilities work correctly: `npm test`
+  - [x] 3.3.3. Run tests to ensure throttle works correctly: `npm test`
 
-  - [ ] 3.8. Run type checking to verify no type errors: `npm run type-check`
+  - [x] 3.3.4. Run type checking to verify no type errors: `npm run type-check`
 
-  - [x] 3.9. **[PR BOUNDARY]** Submit PR 3 using `gt submit` - https://app.graphite.dev/github/pr/Shopify/buy-button-js/928
+  - [ ] 3.3.5. **[PR BOUNDARY]** Submit PR 3-3 using `gt submit`
+
+- [ ] 3.4. Utility Files Migration - merge.js (PR 3-4)
+
+  - [ ] 3.4.1. Create new branch using `gt create typescript-migration-part-3-4` (stacks on current branch)
+
+  - [ ] 3.4.2. Convert `src/utils/merge.js` to TypeScript with generic type parameters
+
+  - [ ] 3.4.3. Run tests to ensure merge works correctly: `npm test`
+
+  - [ ] 3.4.4. Run type checking to verify no type errors: `npm run type-check`
+
+  - [ ] 3.4.5. **[PR BOUNDARY]** Submit PR 3-4 using `gt submit`
+
+- [ ] 3.5. Utility Files Migration - detect-features.js (PR 3-5)
+
+  - [ ] 3.5.1. Create new branch using `gt create typescript-migration-part-3-5` (stacks on current branch)
+
+  - [ ] 3.5.2. Convert `src/utils/detect-features.js` to TypeScript with proper return types
+
+  - [ ] 3.5.3. Run tests to ensure detect-features works correctly: `npm test`
+
+  - [ ] 3.5.4. Run type checking to verify no type errors: `npm run type-check`
+
+  - [ ] 3.5.5. **[PR BOUNDARY]** Submit PR 3-5 using `gt submit`
+
+- [ ] 3.6. Utility Files Migration - Imports and Testing (PR 3-6)
+
+  - [ ] 3.6.1. Create new branch using `gt create typescript-migration-part-3-6` (stacks on current branch)
+
+  - [ ] 3.6.2. Update any imports in other files that reference these utilities
+
+  - [ ] 3.6.3. Run full test suite to ensure all utilities work correctly: `npm test`
+
+  - [ ] 3.6.4. Run type checking on all migrated utilities: `npm run type-check`
+
+  - [ ] 3.6.5. **[PR BOUNDARY]** Submit PR 3-6 using `gt submit`
 
 - [ ] 4. Utility Files Migration - Part 2 (PR 4)
 

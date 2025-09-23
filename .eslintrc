@@ -5,7 +5,12 @@
   },
   "rules": {
   	"promise/always-return": 0,
-  	"promise/catch-or-return": 0
+  	"promise/catch-or-return": 0,
+  	"import/namespace": 0,
+  	"import/default": 0,
+  	"import/no-deprecated": 0,
+  	"import/no-named-as-default": 0,
+  	"import/no-named-as-default-member": 0
   },
   "settings": {
     "import/resolver": {

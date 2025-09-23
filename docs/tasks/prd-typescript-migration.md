@@ -2,7 +2,7 @@
 
 ## Introduction/Overview
 
-This document outlines the requirements for migrating the Buy Button JS application from JavaScript to TypeScript. The primary driver for this migration is to enable a safe and confident future refactoring from the `shopify-buy` SDK to Shopify's Storefront API Client. This migration will be executed through a series of small, reviewable pull requests, each containing a maximum of ~500 lines of code changes.
+This document outlines the requirements for migrating the Buy Button JS application from JavaScript to TypeScript. The primary driver for this migration is to enable a safe and confident future refactoring from the `shopify-buy` SDK to Shopify's Storefront API Client. This migration will be executed through a series of small, reviewable pull requests (ideal: ~100 lines changed excluding lock files, good: 100-300 lines, max: 500 lines only when absolutely necessary).
 
 **Important:** This migration will NOT add any dependencies on `@types/shopify-buy`. Instead, we will create our own type definitions for the shopify-buy SDK usage, using the community types only as a reference guide. This approach ensures we're not adding dependencies we plan to remove and gives us full control over the types as we prepare for the API client migration.
 
@@ -11,7 +11,7 @@ This document outlines the requirements for migrating the Buy Button JS applicat
 1. **Enable Safe API Client Migration:** Provide full type safety to support the future migration from `shopify-buy` to Shopify's Storefront API Client with 100% confidence.
 2. **Achieve Complete Type Safety:** Convert all JavaScript files to TypeScript with no `any` types or unsafe operations.
 3. **Maintain Backward Compatibility:** Preserve the exact same public API surface with zero breaking changes for users.
-4. **Keep PRs Reviewable:** Structure the migration in PRs of ~500 lines or less for effective code review.
+4. **Keep PRs Reviewable:** Structure the migration in small, focused PRs (ideal: ~100 lines, good: 100-300 lines, max: 500 lines only when absolutely necessary) for effective code review.
 5. **Ensure Continuous Shippability:** Maintain a working application at every stage of the migration.
 
 ## User Stories
