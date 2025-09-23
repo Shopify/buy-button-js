@@ -177,7 +177,7 @@ Use Graphite (gt) commands for managing stacked branches:
 
   - [ ] 3.8. Run type checking to verify no type errors: `npm run type-check`
 
-  - [ ] 3.9. **[PR BOUNDARY]** Submit PR 3 using `gt submit`
+  - [x] 3.9. **[PR BOUNDARY]** Submit PR 3 using `gt submit` - https://app.graphite.dev/github/pr/Shopify/buy-button-js/928
 
 - [ ] 4. Utility Files Migration - Part 2 (PR 4)
 
