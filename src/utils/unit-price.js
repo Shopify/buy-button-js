@@ -1,5 +1,7 @@
 function getUnitString(unitEnum) {
-  if(unitEnum === 'L') {
+  if (!unitEnum) return '';
+
+  if (unitEnum === 'L') {
     return 'L';
   } else if (unitEnum === 'M3') {
     return 'm³';
