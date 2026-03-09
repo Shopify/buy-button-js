@@ -1,74 +1,151 @@
-# Task List: TypeScript Migration
+# Task List: TypeScript Migration & Tech Stack Modernization
 
-## PR Breakdown
+## Overview
 
-This migration will be implemented across multiple small PRs (~200-500 lines each):
+This migration is structured across ~28 PRs in 5 phases. Phases 1-2 are complete. This task list covers the remaining ~26 PRs (Phases 3-5).
 
-**PR 1: TypeScript Infrastructure Setup** (~200 lines)
-- TypeScript configuration and build setup
-- CI pipeline configuration
-- Initial type checking setup
+**Exit criteria for every PR:** `pnpm test` passes, `pnpm run build` produces correct bundles, `pnpm run type-check` passes, `pnpm run lint` passes.
 
-**PR 2: Type Definitions Setup** (~300 lines)
-- Install @types packages for dependencies
-- Create custom shopify-buy type definitions
-- Set up core interfaces and types directory
+**Note on package manager commands:** All commands in this document use `pnpm` (the target state after PR 3). Before PR 3 is complete, the project uses Yarn (`yarn test`, `yarn run build`, etc.). The `pretest` script in package.json also uses `npm run` — this should be updated to `pnpm run` in PR 3.
 
-**PR 3-6: Utility Files Migration** (~400 lines each, 4 PRs)
-- Convert utility functions to TypeScript
-- Add explicit types for all utilities
-- Convert utility test files
+## Source File Inventory (49 files)
 
-**PR 7-16: Components Migration (Bottom-up)** (~500 lines each, 10 PRs)
-- Convert views components
-- Convert updaters components  
-- Convert main components
-- Maintain class/function signatures
+All JS files in `src/` categorized by dependency tier:
 
-**PR 17-19: Entry Points Migration** (~400-500 lines each, 3 PRs)
-- Convert main entry files
-- Update build outputs
-- Ensure UMD bundle compatibility
+### Tier 0 — Pure Leaf Utilities + Template Base (13 files)
 
-**PR 20-25: Test Files Migration** (~400 lines each, 6 PRs)
-- Convert all test files to TypeScript
-- Ensure tests continue to pass
-- Add type checking for tests
+These files have no internal dependencies (only external or none).
 
-**PR 26: Strict Type Enforcement** (~100 lines)
-- Remove temporary type assertions
-- Enable strict type checking
-- Make CI type checks blocking
+| File | Lines | Notes |
+|------|-------|-------|
+| `src/utils/is-function.js` | ~5 | Type guard utility |
+| `src/utils/window-utils.js` | ~10 | Window/document detection |
+| `src/utils/element-class.js` | ~15 | DOM class manipulation |
+| `src/utils/logger.js` | ~15 | Console logging wrapper |
+| `src/utils/frame-utils.js` | ~30 | iframe/frame helpers |
+| `src/utils/focus.js` | ~90 | Focus trap management |
+| `src/utils/detect-features.js` | ~25 | Browser feature detection |
+| `src/utils/merge.js` | ~60 | Deep object merge |
+| `src/utils/normalize-config.js` | ~50 | Config normalization |
+| `src/defaults/money-format.js` | ~10 | Default money format string |
+| `src/utils/unit-price.js` | ~25 | Unit price calculation |
+| `src/utils/track.js` | ~75 | Analytics tracking |
+| `src/template.js` | ~27 | Base Template class (only imports external `mustache`) |
 
-## Relevant Files
+### Tier 1 — Utilities with Internal Dependencies (3 files)
 
-- `test/unit/**/*.test.js` - Unit tests to be converted (TDD - update as we migrate)
-- `tsconfig.json` - TypeScript configuration (create first)
-- `src/types/shopify-buy.d.ts` - Custom type definitions for shopify-buy SDK
-- `src/types/index.ts` - Core interfaces and shared types
-- `src/utils/*.js` - Utility functions to migrate
-- `src/views/*.js` - View components (migrate first in component phase)
-- `src/updaters/*.js` - Updater components (migrate second)
-- `src/components/*.js` - Main components (migrate third)
-- `src/buybutton.js` - Main entry point
-- `src/ui.js` - UI entry point
-- `src/iframe.js` - IFrame entry point
-- `package.json` - Dependencies and scripts updates
-- `.github/workflows/*.yml` - CI configuration updates
+| File | Lines | Depends On |
+|------|-------|------------|
+| `src/utils/money.js` | ~60 | money-format (Tier 0) |
+| `src/utils/log-not-found.js` | ~10 | logger (Tier 0) |
+| `src/utils/throttle.js` | ~15 | frame-utils (Tier 0) |
 
-### Notes
+### Tier 2 — Templates + Styles + Defaults (12 files)
 
-- Follow TDD: Tests should continue to pass throughout migration
-- Use `npm test` to run the test suite
-- Use `npm run type-check` (to be added) for TypeScript type checking
-- All TypeScript files must use strict mode from the start
-- Custom shopify-buy types only - do NOT install @types/shopify-buy
-- Reference @types/shopify-buy from npm for guidance only
-- Maintain backward compatibility - no breaking API changes
-- Each PR should be independently reviewable and shippable
-- Use type assertions only at JS/TS boundaries during migration
-- Prefer interfaces over type aliases for object shapes
-- Keep PRs under 500 lines for effective review
+| File | Lines | Notes |
+|------|-------|-------|
+| `src/templates/product.js` | ~130 | Mustache template string |
+| `src/templates/cart.js` | ~150 | Mustache template string |
+| `src/templates/modal.js` | ~20 | Mustache template string |
+| `src/templates/option.js` | ~15 | Mustache template string |
+| `src/templates/line-item.js` | ~50 | Mustache template string |
+| `src/templates/toggle.js` | ~30 | Mustache template string |
+| `src/templates/styles.js` | ~10 | Style template string |
+| `src/styles/embeds/all.js` | ~20 | CSS-in-JS embed styles |
+| `src/styles/embeds/conditional.js` | 1 (189 bytes) | Single-line string export of conditional embed CSS rules |
+| `src/styles/host/host.js` | 1 (2,826 bytes) | Single-line string export containing **~135 lines of CSS** when formatted (modals, carts, toggles, frames) |
+| `src/styles/host/conditional.js` | 1 (129 bytes) | Single-line string export of conditional host CSS rules |
+| `src/defaults/components.js` | ~336 | **Largest config file.** Imports templates. Use `satisfies` operator. |
+
+### Tier 3 — Base Classes with Internal Dependencies (2 files)
+
+| File | Lines | Depends On |
+|------|-------|------------|
+| `src/updater.js` | ~80 | merge, template |
+| `src/iframe.js` | ~200 | templates/styles, element-class |
+
+### Tier 4 — Core Base Classes (2 files)
+
+| File | Lines | Depends On |
+|------|-------|------------|
+| `src/view.js` | ~300 | template, iframe, styles, element-class, focus |
+| `src/component.js` | ~400 | merge, is-function, defaults, log-not-found, logger, money-format, view, updater |
+
+### Tier 5 — Derived Views (5 files)
+
+| File | Lines | Depends On |
+|------|-------|------------|
+| `src/views/product.js` | ~150 | view |
+| `src/views/cart.js` | ~200 | view |
+| `src/views/modal.js` | ~80 | view |
+| `src/views/toggle.js` | ~50 | view |
+| `src/views/product-set.js` | ~50 | view |
+
+### Tier 6 — Derived Updaters (excluding modal) (3 files)
+
+| File | Lines | Depends On |
+|------|-------|------------|
+| `src/updaters/product.js` | ~100 | updater |
+| `src/updaters/cart.js` | ~80 | updater |
+| `src/updaters/product-set.js` | ~40 | updater |
+
+### Tier 7 — Components + Modal Updater (7 files)
+
+| File | Lines | Depends On | Notes |
+|------|-------|------------|-------|
+| `src/components/checkout.js` | ~60 | (standalone) | Does NOT extend Component — standalone redirect handler |
+| `src/components/toggle.js` | ~100 | component, views/toggle | |
+| `src/components/product.js` | ~861 | component, views/product, updaters/product | **Largest source file** |
+| `src/updaters/modal.js` | ~40 | updater, **components/product** | Cross-tier dep — must convert after Product |
+| `src/components/cart.js` | ~400 | component, toggle, checkout, views/cart, updaters/cart | |
+| `src/components/modal.js` | ~200 | component, product, views/modal, **updaters/modal** | |
+| `src/components/product-set.js` | ~150 | component, product, views/product-set, updaters/product-set | |
+
+### Tier 8 — Entry Points (2 files)
+
+| File | Lines | Depends On |
+|------|-------|------------|
+| `src/ui.js` | ~200 | all components, track, styles, throttle, detect-features |
+| `src/buybutton.js` | ~30 | ui, templates/product |
+
+**Total: 49 files**
+
+## Test File Inventory (30 files)
+
+| File | Lines | Tests For | Assigned PR |
+|------|-------|-----------|-------------|
+| test/fixtures/product-fixture.js | 153 | Shared fixture | 22 |
+| test/fixtures/shop-info.js | 11 | Shared fixture | 22 |
+| test/test.js | 35 | Entry point | 22 |
+| test/unit/merge.js | 122 | src/utils/merge.js | 23 |
+| test/unit/money.js | 38 | src/utils/money.js | 23 |
+| test/unit/normalize-config.js | 64 | src/utils/normalize-config.js | 23 |
+| test/unit/detect-features.js | 63 | src/utils/detect-features.js | 23 |
+| test/unit/unit-price.js | 23 | src/utils/unit-price.js | 23 |
+| test/unit/focus.js | 191 | src/utils/focus.js | 23 |
+| test/unit/template.js | 63 | src/template.js | 23 |
+| test/unit/updater.js | 67 | src/updater.js | 23 |
+| test/unit/checkout.js | 55 | src/components/checkout.js | 23 |
+| test/unit/tracker.js | 106 | src/utils/track.js | 23 |
+| test/unit/component.js | 459 | src/component.js | 24 |
+| test/unit/view.js | 930 | src/view.js | 24 |
+| test/unit/iframe.js | 523 | src/iframe.js | 24 |
+| test/unit/ui.js | 1016 | src/ui.js | 24 |
+| test/unit/buybutton.js | 64 | src/buybutton.js | 24 |
+| test/unit/product/product-component.js | 2568 | src/components/product.js | 25a |
+| test/unit/product/product-updater.js | 256 | src/updaters/product.js | 25a |
+| test/unit/product/product-view.js | 271 | src/views/product.js | 25a |
+| test/unit/cart/cart.js | 1633 | src/components/cart.js | 25b |
+| test/unit/cart/cart-view.js | 277 | src/views/cart.js | 25b |
+| test/unit/modal/modal-component.js | 250 | src/components/modal.js | 25b |
+| test/unit/modal/modal-updater.js | 52 | src/updaters/modal.js | 25b |
+| test/unit/modal/modal-view.js | 304 | src/views/modal.js | 25b |
+| test/unit/toggle/toggle-component.js | 149 | src/components/toggle.js | 25b |
+| test/unit/toggle/toggle-view.js | 288 | src/views/toggle.js | 25b |
+| test/unit/product-set.js | 453 | src/components/product-set.js | 25b |
+| test/build/test.js | 72,678 | **Generated Browserify bundle** (NOT hand-written — created by `pretest` script) | 22 (likely remove — Vite replaces Browserify) |
+
+**Total: 30 test files (~10,500 lines)**
 
 ## Version Control with Graphite
 
@@ -84,586 +161,654 @@ Use Graphite (gt) commands for managing stacked branches:
 - **Check status:** `gt log` or `gt ls` to view stack structure
 
 ### Workflow
-1. Create branch FIRST: `gt create typescript-migration-part-1`
+1. Create branch FIRST: `gt create typescript-migration-part-3`
 2. Make changes for the task
 3. Stage specific files: `gt add tsconfig.json package.json`
 4. Commit: `gt modify --message "feat: add TypeScript infrastructure"`
 5. Submit: `gt submit`
-6. Next PR: `gt create typescript-migration-part-2`
+6. Next PR: `gt create typescript-migration-part-4`
 
-## Tasks
+## Completed Tasks
 
 - [x] 0. Initial Setup
+  - [x] 0.1. Create feature branch using `gt create typescript-migration-part-1`
 
-  - [x] 0.1. Create feature branch using `gt create typescript-migration-part-1` (from main branch)
+- [x] 1. TypeScript Infrastructure Setup (PR 1) — [PR #926](https://github.com/Shopify/buy-button-js/pull/926)
+  - [x] 1.1. Install TypeScript, create tsconfig.json, configure Rollup, add type-check script, add CI check
 
-- [x] 1. TypeScript Infrastructure Setup (PR 1)
+- [x] 2. Type Definitions Setup (PR 2) — [PR #927](https://github.com/Shopify/buy-button-js/pull/927)
+  - [x] 2.1. Install @types packages, create src/types/ directory, create custom shopify-buy types, create core interfaces
+  - **Known issue:** `@types/jest` was incorrectly installed (project uses Mocha, not Jest). Will be removed in PR 7a when Vitest is adopted.
+  - **Known issue:** 11 `Record<string, any>` instances and 1 `Function` type remain in `src/types/index.ts`. Scheduled for cleanup in PR 20.
 
-  - [x] 1.1. Install TypeScript as a development dependency using `npm install --save-dev typescript@^5.0.0`
+---
 
-  - [x] 1.2. Create `tsconfig.json` with strict mode enabled and appropriate compiler options for gradual migration
+## Phase 3: Tooling Modernization (PRs 3-8)
 
-  - [x] 1.3. Update `.gitignore` to exclude TypeScript build artifacts (*.tsbuildinfo, dist-types/)
+### Ordering Rationale
 
-  - [x] 1.4. Configure Rollup build system to handle both `.js` and `.ts` files during migration
+1. **pnpm first** — package manager swap is independent of everything else
+2. **Browser targets second** — removes Babel transforms, which must happen before UglifyJS removal
+3. **ESLint third** — independent of build/test, benefits from TS support
+4. **Vite fourth** — replaces Rollup + Babel build pipeline (depends on browser targets removing UglifyJS)
+5. **Vitest fifth** (split into 7a + 7b) — replaces Mocha + Testem + Browserify test pipeline (depends on Vite)
+6. **Dep cleanup last** — aws-sdk v3 + dead dep removal (independent but logically last)
 
-  - [x] 1.5. Add `type-check` script to package.json: `"type-check": "tsc --noEmit"`
+---
 
-  - [x] 1.6. Add TypeScript checking to CI pipeline as a non-blocking check initially
+- [ ] 3. Migrate Yarn v1 → pnpm (PR 3)
 
-  - [x] 1.7. Verify setup by creating a test TypeScript file and running `npm run type-check`
+  - [ ] 3.1. Create new branch using `gt create typescript-migration-part-3`
 
-  - [x] 1.8. Clean up test file and verify build still works with `npm run build`
+  - [ ] 3.2. Install pnpm and initialize `pnpm-lock.yaml`; delete `yarn.lock`
 
-  - [x] 1.9. **[PR BOUNDARY]** Submit PR 1 using `gt submit` - https://github.com/Shopify/buy-button-js/pull/926/files
+  - [ ] 3.3. Update `package.json` scripts: replace all `yarn run` with `pnpm run`, replace `yarn` with `pnpm`. Fix `pretest` script which uses `npm run` → `pnpm run`
 
-- [x] 2. Type Definitions Setup (PR 2)
+  - [ ] 3.4. Update `.github/workflows/ci.yml`: replace `npm install`/`npm run`/`npm test` with pnpm equivalents. Add pnpm setup step.
 
-  - [x] 2.1. Create new branch using `gt create typescript-migration-part-2` (stacks on current branch)
+  - [ ] 3.5. Update `.github/workflows/npm-release.yml`: replace `yarn install` with `pnpm install`, `npx changeset` with `pnpx changeset`. Add pnpm setup step.
 
-  - [x] 2.2. Install @types packages for existing dependencies (NOT @types/shopify-buy): `npm install --save-dev @types/node @types/jest`
+  - [ ] 3.6. Update `.github/workflows/snapit.yml`: same pattern — replace yarn/npm with pnpm equivalents. Add pnpm setup step.
 
-  - [x] 2.3. Create `src/types/` directory for centralized type definitions
+  - [ ] 3.7. Verify: `pnpm test` passes, `pnpm run build` produces correct output, `pnpm run type-check` passes
 
-  - [x] 2.4. Review @types/shopify-buy from npm (without installing) to understand type structure
+  - [ ] 3.8. **[PR BOUNDARY]** Submit PR 3 using `gt submit`
 
-  - [x] 2.5. Create `src/types/shopify-buy.d.ts` with custom type definitions based on actual usage in codebase
+- [ ] 4. Drop IE 11 + Modernize Browser Targets — MAJOR VERSION BUMP (PR 4)
 
-  - [x] 2.6. Create `src/types/index.ts` for shared interfaces and core types used across components
+  - [ ] 4.1. Create new branch using `gt create typescript-migration-part-4`
 
-  - [x] 2.7. Add common utility types (DeepPartial, Nullable, etc.) to `src/types/utils.ts`
+  - [ ] 4.2. Update `package.json` and create changeset:
+    - Create a major changeset via `pnpm changeset` (select `major` bump) with description: "Drop IE 11, Safari 8, iOS 8, Android 4.4 browser support. Minimum browser targets are now rolling modern versions aligned with Shopify Online Store themes." Do NOT edit `version` in package.json directly — changesets manages this.
+    - Replace `browserslist` with modern rolling targets:
+      ```json
+      "browserslist": [
+        "last 3 Chrome versions",
+        "last 3 Firefox versions",
+        "last 3 Safari versions",
+        "last 2 Edge versions",
+        "last 3 ChromeAndroid versions",
+        "last 3 iOS versions",
+        "last 2 Samsung versions",
+        "not dead"
+      ]
+      ```
 
-  - [x] 2.8. Verify type definitions compile correctly with `npm run type-check`
+  - [ ] 4.3. Update `.babelrc`: remove 16 transform plugins (15 production + 1 development-only):
+    - `@babel/plugin-transform-arrow-functions`
+    - `@babel/plugin-transform-block-scoped-functions`
+    - `@babel/plugin-transform-block-scoping`
+    - `@babel/plugin-transform-classes`
+    - `@babel/plugin-transform-computed-properties`
+    - `@babel/plugin-transform-destructuring`
+    - `@babel/plugin-transform-duplicate-keys`
+    - `@babel/plugin-transform-function-name`
+    - `@babel/plugin-transform-literals`
+    - `@babel/plugin-transform-object-super`
+    - `@babel/plugin-transform-parameters`
+    - `@babel/plugin-transform-shorthand-properties`
+    - `@babel/plugin-transform-spread`
+    - `@babel/plugin-transform-template-literals`
+    - `@babel/plugin-transform-typeof-symbol`
+    - `@babel/plugin-transform-modules-commonjs` (development env)
 
-  - [x] 2.9. **[PR BOUNDARY]** Submit PR 2 using `gt submit` - https://app.graphite.dev/github/pr/Shopify/buy-button-js/927
-  
-  - [x] 2.10. **[MANUAL] Type safety improvements based on actual usage patterns (2025-09-21)**:
-      - **Issue**: Initial type definitions were too permissive with optional fields and `[key: string]: any` patterns throughout
-      - **Root cause analysis**:
-        1. Initial types were created to match SDK's maximum flexibility
-        2. SDK allows behaviors that buy-button-js never actually uses (e.g., empty checkouts)
-        3. Using `[key: string]: any` defeated TypeScript's type safety purpose
-        4. Dynamic property access pattern for manifest components wasn't properly typed
-      - **Evidence gathered**:
-        - Grep analysis showed `checkout.create()` ALWAYS called with lineItems in buy-button-js
-        - `updateAttributes` only ever used with `{note: string}` parameter
-        - Manifest arrays referenced sub-components ('option', 'lineItem') not in original interfaces
-        - All `[key: string]: any` usage was for accessing known sub-component configs
-      - **Solution implemented**: Three phases of type tightening:
-        1. Made `lineItems` required in `CheckoutCreateInput` (with comment explaining SDK allows empty)
-        2. Restricted `updateAttributes` to only accept `{ note: string }`
-        3. Eliminated ALL `[key: string]: any` patterns by:
-           - Creating `ManifestComponent` union type for valid component names
-           - Adding `OptionComponentOptions` and `LineItemComponentOptions` interfaces
-           - Defining all sub-component content/template/class types explicitly
-           - Removing index signatures from all interfaces
-      - **Outcome**: Full type safety achieved with zero `any` types, better IDE support, compile-time error detection
+  - [ ] 4.4. Remove polyfill imports from `src/buybutton.js`:
+    - `whatwg-fetch`
+    - `core-js/features/promise`
+    - `core-js/features/string/ends-with`
+    - `core-js/features/array/iterator`
+    - `core-js/features/array/find`
+    - `core-js/features/object/assign`
+    - `core-js/features/object/values`
 
-- [ ] 3. Utility Files Migration - Part 1 (PR 3)
+  - [ ] 4.5. Remove polyfill dependencies from `package.json`: `core-js`, `whatwg-fetch`
 
-  - [ ] 3.1. Create new branch using `gt create typescript-migration-part-3` (stacks on current branch)
+  - [ ] 4.6. Replace UglifyJS with terser in `script/build.js`: Install `terser` as devDep, replace `uglify-js` calls with terser equivalents. Terser supports ES2015+ syntax (unlike UglifyJS) and serves as the interim minifier until Vite replaces the build pipeline in PR 6.
 
-  - [ ] 3.2. Convert `src/utils/is-function.js` to TypeScript with explicit type annotations
+  - [ ] 4.7. Remove UglifyJS from dependencies: `uglify-js`
 
-  - [ ] 3.3. Convert `src/utils/throttle.js` to TypeScript with proper function type signatures
+  - [ ] 4.8. Update `CHANGELOG.md` documenting the breaking change (IE 11 drop)
 
-  - [ ] 3.4. Convert `src/utils/merge.js` to TypeScript with generic type parameters
+  - [ ] 4.9. Verify: `pnpm test` passes, `pnpm run build` produces correct output, `pnpm run type-check` passes
 
-  - [ ] 3.5. Convert `src/utils/detect-features.js` to TypeScript with proper return types
+  - [ ] 4.10. **[PR BOUNDARY]** Submit PR 4 using `gt submit`
 
-  - [ ] 3.6. Update any imports in other files that reference these utilities
+- [ ] 5. ESLint 3.3.1 → ESLint 9 Flat Config + @typescript-eslint (PR 5)
 
-  - [ ] 3.7. Run tests to ensure utilities work correctly: `npm test`
+  - [ ] 5.1. Create new branch using `gt create typescript-migration-part-5`
 
-  - [ ] 3.8. Run type checking to verify no type errors: `npm run type-check`
+  - [ ] 5.2. Remove `eslint` 3.3.1 and `eslint-plugin-shopify` 13.0 from devDependencies
 
-  - [ ] 3.9. **[PR BOUNDARY]** Submit PR 3 using `gt submit`
+  - [ ] 5.3. Install `eslint` 9.x and `typescript-eslint` (the unified package — preferred for ESLint 9 flat config over the separate `@typescript-eslint/eslint-plugin` + `@typescript-eslint/parser` pair)
 
-- [ ] 4. Utility Files Migration - Part 2 (PR 4)
+  - [ ] 5.4. Create `eslint.config.mjs` (flat config format). Enable these specific rules:
 
-  - [ ] 4.1. Create new branch using `gt create typescript-migration-part-4` (stacks on current branch)
+    **Error-level (block CI):**
+    - `@typescript-eslint/no-explicit-any`
+    - `@typescript-eslint/no-unsafe-assignment`
+    - `@typescript-eslint/no-unsafe-member-access`
+    - `@typescript-eslint/no-unsafe-call`
+    - `@typescript-eslint/no-unsafe-return`
+    - `@typescript-eslint/no-unsafe-argument`
+    - `@typescript-eslint/no-floating-promises`
+    - `@typescript-eslint/no-misused-promises`
+    - `@typescript-eslint/await-thenable`
+    - `@typescript-eslint/no-unnecessary-type-assertion`
 
-  - [ ] 4.2. Convert `src/utils/money.js` to TypeScript with proper number formatting types
+    **Warn-level (upgrade to error after Phase 4):**
+    - `@typescript-eslint/explicit-function-return-type`
+    - `@typescript-eslint/strict-boolean-expressions`
 
-  - [ ] 4.3. Convert `src/utils/unit-price.js` to TypeScript with price calculation types
+    **Scoping:** `no-unsafe-*` rules only apply to `.ts` files (they require type information). Configure separate overrides for `.js` files during migration to exclude TS-specific rules.
 
-  - [ ] 4.4. Convert `src/utils/logger.js` to TypeScript with log level enums
+  - [ ] 5.5. Delete `.eslintrc`
 
-  - [ ] 4.5. Convert `src/utils/track.js` to TypeScript with event tracking types
+  - [ ] 5.6. Update `package.json` lint script if needed for flat config
 
-  - [ ] 4.6. Update imports and ensure compatibility with existing JavaScript files
+  - [ ] 5.7. Fix any new lint errors in existing `.ts` files (src/types/)
 
-  - [ ] 4.7. Run tests to verify functionality: `npm test`
-
-  - [ ] 4.8. Run type checking: `npm run type-check`
-
-  - [ ] 4.9. **[PR BOUNDARY]** Submit PR 4 using `gt submit`
-
-- [ ] 5. Utility Files Migration - Part 3 (PR 5)
-
-  - [ ] 5.1. Create new branch using `gt create typescript-migration-part-5` (stacks on current branch)
-
-  - [ ] 5.2. Convert `src/utils/frame-utils.js` to TypeScript with DOM element types
-
-  - [ ] 5.3. Convert `src/utils/window-utils.js` to TypeScript with Window interface types
-
-  - [ ] 5.4. Convert `src/utils/element-class.js` to TypeScript with HTMLElement types
-
-  - [ ] 5.5. Convert `src/utils/focus.js` to TypeScript with focus management types
-
-  - [ ] 5.6. Ensure all DOM manipulation utilities have proper type safety
-
-  - [ ] 5.7. Run tests: `npm test`
-
-  - [ ] 5.8. Run type checking: `npm run type-check`
+  - [ ] 5.8. Verify: `pnpm run lint` passes, `pnpm test` passes
 
   - [ ] 5.9. **[PR BOUNDARY]** Submit PR 5 using `gt submit`
 
-- [ ] 6. Utility Files Migration - Part 4 (PR 6)
+- [ ] 6. Rollup 1 + Babel → Vite Library Mode (PR 6)
 
-  - [ ] 6.1. Create new branch using `gt create typescript-migration-part-6` (stacks on current branch)
+  - [ ] 6.1. Create new branch using `gt create typescript-migration-part-6`
 
-  - [ ] 6.2. Convert `src/utils/normalize-config.js` to TypeScript with config interface types
+  - [ ] 6.2. Install `vite` and configure `vite.config.ts` for library mode:
+    - UMD output with `ShopifyBuy` global name
+    - ESM output
+    - CJS output
 
-  - [ ] 6.3. Convert `src/utils/log-not-found.js` to TypeScript with proper error types
+  - [ ] 6.3. Delete `script/build.js` (Rollup build script)
 
-  - [ ] 6.4. Convert `src/defaults/money-format.js` to TypeScript with format configuration types
+  - [ ] 6.4. Update `package.json`:
+    - Replace build scripts to use Vite
+    - Add `"module"` and `"exports"` fields
+    - Remove rollup, rollup-plugin-babel, rollup-plugin-commonjs, rollup-plugin-node-resolve from deps
+    - Remove all `@babel/plugin-transform-*` plugins (keep `@babel/preset-typescript` temporarily for test pipeline if needed)
+    - Remove `.babelrc` production env (or entire file if only production env remains)
 
-  - [ ] 6.5. Convert any remaining utility files to TypeScript
+  - [ ] 6.5. Update `src:watch` script for Vite dev server
 
-  - [ ] 6.6. Create utility type exports in `src/utils/index.ts` for centralized imports
+  - [ ] 6.6. Update build entry point references: `script/build.js` and `src:watch` both hardcode `src/buybutton.js` — Vite config should reference this
 
-  - [ ] 6.7. Run full test suite: `npm test`
+  - [ ] 6.7. **Sass pipeline evaluation:** The Sass compilation scripts (`script/embed-styles`, `script/host-styles`) use `sass` and `postcss` directly, independent of the JS build pipeline. Evaluate whether Vite's CSS handling can replace these scripts. If not, keep them as-is — they are not blocked by the Vite migration.
 
-  - [ ] 6.8. Run type checking on all utilities: `npm run type-check`
+  - [ ] 6.8. **Bundle equivalence gate:** Before merging, verify:
+    1. UMD bundle exposes `window.ShopifyBuy` global with identical public API surface
+    2. ESM bundle exports match pre-Vite: `ShopifyBuy` default export, `buildClient` named export
+    3. UMD bundle size is within ±15% of pre-Vite build (terser vs Vite's built-in minification may differ slightly)
+    4. Load UMD bundle in a `<script>` tag and verify `window.ShopifyBuy.buildClient()` is callable
 
-  - [ ] 6.9. **[PR BOUNDARY]** Submit PR 6 using `gt submit`
+  - [ ] 6.9. Verify: `pnpm run build` produces UMD/ESM/CJS bundles, `pnpm test` passes, `pnpm run type-check` passes
 
-- [ ] 7. View Components Migration - Part 1 (PR 7)
+  - [ ] 6.10. **[PR BOUNDARY]** Submit PR 6 using `gt submit`
 
-  - [ ] 7.1. Create new branch using `gt create typescript-migration-part-7` (stacks on current branch)
+- [ ] 7a. Mocha + Testem + Browserify → Vitest + happy-dom (Runner Swap) (PR 7a)
 
-  - [ ] 7.2. Convert `src/views/toggle.js` to TypeScript with view interface types
+  - [ ] 7a.1. Create new branch using `gt create typescript-migration-part-7a`
 
-  - [ ] 7.3. Convert `src/views/product.js` to TypeScript with product view types
+  - [ ] 7a.2. Install `vitest`, `happy-dom`
 
-  - [ ] 7.4. Define base view interface in `src/types/views.ts` for common view properties
+  - [ ] 7a.3. Create `vitest.config.ts` with happy-dom environment
 
-  - [ ] 7.5. Ensure view render methods have proper return types
+  - [ ] 7a.4. Delete `testem.json`
 
-  - [ ] 7.6. Update any component imports that reference these views
+  - [ ] 7a.5. Update `package.json`:
+    - Replace test scripts to use Vitest
+    - Remove browserify, babelify, testem, mocha from devDeps
+    - Remove test-mocha:build, test-mocha:watch, pretest scripts
+    - Remove `@types/jest` (Vitest provides its own types)
 
-  - [ ] 7.7. Run tests for affected components: `npm test`
+  - [ ] 7a.6. Vitest uses Chai internally, so `expect(x).to.equal(y)` syntax may work as-is. Focus on getting all 29 unit tests passing under Vitest with minimal assertion changes.
 
-  - [ ] 7.8. Run type checking: `npm run type-check`
+  - [ ] 7a.7. Keep chai and sinon temporarily — they will be cleaned up in PR 7b
 
-  - [ ] 7.9. **[PR BOUNDARY]** Submit PR 7 using `gt submit`
+  - [ ] 7a.8. Verify: `pnpm test` passes (all 29 unit tests), `pnpm run build` still works
 
-- [ ] 8. View Components Migration - Part 2 (PR 8)
+  - [ ] 7a.9. **[PR BOUNDARY]** Submit PR 7a using `gt submit`
 
-  - [ ] 8.1. Create new branch using `gt create typescript-migration-part-8` (stacks on current branch)
+- [ ] 7b. Sinon → vi Migration (PR 7b)
 
-  - [ ] 8.2. Convert `src/views/cart.js` to TypeScript with cart item types
+  - [ ] 7b.1. Create new branch using `gt create typescript-migration-part-7b`
 
-  - [ ] 8.3. Convert `src/views/modal.js` to TypeScript with modal state types
+  - [ ] 7b.2. Replace Sinon patterns across all test files:
 
-  - [ ] 8.4. Convert `src/views/product-set.js` to TypeScript with product collection types
+    **Sinon → vi API mapping:**
+    | Sinon | Vitest |
+    |-------|--------|
+    | `sinon.stub()` | `vi.fn()` |
+    | `sinon.stub(obj, 'method')` | `vi.spyOn(obj, 'method')` |
+    | `sinon.spy()` | `vi.fn()` |
+    | `sinon.spy(obj, 'method')` | `vi.spyOn(obj, 'method')` |
+    | `stub.returns(value)` | `mock.mockReturnValue(value)` |
+    | `stub.callsFake(fn)` | `mock.mockImplementation(fn)` |
+    | `stub.resolves(value)` | `mock.mockResolvedValue(value)` |
+    | `stub.rejects(err)` | `mock.mockRejectedValue(err)` |
+    | `stub.calledOnce` | `expect(mock).toHaveBeenCalledOnce()` |
+    | `stub.calledWith(args)` | `expect(mock).toHaveBeenCalledWith(args)` |
+    | `sinon.sandbox.create()` | Not needed — Vitest auto-restores |
+    | `sandbox.restore()` | `vi.restoreAllMocks()` in afterEach |
 
-  - [ ] 8.5. Ensure all view event handlers have proper type signatures
+  - [ ] 7b.3. Remove `sinon` and `chai` from devDependencies (if Chai assertions were replaced by Vitest's `expect` in 7a, otherwise keep chai)
 
-  - [ ] 8.6. Add type exports to `src/views/index.ts` for centralized imports
+  - [ ] 7b.4. Verify: `pnpm test` passes (all 29 unit tests)
 
-  - [ ] 8.7. Run component tests: `npm test`
+  - [ ] 7b.5. **[PR BOUNDARY]** Submit PR 7b using `gt submit`
 
-  - [ ] 8.8. Run type checking: `npm run type-check`
+- [ ] 8. Dependency Cleanup + aws-sdk v2 → v3 (PR 8)
 
-  - [ ] 8.9. **[PR BOUNDARY]** Submit PR 8 using `gt submit`
+  - [ ] 8.1. Create new branch using `gt create typescript-migration-part-8`
 
-- [ ] 9. Updater Components Migration - Part 1 (PR 9)
+  - [ ] 8.2. Remove `webdriverio` from devDependencies (dead — no E2E tests found)
 
-  - [ ] 9.1. Create new branch using `gt create typescript-migration-part-9` (stacks on current branch)
+  - [ ] 8.3. Migrate `aws-sdk` v2 → `@aws-sdk/client-s3` v3 in `script/deploy.js`:
+    - Replace `new AWS.S3()` with `new S3Client()`
+    - Replace `s3.putObject({...}).promise()` with `send(new PutObjectCommand({...}))`
 
-  - [ ] 9.2. Convert `src/updaters/product.js` to TypeScript with updater interface
+  - [ ] 8.4. **Replace `@shopify/js-uploader` entirely** — it uses v2's `s3.putObject().promise()` API which is incompatible with v3. The uploader's actual upload logic is ~20 lines; inline the S3 calls directly in `script/deploy.js`.
 
-  - [ ] 9.3. Convert `src/updaters/cart.js` to TypeScript with cart update types
+  - [ ] 8.5. Move misplaced dependencies to devDependencies or remove:
+    - `browserify` — remove (replaced by Vite)
+    - `sass` — move to devDependencies (it IS still used by `script/embed-styles` and `script/host-styles` for Sass compilation, which is independent of the JS build pipeline per PR 6 evaluation)
+    - `@babel/runtime` — remove if no longer needed post-Vite
 
-  - [ ] 9.4. Define base updater interface in `src/types/updaters.ts`
+  - [ ] 8.6. Verify CDN deploy still works (if possible in dev environment)
 
-  - [ ] 9.5. Ensure updater methods maintain compatibility with views
+  - [ ] 8.7. Verify: `pnpm test` passes, `pnpm run build` works
 
-  - [ ] 9.6. Update component imports that use these updaters
+  - [ ] 8.8. **[PR BOUNDARY]** Submit PR 8 using `gt submit`
 
-  - [ ] 9.7. Run integration tests: `npm test`
+**Phase 3 exit criteria:** `pnpm test` passes, `pnpm run build` produces UMD/ESM/CJS bundles, `pnpm run type-check` passes, `pnpm run lint` passes with TS rules enforced. Bundle equivalence verified against pre-Vite builds.
 
-  - [ ] 9.8. Run type checking: `npm run type-check`
+**Phase 3 smoke test checkpoints:**
+- After PR 3: `pnpm install` resolves cleanly, CI workflows pass
+- After PR 4: Bundle builds without UglifyJS errors, no polyfill references in output
+- After PR 6: Bundle equivalence gate passes, `window.ShopifyBuy.buildClient()` callable from UMD `<script>` tag
+- After PR 7a: All 29 unit tests pass under Vitest
 
-  - [ ] 9.9. **[PR BOUNDARY]** Submit PR 9 using `gt submit`
+---
 
-- [ ] 10. Updater Components Migration - Part 2 (PR 10)
+## Phase 4: TypeScript File Conversion (PRs 9-21)
 
-  - [ ] 10.1. Create new branch using `gt create typescript-migration-part-10` (stacks on current branch)
+### Key Decisions
 
-  - [ ] 10.2. Convert `src/updaters/modal.js` to TypeScript with modal updater types
+- **Each PR must pass** `pnpm test`, `pnpm run build`, `pnpm run type-check`, and `pnpm run lint`
+- **CSS class types: change from `string[]` to `string`** in PR 10 to match runtime defaults in `defaults/components.js`
+- **Use `satisfies` operator** for `defaults/components.js` (PR 10)
+- **Modal updater moves to PR 17** due to cross-tier dependency on Product component
+- **Checkout is standalone** — does not extend Component
 
-  - [ ] 10.3. Convert `src/updaters/product-set.js` to TypeScript with collection updater types
+---
 
-  - [ ] 10.4. Ensure all updater state transitions are type-safe
+- [ ] 9. Convert Leaf Utilities + template.js (Tiers 0-1, 16 files) (PR 9)
 
-  - [ ] 10.5. Add type exports to `src/updaters/index.ts`
+  **Note:** 16 files is a large PR. Most of these are tiny leaf utilities (5-30 lines) so the total diff should be manageable (~500-800 lines). If the PR exceeds ~800 lines, consider splitting Tier 0 and Tier 1 into separate PRs.
 
-  - [ ] 10.6. Verify updater-view integration with proper types
+  - [ ] 9.1. Create new branch using `gt create typescript-migration-part-9`
 
-  - [ ] 10.7. Run full test suite: `npm test`
+  - [ ] 9.2. Convert all Tier 0 files (13 files):
+    - `src/utils/is-function.js`
+    - `src/utils/window-utils.js`
+    - `src/utils/element-class.js`
+    - `src/utils/logger.js`
+    - `src/utils/frame-utils.js`
+    - `src/utils/focus.js`
+    - `src/utils/detect-features.js`
+    - `src/utils/merge.js`
+    - `src/utils/normalize-config.js`
+    - `src/defaults/money-format.js`
+    - `src/utils/unit-price.js`
+    - `src/utils/track.js`
+    - `src/template.js`
 
-  - [ ] 10.8. Run type checking: `npm run type-check`
+  - [ ] 9.3. Convert all Tier 1 files (3 files):
+    - `src/utils/money.js` (imports money-format)
+    - `src/utils/log-not-found.js` (imports logger)
+    - `src/utils/throttle.js` (imports frame-utils)
 
-  - [ ] 10.9. **[PR BOUNDARY]** Submit PR 10 using `gt submit`
+  - [ ] 9.4. Ensure all utility functions have explicit input and return types
 
-- [ ] 11. Main Components Migration - Part 1 (PR 11)
+  - [ ] 9.5. Update any imports in other files that reference these utilities (Rollup/Vite resolves `.ts` extensions)
 
-  - [ ] 11.1. Create new branch using `gt create typescript-migration-part-11` (stacks on current branch)
+  - [ ] 9.6. Verify: `pnpm test` passes, `pnpm run build` works, `pnpm run type-check` passes, `pnpm run lint` passes
 
-  - [ ] 11.2. Convert `src/component.js` base class to TypeScript with generic type parameters
+  - [ ] 9.7. **[PR BOUNDARY]** Submit PR 9 using `gt submit`
 
-  - [ ] 11.3. Define component lifecycle interface in `src/types/component.ts`
+- [ ] 10. Convert Templates, Styles, Defaults (Tier 2, 12 files) (PR 10)
 
-  - [ ] 11.4. Convert `src/components/toggle.js` to TypeScript extending base component
+  - [ ] 10.1. Create new branch using `gt create typescript-migration-part-10`
 
-  - [ ] 11.5. Ensure component props and state are properly typed
+  - [ ] 10.2. Convert 7 template files:
+    - `src/templates/product.js`
+    - `src/templates/cart.js`
+    - `src/templates/modal.js`
+    - `src/templates/option.js`
+    - `src/templates/line-item.js`
+    - `src/templates/toggle.js`
+    - `src/templates/styles.js`
 
-  - [ ] 11.6. Update any files importing these components
+  - [ ] 10.3. Convert 4 style files:
+    - `src/styles/embeds/all.js`
+    - `src/styles/embeds/conditional.js` (189 bytes — small but real CSS rules, not dead code)
+    - `src/styles/host/host.js` (~135 lines of substantive CSS when formatted)
+    - `src/styles/host/conditional.js` (129 bytes — small but real CSS rules, not dead code)
 
-  - [ ] 11.7. Run component tests: `npm test`
+  - [ ] 10.4. Convert `src/defaults/components.js` (336 lines):
+    - **Fix CSS class type mismatch:** Types define CSS class properties as `string[]` but runtime defaults use plain `string` values (e.g., `wrapper: 'shopify-buy__product-wrapper'`). Change ALL properties in these 7 interfaces from `string[]` to `string` in `src/types/index.ts`:
+      1. `ProductClasses` (lines ~306-319): wrapper, product, button, img, imgWrapper, carousel, title, price, options, quantity, description, hasImage
+      2. `CartClasses` (lines ~321-330): wrapper, cart, lineItem, footer, title, note, button, subtotal
+      3. `ModalClasses` (lines ~332-342): wrapper, modal, overlay, contents, close, footer, product, img, imgWithCarousel
+      4. `ProductSetClasses` (lines ~344-350): wrapper, products, product, title, pagination
+      5. `ToggleClasses` (lines ~352-357): wrapper, toggle, icon, count
+      6. `OptionClasses` (lines ~359-368): option, wrapper, select, label, optionDisabled, optionSelected, selectIcon, hiddenLabel
+      7. `LineItemClasses` (lines ~370-380): image, title, variantTitle, price, priceWithDiscounts, quantity, quantityButton, quantityInput, remove
+    - **Use `satisfies` operator:** `export default { ... } satisfies ComponentOptions` to validate against the type while preserving literal types. Also evaluate other config/defaults objects in the codebase for `satisfies` opportunities (e.g., `defaults/money-format.js` if it exports a typed config object).
 
-  - [ ] 11.8. Run type checking: `npm run type-check`
+  - [ ] 10.5. Verify: `pnpm test` passes, `pnpm run build` works, `pnpm run type-check` passes, `pnpm run lint` passes
 
-  - [ ] 11.9. **[PR BOUNDARY]** Submit PR 11 using `gt submit`
+  - [ ] 10.6. **[PR BOUNDARY]** Submit PR 10 using `gt submit`
 
-- [ ] 12. Main Components Migration - Part 2 (PR 12)
+- [ ] 11. Convert Base Classes: updater.js, iframe.js (Tier 3, 2 files) (PR 11)
 
-  - [ ] 12.1. Create new branch using `gt create typescript-migration-part-12` (stacks on current branch)
+  - [ ] 11.1. Create new branch using `gt create typescript-migration-part-11`
 
-  - [ ] 12.2. Convert `src/components/product.js` to TypeScript with product component types
+  - [ ] 11.2. Convert `src/updater.js` — base Updater class (imports merge, template)
 
-  - [ ] 12.3. Convert `src/components/cart.js` to TypeScript with cart component types
+  - [ ] 11.3. Convert `src/iframe.js` — base IFrame class (imports templates/styles, element-class)
 
-  - [ ] 12.4. Ensure component methods maintain public API compatibility
+  - [ ] 11.4. Verify: `pnpm test` passes, `pnpm run type-check` passes, `pnpm run lint` passes
 
-  - [ ] 12.5. Add proper types for component event handlers
+  - [ ] 11.5. **[PR BOUNDARY]** Submit PR 11 using `gt submit`
 
-  - [ ] 12.6. Verify component integration with views and updaters
+- [ ] 12. Convert Base View + Base Component (Tier 4, 2 files) (PR 12)
 
-  - [ ] 12.7. Run integration tests: `npm test`
+  - [ ] 12.1. Create new branch using `gt create typescript-migration-part-12`
 
-  - [ ] 12.8. Run type checking: `npm run type-check`
+  - [ ] 12.2. Convert `src/view.js` — base View class (imports template, iframe, styles, element-class, focus)
 
-  - [ ] 12.9. **[PR BOUNDARY]** Submit PR 12 using `gt submit`
+  - [ ] 12.3. Convert `src/component.js` — base Component class (imports merge, is-function, defaults, log-not-found, logger, money-format, view, updater)
 
-- [ ] 13. Main Components Migration - Part 3 (PR 13)
+  - [ ] 12.4. Verify: `pnpm test` passes, `pnpm run type-check` passes, `pnpm run lint` passes
 
-  - [ ] 13.1. Create new branch using `gt create typescript-migration-part-13` (stacks on current branch)
+  - [ ] 12.5. **[PR BOUNDARY]** Submit PR 12 using `gt submit`
 
-  - [ ] 13.2. Convert `src/components/modal.js` to TypeScript with modal component types
+- [ ] 13. Convert All Derived Views (Tier 5, 5 files) (PR 13)
 
-  - [ ] 13.3. Convert `src/components/product-set.js` to TypeScript with collection types
+  - [ ] 13.1. Create new branch using `gt create typescript-migration-part-13`
 
-  - [ ] 13.4. Convert `src/components/checkout.js` to TypeScript with checkout types
+  - [ ] 13.2. Convert all 5 derived view files:
+    - `src/views/product.js`
+    - `src/views/cart.js`
+    - `src/views/modal.js`
+    - `src/views/toggle.js`
+    - `src/views/product-set.js`
 
-  - [ ] 13.5. Ensure all component lifecycle methods are properly typed
+  - [ ] 13.3. Ensure all view render methods have proper return types and event handler signatures
 
-  - [ ] 13.6. Add component type exports to `src/components/index.ts`
+  - [ ] 13.4. Verify: `pnpm test` passes, `pnpm run type-check` passes, `pnpm run lint` passes
 
-  - [ ] 13.7. Run full component test suite: `npm test`
+  - [ ] 13.5. **[PR BOUNDARY]** Submit PR 13 using `gt submit`
 
-  - [ ] 13.8. Run type checking: `npm run type-check`
+- [ ] 14. Convert Derived Updaters, Excluding Modal (Tier 6, 3 files) (PR 14)
 
-  - [ ] 13.9. **[PR BOUNDARY]** Submit PR 13 using `gt submit`
+  - [ ] 14.1. Create new branch using `gt create typescript-migration-part-14`
 
-- [ ] 14. Component Dependencies Migration (PR 14)
+  - [ ] 14.2. Convert 3 updater files:
+    - `src/updaters/product.js`
+    - `src/updaters/cart.js`
+    - `src/updaters/product-set.js`
 
-  - [ ] 14.1. Create new branch using `gt create typescript-migration-part-14` (stacks on current branch)
+  - [ ] 14.3. **Do NOT convert `src/updaters/modal.js` here** — it imports `components/product.js` which hasn't been converted yet. Modal updater moves to PR 17.
 
-  - [ ] 14.2. Convert any component helper files to TypeScript
+  - [ ] 14.4. Verify: `pnpm test` passes, `pnpm run type-check` passes, `pnpm run lint` passes
 
-  - [ ] 14.3. Convert component factory functions to TypeScript with proper return types
+  - [ ] 14.5. **[PR BOUNDARY]** Submit PR 14 using `gt submit`
 
-  - [ ] 14.4. Ensure all component dependencies have type definitions
+- [ ] 15. Convert Checkout + Toggle Components (Tier 7 — simpler components, 2 files) (PR 15)
 
-  - [ ] 14.5. Update component imports to use TypeScript versions
+  - [ ] 15.1. Create new branch using `gt create typescript-migration-part-15`
 
-  - [ ] 14.6. Verify no circular dependencies with type checking
+  - [ ] 15.2. Convert `src/components/checkout.js` — **Note:** This does NOT extend Component. It is a standalone redirect handler. Do not assume component base class patterns.
 
-  - [ ] 14.7. Run tests: `npm test`
+  - [ ] 15.3. Convert `src/components/toggle.js` — extends Component, uses views/toggle
 
-  - [ ] 14.8. Run type checking: `npm run type-check`
+  - [ ] 15.4. Verify: `pnpm test` passes, `pnpm run type-check` passes, `pnpm run lint` passes
 
-  - [ ] 14.9. **[PR BOUNDARY]** Submit PR 14 using `gt submit`
+  - [ ] 15.5. **[PR BOUNDARY]** Submit PR 15 using `gt submit`
 
-- [ ] 15. Component Helpers Migration (PR 15)
+- [ ] 16. Convert Product Component (Tier 7 — largest file, 1 file) (PR 16)
 
-  - [ ] 15.1. Create new branch using `gt create typescript-migration-part-15` (stacks on current branch)
+  - [ ] 16.1. Create new branch using `gt create typescript-migration-part-16`
 
-  - [ ] 15.2. Convert component initialization helpers to TypeScript
+  - [ ] 16.2. Convert `src/components/product.js` (~861 lines — the largest source file)
 
-  - [ ] 15.3. Convert component configuration helpers to TypeScript
+  - [ ] 16.3. Ensure all product-specific methods, event handlers, and variant selection logic are properly typed
 
-  - [ ] 15.4. Add types for component options and configuration objects
+  - [ ] 16.4. Verify: `pnpm test` passes, `pnpm run type-check` passes, `pnpm run lint` passes
 
-  - [ ] 15.5. Ensure helper functions maintain backward compatibility
+  - [ ] 16.5. **[PR BOUNDARY]** Submit PR 16 using `gt submit`
 
-  - [ ] 15.6. Update all references to use typed helpers
+- [ ] 17. Convert Cart + Modal Components + Modal Updater (Tier 7, 3 files) (PR 17)
 
-  - [ ] 15.7. Run integration tests: `npm test`
+  - [ ] 17.1. Create new branch using `gt create typescript-migration-part-17`
 
-  - [ ] 15.8. Run type checking: `npm run type-check`
+  - [ ] 17.2. Convert `src/updaters/modal.js` — **Now safe:** Product component was converted in PR 16, so the `import Product from '../components/product'` has types available.
 
-  - [ ] 15.9. **[PR BOUNDARY]** Submit PR 15 using `gt submit`
+  - [ ] 17.3. Convert `src/components/cart.js` (~400 lines — depends on toggle, checkout, views/cart, updaters/cart)
 
-- [ ] 16. Component Integration Migration (PR 16)
+  - [ ] 17.4. Convert `src/components/modal.js` (~200 lines — depends on product, views/modal, updaters/modal)
 
-  - [ ] 16.1. Create new branch using `gt create typescript-migration-part-16` (stacks on current branch)
+  - [ ] 17.5. Verify: `pnpm test` passes, `pnpm run type-check` passes, `pnpm run lint` passes
 
-  - [ ] 16.2. Convert component communication interfaces to TypeScript
+  - [ ] 17.6. **[PR BOUNDARY]** Submit PR 17 using `gt submit`
 
-  - [ ] 16.3. Add types for inter-component messaging
+- [ ] 18. Convert ProductSet Component (Tier 7, 1 file) (PR 18)
 
-  - [ ] 16.4. Ensure all component integrations are type-safe
+  - [ ] 18.1. Create new branch using `gt create typescript-migration-part-18`
 
-  - [ ] 16.5. Convert any remaining component-related files to TypeScript
+  - [ ] 18.2. Convert `src/components/product-set.js` (~150 lines — depends on product, views/product-set, updaters/product-set)
 
-  - [ ] 16.6. Verify end-to-end component functionality
+  - [ ] 18.3. Verify: `pnpm test` passes, `pnpm run type-check` passes, `pnpm run lint` passes
 
-  - [ ] 16.7. Run full test suite: `npm test`
+  - [ ] 18.4. **[PR BOUNDARY]** Submit PR 18 using `gt submit`
 
-  - [ ] 16.8. Run type checking: `npm run type-check`
+- [ ] 19. Convert Entry Points (Tier 8, 2 files) (PR 19)
 
-  - [ ] 16.9. **[PR BOUNDARY]** Submit PR 16 using `gt submit`
+  - [ ] 19.1. Create new branch using `gt create typescript-migration-part-19`
 
-- [ ] 17. Entry Points Migration - Part 1 (PR 17)
+  - [ ] 19.2. Convert `src/ui.js` — imports all components, track, styles, throttle, detect-features
+    - **Fix pre-existing bug (Tier 1):** `destroyComponent` at line 99 has operator precedence bug: `!component.model.id === id` evaluates as `(!component.model.id) === id`. Fix to `component.model.id !== id`. Additionally, the function mutates the array during `forEach` + `splice`, which can skip elements — consider using `filter` instead. (In a separate commit.)
+    - **Fix pre-existing bug (Tier 1):** `_bindPostMessage` at line 316 has no `msg.origin` validation — any cross-origin page can trigger `location.reload()`. Add origin check against the expected Shopify checkout domain (in a separate commit).
 
-  - [ ] 17.1. Create new branch using `gt create typescript-migration-part-17` (stacks on current branch)
+  - [ ] 19.3. Convert `src/buybutton.js` — main entry point, imports ui and templates/product
 
-  - [ ] 17.2. Convert `src/iframe.js` to TypeScript with iframe communication types
+  - [ ] 19.4. Update build entry point reference in `vite.config.ts` from `.js` to `.ts`
 
-  - [ ] 17.3. Define iframe message types in `src/types/iframe.ts`
+  - [ ] 19.5. Verify: `pnpm run build` produces correct bundles, `pnpm test` passes, `pnpm run type-check` passes, `pnpm run lint` passes
 
-  - [ ] 17.4. Ensure iframe postMessage handlers are type-safe
+  - [ ] 19.6. **[PR BOUNDARY]** Submit PR 19 using `gt submit`
 
-  - [ ] 17.5. Update build configuration to handle TypeScript entry point
+- [ ] 20. Type Refinement: Fix Remaining `any` Debt (PR 20)
 
-  - [ ] 17.6. Verify iframe functionality still works correctly
+  - [ ] 20.1. Create new branch using `gt create typescript-migration-part-20`
 
-  - [ ] 17.7. Run integration tests: `npm test`
+  - [ ] 20.2. **First:** grep for `any` in `src/types/` to catch any instances not listed below
 
-  - [ ] 17.8. Run type checking: `npm run type-check`
+  - [ ] 20.3. Fix all 11 known `Record<string, any>` instances in `src/types/index.ts`:
+    - Lines ~94, 113, 129, 146, 162, 185, 197: `styles?: Record<string, any>` — replace with proper CSS style type
+    - Line ~491: `eventProperties?: Record<string, any>` — replace with specific event property type
+    - Line ~545: `options: Record<string, any>` — replace with proper ComponentOptions type
+    - Line ~571: `config: Record<string, any>` — replace with proper config type
 
-  - [ ] 17.9. **[PR BOUNDARY]** Submit PR 17 using `gt submit`
+  - [ ] 20.4. Fix the `Function` type at line ~492: replace with a specific function signature
 
-- [ ] 18. Entry Points Migration - Part 2 (PR 18)
+  - [ ] 20.5. Verify: `pnpm run type-check` passes, `pnpm test` passes, `pnpm run lint` passes (especially `no-explicit-any`)
 
-  - [ ] 18.1. Create new branch using `gt create typescript-migration-part-18` (stacks on current branch)
+  - [ ] 20.6. **[PR BOUNDARY]** Submit PR 20 using `gt submit`
 
-  - [ ] 18.2. Convert `src/ui.js` to TypeScript with UI initialization types
+- [ ] 21. Final Source Lockdown: Remove allowJs, Make Type-Check Blocking (PR 21)
 
-  - [ ] 18.3. Define UI configuration interface in `src/types/ui.ts`
+  - [ ] 21.1. Create new branch using `gt create typescript-migration-part-21`
 
-  - [ ] 18.4. Ensure UI factory functions have proper return types
+  - [ ] 21.2. Remove `allowJs: true` from `tsconfig.json`
 
-  - [ ] 18.5. Update build outputs for TypeScript UI module
+  - [ ] 21.3. Update `.github/workflows/ci.yml`: remove `continue-on-error: true` from type-check step (make it blocking)
 
-  - [ ] 18.6. Verify UI initialization works with existing integrations
+  - [ ] 21.4. Verify: `pnpm run type-check` passes with `allowJs: false`, `pnpm test` passes, `pnpm run build` works
 
-  - [ ] 18.7. Run UI tests: `npm test`
+  - [ ] 21.5. **[PR BOUNDARY]** Submit PR 21 using `gt submit`
 
-  - [ ] 18.8. Run type checking: `npm run type-check`
+**Phase 4 exit criteria:** All 49 `src/*.js` files converted to `.ts`. Zero `any` types in source. `pnpm run type-check` passes. `pnpm test` passes. `allowJs: false` in tsconfig.
 
-  - [ ] 18.9. **[PR BOUNDARY]** Submit PR 18 using `gt submit`
+**Phase 4 smoke test checkpoints:**
+- After PR 9: First converted batch produces correct output, imports from remaining JS files still work
+- After PR 19: Full build from TS entry point, all exports intact
+- After PR 21: `tsc --noEmit` passes with `allowJs: false`
 
-- [ ] 19. Entry Points Migration - Part 3 (PR 19)
+---
 
-  - [ ] 19.1. Create new branch using `gt create typescript-migration-part-19` (stacks on current branch)
+## Phase 5: Test File Conversion (PRs 22-26)
 
-  - [ ] 19.2. Convert `src/buybutton.js` main entry to TypeScript
+Since Vitest natively handles both `.js` and `.ts` test files, test conversion is straightforward — primarily adding type annotations. No test logic changes.
 
-  - [ ] 19.3. Convert `src/updater.js` to TypeScript with updater registry types
+---
 
-  - [ ] 19.4. Define main library interface in `src/types/buybutton.ts`
+- [ ] 22. Convert Test Fixtures + Entry Point (PR 22)
 
-  - [ ] 19.5. Ensure public API maintains exact same interface
+  - [ ] 22.1. Create new branch using `gt create typescript-migration-part-22`
 
-  - [ ] 19.6. Update build to generate proper UMD bundle from TypeScript
+  - [ ] 22.2. Convert `test/fixtures/product-fixture.js` (153 lines)
 
-  - [ ] 19.7. Verify examples and demos still work correctly
+  - [ ] 22.3. Convert `test/fixtures/shop-info.js` (11 lines)
 
-  - [ ] 19.8. Run full test suite: `npm test`
+  - [ ] 22.4. Convert `test/test.js` (35 lines — test entry point)
 
-  - [ ] 19.9. Run type checking: `npm run type-check`
+  - [ ] 22.5. Evaluate `test/build/test.js`: This is a **72,678-line generated Browserify bundle** (created by the `pretest` script: `browserify test/test.js -t babelify --outfile test/build/test.js`). Do NOT attempt to convert this file. It should be removed entirely since Vitest (PR 7a) eliminates the Browserify test pipeline. Verify the `pretest` script was already removed in PR 7a; if not, remove it here. Add `test/build/` to `.gitignore` if not already present.
 
-  - [ ] 19.10. **[PR BOUNDARY]** Submit PR 19 using `gt submit`
+  - [ ] 22.6. Verify: `pnpm test` passes
 
-- [ ] 20. Test Files Migration - Part 1 (PR 20)
+  - [ ] 22.7. **[PR BOUNDARY]** Submit PR 22 using `gt submit`
 
-  - [ ] 20.1. Create new branch using `gt create typescript-migration-part-20` (stacks on current branch)
+- [ ] 23. Convert Utility + Small Unit Tests (~10 files) (PR 23)
 
-  - [ ] 20.2. Update Jest configuration to handle TypeScript test files
+  - [ ] 23.1. Create new branch using `gt create typescript-migration-part-23`
 
-  - [ ] 20.3. Convert utility test files in `test/unit/utils/` to TypeScript
+  - [ ] 23.2. Convert 10 test files:
+    - `test/unit/merge.js` (122 lines)
+    - `test/unit/money.js` (38 lines)
+    - `test/unit/normalize-config.js` (64 lines)
+    - `test/unit/detect-features.js` (63 lines)
+    - `test/unit/unit-price.js` (23 lines)
+    - `test/unit/focus.js` (191 lines)
+    - `test/unit/template.js` (63 lines)
+    - `test/unit/updater.js` (67 lines)
+    - `test/unit/checkout.js` (55 lines)
+    - `test/unit/tracker.js` (106 lines)
 
-  - [ ] 20.4. Add @types/jest if not already installed
+  - [ ] 23.3. Add type annotations to test assertions and mocks
 
-  - [ ] 20.5. Ensure test assertions have proper types
+  - [ ] 23.4. Verify: `pnpm test` passes
 
-  - [ ] 20.6. Verify tests still pass: `npm test`
+  - [ ] 23.5. **[PR BOUNDARY]** Submit PR 23 using `gt submit`
 
-  - [ ] 20.7. Run type checking on test files: `npm run type-check`
+- [ ] 24. Convert Base Class + UI Tests (5 files) (PR 24)
 
-  - [ ] 20.8. **[PR BOUNDARY]** Submit PR 20 using `gt submit`
+  - [ ] 24.1. Create new branch using `gt create typescript-migration-part-24`
 
-- [ ] 21. Test Files Migration - Part 2 (PR 21)
+  - [ ] 24.2. Convert 5 test files:
+    - `test/unit/component.js` (459 lines)
+    - `test/unit/view.js` (930 lines)
+    - `test/unit/iframe.js` (523 lines)
+    - `test/unit/ui.js` (1016 lines)
+    - `test/unit/buybutton.js` (64 lines)
 
-  - [ ] 21.1. Create new branch using `gt create typescript-migration-part-21` (stacks on current branch)
+  - [ ] 24.3. Add type annotations for component mocks and view test helpers
 
-  - [ ] 21.2. Convert view component test files to TypeScript
+  - [ ] 24.4. Verify: `pnpm test` passes
 
-  - [ ] 21.3. Convert updater component test files to TypeScript
+  - [ ] 24.5. **[PR BOUNDARY]** Submit PR 24 using `gt submit`
 
-  - [ ] 21.4. Ensure test mocks have proper types
+- [ ] 25a. Convert Product Tests (3 files) (PR 25a)
 
-  - [ ] 21.5. Verify test coverage remains the same
+  - [ ] 25a.1. Create new branch using `gt create typescript-migration-part-25a`
 
-  - [ ] 21.6. Run view and updater tests: `npm test`
+  - [ ] 25a.2. Convert 3 product test files:
+    - `test/unit/product/product-component.js` (2568 lines — largest test file)
+    - `test/unit/product/product-updater.js` (256 lines)
+    - `test/unit/product/product-view.js` (271 lines)
 
-  - [ ] 21.7. Run type checking: `npm run type-check`
+  - [ ] 25a.3. Add type annotations for product-specific test data and mocks
 
-  - [ ] 21.8. **[PR BOUNDARY]** Submit PR 21 using `gt submit`
+  - [ ] 25a.4. Verify: `pnpm test` passes
 
-- [ ] 22. Test Files Migration - Part 3 (PR 22)
+  - [ ] 25a.5. **[PR BOUNDARY]** Submit PR 25a using `gt submit`
 
-  - [ ] 22.1. Create new branch using `gt create typescript-migration-part-22` (stacks on current branch)
+- [ ] 25b. Convert Cart + Modal + Toggle + ProductSet Tests (8 files) (PR 25b)
 
-  - [ ] 22.2. Convert main component test files to TypeScript
+  - [ ] 25b.1. Create new branch using `gt create typescript-migration-part-25b`
 
-  - [ ] 22.3. Add types for test fixtures and helpers
+  - [ ] 25b.2. Convert 8 test files:
+    - `test/unit/cart/cart.js` (1633 lines)
+    - `test/unit/cart/cart-view.js` (277 lines)
+    - `test/unit/modal/modal-component.js` (250 lines)
+    - `test/unit/modal/modal-updater.js` (52 lines)
+    - `test/unit/modal/modal-view.js` (304 lines)
+    - `test/unit/toggle/toggle-component.js` (149 lines)
+    - `test/unit/toggle/toggle-view.js` (288 lines)
+    - `test/unit/product-set.js` (453 lines)
 
-  - [ ] 22.4. Ensure component mocks are properly typed
+  - [ ] 25b.3. Add type annotations for cart/modal/toggle/product-set test data and mocks
 
-  - [ ] 22.5. Verify all component tests pass
+  - [ ] 25b.4. Verify: `pnpm test` passes
 
-  - [ ] 22.6. Run component tests: `npm test`
+  - [ ] 25b.5. **[PR BOUNDARY]** Submit PR 25b using `gt submit`
 
-  - [ ] 22.7. Run type checking: `npm run type-check`
+- [ ] 26. Final Lockdown: Remove All JS Allowances (PR 26)
 
-  - [ ] 22.8. **[PR BOUNDARY]** Submit PR 22 using `gt submit`
+  - [ ] 26.1. Create new branch using `gt create typescript-migration-part-26`
 
-- [ ] 23. Test Files Migration - Part 4 (PR 23)
+  - [ ] 26.2. Verify no `.js` files remain in `src/` or `test/` (except any intentional config files)
 
-  - [ ] 23.1. Create new branch using `gt create typescript-migration-part-23` (stacks on current branch)
+  - [ ] 26.3. Update tsconfig to include test files in type checking if not already
 
-  - [ ] 23.2. Convert integration test files to TypeScript
+  - [ ] 26.4. Verify: `pnpm test` passes, `pnpm run type-check` passes, `pnpm run build` works, `pnpm run lint` passes
 
-  - [ ] 23.3. Add types for integration test scenarios
+  - [ ] 26.5. **[PR BOUNDARY]** Submit PR 26 using `gt submit --stack` (submit entire remaining stack)
 
-  - [ ] 23.4. Ensure end-to-end test flows are type-safe
+**Phase 5 exit criteria:** All 30 test `.js` files converted to `.ts`. Zero `.js` files in `src/` or `test/` (except config files). Full TypeScript strictness enforced across codebase. All CI checks passing and blocking.
 
-  - [ ] 23.5. Verify integration tests pass
-
-  - [ ] 23.6. Run integration tests: `npm test`
-
-  - [ ] 23.7. Run type checking: `npm run type-check`
-
-  - [ ] 23.8. **[PR BOUNDARY]** Submit PR 23 using `gt submit`
-
-- [ ] 24. Test Files Migration - Part 5 (PR 24)
-
-  - [ ] 24.1. Create new branch using `gt create typescript-migration-part-24` (stacks on current branch)
-
-  - [ ] 24.2. Convert entry point test files to TypeScript
-
-  - [ ] 24.3. Convert iframe test files to TypeScript
-
-  - [ ] 24.4. Add types for test environment setup
-
-  - [ ] 24.5. Verify entry point tests pass
-
-  - [ ] 24.6. Run tests: `npm test`
-
-  - [ ] 24.7. Run type checking: `npm run type-check`
-
-  - [ ] 24.8. **[PR BOUNDARY]** Submit PR 24 using `gt submit`
-
-- [ ] 25. Test Files Migration - Part 6 (PR 25)
-
-  - [ ] 25.1. Create new branch using `gt create typescript-migration-part-25` (stacks on current branch)
-
-  - [ ] 25.2. Convert any remaining test files to TypeScript
-
-  - [ ] 25.3. Convert test helper utilities to TypeScript
-
-  - [ ] 25.4. Add type checking for test files to CI pipeline
-
-  - [ ] 25.5. Ensure 100% of tests are in TypeScript
-
-  - [ ] 25.6. Run full test suite: `npm test`
-
-  - [ ] 25.7. Run type checking on all tests: `npm run type-check`
-
-  - [ ] 25.8. **[PR BOUNDARY]** Submit PR 25 using `gt submit`
-
-- [ ] 26. Strict Type Enforcement and Cleanup (PR 26)
-
-  - [ ] 26.1. Create new branch using `gt create typescript-migration-part-26` (stacks on current branch)
-
-  - [ ] 26.2. Remove all temporary type assertions (as Type) used during migration
-
-  - [ ] 26.3. Eliminate any remaining `any` types in the codebase
-
-  - [ ] 26.4. Remove `allowJs: true` from tsconfig.json
-
-  - [ ] 26.5. Enable additional strict checks if not already enabled (strictNullChecks, noImplicitAny, etc.)
-
-  - [ ] 26.6. Make TypeScript type checking a blocking CI check
-
-  - [ ] 26.7. Update documentation to reflect TypeScript usage
-
-  - [ ] 26.8. Run final verification: `npm test && npm run type-check && npm run build`
-
-  - [ ] 26.9. **[PR BOUNDARY]** Submit PR 26 using `gt submit --stack` to submit entire stack
+---
 
 ## Important Learnings from Initial Setup
 
-### Package Manager Considerations
-**CRITICAL:** This project uses **Yarn**, not npm. Always use `yarn add` instead of `npm install` to avoid creating conflicting lock files.
-- The project has a `yarn.lock` file - respect this choice
-- Using `npm install` will create a `package-lock.json` with 12,000+ lines of unnecessary changes
-- All scripts in package.json use `yarn run` commands
+### Package Manager
+**CRITICAL:** This project currently uses **Yarn v1**, but will migrate to **pnpm** in PR 3. Until PR 3 is complete, use `yarn` commands. After PR 3, use `pnpm` exclusively.
 
 ### Build System Architecture
-- The project uses Rollup with Babel for builds (not webpack or vite)
+- Currently: Rollup with Babel for builds (migrates to Vite in PR 6)
 - Babel handles TypeScript transpilation via `@babel/preset-typescript`
-- Build script is at `script/build.js` and needs TypeScript extensions added to both babel and nodeResolve plugins
-- The `.babelrc` file needs TypeScript preset added to both production and development environments
+- Build script is at `script/build.js` — hardcodes `src/buybutton.js` as entry point
+- `src:watch` in package.json also hardcodes `src/buybutton.js`
+- Both must be updated when Vite replaces Rollup (PR 6) and when entry point becomes `.ts` (PR 19)
 
 ### Git Workflow with Worktrees
-- This repository uses **git worktrees** - the main branch may be checked out in another worktree
-- Use `gt get` instead of `gt sync` for fetching and rebasing (gt sync doesn't work well with worktrees)
-- When creating branches, you might see errors about branches being used by other worktrees - this is normal
+- This repository uses **git worktrees** — the main branch may be checked out in another worktree
+- Use `gt get` instead of `gt sync` for fetching and rebasing
+- When creating branches, errors about branches being used by other worktrees are normal
 
-### TypeScript Configuration Gotchas
-- Must use `"isolatedModules": true` in tsconfig.json for Babel compatibility
-- When exporting types, use `export type { TypeName }` syntax to avoid TS1205 errors
-- The project needs `allowJs: true` and `checkJs: false` for gradual migration
+### TypeScript Configuration
+- `"isolatedModules": true` in tsconfig.json for Babel compatibility
+- Use `export type { TypeName }` syntax to avoid TS1205 errors
+- `allowJs: true` and `checkJs: false` during migration; `allowJs: false` set in final PR 21
 
-### CI/CD Setup
-- GitHub Actions workflows are in `.github/workflows/`
-- The npm-release.yml handles package publishing
-- Created new ci.yml for TypeScript checking with `continue-on-error: true` for non-blocking checks
+### CI/CD
+- GitHub Actions workflows in `.github/workflows/`: `ci.yml`, `npm-release.yml`, `snapit.yml`, `cla.yml`
+- `cla.yml` is GitHub-managed and not modified during migration
+- Type checking starts non-blocking (`continue-on-error: true`), becomes blocking in PR 21
 
-### Testing Approach
-- Run `npm test` to verify changes don't break existing functionality
-- The project uses testem for test running
-- Build verification: `npm run build` should complete without errors
-
-### Next Steps Preparation
-- PR 1 (TypeScript setup) is complete and submitted
-- Next PR should install @types packages BUT NOT @types/shopify-buy
-- Must create custom shopify-buy types based on actual usage, not community types
+### Testing
+- Currently: Mocha + Testem + Chai + Sinon + Browserify (migrates to Vitest in PR 7a/7b)
+- `@types/jest` was incorrectly installed in Phase 2 — removed in PR 7a
+- Build verification test at `test/build/test.js` may need removal after Vite migration
