@@ -6,7 +6,7 @@ This migration is structured across ~28 PRs in 5 phases. Phases 1-2 are complete
 
 **Exit criteria for every PR:** `pnpm test` passes, `pnpm run build` produces correct bundles, `pnpm run type-check` passes, `pnpm run lint` passes.
 
-**Note on package manager commands:** All commands in this document use `pnpm` (the target state after PR 3). Before PR 3 is complete, the project uses Yarn (`yarn test`, `yarn run build`, etc.). The `pretest` script in package.json also uses `npm run` — this should be updated to `pnpm run` in PR 3.
+**Note on package manager commands:** All commands in this document use `pnpm`, which is the active package manager since PR 3.
 
 ## Source File Inventory (49 files)
 
@@ -196,82 +196,47 @@ Use Graphite (gt) commands for managing stacked branches:
 
 ---
 
-- [ ] 3. Migrate Yarn v1 → pnpm (PR 3)
+- [x] 3. Migrate Yarn v1 → pnpm (PR 3) — [PR #942](https://github.com/Shopify/buy-button-js/pull/942)
 
-  - [ ] 3.1. Create new branch using `gt create typescript-migration-part-3`
+  - [x] 3.1. Create new branch using `gt create typescript-migration-part-3`
 
-  - [ ] 3.2. Install pnpm and initialize `pnpm-lock.yaml`; delete `yarn.lock`
+  - [x] 3.2. Install pnpm and initialize `pnpm-lock.yaml`; delete `yarn.lock`
 
-  - [ ] 3.3. Update `package.json` scripts: replace all `yarn run` with `pnpm run`, replace `yarn` with `pnpm`. Fix `pretest` script which uses `npm run` → `pnpm run`
+  - [x] 3.3. Update `package.json` scripts: replace all `yarn run` with `pnpm run`, replace `yarn` with `pnpm`. Fix `pretest` script which uses `npm run` → `pnpm run`
 
-  - [ ] 3.4. Update `.github/workflows/ci.yml`: replace `npm install`/`npm run`/`npm test` with pnpm equivalents. Add pnpm setup step.
+  - [x] 3.4. Update `.github/workflows/ci.yml`: replace `npm install`/`npm run`/`npm test` with pnpm equivalents. Add pnpm setup step.
 
   - [ ] 3.5. Update `.github/workflows/npm-release.yml`: replace `yarn install` with `pnpm install`, `npx changeset` with `pnpx changeset`. Add pnpm setup step.
 
-  - [ ] 3.6. Update `.github/workflows/snapit.yml`: same pattern — replace yarn/npm with pnpm equivalents. Add pnpm setup step.
+  - [x] 3.6. Update `.github/workflows/snapit.yml`: same pattern — replace yarn/npm with pnpm equivalents. Add pnpm setup step.
 
-  - [ ] 3.7. Verify: `pnpm test` passes, `pnpm run build` produces correct output, `pnpm run type-check` passes
+  - [x] 3.7. Verify: `pnpm test` passes, `pnpm run build` produces correct output, `pnpm run type-check` passes
 
-  - [ ] 3.8. **[PR BOUNDARY]** Submit PR 3 using `gt submit`
+  - [x] 3.8. **[PR BOUNDARY]** Submit PR 3 using `gt submit`
 
-- [ ] 4. Drop IE 11 + Modernize Browser Targets — MAJOR VERSION BUMP (PR 4)
+- [x] 4. Drop IE 11 + Modernize Browser Targets — MAJOR VERSION BUMP (PR 4) — PR 4a: [PR #945](https://github.com/Shopify/buy-button-js/pull/945), PR 4b: [PR #946](https://github.com/Shopify/buy-button-js/pull/946)
 
-  - [ ] 4.1. Create new branch using `gt create typescript-migration-part-4`
+  - [x] 4.1. Create new branch using `gt create typescript-migration-part-4`
 
-  - [ ] 4.2. Update `package.json` and create changeset:
+  - [x] 4.2. Update `package.json` and create changeset:
     - Create a major changeset via `pnpm changeset` (select `major` bump) with description: "Drop IE 11, Safari 8, iOS 8, Android 4.4 browser support. Minimum browser targets are now rolling modern versions aligned with Shopify Online Store themes." Do NOT edit `version` in package.json directly — changesets manages this.
-    - Replace `browserslist` with modern rolling targets:
-      ```json
-      "browserslist": [
-        "last 3 Chrome versions",
-        "last 3 Firefox versions",
-        "last 3 Safari versions",
-        "last 2 Edge versions",
-        "last 3 ChromeAndroid versions",
-        "last 3 iOS versions",
-        "last 2 Samsung versions",
-        "not dead"
-      ]
-      ```
+    - Replace `browserslist` with modern rolling targets (union of `@shopify/browserslist-config` + Theme Store requirements)
 
-  - [ ] 4.3. Update `.babelrc`: remove 16 transform plugins (15 production + 1 development-only):
-    - `@babel/plugin-transform-arrow-functions`
-    - `@babel/plugin-transform-block-scoped-functions`
-    - `@babel/plugin-transform-block-scoping`
-    - `@babel/plugin-transform-classes`
-    - `@babel/plugin-transform-computed-properties`
-    - `@babel/plugin-transform-destructuring`
-    - `@babel/plugin-transform-duplicate-keys`
-    - `@babel/plugin-transform-function-name`
-    - `@babel/plugin-transform-literals`
-    - `@babel/plugin-transform-object-super`
-    - `@babel/plugin-transform-parameters`
-    - `@babel/plugin-transform-shorthand-properties`
-    - `@babel/plugin-transform-spread`
-    - `@babel/plugin-transform-template-literals`
-    - `@babel/plugin-transform-typeof-symbol`
-    - `@babel/plugin-transform-modules-commonjs` (development env)
+  - [x] 4.3. Update `.babelrc`: remove 15 ES5 transform plugins; retain `@babel/plugin-transform-modules-commonjs` in development env for Browserify test pipeline (removed in PR 7a)
 
-  - [ ] 4.4. Remove polyfill imports from `src/buybutton.js`:
-    - `whatwg-fetch`
-    - `core-js/features/promise`
-    - `core-js/features/string/ends-with`
-    - `core-js/features/array/iterator`
-    - `core-js/features/array/find`
-    - `core-js/features/object/assign`
-    - `core-js/features/object/values`
+  - [x] 4.4. Remove polyfill imports from `src/buybutton.js` (7 imports: `whatwg-fetch` + 6 `core-js` modules)
 
-  - [ ] 4.5. Remove polyfill dependencies from `package.json`: `core-js`, `whatwg-fetch`
+  - [x] 4.5. Remove polyfill dependencies from `package.json`: `core-js`, `whatwg-fetch`
 
-  - [ ] 4.6. Replace UglifyJS with terser in `script/build.js`: Install `terser` as devDep, replace `uglify-js` calls with terser equivalents. Terser supports ES2015+ syntax (unlike UglifyJS) and serves as the interim minifier until Vite replaces the build pipeline in PR 6.
+  - [x] 4.6. Replace UglifyJS with terser in `script/build.js`: Install `terser` as devDep, replace `uglify-js` calls with terser equivalents. Terser supports ES2015+ syntax (unlike UglifyJS) and serves as the interim minifier until Vite replaces the build pipeline in PR 6.
 
-  - [ ] 4.7. Remove UglifyJS from dependencies: `uglify-js`
+  - [x] 4.7. Remove UglifyJS from dependencies: `uglify-js`
 
-  - [ ] 4.8. Update `CHANGELOG.md` documenting the breaking change (IE 11 drop)
+  - [x] 4.8. CHANGELOG breaking change is documented via major changeset (automatic CHANGELOG generation enabled in PR 4a)
 
-  - [ ] 4.9. Verify: `pnpm test` passes, `pnpm run build` produces correct output, `pnpm run type-check` passes
+  - [x] 4.9. Verify: `pnpm test` passes, `pnpm run build` produces correct output, `pnpm run type-check` passes
 
-  - [ ] 4.10. **[PR BOUNDARY]** Submit PR 4 using `gt submit`
+  - [x] 4.10. **[PR BOUNDARY]** Submit PR 4 using `gt submit`
 
 - [ ] 5. ESLint 3.3.1 → ESLint 9 Flat Config + @typescript-eslint (PR 5)
 
@@ -312,6 +277,10 @@ Use Graphite (gt) commands for managing stacked branches:
   - [ ] 5.9. **[PR BOUNDARY]** Submit PR 5 using `gt submit`
 
 - [ ] 6. Rollup 1 + Babel → Vite Library Mode (PR 6)
+
+  > **Deferred from PR 4b review:**
+  > - **Update `caniuse-lite`** before this PR. The current version (1.0.30000989, circa 2019) resolves `"last 3 Chrome versions"` to Chrome 73-75 instead of current versions. This had no impact in PR 4b (no Babel transform plugins consume targets), but Vite's `build.target` will consume browserslist — stale data would produce incorrect output.
+  > - **Source maps for minification** were not added in PR 4b (terser replaced UglifyJS without source map config, matching the original behavior). Vite's library mode handles source maps natively, so this resolves itself when terser is removed.
 
   - [ ] 6.1. Create new branch using `gt create typescript-migration-part-6`
 
@@ -784,7 +753,7 @@ Since Vitest natively handles both `.js` and `.ts` test files, test conversion i
 ## Important Learnings from Initial Setup
 
 ### Package Manager
-**CRITICAL:** This project currently uses **Yarn v1**, but will migrate to **pnpm** in PR 3. Until PR 3 is complete, use `yarn` commands. After PR 3, use `pnpm` exclusively.
+This project uses **pnpm** (migrated from Yarn v1 in PR 3).
 
 ### Build System Architecture
 - Currently: Rollup with Babel for builds (migrates to Vite in PR 6)
