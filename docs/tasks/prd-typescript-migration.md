@@ -11,7 +11,7 @@ This document outlines the requirements for migrating the Buy Button JS applicat
 ### Status
 
 - **Phases 1-2 (Infrastructure + Type Definitions):** Complete. PRs [#926](https://github.com/Shopify/buy-button-js/pull/926) and [#927](https://github.com/Shopify/buy-button-js/pull/927) merged.
-- **Phase 3 (Tooling Modernization):** Not started.
+- **Phase 3 (Tooling Modernization):** In progress. PR 3 (pnpm) submitted as [PR #942](https://github.com/Shopify/buy-button-js/pull/942). PR 4 (browser targets) submitted as PR 4a ([#945](https://github.com/Shopify/buy-button-js/pull/945)) + PR 4b ([#946](https://github.com/Shopify/buy-button-js/pull/946)).
 - **Phase 4 (Source File Conversion):** Not started. 49 JS files remain in `src/`.
 - **Phase 5 (Test File Conversion):** Not started. 30 test JS files remain.
 
@@ -185,7 +185,7 @@ All 49 source files are categorized by dependency depth. Each tier must be conve
 | Area | Current | Target | Rationale |
 |------|---------|--------|-----------|
 | Package manager | Yarn v1 (1.x) | pnpm | Faster, stricter dependency resolution, better monorepo support, actively maintained |
-| Browser targets | IE 11, Safari 8, iOS 8, Android 4.4 | Rolling modern targets | Eliminates 16 Babel transform plugins + all polyfills (~30-50KB bundle savings). Major version bump required. |
+| Browser targets | IE 11, Safari 8, iOS 8, Android 4.4 | Rolling modern targets | Eliminates 15 Babel ES5 transform plugins + all polyfills (~30-50KB bundle savings). Major version bump required. `@babel/plugin-transform-modules-commonjs` retained for Browserify test pipeline until PR 7a. |
 | Build system | Rollup 1.18.0 + Babel 7.5 + UglifyJS | Vite library mode | Native TS support, ESM-first, tree-shaking, faster builds. UglifyJS can't parse ES2015+ (blocks IE 11 drop). |
 | Test framework | Mocha 6.2 + Testem 2.17 + Chai 4.2 + Sinon 7.4 + Browserify | Vitest + happy-dom | Native TS support, ESM-first, fast, built-in coverage, compatible assertion API. Eliminates Browserify test pipeline. |
 | Linting | ESLint 3.3.1 + eslint-plugin-shopify | ESLint 9 flat config + @typescript-eslint | Modern TS rules, enforces `no-explicit-any`, replaces unmaintained Shopify plugin |
@@ -211,7 +211,7 @@ All 49 source files are categorized by dependency depth. Each tier must be conve
 **Rationale:** Buy-button-js is embedded on merchant storefronts — the same browser environment as the theme itself. If the theme works, the buy button must work. Auto-advancing rolling targets mean zero maintenance.
 
 Dropping legacy browsers enables:
-1. Remove 16 Babel transform plugins (all target ES5 output)
+1. Remove 15 Babel ES5 transform plugins (retain `@babel/plugin-transform-modules-commonjs` for Browserify test pipeline until PR 7a)
 2. Replace UglifyJS with terser as interim minifier (UglifyJS can't parse ES2015+ — blocking the Vite migration). Terser is removed once Vite handles minification.
 3. Remove 7 polyfill imports from `buybutton.js` (`whatwg-fetch` + 6 `core-js` modules)
 4. Native ES2015+ output — classes, arrow functions, template literals, destructuring
@@ -306,7 +306,7 @@ These are key checkpoints where the executor should perform manual verification 
 |-------|-------------|-----|--------|
 | 1 | TypeScript Infrastructure Setup | 1 (PR 1) | Complete |
 | 2 | Type Definitions | 1 (PR 2) | Complete |
-| 3 | Tooling Modernization | 7 (PRs 3-8, with 7 split into 7a/7b) | Not started |
+| 3 | Tooling Modernization | 7 (PRs 3-8, with 7 split into 7a/7b) | In progress (PRs 3-4 submitted) |
 | 4 | TypeScript File Conversion | 13 (PRs 9-21) | Not started |
 | 5 | Test File Conversion | 6 (PRs 22-26, with 25 split into 25a/25b) | Not started |
 
