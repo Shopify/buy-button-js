@@ -13,41 +13,52 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-        
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
-          
+          cache: 'pnpm'
+
       - name: Install dependencies
-        run: npm install
-        
+        run: pnpm install --frozen-lockfile
+
+      - name: Build generated styles
+        run: pnpm run styles
+
       - name: Run linter
-        run: npm run lint
-        
+        run: pnpm run lint
+
       - name: Run tests
-        run: npm test
-        
+        run: pnpm test
+
       - name: Build
-        run: npm run build
+        run: pnpm run build
 
   type-check:
     name: Type Check (Non-blocking)
     runs-on: ubuntu-latest
     continue-on-error: true
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-        
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
-          
+          cache: 'pnpm'
+
       - name: Install dependencies
-        run: npm install
-        
+        run: pnpm install --frozen-lockfile
+
       - name: Run TypeScript type checking
-        run: npm run type-check
+        run: pnpm run type-check
         continue-on-error: true

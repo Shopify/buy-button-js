@@ -17,7 +17,7 @@ If your Online Store is password protected, users will be shown your Online Stor
 ## Development
 
 ```
-yarn
+pnpm install
 cp index.example.html index.html
 ```
 
@@ -25,7 +25,7 @@ cp index.example.html index.html
 - Set a product ID in index.html
 
 ```
-yarn run start
+pnpm run start
 
 ```
 
@@ -34,13 +34,13 @@ Will watch for changes, compile src/ to tmp/ using babel & browserify, and run a
 ## Testing
 
 ```
-yarn run test
+pnpm run test
 ```
 
 will run full test suite locally
 
 ```
-yarn run test-dev
+pnpm run test-dev
 ```
 
 Will watch for changes and run test suite.
@@ -54,7 +54,7 @@ gem install jekyll
 ```
 
 ```
-yarn run docs
+pnpm run docs
 ```
 
 Doc server will run at <http://localhost:4000/buy-button-js/>

@@ -25,18 +25,22 @@ jobs:
         with:
           fetch-depth: 1
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4
+
       - name: Setup Node.js
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: "18.20"
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: yarn install --no-progress --ignore-engines
+        run: pnpm install --frozen-lockfile
 
       - name: Check for changesets
         id: check_changesets
         run: |
-          if [ -z "$(ls -A .changeset)" ]; then
+          if ! ls .changeset/*.md 1>/dev/null 2>&1; then
             echo "No changesets found. Exiting."
             echo "changesets_found=false" >> $GITHUB_ENV
             exit 0
@@ -46,14 +50,14 @@ jobs:
 
       - name: Update package version and remove changesets
         if: env.changesets_found == 'true'
-        run: npx changeset version
+        run: pnpm exec changeset version
 
       - name: Publish to NPM
         if: env.changesets_found == 'true'
         id: changesets
         uses: changesets/action@e0538e686673de0265c8a3e2904b8c76beaa43fd # v1.5.2
         with:
-          publish: npx changeset publish
+          publish: pnpm exec changeset publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
