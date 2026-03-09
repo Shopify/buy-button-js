@@ -278,6 +278,10 @@ Use Graphite (gt) commands for managing stacked branches:
 
 - [ ] 6. Rollup 1 + Babel → Vite Library Mode (PR 6)
 
+  > **Deferred from PR 4b review:**
+  > - **Update `caniuse-lite`** before this PR. The current version (1.0.30000989, circa 2019) resolves `"last 3 Chrome versions"` to Chrome 73-75 instead of current versions. This had no impact in PR 4b (no Babel transform plugins consume targets), but Vite's `build.target` will consume browserslist — stale data would produce incorrect output.
+  > - **Source maps for minification** were not added in PR 4b (terser replaced UglifyJS without source map config, matching the original behavior). Vite's library mode handles source maps natively, so this resolves itself when terser is removed.
+
   - [ ] 6.1. Create new branch using `gt create typescript-migration-part-6`
 
   - [ ] 6.2. Install `vite` and configure `vite.config.ts` for library mode:
