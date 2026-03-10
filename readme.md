@@ -1,4 +1,4 @@
-# BuyButton.js
+# BuyButton.js [test]
 
 [BuyButton.js on NPM](https://www.npmjs.com/package/@shopify/buy-button-js)
 
