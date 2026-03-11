@@ -3,9 +3,17 @@
     "Chrome"
   ],
   "launch_in_ci": [
-    "Chrome",
-    "Firefox"
+    "Chrome"
   ],
+  "browser_args": {
+    "Chrome": {
+      "ci": [
+        "--headless",
+        "--no-sandbox",
+        "--disable-gpu"
+      ]
+    }
+  },
   "framework": "mocha",
   "src_files": "test/build/test.js"
 }
