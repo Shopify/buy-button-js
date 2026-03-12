@@ -293,7 +293,7 @@ These are key checkpoints where the executor should perform manual verification 
 |-------|-------------|-----|--------|
 | 1 | TypeScript Infrastructure Setup | 1 (PR 1) | Complete |
 | 2 | Type Definitions | 1 (PR 2) | Complete |
-| 3 | Tooling Modernization | 7 (PRs 3-8, with 7 split into 7a/7b) | In progress (PRs 3-4 submitted) |
+| 3 | Tooling Modernization | 7 (PRs 3-8, with 7 split into 7a/7b) | In progress (PRs 3-5 submitted) |
 | 4 | TypeScript File Conversion | 13 (PRs 9-21) | Not started |
 | 5 | Test File Conversion | 6 (PRs 22-26, with 25 split into 25a/25b) | Not started |
 

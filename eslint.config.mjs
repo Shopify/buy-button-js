@@ -74,7 +74,7 @@ export default tseslint.config(
   },
 
   // TECH DEBT: src/types/ contains legacy type definitions with `any`, `Function`, and `{}`.
-  // These suppressions are temporary — removed in PR 20 (type refinement).
+  // These suppressions are temporary — removed during the type refinement phase.
   {
     files: ['src/types/**/*.ts'],
     rules: {
