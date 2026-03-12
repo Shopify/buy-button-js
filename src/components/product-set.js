@@ -24,10 +24,8 @@ export default class ProductSet extends Component {
    */
   constructor(config, props) {
     if (Array.isArray(config.id)) {
-      // eslint-disable-next-line no-param-reassign
       config = normalizeConfig(config);
     } else {
-      // eslint-disable-next-line no-param-reassign
       config = normalizeConfig(config, 'Collection');
     }
 
@@ -237,7 +235,7 @@ export default class ProductSet extends Component {
 
     return Promise.all(promises).then(() => {
       this.view.resizeUntilFits();
-      const hasPagination = this.model.products[0].hasOwnProperty('hasNextPage');
+      const hasPagination = Object.hasOwn(this.model.products[0], 'hasNextPage');
 
       if (this.options.contents.pagination && hasPagination) {
         this.showPagination();
