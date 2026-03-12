@@ -252,7 +252,7 @@ Use Graphite (gt) commands for managing stacked branches:
 
   - [x] 5.6. Update `package.json`: lint script (remove `-c .eslintrc`, use `src/` for recursive linting), test script (remove redundant `pnpm run lint` — CI runs lint separately)
 
-  - [x] 5.7. Fix lint errors in newly-linted files: `hasOwnProperty` → `Object.hasOwn()`, removed unused `isObject` function, removed unused `element` param, removed unused `err` binding, cleaned up stale eslint-disable directives
+  - [x] 5.7. Fix lint errors in newly-linted files: `hasOwnProperty` → `Object.hasOwn()`, removed unused `isObject` function, removed unused `element` param, underscore-prefixed unused `err` binding, cleaned up stale eslint-disable directives
 
   - [x] 5.8. Verify: `pnpm run lint` passes (0 errors, 0 warnings), `pnpm run testem` passes (794/794), `pnpm run type-check` passes, `pnpm run build` passes
 
