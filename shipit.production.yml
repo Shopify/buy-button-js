@@ -1,9 +1,9 @@
 dependencies:
   override:
-    - yarn install --no-progress --ignore-engines
+    - pnpm install --frozen-lockfile
 
 deploy:
   override:
     - ejson decrypt -o config.json config.ejson
-    - npm run deploy # upload built scripts to the CDN
+    - pnpm run deploy # upload built scripts to the CDN
     # - npm publish (npm publishing is now done via Github actions with changesets and provenance)

@@ -7,13 +7,13 @@ If you do want to publish a new version of the app to the CDN and npm:
 ### 1. Pull from main and install all dependencies
 ```
 git pull origin main
-yarn install
+pnpm install
 ```
 
 ### 2. Then run
 
 ```
-npx changeset add
+pnpm exec changeset add
 ```
 
 ### 3. Update CHANGELOG.md to describe your changes
@@ -50,7 +50,7 @@ If you instead want to revert a change while also publishing a new version to np
 3. Revert the faulty code changes (eg: downgrade the version of a dependency in the package.json file if bumping its version caused issues)
 4. In `package.json`, change the package version (on line 3) by appending a string like `-ROLLBACK` to the existing version number
     - Eg: `3.0.1` (original) --> `3.0.1-ROLLBACK`
-5. Run `yarn install`
+5. Run `pnpm install`
 6. Stage and commit your changes
 7. Run `git tag <new app version>` which will create a new tag and tag the commit you just created
     - Eg: if after step 4 the app's version is now `3.0.1-ROLLBACK`, you would run `git tag 3.0.1-ROLLBACK`
