@@ -11,7 +11,7 @@ This document outlines the requirements for migrating the Buy Button JS applicat
 ### Status
 
 - **Phases 1-2 (Infrastructure + Type Definitions):** Complete. PRs [#926](https://github.com/Shopify/buy-button-js/pull/926) and [#927](https://github.com/Shopify/buy-button-js/pull/927) merged.
-- **Phase 3 (Tooling Modernization):** In progress. PR 3 (pnpm) submitted as [PR #942](https://github.com/Shopify/buy-button-js/pull/942). PR 4 (browser targets) submitted as PR 4a ([#945](https://github.com/Shopify/buy-button-js/pull/945)) + PR 4b ([#946](https://github.com/Shopify/buy-button-js/pull/946)).
+- **Phase 3 (Tooling Modernization):** In progress. PR 3 (pnpm) submitted as [PR #942](https://github.com/Shopify/buy-button-js/pull/942). PR 4 (browser targets) submitted as PR 4a ([#945](https://github.com/Shopify/buy-button-js/pull/945)) + PR 4b ([#946](https://github.com/Shopify/buy-button-js/pull/946)). PR 5 (ESLint) submitted as [PR #950](https://github.com/Shopify/buy-button-js/pull/950).
 - **Phase 4 (Source File Conversion):** Not started. 49 JS files remain in `src/`.
 - **Phase 5 (Test File Conversion):** Not started. 30 test JS files remain.
 
@@ -94,20 +94,7 @@ These are NOT introduced by the migration but should be fixed as Tier 1 improvem
 
 10. The system must migrate the package manager from Yarn v1 to pnpm, updating all CI workflows and package.json scripts.
 11. The system must drop legacy browser targets (IE 11, Safari 8, iOS 8, Android 4.4) and adopt rolling browserslist targeting modern browsers aligned with Shopify Online Store theme requirements. This is a **breaking change** requiring a major version bump to 4.0.0.
-12. The system must migrate from ESLint 3.3.1 to ESLint 9 flat config with @typescript-eslint, enabling the following rules:
-    - `@typescript-eslint/no-explicit-any` (error)
-    - `@typescript-eslint/no-unsafe-assignment` (error)
-    - `@typescript-eslint/no-unsafe-member-access` (error)
-    - `@typescript-eslint/no-unsafe-call` (error)
-    - `@typescript-eslint/no-unsafe-return` (error)
-    - `@typescript-eslint/no-unsafe-argument` (error)
-    - `@typescript-eslint/explicit-function-return-type` (warn — error after Phase 4)
-    - `@typescript-eslint/strict-boolean-expressions` (warn)
-    - `@typescript-eslint/no-floating-promises` (error)
-    - `@typescript-eslint/no-misused-promises` (error)
-    - `@typescript-eslint/await-thenable` (error)
-    - `@typescript-eslint/no-unnecessary-type-assertion` (error)
-    - Note: `no-unsafe-*` rules only apply to `.ts` files. During migration, `.js` files are excluded from TS-specific rules.
+12. The system must migrate from ESLint 3.3.1 to ESLint 9 flat config with @typescript-eslint. The authoritative rule configuration is in `eslint.config.mjs`. Rules are organized into error-level (blocks CI), warn-level (upgrade to error after Phase 4), and warn-level complexity categories. TypeScript rules only apply to `.ts` files; JS files get `eslint:recommended` + browser globals. `src/types/` has an override suppressing known `any`/`Function` debt (deferred to PR 20).
 13. The system must migrate the build system from Rollup 1 + Babel 7 + UglifyJS to Vite library mode, producing UMD, ESM, and CJS outputs. Output bundles must be functionally equivalent to pre-Vite builds (same exports, same UMD global, similar size).
 14. The system must migrate the test framework from Mocha + Testem + Browserify to Vitest + happy-dom, in two steps: runner swap (PR 7a) and Sinon → vi migration (PR 7b).
 15. The system must modernize aws-sdk v2 to @aws-sdk/client-s3 v3 in the CDN deploy script (`script/deploy.js`), replacing `@shopify/js-uploader` entirely (incompatible with v3's API).
@@ -306,7 +293,7 @@ These are key checkpoints where the executor should perform manual verification 
 |-------|-------------|-----|--------|
 | 1 | TypeScript Infrastructure Setup | 1 (PR 1) | Complete |
 | 2 | Type Definitions | 1 (PR 2) | Complete |
-| 3 | Tooling Modernization | 7 (PRs 3-8, with 7 split into 7a/7b) | In progress (PRs 3-4 submitted) |
+| 3 | Tooling Modernization | 7 (PRs 3-8, with 7 split into 7a/7b) | In progress (PRs 3-5 submitted) |
 | 4 | TypeScript File Conversion | 13 (PRs 9-21) | Not started |
 | 5 | Test File Conversion | 6 (PRs 22-26, with 25 split into 25a/25b) | Not started |
 

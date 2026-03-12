@@ -13,7 +13,7 @@ if (window.requestAnimationFrame && window.cancelAnimationFrame) {
   }
 
   if (!frameUtils.requestAnimationFrame)
-    frameUtils.requestAnimationFrame = function(callback, element) {
+    frameUtils.requestAnimationFrame = function(callback) {
       var currTime = new Date().getTime();
       var timeToCall = Math.max(0, 16 - (currTime - lastTime));
       var id = window.setTimeout(function() { callback(currTime + timeToCall); }, timeToCall);
