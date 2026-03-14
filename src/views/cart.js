@@ -44,7 +44,7 @@ export default class CartView extends View {
   }
 
   wrapTemplate(html) {
-    return `<div class="${this.component.classes.cart.cart}">${html}</div>`;
+    return `<div class="${this.component.classes.cart.cart}" role="dialog" aria-modal="true" aria-labelledby="${this.component.cartTitleId}">${html}</div>`;
   }
 
   get wrapperClass() {
