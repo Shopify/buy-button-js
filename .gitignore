@@ -21,6 +21,10 @@ _site
 /.vscode
 .DS_Store
 
+# Environment files
+.env
+.env.*
+
 # TypeScript build artifacts
 *.tsbuildinfo
 /dist-types

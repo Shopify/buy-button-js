@@ -37,7 +37,11 @@ If your PR doesn't need a new npm release (docs-only changes, test updates, CI c
 Follow these steps to roll back the `latest` CDN version without publishing a normal npm release.
 
 1. Create a branch from `main` and revert the faulty code changes
-2. Do **not** include a changeset file
+2. Do **not** include a changeset file. Verify no stale `.changeset/*.md` files exist (other than `README.md`):
+   ```
+   ls .changeset/*.md
+   ```
+   If any exist, delete them — stale changesets would cause the release workflow to open a release PR instead of a clean rollback.
 3. Append `-ROLLBACK` to the version in `package.json` (e.g., `3.0.6` → `3.0.6-ROLLBACK`)
 4. Run `pnpm install` to update the lockfile
 5. Stage and commit your changes
