@@ -206,7 +206,7 @@ Use Graphite (gt) commands for managing stacked branches:
 
   - [ ] 3.4. Update `.github/workflows/ci.yml`: replace `npm install`/`npm run`/`npm test` with pnpm equivalents. Add pnpm setup step.
 
-  - [ ] 3.5. Update `.github/workflows/npm-release.yml`: replace `yarn install` with `pnpm install`, `npx changeset` with `pnpx changeset`. Add pnpm setup step.
+  - [x] 3.5. ~~Update `.github/workflows/npm-release.yml`~~ — Superseded: npm-release.yml was rewritten for the changesets release PR pattern.
 
   - [ ] 3.6. Update `.github/workflows/snapit.yml`: same pattern — replace yarn/npm with pnpm equivalents. Add pnpm setup step.
 
@@ -267,7 +267,7 @@ Use Graphite (gt) commands for managing stacked branches:
 
   - [ ] 4.7. Remove UglifyJS from dependencies: `uglify-js`
 
-  - [ ] 4.8. Update `CHANGELOG.md` documenting the breaking change (IE 11 drop)
+  - [ ] 4.8. Create a changeset via `pnpm exec changeset add` documenting the breaking change (IE 11 drop). CHANGELOG.md is now generated automatically — do not edit it manually.
 
   - [ ] 4.9. Verify: `pnpm test` passes, `pnpm run build` produces correct output, `pnpm run type-check` passes
 
