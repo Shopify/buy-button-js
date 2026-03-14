@@ -2,11 +2,9 @@ function wrapConsole(logCommand) {
   const logMethod = function () {
     const hostConsole = window.console;
     const args = Array.prototype.slice.apply(arguments).join(' ');
-    /* eslint-disable no-console */
     if (hostConsole) {
       hostConsole[logCommand](args);
     }
-    /* eslint-enable no-console */
   };
 
   return function () {
