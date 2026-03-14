@@ -1,29 +1,31 @@
-name: Release new NPM version
+name: Release
 
 on:
-  pull_request:
-    types: [closed]
+  push:
     branches:
       - main
 
 concurrency:
-  group: changeset-${{ github.head_ref }}
-  cancel-in-progress: true
+  group: release-${{ github.ref_name }}
+  # IMPORTANT: Do NOT set cancel-in-progress to true.
+  # Cancelling an in-progress run could kill a mid-flight npm publish,
+  # leaving the repo in a half-published state. Queuing is safe — a second
+  # run after a publish is a harmless no-op (no changesets to consume).
 
 jobs:
-  npm:
-    name: Changeset release
+  release:
+    name: Release
     runs-on: ubuntu-latest
-    if: github.event.pull_request.merged == true && !contains(github.event.pull_request.title, '[ROLLBACK]') && !contains(github.event.pull_request.title, '[DOCS]')
+    if: github.repository_owner == 'Shopify'
     permissions:
-      contents: write # to be able to publish a GitHub release
-      pull-requests: write # to be able to comment on released pull requests
-      id-token: write # to enable use of OIDC for npm provenance
+      contents: write
+      pull-requests: write
+      id-token: write
     steps:
-      - name: Checkout the repo
+      - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
-          fetch-depth: 1
+          fetch-depth: 0
 
       - name: Setup pnpm
         uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4
@@ -33,44 +35,21 @@ jobs:
         with:
           node-version: "18.20"
           cache: 'pnpm'
+          registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Check for changesets
-        id: check_changesets
-        run: |
-          if ! ls .changeset/*.md 1>/dev/null 2>&1; then
-            echo "No changesets found. Exiting."
-            echo "changesets_found=false" >> $GITHUB_ENV
-            exit 0
-          else
-            echo "changesets_found=true" >> $GITHUB_ENV
-          fi
-
-      - name: Update package version and remove changesets
-        if: env.changesets_found == 'true'
-        run: pnpm exec changeset version
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Publish to NPM
-        if: env.changesets_found == 'true'
+      - name: Create Release Pull Request or Publish
         id: changesets
-        uses: changesets/action@e0538e686673de0265c8a3e2904b8c76beaa43fd # v1.5.2
+        uses: changesets/action@6a0a831ff30acef54f2c6aa1cbbc1096b066edaf # v1.7.0
         with:
+          version: pnpm exec changeset version
           publish: pnpm exec changeset publish
+          commit: '[ci] release'
+          title: '[ci] release'
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.SHOPIFY_GH_ACCESS_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_CONFIG_PROVENANCE: true
-
-      - name: Update package.json version and reset changesets
-        if: env.changesets_found == 'true'
-        run: |
-          git config --global user.name 'github-actions[bot]'
-          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git add package.json .changeset CHANGELOG.md
-          git commit -m "Update package version & delete changesets"
-          git push
