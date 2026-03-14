@@ -1,13 +1,6 @@
 import ShopifyBuy from 'shopify-buy';
 import UI from './ui';
 import productTemplates from './templates/product';
-import 'whatwg-fetch';
-import 'core-js/features/promise';
-import 'core-js/features/string/ends-with';
-import 'core-js/features/array/iterator';
-import 'core-js/features/array/find';
-import 'core-js/features/object/assign';
-import 'core-js/features/object/values';
 
 class UpdatedShopifyBuy extends ShopifyBuy {
   static buildClient(config) {
