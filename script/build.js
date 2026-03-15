@@ -5,7 +5,7 @@ const rollup = require('rollup').rollup;
 const nodeResolve = require('rollup-plugin-node-resolve');
 const commonjs = require('rollup-plugin-commonjs');
 const babel = require('rollup-plugin-babel');
-const UglifyJS = require('uglify-js');
+const { minify } = require('terser');
 
 const srcPath = 'src/buybutton.js';
 const buildPaths = {
@@ -16,7 +16,6 @@ const buildPaths = {
 };
 
 async function build() {
-  // create a bundle
   try {
     const bundle = await rollup({
       input: srcPath,
@@ -33,7 +32,6 @@ async function build() {
       ],
     });
 
-    // or write the bundle to disk
     await Promise.all([
       bundle.write({
         file: buildPaths.globals,
@@ -52,11 +50,14 @@ async function build() {
       }),
     ]);
 
-    const code = await fs.readFileSync(buildPaths.globals, 'utf8');
-    const uglifyBundle = UglifyJS.minify(code);
-    await fs.writeFileSync(buildPaths.min, uglifyBundle.code);
+    const code = fs.readFileSync(buildPaths.globals, 'utf8');
+    const minified = await minify(code);
+    if (!minified.code) {
+      throw new Error('terser minification failed: output code is empty');
+    }
+    fs.writeFileSync(buildPaths.min, minified.code);
   } catch (err) {
-    console.log(err);
+    console.error(err);
     process.exit(1);
   }
 }

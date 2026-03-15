@@ -2,13 +2,16 @@
   "name": "@shopify/buy-button-js",
   "version": "3.0.6",
   "browserslist": [
-    "last 2 Chrome versions",
-    "last 2 Firefox versions",
-    "last 2 versions",
-    "Safari >= 8",
-    "iOS >= 8",
-    "IE >= 11",
-    "android >= 4.4"
+    "last 3 Chrome versions",
+    "last 3 Firefox versions",
+    "last 3 Safari versions",
+    "last 3 Edge versions",
+    "last 3 Opera versions",
+    "last 3 ChromeAndroid versions",
+    "last 1 FirefoxAndroid versions",
+    "ios >= 13.4",
+    "last 2 Samsung versions",
+    "not dead"
   ],
   "description": "BuyButton.js allows merchants to build Shopify interfaces into any website",
   "main": "lib/buybutton.umd.js",
@@ -57,23 +60,7 @@
   "devDependencies": {
     "@babel/cli": "7.5.5",
     "@babel/core": "7.5.5",
-    "@babel/plugin-external-helpers": "7.2.0",
-    "@babel/plugin-transform-arrow-functions": "7.2.0",
-    "@babel/plugin-transform-block-scoped-functions": "7.2.0",
-    "@babel/plugin-transform-block-scoping": "7.5.5",
-    "@babel/plugin-transform-classes": "7.5.5",
-    "@babel/plugin-transform-computed-properties": "7.2.0",
-    "@babel/plugin-transform-destructuring": "7.5.0",
-    "@babel/plugin-transform-duplicate-keys": "7.5.0",
-    "@babel/plugin-transform-function-name": "7.4.4",
-    "@babel/plugin-transform-literals": "7.2.0",
     "@babel/plugin-transform-modules-commonjs": "7.5.0",
-    "@babel/plugin-transform-object-super": "7.5.5",
-    "@babel/plugin-transform-parameters": "7.4.4",
-    "@babel/plugin-transform-shorthand-properties": "7.2.0",
-    "@babel/plugin-transform-spread": "7.2.2",
-    "@babel/plugin-transform-template-literals": "7.4.4",
-    "@babel/plugin-transform-typeof-symbol": "7.2.0",
     "@babel/preset-typescript": "^7.27.1",
     "@changesets/changelog-github": "^0.6.0",
     "@changesets/cli": "^2.28.1",
@@ -83,7 +70,6 @@
     "aws-sdk": "2.6.8",
     "babelify": "10.0.0",
     "chai": "4.2.0",
-    "core-js": "3.1.4",
     "eslint": "3.3.1",
     "eslint-plugin-shopify": "13.0",
     "fetch-pretender": "1.5.0",
@@ -101,12 +87,12 @@
     "rollup-plugin-commonjs": "10.0.1",
     "rollup-plugin-node-resolve": "5.2.0",
     "sinon": "7.4.1",
+    "terser": "^5.39.0",
     "testem": "2.17.0",
     "typescript": "^5.9.2",
     "watch": "1.0.2",
     "watchify": "3.11.1",
-    "webdriverio": "4.2.8",
-    "whatwg-fetch": "3.0.0"
+    "webdriverio": "4.2.8"
   },
   "dependencies": {
     "@babel/runtime": "7.18.9",
@@ -114,7 +100,6 @@
     "morphdom": "2.6.1",
     "mustache": "3.0.1",
     "sass": "1.69.0",
-    "shopify-buy": "3.0.7",
-    "uglify-js": "3.16.3"
+    "shopify-buy": "3.0.7"
   }
 }
