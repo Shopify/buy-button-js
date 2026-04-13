@@ -50,7 +50,7 @@
   },
   "author": "Shopify Inc.",
   "license": "MIT",
-  "packageManager": "pnpm@10.16.1",
+  "packageManager": "pnpm@10.33.0",
   "devDependencies": {
     "@babel/cli": "7.5.5",
     "@babel/core": "7.5.5",
@@ -83,7 +83,6 @@
     "eslint": "3.3.1",
     "eslint-plugin-shopify": "13.0",
     "fetch-pretender": "1.5.0",
-    "global-npm": "0.3.0",
     "http-server": "0.11.1",
     "mime-types": "2.1.24",
     "mocha": "6.2.0",
