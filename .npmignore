@@ -10,4 +10,5 @@ test-output.xml
 lint-output.xml
 /errorShots
 /test/build
+/test-manual
 config.json

@@ -45,6 +45,19 @@ pnpm run test-dev
 
 Will watch for changes and run test suite.
 
+### Manual Browser Testing
+
+To verify buy buttons render correctly in a real browser:
+
+```bash
+pnpm build
+pnpm serve
+# Open the URL the terminal prints on startup, e.g.:
+open http://localhost:8080/test-manual/
+```
+
+See [`test-manual/README.md`](./test-manual/README.md) for details.
+
 ## Documentation
 
 To run docs locally, install jekyll:
