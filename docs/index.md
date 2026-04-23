@@ -17,9 +17,11 @@ This tool is intended for use by developers who are familiar with JavaScript and
 
 ## Current Support
 
-| Internet Explorer     | Chrome, Edge, Firefox, Opera     | Safari    | iOS     | Android   |
-| :-------------------- | :------------------------------- | :-------- | :------ | :-------- |
-| 11+                   | (Current - 1) or Current         | 8+        | 8+      | 4.4+
+| Chrome | Firefox | Safari | Edge | iOS | Android |
+| :----- | :------ | :----- | :--- | :-- | :------ |
+| Last 3 | Last 3  | Last 3 | Last 3 | 13.4+ | Last 3 Chrome |
+
+> **Note (v4.0.0+):** Internet Explorer, Safari 8, iOS 8, and Android 4.4 are no longer supported. If you need IE 11 support, pin to v3.x.
 
 ## Including the library
 
