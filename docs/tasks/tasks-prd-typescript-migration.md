@@ -238,43 +238,25 @@ Use Graphite (gt) commands for managing stacked branches:
 
   - [x] 4.10. **[PR BOUNDARY]** Submit PR 4 using `gt submit`
 
-- [ ] 5. ESLint 3.3.1 → ESLint 9 Flat Config + @typescript-eslint (PR 5)
+- [x] 5. ESLint 3.3.1 → ESLint 9 Flat Config + @typescript-eslint (PR 5) — [PR #950](https://github.com/Shopify/buy-button-js/pull/950)
 
-  - [ ] 5.1. Create new branch using `gt create typescript-migration-part-5`
+  - [x] 5.1. Create new branch using `gt create typescript-migration-part-5`
 
-  - [ ] 5.2. Remove `eslint` 3.3.1 and `eslint-plugin-shopify` 13.0 from devDependencies
+  - [x] 5.2. Remove `eslint` 3.3.1 and `eslint-plugin-shopify` 13.0 from devDependencies
 
-  - [ ] 5.3. Install `eslint` 9.x and `typescript-eslint` (the unified package — preferred for ESLint 9 flat config over the separate `@typescript-eslint/eslint-plugin` + `@typescript-eslint/parser` pair)
+  - [x] 5.3. Install `eslint` 9.x, `typescript-eslint` v8 (unified package), `@eslint/js` 9.x, and `globals`
 
-  - [ ] 5.4. Create `eslint.config.mjs` (flat config format). Enable these specific rules:
+  - [x] 5.4. Create `eslint.config.mjs` (flat config format) with TypeScript rules, JS/TS file scoping, and `src/types/` override for known `any`/`Function` debt. See `eslint.config.mjs` for the authoritative rule list.
 
-    **Error-level (block CI):**
-    - `@typescript-eslint/no-explicit-any`
-    - `@typescript-eslint/no-unsafe-assignment`
-    - `@typescript-eslint/no-unsafe-member-access`
-    - `@typescript-eslint/no-unsafe-call`
-    - `@typescript-eslint/no-unsafe-return`
-    - `@typescript-eslint/no-unsafe-argument`
-    - `@typescript-eslint/no-floating-promises`
-    - `@typescript-eslint/no-misused-promises`
-    - `@typescript-eslint/await-thenable`
-    - `@typescript-eslint/no-unnecessary-type-assertion`
+  - [x] 5.5. Delete `.eslintrc`, `test/.eslintrc`, and `.eslintignore`
 
-    **Warn-level (upgrade to error after Phase 4):**
-    - `@typescript-eslint/explicit-function-return-type`
-    - `@typescript-eslint/strict-boolean-expressions`
+  - [x] 5.6. Update `package.json`: lint script (remove `-c .eslintrc`, use `src/` for recursive linting), test script (remove redundant `pnpm run lint` — CI runs lint separately)
 
-    **Scoping:** `no-unsafe-*` rules only apply to `.ts` files (they require type information). Configure separate overrides for `.js` files during migration to exclude TS-specific rules.
+  - [x] 5.7. Fix lint errors in newly-linted files: `hasOwnProperty` → `Object.hasOwn()`, removed unused `isObject` function, removed unused `element` param, underscore-prefixed unused `err` binding, cleaned up stale eslint-disable directives
 
-  - [ ] 5.5. Delete `.eslintrc`
+  - [x] 5.8. Verify: `pnpm run lint` passes (0 errors, 0 warnings), `pnpm run testem` passes (794/794), `pnpm run type-check` passes, `pnpm run build` passes
 
-  - [ ] 5.6. Update `package.json` lint script if needed for flat config
-
-  - [ ] 5.7. Fix any new lint errors in existing `.ts` files (src/types/)
-
-  - [ ] 5.8. Verify: `pnpm run lint` passes, `pnpm test` passes
-
-  - [ ] 5.9. **[PR BOUNDARY]** Submit PR 5 using `gt submit`
+  - [x] 5.9. **[PR BOUNDARY]** Submit PR 5 using `gt submit`
 
 - [ ] 6. Rollup 1 + Babel → Vite Library Mode (PR 6)
 

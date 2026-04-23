@@ -74,7 +74,6 @@ export default class UI {
         this.errorReporter.notifyException(error);
       }
 
-      // eslint-disable-next-line
       console.error(error);
     });
   }
@@ -317,7 +316,7 @@ export default class UI {
       let data;
       try {
         data = JSON.parse(msg.data);
-      } catch (err) {
+      } catch (_err) {
         data = {};
       }
       if (data.syncCart || (data.current_checkout_page && data.current_checkout_page === '/checkout/thank_you')) {

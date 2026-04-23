@@ -67,7 +67,6 @@ export default class Product extends Component {
    * @param {Object} props - data and utilities passed down from UI instance.
    */
   constructor(config, props) {
-    // eslint-disable-next-line no-param-reassign
     config = normalizeConfig(config);
 
     super(config, props);
