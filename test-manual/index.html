@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buy Button JS — Manual Testing</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    h1, h2 { color: #333; }
+    .test-section {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px 0;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .test-section h2 {
+      margin-top: 0;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+    }
+    .store-info {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 15px;
+    }
+    .status {
+      padding: 10px;
+      border-radius: 4px;
+      margin-bottom: 15px;
+      font-size: 14px;
+    }
+    .status.loading { background: #fff3cd; color: #856404; }
+    .status.success { background: #d4edda; color: #155724; }
+    .status.error { background: #f8d7da; color: #721c24; }
+    .component-error { color: #721c24; padding: 10px; background: #f8d7da; border-radius: 4px; }
+    #script-status { font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>Buy Button JS — Manual Browser Testing</h1>
+  
+  <div class="status loading" id="script-status">
+    Loading buy-button script...
+  </div>
+
+  <p>
+    This page loads the <strong>locally built</strong> version of buy-button-js 
+    from <code>../lib/buybutton.umd.js</code>. Use this to verify changes work 
+    correctly before merging PRs.
+  </p>
+  <p>
+    <strong>Setup:</strong> Run <code>pnpm build</code> first, then open this file 
+    in a browser. See <a href="./README.md">README.md</a> for details.
+  </p>
+
+  <hr>
+
+  <!-- Test 1: Simple Product -->
+  <div class="test-section">
+    <h2>Test 1: Product Component</h2>
+    <div class="store-info">Store: kara-daviduik.myshopify.com</div>
+    <div id="product-1"></div>
+  </div>
+
+  <!-- Test 2: Collection -->
+  <div class="test-section">
+    <h2>Test 2: Collection Component</h2>
+    <div class="store-info">Store: kara-daviduik.myshopify.com</div>
+    <div id="collection-1"></div>
+  </div>
+
+  <!-- Test 3: Product from different store -->
+  <div class="test-section">
+    <h2>Test 3: Product (Different Store)</h2>
+    <div class="store-info">Store: hydrogen-preview.myshopify.com</div>
+    <div id="product-2"></div>
+  </div>
+
+  <!-- Load the LOCAL build -->
+  <script src="../lib/buybutton.umd.js"></script>
+  
+  <script>
+    // Update status indicator
+    var statusEl = document.getElementById('script-status');
+    
+    if (typeof ShopifyBuy === 'undefined') {
+      statusEl.className = 'status error';
+      statusEl.textContent = '❌ ShopifyBuy not loaded. Did you run `pnpm build`?';
+    } else if (typeof ShopifyBuy.UI === 'undefined' || typeof ShopifyBuy.UI.init !== 'function') {
+      statusEl.className = 'status error';
+      statusEl.textContent = '❌ ShopifyBuy.UI.init not available. Bundle may be corrupted.';
+    } else {
+      statusEl.className = 'status success';
+      statusEl.textContent = '✅ ShopifyBuy loaded successfully';
+      
+      // Initialize all test components
+      initializeTests();
+    }
+
+    function showError(elementId, message) {
+      var el = document.getElementById(elementId);
+      if (el) {
+        el.innerHTML = '<div class="component-error">❌ ' + message + '</div>';
+      }
+    }
+
+    function initializeTests() {
+      // Test 1 & 2: kara-daviduik store (product + collection)
+      // Note: Local build uses ShopifyBuy.UI.init(client), NOT ShopifyBuy.UI.onReady(client)
+      // The CDN version wraps this differently - see README for details.
+      try {
+        var client1 = ShopifyBuy.buildClient({
+          domain: 'kara-daviduik.myshopify.com',
+          storefrontAccessToken: 'c95015845b304ddd0c325d9a67341d69',
+        });
+        
+        var ui1 = ShopifyBuy.UI.init(client1);
+        
+        // Product component
+        ui1.createComponent('product', {
+          id: '7500346818582',
+          node: document.getElementById('product-1'),
+          moneyFormat: '${{amount}}',
+          options: {
+            product: {
+              text: { button: 'Add to cart' }
+            },
+            cart: {
+              text: { total: 'Subtotal', button: 'Checkout' }
+            }
+          }
+        }).catch(function(err) {
+          showError('product-1', 'Test 1 failed: ' + (err && err.message ? err.message : String(err)));
+          console.error('Test 1 failed:', err);
+        });
+        
+        // Collection component
+        ui1.createComponent('collection', {
+          id: '287642517526',
+          node: document.getElementById('collection-1'),
+          moneyFormat: '${{amount}}',
+          options: {
+            product: {
+              text: { button: 'Add to cart' }
+            }
+          }
+        }).catch(function(err) {
+          showError('collection-1', 'Test 2 failed: ' + (err && err.message ? err.message : String(err)));
+          console.error('Test 2 failed:', err);
+        });
+      } catch (err) {
+        showError('product-1', 'Tests 1 & 2 init failed: ' + (err && err.message ? err.message : String(err)));
+        showError('collection-1', 'Tests 1 & 2 init failed: ' + (err && err.message ? err.message : String(err)));
+        console.error('Tests 1 & 2 init failed:', err);
+      }
+      
+      // Test 3: hydrogen-preview store
+      try {
+        var client2 = ShopifyBuy.buildClient({
+          domain: 'hydrogen-preview.myshopify.com',
+          storefrontAccessToken: '79921ccabf3be126fbd83c8fa0e04a3c',
+        });
+        
+        var ui2 = ShopifyBuy.UI.init(client2);
+        
+        ui2.createComponent('product', {
+          id: '7604648181816',
+          node: document.getElementById('product-2'),
+          moneyFormat: '${{amount}}',
+          options: {
+            product: {
+              text: { button: 'Add to cart' }
+            }
+          }
+        }).catch(function(err) {
+          showError('product-2', 'Test 3 failed: ' + (err && err.message ? err.message : String(err)));
+          console.error('Test 3 failed:', err);
+        });
+      } catch (err) {
+        showError('product-2', 'Test 3 init failed: ' + (err && err.message ? err.message : String(err)));
+        console.error('Test 3 init failed:', err);
+      }
+    }
+  </script>
+</body>
+</html>
