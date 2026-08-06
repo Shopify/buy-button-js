@@ -51,6 +51,8 @@ jobs:
       - name: Update package version and remove changesets
         if: env.changesets_found == 'true'
         run: pnpm exec changeset version
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish to NPM
         if: env.changesets_found == 'true'
@@ -69,6 +71,6 @@ jobs:
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git add package.json .changeset
+          git add package.json .changeset CHANGELOG.md
           git commit -m "Update package version & delete changesets"
           git push
