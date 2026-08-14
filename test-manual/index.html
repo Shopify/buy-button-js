@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buy Button JS — Manual Testing</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    h1, h2 { color: #333; }
+    .test-section {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px 0;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .test-section h2 {
+      margin-top: 0;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+    }
+    .store-info {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 15px;
+    }
+    .status {
+      padding: 10px;
+      border-radius: 4px;
+      margin-bottom: 15px;
+      font-size: 14px;
+    }
+    .status.loading { background: #fff3cd; color: #856404; }
+    .status.success { background: #d4edda; color: #155724; }
+    .status.error { background: #f8d7da; color: #721c24; }
+    .component-error { color: #721c24; padding: 10px; background: #f8d7da; border-radius: 4px; }
+    #script-status { font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>Buy Button JS — Manual Browser Testing</h1>
+  
+  <div class="status loading" id="script-status">
+    Loading buy-button script...
+  </div>
+
+  <p>
+    This page loads the <strong>locally built</strong> version of buy-button-js 
+    from <code>../lib/buybutton.umd.js</code>. Use this to verify changes work 
+    correctly before merging PRs.
+  </p>
+  <p>
+    <strong>Setup:</strong> Run <code>pnpm build</code> first, then open this file 
+    in a browser. See <a href="./README.md">README.md</a> for details.
+  </p>
+
+  <hr>
+
+  <!-- Test 1: Product -->
+  <div class="test-section">
+    <h2>Test 1: Product Component</h2>
+    <div class="store-info">Store: hydrogen-preview.myshopify.com</div>
+    <div id="product-1"></div>
+  </div>
+
+  <!-- Test 2: Collection -->
+  <div class="test-section">
+    <h2>Test 2: Collection Component</h2>
+    <div class="store-info">Store: hydrogen-preview.myshopify.com</div>
+    <div id="collection-1"></div>
+  </div>
+
+  <!-- Test 3: Product from different store -->
+  <div class="test-section">
+    <h2>Test 3: Product (Different Store)</h2>
+    <div class="store-info">Store: kara-daviduik.myshopify.com</div>
+    <div id="product-2"></div>
+  </div>
+
+  <!-- Load the LOCAL build -->
+  <script src="../lib/buybutton.umd.js"></script>
+  
+  <script>
+    // Update status indicator
+    var statusEl = document.getElementById('script-status');
+    
+    if (typeof ShopifyBuy === 'undefined') {
+      statusEl.className = 'status error';
+      statusEl.textContent = '❌ ShopifyBuy not loaded. Did you run `pnpm build`?';
+    } else if (typeof ShopifyBuy.UI === 'undefined' || typeof ShopifyBuy.UI.init !== 'function') {
+      statusEl.className = 'status error';
+      statusEl.textContent = '❌ ShopifyBuy.UI.init not available. Bundle may be corrupted.';
+    } else {
+      statusEl.className = 'status success';
+      statusEl.textContent = '✅ ShopifyBuy loaded successfully';
+      
+      // Initialize all test components
+      initializeTests();
+    }
+
+    function showError(elementId, message) {
+      var el = document.getElementById(elementId);
+      if (el) {
+        el.innerHTML = '<div class="component-error">❌ ' + message + '</div>';
+      }
+    }
+
+    function initializeTests() {
+      // Note: Local build uses ShopifyBuy.UI.init(client), NOT ShopifyBuy.UI.onReady(client).
+      // The CDN buy-button generator snippet wraps createComponent in onReady(), which is
+      // only present on the CDN wrapper. We adapt generator configs to init() here.
+      // See README for details.
+
+      // Tests 1 & 2: hydrogen-preview store (product + collection)
+      try {
+        var hydrogenClient = ShopifyBuy.buildClient({
+          domain: 'hydrogen-preview.myshopify.com',
+          storefrontAccessToken: '79921ccabf3be126fbd83c8fa0e04a3c',
+        });
+
+        var hydrogenUI = ShopifyBuy.UI.init(hydrogenClient);
+
+        // Test 1: Product component
+        hydrogenUI.createComponent('product', {
+          id: '7604648181816',
+          node: document.getElementById('product-1'),
+          moneyFormat: '${{amount}}',
+          options: {
+            product: {
+              text: { button: 'Add to cart' }
+            }
+          }
+        }).catch(function(err) {
+          showError('product-1', 'Test 1 failed: ' + (err && err.message ? err.message : String(err)));
+          console.error('Test 1 failed:', err);
+        });
+
+        // Test 2: Collection component
+        hydrogenUI.createComponent('collection', {
+          id: '387234594872',
+          node: document.getElementById('collection-1'),
+          moneyFormat: '${{amount}}',
+          options: {
+            product: {
+              styles: {
+                product: {
+                  '@media (min-width: 601px)': {
+                    'max-width': 'calc(25% - 20px)',
+                    'margin-left': '20px',
+                    'margin-bottom': '50px',
+                    'width': 'calc(25% - 20px)'
+                  },
+                  'img': {
+                    'height': 'calc(100% - 15px)',
+                    'position': 'absolute',
+                    'left': '0',
+                    'right': '0',
+                    'top': '0'
+                  },
+                  'imgWrapper': {
+                    'padding-top': 'calc(75% + 15px)',
+                    'position': 'relative',
+                    'height': '0'
+                  }
+                },
+                'button': {
+                  'font-family': 'Roboto, sans-serif',
+                  'font-weight': 'bold',
+                  ':hover': { 'background-color': '#4229b9' },
+                  'background-color': '#492dcd',
+                  ':focus': { 'background-color': '#4229b9' },
+                  'border-radius': '11px',
+                  'padding-left': '34px',
+                  'padding-right': '34px'
+                }
+              },
+              'text': { 'button': 'Add to cart' },
+              'googleFonts': ['Roboto']
+            },
+            productSet: {
+              styles: {
+                products: {
+                  '@media (min-width: 601px)': { 'margin-left': '-20px' }
+                }
+              }
+            },
+            modalProduct: {
+              contents: {
+                'img': false,
+                'imgWithCarousel': true,
+                'button': false,
+                'buttonWithQuantity': true
+              },
+              styles: {
+                product: {
+                  '@media (min-width: 601px)': {
+                    'max-width': '100%',
+                    'margin-left': '0px',
+                    'margin-bottom': '0px'
+                  }
+                },
+                'button': {
+                  'font-family': 'Roboto, sans-serif',
+                  'font-weight': 'bold',
+                  ':hover': { 'background-color': '#4229b9' },
+                  'background-color': '#492dcd',
+                  ':focus': { 'background-color': '#4229b9' },
+                  'border-radius': '11px',
+                  'padding-left': '34px',
+                  'padding-right': '34px'
+                }
+              },
+              'googleFonts': ['Roboto'],
+              'text': { 'button': 'Add to cart' }
+            },
+            option: {},
+            cart: {
+              styles: {
+                'button': {
+                  'font-family': 'Roboto, sans-serif',
+                  'font-weight': 'bold',
+                  ':hover': { 'background-color': '#4229b9' },
+                  'background-color': '#492dcd',
+                  ':focus': { 'background-color': '#4229b9' },
+                  'border-radius': '11px'
+                }
+              },
+              'text': { 'total': 'Subtotal', 'button': 'Checkout' },
+              'contents': { 'note': true },
+              'googleFonts': ['Roboto']
+            },
+            toggle: {
+              styles: {
+                'toggle': {
+                  'font-family': 'Roboto, sans-serif',
+                  'font-weight': 'bold',
+                  'background-color': '#492dcd',
+                  ':hover': { 'background-color': '#4229b9' },
+                  ':focus': { 'background-color': '#4229b9' }
+                }
+              },
+              'googleFonts': ['Roboto']
+            }
+          }
+        }).catch(function(err) {
+          showError('collection-1', 'Test 2 failed: ' + (err && err.message ? err.message : String(err)));
+          console.error('Test 2 failed:', err);
+        });
+      } catch (err) {
+        showError('product-1', 'Tests 1 & 2 init failed: ' + (err && err.message ? err.message : String(err)));
+        showError('collection-1', 'Tests 1 & 2 init failed: ' + (err && err.message ? err.message : String(err)));
+        console.error('Tests 1 & 2 init failed:', err);
+      }
+
+      // Test 3: kara-daviduik store (product from a different store)
+      try {
+        var karaClient = ShopifyBuy.buildClient({
+          domain: 'kara-daviduik.myshopify.com',
+          storefrontAccessToken: 'c95015845b304ddd0c325d9a67341d69',
+        });
+
+        var karaUI = ShopifyBuy.UI.init(karaClient);
+
+        karaUI.createComponent('product', {
+          id: '7500346818582',
+          node: document.getElementById('product-2'),
+          moneyFormat: '${{amount}}',
+          options: {
+            product: {
+              text: { button: 'Add to cart' }
+            },
+            cart: {
+              text: { total: 'Subtotal', button: 'Checkout' }
+            }
+          }
+        }).catch(function(err) {
+          showError('product-2', 'Test 3 failed: ' + (err && err.message ? err.message : String(err)));
+          console.error('Test 3 failed:', err);
+        });
+      } catch (err) {
+        showError('product-2', 'Test 3 init failed: ' + (err && err.message ? err.message : String(err)));
+        console.error('Test 3 init failed:', err);
+      }
+    }
+  </script>
+</body>
+</html>
