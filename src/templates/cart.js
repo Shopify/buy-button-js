@@ -1,6 +1,6 @@
 const cartTemplates = {
   title: `<div class="{{data.classes.cart.header}}" data-element="cart.header">
-            <h2 class="{{data.classes.cart.title}}" data-element="cart.title">{{data.text.title}}</h2>
+            <h2 id="{{data.cartTitleId}}" class="{{data.classes.cart.title}}" data-element="cart.title">{{data.text.title}}</h2>
             <button class="{{data.classes.cart.close}}" data-element="cart.close">
               <span aria-hidden="true">&times;</span>
               <span class="visuallyhidden">{{data.text.closeAccessibilityLabel}}</span>

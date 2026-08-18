@@ -40,6 +40,7 @@ export default class Cart extends Component {
     this.toggles = toggles.map((toggle) => {
       return new CartToggle(merge({}, config, toggle), Object.assign({}, this.props, {cart: this}));
     });
+    this.index = null;
     this.updater = new CartUpdater(this);
     this.view = new CartView(this);
   }
@@ -137,6 +138,7 @@ export default class Cart extends Component {
       contents: this.options.contents,
       cartNote: this.cartNote,
       cartNoteId: this.cartNoteId,
+      cartTitleId: this.cartTitleId,
     });
   }
 
@@ -191,7 +193,11 @@ export default class Cart extends Component {
   }
 
   get cartNoteId() {
-    return `CartNote-${Date.now()}`;
+    return `CartNote-${this.index}`;
+  }
+
+  get cartTitleId() {
+    return `CartTitle-${this.index}`;
   }
 
   get wrapperClass() {
@@ -494,5 +500,9 @@ export default class Cart extends Component {
     setTimeout(() => {
       this.view.setFocus();
     }, 0);
+  }
+
+  setIndex(index) {
+    this.index = index;
   }
 }
