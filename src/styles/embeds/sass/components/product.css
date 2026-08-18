@@ -3,6 +3,7 @@
 .shopify-buy__product {
   overflow: hidden;
   width: 100%;
+  padding: 5px;
 }
 
 .shopify-buy__product__variant-img {
