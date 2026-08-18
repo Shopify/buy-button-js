@@ -12,7 +12,7 @@
   text-overflow: ellipsis;
   overflow: hidden;
   line-height: 1.2;
-  border: 0;
+  border: 1px solid transparent;
   -moz-appearance: none;
   -webkit-appearance: none;
 
