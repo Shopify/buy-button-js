@@ -6,21 +6,94 @@ on:
   pull_request:
 
 jobs:
+  check-node-version:
+    name: Node version sync
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Validate .nvmrc matches dev.yml
+        run: |
+          NVMRC_VERSION=$(tr -d 'v\n' < .nvmrc)
+          # Expects dev.yml format:
+          #   - node:
+          #       version: vXX.YY.ZZ
+          DEV_YML_RAW=$(grep -A3 '^\s*- node:' dev.yml | grep 'version:' | grep -oE 'v?[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+          DEV_YML_VERSION=$(echo "$DEV_YML_RAW" | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
+
+          if [ -z "$NVMRC_VERSION" ]; then
+            echo "::error::Could not parse version from .nvmrc"
+            echo "  .nvmrc contents: '$(cat .nvmrc)'"
+            echo "  dev.yml raw:     '$DEV_YML_RAW'"
+            exit 1
+          fi
+
+          if [ -z "$DEV_YML_RAW" ]; then
+            echo "::error::Could not find node version in dev.yml"
+            echo "  .nvmrc version:  '$NVMRC_VERSION'"
+            echo "  Searched for: '- node:' followed by 'version:' line in dev.yml"
+            echo "  Relevant dev.yml lines:"
+            grep -A3 'node:' dev.yml | sed 's/^/    /'
+            exit 1
+          fi
+
+          if [ -z "$DEV_YML_VERSION" ]; then
+            echo "::error::dev.yml must specify a FULL Node version (X.Y.Z format)"
+            echo ""
+            echo "Found: '$DEV_YML_RAW'"
+            echo ".nvmrc version: '$NVMRC_VERSION'"
+            echo "Expected format: 'vX.Y.Z' (e.g., 'v24.19.0')"
+            echo ""
+            echo "The Shopify 'dev' tool requires a specific installable version,"
+            echo "not just a major version like 'v24'. Nix needs the exact version"
+            echo "to fetch from its package cache."
+            exit 1
+          fi
+
+          NVMRC_MAJOR=$(echo "$NVMRC_VERSION" | cut -d. -f1)
+          DEV_YML_MAJOR=$(echo "$DEV_YML_VERSION" | cut -d. -f1)
+
+          if [ "$NVMRC_MAJOR" != "$DEV_YML_MAJOR" ]; then
+            echo "::error::Node version mismatch between .nvmrc and dev.yml"
+            echo ""
+            echo "┌─────────────────────────────────────────────────────────────────┐"
+            echo "│  IMPORTANT: This is NOT a configuration oversight!              │"
+            echo "│                                                                 │"
+            echo "│  The Shopify 'dev' tool CANNOT read from .nvmrc - it requires   │"
+            echo "│  an explicit version. These files serve different tools:        │"
+            echo "│    • .nvmrc  → used by nvm (flexible major version like 'v24')  │"
+            echo "│    • dev.yml → used by dev tool (needs exact version 'v24.x.x') │"
+            echo "│                                                                 │"
+            echo "│  Both files MUST be updated TOGETHER when changing Node version.│"
+            echo "└─────────────────────────────────────────────────────────────────┘"
+            echo ""
+            echo "Current state:"
+            echo "  .nvmrc major version:  v$NVMRC_MAJOR"
+            echo "  dev.yml major version: v$DEV_YML_MAJOR"
+            echo ""
+            echo "To fix: Update both files to use the same Node major version."
+            exit 1
+          fi
+
+          echo "✅ Node versions in sync (major version: v$NVMRC_MAJOR)"
+
   test:
     name: Test
     runs-on: ubuntu-latest
     
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: '18'
+          node-version: '24'
           cache: 'pnpm'
 
       - name: Install dependencies
@@ -45,15 +118,15 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
-          node-version: '18'
+          node-version: '24'
           cache: 'pnpm'
 
       - name: Install dependencies
