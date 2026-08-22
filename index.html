@@ -9,14 +9,19 @@
     <script src="tmp/buybutton.dev.js"></script>
     <script data-shopify-buy-ui>
       var client = ShopifyBuy.buildClient({
-        domain: '', // ex 'storename.myshopify.com'
-        storefrontAccessToken: '' // previously 'apiKey', now deprecated
+        domain: 'hydrogen-preview.myshopify.com',
+        storefrontAccessToken: '79921ccabf3be126fbd83c8fa0e04a3c'
       });
 
       var ui = ShopifyBuy.UI.init(client);
       ui.createComponent('product', {
-        id: 1,
-        options: {}
+        id: '7604648181816',
+        moneyFormat: '${{amount}}',
+        options: {
+          product: {
+            text: { button: 'Add to cart' }
+          }
+        }
       });
 
     </script>
