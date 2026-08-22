@@ -3,7 +3,6 @@ npm-debug.log
 /dist
 /tmp
 /lib
-/index.html
 index.js
 legacy.html
 /src/styles/embeds/all.js
@@ -16,6 +15,7 @@ docs/src
 _site
 .sass-cache
 .jekyll-metadata
+.jekyll-cache
 /test/build
 ./config.json
 /.vscode

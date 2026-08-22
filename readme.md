@@ -18,18 +18,16 @@ If your Online Store is password protected, users will be shown your Online Stor
 
 ```
 pnpm install
-cp index.example.html index.html
 ```
-
-- Add your API key and shop domain to index.html
-- Set a product ID in index.html
 
 ```
 pnpm run start
 
 ```
 
-Will watch for changes, compile src/ to tmp/ using babel & browserify, and run a server on port 8080.
+Will watch for changes, compile src/ to tmp/ using babel & browserify, and run a server at <http://localhost:8080/>.
+`http-server` binds to `127.0.0.1` (not `0.0.0.0`) to avoid conflicting with dev's `devns` port proxy. `dev open app` opens this URL.
+If 8080 is taken, `http-server` auto-increments to 8081, 8082, etc. — use the URL printed in the terminal.
 
 ## Testing
 
@@ -60,16 +58,14 @@ See [`test-manual/README.md`](./test-manual/README.md) for details.
 
 ## Documentation
 
-To run docs locally, install jekyll:
+Docs are a Jekyll site in `/docs`, published at <https://shopify.github.io/buy-button-js/>.
+GitHub Pages builds `/docs` from `main` automatically (there is no `gh-pages` branch).
 
-```
-gem install jekyll
-```
+`dev up` provisions Ruby and Jekyll, so to preview locally just run:
 
 ```
 pnpm run docs
 ```
 
-Doc server will run at <http://localhost:4000/buy-button-js/>
-Docs source files are located in /docs.
-Docs are automatically deployed to gh-pages from main.
+Doc server runs at <http://localhost:4000/buy-button-js/>.
+`dev open docs` assumes Jekyll's default port (4000); if you pass `--port` to override it, open the URL Jekyll prints instead.

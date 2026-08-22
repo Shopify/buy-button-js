@@ -12,3 +12,6 @@ lint-output.xml
 /test/build
 /test-manual
 config.json
+/Gemfile
+/Gemfile.lock
+/.ruby-version

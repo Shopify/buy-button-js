@@ -1,20 +1,22 @@
-# JS Buy SDK Docs
+# BuyButton.js Docs
 
-## Local Setup
+This directory holds the Jekyll source for the public documentation site at
+<https://shopify.github.io/buy-button-js/>.
 
-### Install jekyll
-- `gem install jekyll`
+## Local preview
 
-*If you are having troubles setting up jekyll, see https://jekyllrb.com/docs/installation/*
+Ruby and Jekyll are provisioned by `dev up` (see `dev.yml` and the root `Gemfile`).
+After `dev up`, run:
 
-### Install dependencies
-- `pnpm install`
+```
+pnpm run docs
+```
 
-### Update the API docs
-- `pnpm run doc-build`
-
-### Serve the documentation
-- `pnpm run doc-serve`
+The site is served at <http://localhost:4000/buy-button-js/>.
+`dev open docs` assumes Jekyll's default port (4000); if you pass `--port` to override it, open the URL Jekyll prints instead.
 
 ## Deployment
-Changes to the `docs` directory will automatically be deployed to http://shopify.github.io/js-buy-sdk/ when added to `main` (remote).
+
+GitHub Pages builds this directory automatically from `main` — the Pages source
+is configured to `/docs` on the `main` branch. There is no `gh-pages` branch and
+no deploy workflow; pushes to `main` trigger a Pages rebuild.
