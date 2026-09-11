@@ -25,6 +25,7 @@ jobs:
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
           cache: 'pnpm'
 
       - name: Install dependencies
@@ -34,11 +35,10 @@ jobs:
         run: |
           printf -- "---\n'@shopify/buy-button-js': patch\n" > snapshot.txt
       - name: Create snapshot version
-        uses: Shopify/snapit@0c0d2dd62c9b0c94b7d03e1f54e72f18548e7752 # pin to a specific commit
+        uses: Shopify/snapit@efd7ad2bbc01ba82ac9a8495eb49b3a8eed0d9b9 # v0.1.0
         with:
-          github_comment_included_packages: '@shopify/buy-button-js'
+          comment_packages: '@shopify/buy-button-js'
           build_script: 'pnpm run build'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_CONFIG_PROVENANCE: true
