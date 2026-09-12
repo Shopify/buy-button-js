@@ -116,6 +116,7 @@ export default class Cart extends Component {
       data.classes = this.classes;
       data.text = this.config.lineItem.text;
       data.lineItemImage = this.imageForLineItem(data);
+      data.lineItemImageAltText = this.imageAltTextForLineItem(data);
       data.variantTitle = data.variant.title === 'Default Title' ? '' : data.variant.title;
       return acc + this.childTemplate.render({data}, (output) => `<li id="${lineItem.id}" class=${this.classes.lineItem.lineItem}>${output}</li>`);
     }, '');
@@ -212,6 +213,14 @@ export default class Cart extends Component {
       return this.props.client.image.helpers.imageForSize(lineItem.variant.image, imageOptions);
     } else {
       return NO_IMG_URL;
+    }
+  }
+
+  imageAltTextForLineItem(lineItem) {
+    if (lineItem.variant.image) {
+      return lineItem.variant.image.altText || lineItem.title;
+    } else {
+      return null;
     }
   }
 
