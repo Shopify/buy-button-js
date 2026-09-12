@@ -259,7 +259,7 @@ describe('Cart View class', () => {
       const mockClass = 'mockClass';
       cart.classes.cart.cart = mockClass;
       cart.view.wrapTemplate(html);
-      assert.equal(cart.view.wrapTemplate(html), `<div class="${mockClass}">${html}</div>`);
+      assert.equal(cart.view.wrapTemplate(html), `<div class="${mockClass}" role="dialog" aria-modal="true" aria-labelledby="${cart.cartTitleId}">${html}</div>`);
     });
   });
 
