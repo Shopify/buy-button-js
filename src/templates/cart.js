@@ -10,7 +10,8 @@ const cartTemplates = {
                 {{#data.isEmpty}}<p class="{{data.classes.cart.empty}} {{data.classes.cart.emptyCart}}" data-element="cart.empty">{{data.text.empty}}</p>{{/data.isEmpty}}
                 <ul role="list" class="{{data.classes.cart.lineItems}}" data-element="cart.lineItems">{{{data.lineItemsHtml}}}</ul>
               </div>`,
-  footer: `{{^data.isEmpty}}
+  footer: `<span class="{{data.classes.cart.hiddenSummary}}" aria-live="polite" aria-atomic="true"></span>
+          {{^data.isEmpty}}
             <div class="{{data.classes.cart.footer}}" data-element="cart.footer">
               {{#data.discounts}}
                 <div class="{{data.classes.cart.discount}}" data-element="cart.discount">
