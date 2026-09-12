@@ -9,6 +9,7 @@ import ShopifyBuy from '../../../src/buybutton';
 import * as formatMoney from '../../../src/utils/money';
 import * as elementClass from '../../../src/utils/element-class';
 import * as focusUtils from '../../../src/utils/focus';
+import { assert } from 'chai';
 
 let cart;
 
@@ -633,9 +634,14 @@ describe('Cart class', () => {
       cart.cartItemTrackingInfo = sinon.spy();
     });
 
-    it('calls updateItem', () => {
+    it('calls updateItem if the quantity returned by the function parameter is not the same as the current quantity', () => {
       cart.setQuantity(node, (n) => n + 1);
       assert.calledWith(cart.updateItem, 1234, 2);
+    });
+
+    it('does not call updateItem if the quantity returned by the function parameter is the same as the current quantity', () => {
+      cart.setQuantity(node, (n) => n);
+      assert.notCalled(cart.updateItem);
     });
   });
 
@@ -1628,6 +1634,71 @@ describe('Cart class', () => {
 
       setTimeoutStub.restore();
       viewSetFocusStub.restore();
+    });
+  });
+
+  describe('onQuantityBlur', () => {
+    const targetValue = 5;
+    let setQuantityStub;
+    let target;
+
+    beforeEach(() => {
+      setQuantityStub = sinon.stub(cart, 'setQuantity');
+      target = document.createElement('div');
+      target.value = targetValue;
+      cart.onQuantityBlur(null, target);
+    });
+
+    afterEach(() => {
+      setQuantityStub.restore();
+    });
+
+    it('calls setQuantity with the target and a callback function', () => {
+      assert.calledOnce(setQuantityStub);
+      assert.calledWith(setQuantityStub, target, sinon.match.func);
+    });
+
+    it('returns the result of parseInt using the target value from the callback function', () => {
+      const callbackFunc = setQuantityStub.getCall(0).args[1];
+      assert.equal(callbackFunc(), parseInt(targetValue, 10));
+    });
+  });
+
+  describe('onQuantityIncrement', () => {
+    const qty = 2;
+    let setQuantityStub;
+    let target;
+    let parentNode;
+
+
+    beforeEach(() => {
+      setQuantityStub = sinon.stub(cart, 'setQuantity');
+      target = document.createElement('div');
+      parentNode = document.createElement('div');
+      parentNode.appendChild(target);
+    });
+
+    afterEach(() => {
+      setQuantityStub.restore();
+    });
+
+    it('does not call setQuantity if the target`s parent node has the is-loading class', () => {
+      parentNode.classList.add('is-loading');
+      cart.onQuantityIncrement(qty, null, target);
+      assert.notCalled(setQuantityStub);
+    });
+
+    it('calls setQuantity with the target and a callback function if parent node does not have the is-loading class', () => {
+      cart.onQuantityIncrement(qty, null, target);
+      assert.calledOnce(setQuantityStub);
+      assert.calledWith(setQuantityStub, target, sinon.match.func);
+    });
+
+    it('returns the result of the callback argument added to the quantity parameter from the callback function', () => {
+      cart.onQuantityIncrement(qty, null, target);
+      const callbackFunc = setQuantityStub.getCall(0).args[1];
+      const prevQty = 2;
+      assert.equal(callbackFunc(prevQty), prevQty + qty);
     });
   });
 });
