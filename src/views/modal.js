@@ -4,7 +4,7 @@ import {removeTrapFocus} from '../utils/focus';
 
 export default class ModalView extends View {
   wrapTemplate(html) {
-    return `<div class="${this.component.classes.modal.overlay}"><div class="${this.component.classes.modal.modal}">${html}</div></div>`;
+    return `<div class="${this.component.classes.modal.overlay}" role="dialog" aria-modal="true" aria-labelledby="ModalProductTitle"><div class="${this.component.classes.modal.modal}"><div id="ModalProductTitle" hidden>${this.component.model.title}</div>${html}</div></div>`;
   }
 
   /**
