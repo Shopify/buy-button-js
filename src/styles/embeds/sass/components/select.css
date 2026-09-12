@@ -1,6 +1,4 @@
 .shopify-buy__option-select-wrapper {
-  border: 1px solid var(--color-border);
-  border-radius: 3px;
   box-sizing: border-box;
   position: relative;
   background: var(--color-white);
@@ -44,7 +42,8 @@
   font-size: inherit;
   padding: 7px 10px;
   padding-right: 32px;
-  border: 0;
+  border: 1px solid var(--color-border);
+  border-radius: 3px;
   width: 100%;
   background: transparent;
   -webkit-appearance: none;
@@ -52,6 +51,14 @@
 
   &::-ms-expand {
     display: none;
+  }
+
+  &:focus {
+    border-color: var(--color-border-focus);
+
+    @media (-ms-high-contrast: active) {
+      outline: 1px solid var(--color-white);
+    }
   }
 }
 
