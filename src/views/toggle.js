@@ -45,6 +45,7 @@ export default class ToggleView extends View {
       this.iframe.parent.setAttribute('tabindex', 0);
       this.iframe.parent.setAttribute('role', 'button');
       this.iframe.parent.setAttribute('aria-label', this.component.options.text.title);
+      this.iframe.parent.setAttribute('aria-haspopup', 'dialog');
       this.resize();
     }
   }
