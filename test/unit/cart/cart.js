@@ -694,10 +694,11 @@ describe('Cart class', () => {
     const modelId = 135;
     const variantId = 1111;
     const quantity = 2;
+    const customAttributes = [];
     const variant = {
       id: variantId,
     };
-    const lineItem = {variantId, quantity};
+    const lineItem = {variantId, quantity, customAttributes};
     let cartOpenStub;
     let setFocusStub;
     let addLineItemsStub;
@@ -741,13 +742,13 @@ describe('Cart class', () => {
     });
 
     it('calls open on cart if openCart parameter is true', () => {
-      return cart.addVariantToCart(variant, quantity, true).then(() => {
+      return cart.addVariantToCart(variant, quantity, [], true).then(() => {
         assert.calledOnce(cartOpenStub);
       });
     });
 
     it('does not call open on cart if openCart parameter is false', () => {
-      return cart.addVariantToCart(variant, quantity, false).then(() => {
+      return cart.addVariantToCart(variant, quantity, [], false).then(() => {
         assert.notCalled(cartOpenStub);
       });
     });
@@ -758,7 +759,7 @@ describe('Cart class', () => {
       };
 
       return cart.addVariantToCart(variant).then(() => {
-        assert.calledWith(addLineItemsStub, modelId, [{variantId, quantity: 1}]);
+        assert.calledWith(addLineItemsStub, modelId, [{variantId, quantity: 1, customAttributes: []}]);
       });
     });
 
@@ -779,13 +780,13 @@ describe('Cart class', () => {
       });
 
       it('does not call setFocus if the openCart parameter is true', () => {
-        return cart.addVariantToCart(variant, quantity, true).then(() => {
+        return cart.addVariantToCart(variant, quantity, [], true).then(() => {
           assert.notCalled(setFocusStub);
         });
       });
 
       it('calls setFocus if the openCart parameter is false', () => {
-        return cart.addVariantToCart(variant, quantity, false).then(() => {
+        return cart.addVariantToCart(variant, quantity, [], false).then(() => {
           assert.calledOnce(setFocusStub);
         });
       });
@@ -805,19 +806,19 @@ describe('Cart class', () => {
       it('creates a checkout with line item and returns the updated checkout if cart model is null', () => {
         return cart.addVariantToCart(variant, quantity).then((checkout) => {
           assert.calledOnce(checkoutCreateStub);
-          assert.calledWith(checkoutCreateStub, {lineItems: [lineItem]});
+          assert.calledWith(checkoutCreateStub, {lineItems: [lineItem], customAttributes: []});
           assert.deepEqual(checkout, mockCheckout);
         });
       });
 
       it('does not call setFocus if the openCart parameter is true', () => {
-        return cart.addVariantToCart(variant, quantity, true).then(() => {
+        return cart.addVariantToCart(variant, quantity, [], true).then(() => {
           assert.notCalled(setFocusStub);
         });
       });
 
       it('calls setFocus if openCart parameter is false', () => {
-        return cart.addVariantToCart(variant, quantity, false).then(() => {
+        return cart.addVariantToCart(variant, quantity, [], false).then(() => {
           assert.calledOnce(setFocusStub);
         });
       });
