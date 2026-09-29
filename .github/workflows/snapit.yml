@@ -40,5 +40,8 @@ jobs:
           build_script: 'pnpm run build'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          # TODO: migrate this workflow's contents into .github/workflows/npm-release.yml, as a repo can 
+          # only have 1 authorized GitHub workflow for publishing, and for this repo that's npm-release.yml
+          # In the meantime snapit.yml was and will continue to fail if run. 
+          NPM_TOKEN: ''
           NPM_CONFIG_PROVENANCE: true
