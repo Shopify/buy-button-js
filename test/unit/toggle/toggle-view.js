@@ -283,6 +283,20 @@ describe('Toggle View class', () => {
         };
         assert.equal(toggle.view.readableLabel, `<p class="shopify-buy--visually-hidden">${toggle.options.text.title}</p>`);
       });
+
+      it('renders the text title as literal text rather than markup', () => {
+        const markupTitle = '<img src="x"> & "cart"';
+        toggle.config.toggle = {
+          contents: {title: false},
+          text: {title: markupTitle},
+        };
+        const container = document.createElement('div');
+        container.innerHTML = toggle.view.readableLabel;
+        const label = container.querySelector('.shopify-buy--visually-hidden');
+
+        assert.isNull(container.querySelector('img'));
+        assert.equal(label.textContent, markupTitle);
+      });
     });
   });
 });
