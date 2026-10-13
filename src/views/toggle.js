@@ -1,3 +1,4 @@
+import Mustache from 'mustache';
 import View from '../view';
 
 const ENTER_KEY = 13;
@@ -28,7 +29,7 @@ export default class ToggleView extends View {
     if (this.component.options.contents.title) {
       return '';
     }
-    return `<p class="shopify-buy--visually-hidden">${this.component.options.text.title}</p>`;
+    return `<p class="shopify-buy--visually-hidden">${Mustache.escape(this.component.options.text.title)}</p>`;
   }
 
   render() {
