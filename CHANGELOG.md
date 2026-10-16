@@ -1,23 +1,37 @@
 # Changelog
+
+## 3.0.7
+
+### Patch Changes
+
+- [#960](https://github.com/Shopify/buy-button-js/pull/960) [`fc11e77`](https://github.com/Shopify/buy-button-js/commit/fc11e773fccf1dedda1a8b96f6e2948e281584fd) Thanks [@kdaviduik](https://github.com/kdaviduik)! - Escape the cart toggle's visually hidden title label so `options.toggle.text.title` is always rendered as plain text, matching how the visible title is rendered.
+
 ### v3.0.6 (August 25, 2025)
+
 - Add title attribute to iframes for improved accessibility ([#919](https://github.com/Shopify/buy-button-js/pull/919))
 
 ### v3.0.5 (July 2, 2025)
+
 - Upgrade to v3.0.7 of `shopify-buy`
 
 ### v3.0.4 (June 18, 2025)
+
 - Upgrade to v3.0.6 of `shopify-buy`
 
 ### v3.0.3 (June 17, 2025)
+
 - Upgrade to v3.0.5 of `shopify-buy`
 
 ### v3.0.2 (May 7, 2025)
+
 - Re-release of Buy Button JS v3.0.1 (due to deploy issues)
 
 ### v3.0.1 (May 7, 2025)
+
 - Upgrade to v3.0.4 of `shopify-buy`
 
 ### v3.0.0 (April 8, 2025)
+
 - Upgrade to v3.0.0 of `shopify-buy`
 
 ### v2.4.0 (July 6, 2023)
