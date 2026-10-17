@@ -23,6 +23,10 @@ describe('formatMoney', () => {
     assert.equal('1 000', formatMoney(1000.00, '{{ amount_no_decimals_with_space_separator }}'))
   });
 
+  it("#format with amount_with_space_separator", () => {
+    assert.equal('1 000.00', formatMoney(1000.00, '{{ amount_with_space_separator }}'))
+  });
+
   it("#format will fail softly by using default format", () => {
     assert.equal('1,010.55', formatMoney(1010.55, '{{ unknown_format }}'))
   });
