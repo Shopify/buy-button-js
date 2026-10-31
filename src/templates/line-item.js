@@ -1,5 +1,5 @@
 const lineItemTemplates = {
-  image: '<div class="{{data.classes.lineItem.image}}" style="background-image: url({{data.lineItemImage}})" data-element="lineItem.image"></div>',
+  image: '<div class="{{data.classes.lineItem.image}}" style="background-image: url({{data.lineItemImage}})" data-element="lineItem.image" {{#data.lineItemImageAltText}} role="img" aria-label="{{data.lineItemImageAltText}}" {{/data.lineItemImageAltText}}></div>',
   variantTitle: '<div class="{{data.classes.lineItem.variantTitle}}" data-element="lineItem.variantTitle">{{data.variantTitle}}</div>',
 
   title: '<span class="{{data.classes.lineItem.itemTitle}}" data-element="lineItem.itemTitle">{{data.title}}</span>',
