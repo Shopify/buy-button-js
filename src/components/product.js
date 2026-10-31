@@ -525,7 +525,7 @@ export default class Product extends Component {
         return productStyles;
       }, {}), this.config.modalProduct.styles);
     } else {
-      modalProductStyles = {};
+      modalProductStyles = this.config.modalProduct.styles;
     }
 
     return Object.assign({}, this.config.modalProduct, {
