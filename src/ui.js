@@ -66,6 +66,9 @@ export default class UI {
       this._bindEsc(component.iframe.el.contentWindow || component.iframe.el);
     }
     this.components[type].push(component);
+    if (type === 'cart') {
+      component.setIndex(this.components[type].indexOf(component));
+    }
     return component.init().then(() => {
       this.trackComponent(type, component);
       return component;
@@ -120,6 +123,7 @@ export default class UI {
     } else {
       const cart = new Cart(config, this.componentProps);
       this.components.cart.push(cart);
+      cart.setIndex(this.components.cart.indexOf(cart));
       return cart.init();
     }
   }

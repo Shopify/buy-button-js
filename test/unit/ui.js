@@ -153,11 +153,13 @@ describe('ui class', () => {
           let initStub;
           let trackStub;
           let queryEntryNodeStub;
+          let testNode;
 
           beforeEach(() => {
+            testNode = document.createElement('div');
             initStub = sinon.stub(Product.prototype, 'init').resolves();
             trackStub = sinon.stub(ui, 'trackComponent');
-            queryEntryNodeStub = sinon.stub(ui, '_queryEntryNode').returns('testNode');
+            queryEntryNodeStub = sinon.stub(ui, '_queryEntryNode').returns(testNode);
           });
 
           afterEach(() => {
@@ -182,12 +184,32 @@ describe('ui class', () => {
 
             await ui.createComponent('product', productConfig);
             assert.calledOnce(queryEntryNodeStub);
-            assert.equal(productConfig.node, 'testNode');
+            assert.equal(productConfig.node, testNode);
           });
 
           it('returns the component', async () => {
             const response = await ui.createComponent('product', productConfig);
             assert.instanceOf(response, Product);
+          });
+
+          it('calls setIndex on the component if the component type is cart', async () => {
+            queryEntryNodeStub.restore();
+            const setIndexStub = sinon.stub(Cart.prototype, 'setIndex');
+            await ui.createComponent('cart', {
+              options: {},
+            });
+
+            assert.calledOnce(setIndexStub);
+            assert.calledWith(setIndexStub, 0);
+            setIndexStub.restore();
+          });
+
+          it('does not call setIndex on the component if the component type is not cart', async () => {
+            const setIndexStub = sinon.stub(Cart.prototype, 'setIndex');
+            await ui.createComponent('product', productConfig);
+
+            assert.notCalled(setIndexStub);
+            setIndexStub.restore();
           });
         });
 
@@ -310,6 +332,15 @@ describe('ui class', () => {
             assert.equal(1, ui.components.cart.length);
             assert.instanceOf(ui.components.cart[0], Cart);
             assert.calledOnce(initStub);
+          });
+
+          it('calls setIndex on the cart', async () => {
+            const setIndexStub = sinon.stub(Cart.prototype, 'setIndex');
+            await ui.createCart({options: {}});
+
+            assert.calledOnce(setIndexStub);
+            assert.calledWith(setIndexStub, 0);
+            setIndexStub.restore();
           });
 
           it('returns the init value', async () => {
