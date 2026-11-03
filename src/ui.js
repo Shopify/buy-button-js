@@ -8,6 +8,7 @@ import hostStyles from './styles/host/host';
 import conditionalStyles from './styles/host/conditional';
 import throttle from './utils/throttle';
 import browserFeatures from './utils/detect-features';
+import {isCheckoutPopupMessage} from './utils/checkout-window';
 
 const DATA_ATTRIBUTE = 'data-shopify-buy-ui';
 const ESC_KEY = 27;
@@ -314,6 +315,9 @@ export default class UI {
 
   _bindPostMessage() {
     window.addEventListener('message', (msg) => {
+      if (!this._isTrustedMessage(msg)) {
+        return;
+      }
       let data;
       try {
         data = JSON.parse(msg.data);
@@ -321,8 +325,16 @@ export default class UI {
         data = {};
       }
       if (data.syncCart || (data.current_checkout_page && data.current_checkout_page === '/checkout/thank_you')) {
-        location.reload();
+        this._reloadPage();
       }
     });
+  }
+
+  _isTrustedMessage(msg) {
+    return isCheckoutPopupMessage(msg, this.config.domain);
+  }
+
+  _reloadPage() {
+    location.reload();
   }
 }

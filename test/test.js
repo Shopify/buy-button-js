@@ -18,6 +18,7 @@ import './unit/toggle/toggle-view';
 import './unit/cart/cart';
 import './unit/cart/cart-view';
 import './unit/checkout';
+import './unit/checkout-window';
 import './unit/product-set';
 import './unit/tracker';
 import './unit/merge';

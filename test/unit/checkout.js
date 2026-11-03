@@ -1,4 +1,5 @@
 import Checkout from '../../src/components/checkout';
+import {clearCheckoutOrigins, isCheckoutPopupMessage} from '../../src/utils/checkout-window';
 
 describe('Checkout class', () => {
   let checkout;
@@ -21,6 +22,10 @@ describe('Checkout class', () => {
 
   describe('prototype methods', () => {
     describe('open', () => {
+      afterEach(() => {
+        clearCheckoutOrigins();
+      });
+
       it('opens window to checkout if cart is popup', () => {
         const openStub = sinon.stub(window, 'open');
         checkout.config.cart = {
@@ -29,6 +34,17 @@ describe('Checkout class', () => {
         checkout.open('test.com');
         assert.calledOnce(openStub);
         assert.calledWith(openStub, 'test.com', 'checkout', checkout.params);
+        openStub.restore();
+      });
+
+      it('records the checkout origin of the popup', () => {
+        const openStub = sinon.stub(window, 'open');
+        checkout.config.cart = {
+          popup: true,
+        };
+        checkout.open('https://checkout.example.com/1/checkouts/abc');
+        openStub.restore();
+        assert.isTrue(isCheckoutPopupMessage({source: {opener: window}, origin: 'https://checkout.example.com'}));
       });
     });
 
