@@ -8,7 +8,7 @@ import hostStyles from './styles/host/host';
 import conditionalStyles from './styles/host/conditional';
 import throttle from './utils/throttle';
 import browserFeatures from './utils/detect-features';
-import checkoutWindowTracker from './utils/checkout-window';
+import {isCheckoutPopupMessage} from './utils/checkout-window';
 
 const DATA_ATTRIBUTE = 'data-shopify-buy-ui';
 const ESC_KEY = 27;
@@ -331,7 +331,7 @@ export default class UI {
   }
 
   _isTrustedMessage(msg) {
-    return checkoutWindowTracker.isTrustedMessage(msg, this.config.domain);
+    return isCheckoutPopupMessage(msg, this.config.domain);
   }
 
   _reloadPage() {

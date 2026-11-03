@@ -1,5 +1,4 @@
-let checkoutWindow = null;
-let checkoutOrigin = null;
+const CHECKOUT_ORIGINS_KEY = 'shopify-buy-ui-checkout-origins';
 
 function originFromUrl(url) {
   if (!url) {
@@ -16,47 +15,62 @@ function originFromUrl(url) {
   return `${anchor.protocol}//${anchor.hostname}${port}`;
 }
 
+function readCheckoutOrigins() {
+  try {
+    const origins = JSON.parse(window.sessionStorage.getItem(CHECKOUT_ORIGINS_KEY));
+    return Array.isArray(origins) ? origins : [];
+  } catch (err) {
+    return [];
+  }
+}
+
 /**
- * Tracks the popup window BuyButton.js opened for checkout, so that `message`
- * events can be authenticated against it before the UI acts on them.
+ * Records the origin of a checkout URL that was opened in a popup.
+ * The origin is kept in sessionStorage, so it is still known after the page reloads.
+ * @param {String} url - checkout URL the popup was sent to.
  */
-const checkoutWindowTracker = {
+export function trackCheckoutUrl(url) {
+  const origin = originFromUrl(url);
+  const origins = readCheckoutOrigins();
+  if (!origin || origins.indexOf(origin) !== -1) {
+    return;
+  }
+  origins.push(origin);
+  try {
+    window.sessionStorage.setItem(CHECKOUT_ORIGINS_KEY, JSON.stringify(origins));
+  } catch (err) {
+    // sessionStorage is not available. Messages from the configured shop domain are still trusted.
+  }
+}
 
-  /**
-   * record the window checkout was opened in and the URL it was sent to.
-   * @param {Window} win - window returned by window.open (ignored if falsy or the current window).
-   * @param {String} url - checkout URL the window was navigated to.
-   */
-  track(win, url) {
-    if (!win || win === window) {
-      return;
-    }
-    checkoutWindow = win;
-    checkoutOrigin = originFromUrl(url);
-  },
+/**
+ * Removes the recorded checkout origins.
+ */
+export function clearCheckoutOrigins() {
+  try {
+    window.sessionStorage.removeItem(CHECKOUT_ORIGINS_KEY);
+  } catch (err) {
+    // sessionStorage is not available, so there is nothing to remove.
+  }
+}
 
-  /**
-   * check that a message event was sent by the tracked checkout window, from the checkout origin
-   * or the shop's configured domain.
-   * @param {MessageEvent} msg - message event received by the host window.
-   * @param {String} domain - shop domain configured on the client.
-   * @return {Boolean} true when both source and origin are trusted.
-   */
-  isTrustedMessage(msg, domain) {
-    if (!msg || !checkoutWindow || msg.source !== checkoutWindow || !msg.origin) {
-      return false;
-    }
-    const trustedOrigins = [checkoutOrigin];
-    if (domain) {
-      trustedOrigins.push(originFromUrl(`https://${domain}`));
-    }
-    return trustedOrigins.indexOf(msg.origin) !== -1;
-  },
-
-  reset() {
-    checkoutWindow = null;
-    checkoutOrigin = null;
-  },
-};
-
-export default checkoutWindowTracker;
+/**
+ * Checks that a `message` event was sent by a checkout popup that this page opened.
+ * The sender must be a popup whose `opener` is this window, and the message must come from
+ * a recorded checkout origin or from the shop's configured domain.
+ * Both checks still work after this page reloads.
+ * @param {MessageEvent} msg - message event received by the host window.
+ * @param {String} domain - shop domain configured on the client.
+ * @return {Boolean} true when the sender is a checkout popup that this window opened.
+ */
+export function isCheckoutPopupMessage(msg, domain) {
+  const source = msg && msg.source;
+  if (!source || source === window || source.opener !== window || !msg.origin) {
+    return false;
+  }
+  const trustedOrigins = readCheckoutOrigins();
+  if (domain) {
+    trustedOrigins.push(originFromUrl(`https://${domain}`));
+  }
+  return trustedOrigins.indexOf(msg.origin) !== -1;
+}

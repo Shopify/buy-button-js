@@ -1,5 +1,5 @@
 import Checkout from '../../src/components/checkout';
-import checkoutWindowTracker from '../../src/utils/checkout-window';
+import {clearCheckoutOrigins, isCheckoutPopupMessage} from '../../src/utils/checkout-window';
 
 describe('Checkout class', () => {
   let checkout;
@@ -22,6 +22,10 @@ describe('Checkout class', () => {
 
   describe('prototype methods', () => {
     describe('open', () => {
+      afterEach(() => {
+        clearCheckoutOrigins();
+      });
+
       it('opens window to checkout if cart is popup', () => {
         const openStub = sinon.stub(window, 'open');
         checkout.config.cart = {
@@ -33,16 +37,14 @@ describe('Checkout class', () => {
         openStub.restore();
       });
 
-      it('tracks the window it opened so its messages can be trusted', () => {
-        const popup = {};
-        const openStub = sinon.stub(window, 'open').returns(popup);
+      it('records the checkout origin of the popup', () => {
+        const openStub = sinon.stub(window, 'open');
         checkout.config.cart = {
           popup: true,
         };
         checkout.open('https://checkout.example.com/1/checkouts/abc');
         openStub.restore();
-        assert.isTrue(checkoutWindowTracker.isTrustedMessage({source: popup, origin: 'https://checkout.example.com'}));
-        checkoutWindowTracker.reset();
+        assert.isTrue(isCheckoutPopupMessage({source: {opener: window}, origin: 'https://checkout.example.com'}));
       });
     });
 

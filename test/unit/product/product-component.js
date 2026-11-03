@@ -13,7 +13,7 @@ import * as normalizeConfig from '../../../src/utils/normalize-config';
 import * as formatMoney from '../../../src/utils/money';
 import * as browserFeatures from '../../../src/utils/detect-features';
 import * as getUnitPriceBaseUnit from '../../../src/utils/unit-price';
-import checkoutWindowTracker from '../../../src/utils/checkout-window';
+import {clearCheckoutOrigins, isCheckoutPopupMessage} from '../../../src/utils/checkout-window';
 
 const rootImageURI = 'https://cdn.shopify.com/s/files/1/0014/8583/2214/products/';
 
@@ -630,6 +630,7 @@ describe('Product Component class', () => {
         afterEach(() => {
           openWindowStub.restore();
           createCheckoutStub.restore();
+          clearCheckoutOrigins();
         });
 
         it('calls userEvent with openCheckout', () => {
@@ -656,18 +657,15 @@ describe('Product Component class', () => {
           browserFeaturesStub.restore();
         });
 
-        it('tracks the checkout popup so its messages can be trusted', async () => {
+        it('records the checkout origin when checkout opens in a popup', async () => {
           product.config.cart.popup = true;
           const browserFeaturesStub = sinon.stub(browserFeatures, 'default').value({
             windowOpen: () => true,
           });
-          const popup = {location: ''};
-          openWindowStub.returns(popup);
           product.onButtonClick(evt, target);
           await createCheckoutStub.returnValues[0];
           browserFeaturesStub.restore();
-          assert.isTrue(checkoutWindowTracker.isTrustedMessage({source: popup, origin: window.location.origin}));
-          checkoutWindowTracker.reset();
+          assert.isTrue(isCheckoutPopupMessage({source: {opener: window}, origin: window.location.origin}));
         });
 
         it('does not open checkout in a new window if browser does not support window.open', () => {

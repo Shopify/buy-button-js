@@ -11,7 +11,7 @@ import * as throttle from '../../src/utils/throttle';
 import hostStyles from '../../src/styles/host/host';
 import conditionalStyles from '../../src/styles/host/conditional';
 import shopFixture from '../fixtures/shop-info';
-import checkoutWindowTracker from '../../src/utils/checkout-window';
+import {trackCheckoutUrl, clearCheckoutOrigins} from '../../src/utils/checkout-window';
 
 const DATA_ATTRIBUTE = 'data-shopify-buy-ui';
 const config = {
@@ -1009,25 +1009,22 @@ describe('ui class', () => {
 
           beforeEach(() => {
             reloadStub = sinon.stub(UI.prototype, '_reloadPage');
-            checkoutWindow = {};
+            checkoutWindow = {opener: window};
+            trackCheckoutUrl(checkoutUrl);
           });
 
           afterEach(() => {
             reloadStub.restore();
-            checkoutWindowTracker.reset();
+            clearCheckoutOrigins();
           });
 
-          describe('from the checkout window this UI opened', () => {
-            beforeEach(() => {
-              checkoutWindowTracker.track(checkoutWindow, checkoutUrl);
-            });
-
+          describe('from a checkout popup that this page opened', () => {
             it('parses data from message', () => {
-              const parseStub = sinon.stub(JSON, 'parse').returns({});
+              const parseSpy = sinon.spy(JSON, 'parse');
               dispatchMessage('test', checkoutOrigin, checkoutWindow);
-              parseStub.restore();
-              // called once is not tested because the stub is on the global JSON instance rather than the class instance
-              assert.calledWith(parseStub, 'test');
+              parseSpy.restore();
+              // called once is not tested because the spy is on the global JSON instance rather than the class instance
+              assert.calledWith(parseSpy, 'test');
             });
 
             it('reloads the page on syncCart', () => {
@@ -1040,27 +1037,31 @@ describe('ui class', () => {
               assert.called(reloadStub);
             });
 
-            it('reloads the page when the checkout window is on the configured shop domain', () => {
+            it('reloads the page when the popup is on the configured shop domain', () => {
               dispatchMessage(syncCartMessage, `https://${client.config.domain}`, checkoutWindow);
               assert.called(reloadStub);
             });
 
-            it('does not reload the page when the checkout window is on an untrusted origin', () => {
-              dispatchMessage(syncCartMessage, 'https://attacker.example', checkoutWindow);
-              dispatchMessage(thankYouMessage, 'https://attacker.example', checkoutWindow);
-              assert.notCalled(reloadStub);
-            });
-
-            it('does not reload the page when a different window sends from the checkout origin', () => {
-              dispatchMessage(syncCartMessage, checkoutOrigin, {});
-              dispatchMessage(thankYouMessage, checkoutOrigin, {});
-              assert.notCalled(reloadStub);
+            it('reloads the page for each message, because the checks do not depend on state that a reload clears', () => {
+              // every UI instance in the suite listens for messages, so compare call counts
+              dispatchMessage(syncCartMessage, checkoutOrigin, checkoutWindow);
+              const callsAfterFirstMessage = reloadStub.callCount;
+              dispatchMessage(thankYouMessage, checkoutOrigin, checkoutWindow);
+              assert.isAbove(callsAfterFirstMessage, 0);
+              assert.equal(reloadStub.callCount, callsAfterFirstMessage * 2);
             });
           });
 
-          it('does not reload the page on a cross-origin message when no checkout window was opened', () => {
-            dispatchMessage(syncCartMessage, 'https://attacker.example', {});
-            dispatchMessage(thankYouMessage, 'https://attacker.example', {});
+          it('does not reload the page on a message from another popup that this page opened', () => {
+            dispatchMessage(syncCartMessage, 'https://login.example.com', checkoutWindow);
+            dispatchMessage(thankYouMessage, 'https://login.example.com', checkoutWindow);
+            assert.notCalled(reloadStub);
+          });
+
+          it('does not reload the page on a message from a window that this page did not open', () => {
+            dispatchMessage(syncCartMessage, checkoutOrigin, {});
+            dispatchMessage(thankYouMessage, checkoutOrigin, {opener: {}});
+            dispatchMessage(syncCartMessage, 'https://attacker.example', {opener: null});
             assert.notCalled(reloadStub);
           });
 

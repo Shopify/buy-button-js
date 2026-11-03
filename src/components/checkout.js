@@ -1,4 +1,4 @@
-import checkoutWindowTracker from '../utils/checkout-window';
+import {trackCheckoutUrl} from '../utils/checkout-window';
 
 export default class CheckoutNavigator {
   constructor(config) {
@@ -16,8 +16,8 @@ export default class CheckoutNavigator {
 
   open(url) {
     if (this.config.cart.popup) {
-      const checkoutWindow = window.open(url, 'checkout', this.params);
-      checkoutWindowTracker.track(checkoutWindow, url);
+      trackCheckoutUrl(url);
+      window.open(url, 'checkout', this.params);
     } else {
       window.location = url;
     }

@@ -6,7 +6,7 @@ import windowUtils from '../utils/window-utils';
 import formatMoney from '../utils/money';
 import normalizeConfig from '../utils/normalize-config';
 import browserFeatures from '../utils/detect-features';
-import checkoutWindowTracker from '../utils/checkout-window';
+import {trackCheckoutUrl} from '../utils/checkout-window';
 import getUnitPriceBaseUnit from '../utils/unit-price';
 import ProductView from '../views/product';
 import ProductUpdater from '../updaters/product';
@@ -683,8 +683,10 @@ export default class Product extends Component {
       };
 
       this.props.client.checkout.create(input).then((checkout) => {
+        if (checkoutWindow !== window) {
+          trackCheckoutUrl(checkout.webUrl);
+        }
         checkoutWindow.location = checkout.webUrl;
-        checkoutWindowTracker.track(checkoutWindow, checkout.webUrl);
       });
     }
   }
