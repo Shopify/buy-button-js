@@ -8,5 +8,7 @@ dependencies:
 deploy:
   override:
     - ejson decrypt -o config.json config.ejson
+    # pnpm does not run `prepublishOnly` on install, so build dist/ before the upload.
+    - bash -i -c "pnpm run build"
     - bash -i -c "pnpm run deploy" # upload built scripts to the CDN
     # - npm publish (npm publishing is now done via Github actions with changesets and provenance)
