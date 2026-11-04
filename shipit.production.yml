@@ -1,9 +1,12 @@
 dependencies:
   override:
-    - pnpm install --frozen-lockfile
+    # The Shipit image has no pnpm. Install the version from `packageManager` in package.json.
+    - curl -fsSL https://get.pnpm.io/install.sh | PNPM_VERSION=10.16.1 SHELL=`which bash` bash -
+    # `bash -i` loads the PATH change that the install script writes to .bashrc.
+    - bash -i -c "pnpm install --frozen-lockfile"
 
 deploy:
   override:
     - ejson decrypt -o config.json config.ejson
-    - pnpm run deploy # upload built scripts to the CDN
+    - bash -i -c "pnpm run deploy" # upload built scripts to the CDN
     # - npm publish (npm publishing is now done via Github actions with changesets and provenance)
