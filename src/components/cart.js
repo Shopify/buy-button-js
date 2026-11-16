@@ -100,7 +100,7 @@ export default class Cart extends Component {
         if (LINE_ITEM_TARGET_SELECTIONS.indexOf(targetSelection) > -1) {
           const discountAmount = discount.allocatedAmount.amount;
           const discountDisplayText = discount.discountApplication.title || discount.discountApplication.code;
-          discountAcc.totalDiscount += discountAmount;
+          discountAcc.totalDiscount += Number(discountAmount);
           discountAcc.discounts.push({discount: `${discountDisplayText} (-${formatMoney(discountAmount, this.moneyFormat)})`});
         }
         return discountAcc;
