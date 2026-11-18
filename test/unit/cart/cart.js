@@ -274,6 +274,34 @@ describe('Cart class', () => {
         assert.alwaysCalledWith(formatMoneySpy, fullPrice, moneyFormat);
       });
 
+      it('adds multiple string discount amounts before calculating the line price', () => {
+        cart.lineItemCache = [{
+          id: 123,
+          title: 'test',
+          quantity: 1,
+          variant: {
+            title: 'Default Title',
+            image: {src: 'cdn.shopify.com/image.jpg'},
+            priceV2: {amount: '20.00', currencyCode: 'CAD'},
+          },
+          discountAllocations: ['2.00', '3.00'].map((amount, index) => ({
+            discountApplication: {
+              title: `Offer ${index + 1}`,
+              targetSelection: index === 0 ? 'ENTITLED' : 'EXPLICIT',
+            },
+            allocatedAmount: {amount, currencyCode: 'CAD'},
+          })),
+        }];
+
+        const cartLineItemsHtml = cart.lineItemsHtml;
+
+        assert.include(cartLineItemsHtml, '$20.00');
+        assert.include(cartLineItemsHtml, '$15.00');
+        assert.include(cartLineItemsHtml, 'Offer 1 (-$2.00)');
+        assert.include(cartLineItemsHtml, 'Offer 2 (-$3.00)');
+        assert.calledWith(formatMoneySpy.lastCall, 15, moneyFormat);
+      });
+
       it('renders the discount information if a discount allocation exists with a target selection of `ENTITLED`', () => {
         const discountAmount = '1.00';
         const discountTitle = 'BOGO';
